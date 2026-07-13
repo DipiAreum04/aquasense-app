@@ -24,9 +24,41 @@ public class SharedPreferenceHelper {
         return instance;
     }
     
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return sharedPreferences.getBoolean(key, defaultValue);
+    }
+
+    public void setBoolean(String key, boolean value) {
+        sharedPreferences.edit().putBoolean(key, value).apply();
+    }
+
+    public String getString(String key, String defaultValue) {
+        return sharedPreferences.getString(key, defaultValue);
+    }
+
+    public void setString(String key, String value) {
+        sharedPreferences.edit().putString(key, value).apply();
+    }
+
+    public long getLong(String key, long defaultValue) {
+        return sharedPreferences.getLong(key, defaultValue);
+    }
+
+    public void setLong(String key, long value) {
+        sharedPreferences.edit().putLong(key, value).apply();
+    }
+
     private void remove(String key) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(key);
-        editor.apply();
+        sharedPreferences.edit().remove(key).apply();
+    }
+
+    public void updateField(String key, Object value) {
+        if (value instanceof Boolean) {
+            setBoolean(key, (Boolean) value);
+        } else if (value instanceof String) {
+            setString(key, (String) value);
+        } else if (value instanceof Long) {
+            setLong(key, (Long) value);
+        }
     }
 }

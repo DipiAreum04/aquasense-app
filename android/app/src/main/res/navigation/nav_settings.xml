@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_settings"
+    app:startDestination="@id/settingsHubFragment">
+
+    <!-- Hub — the main settings list -->
+    <fragment
+        android:id="@+id/settingsHubFragment"
+        android:name="ca.team6.aquasense.settings.SettingsHubFragment"
+        android:label="Settings">
+
+        <action
+            android:id="@+id/action_hub_to_notifications"
+            app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_hub_to_accounts"
+            app:destination="@id/accountsBackupFragment" />
+        <action
+            android:id="@+id/action_hub_to_dataSync"
+            app:destination="@id/dataSyncFragment" />
+        <action
+            android:id="@+id/action_hub_to_displayUnits"
+            app:destination="@id/displayUnitsFragment" />
+        <action
+            android:id="@+id/action_hub_to_sensorCalibration"
+            app:destination="@id/sensorCalibrationFragment" />
+        <action
+            android:id="@+id/action_hub_to_contactSupport"
+            app:destination="@id/contactSupportFragment" />
+    </fragment>
+
+    <!-- ST-1.5 -->
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="ca.team6.aquasense.settings.NotificationsFragment"
+        android:label="Notifications" />
+
+    <!-- ST-1.3 -->
+    <fragment
+        android:id="@+id/accountsBackupFragment"
+        android:name="ca.team6.aquasense.settings.AccountsBackupFragment"
+        android:label="Accounts &amp; Backup" />
+
+    <!-- ST-1.4 — merged Privacy + Encryption + Firebase -->
+    <fragment
+        android:id="@+id/dataSyncFragment"
+        android:name="ca.team6.aquasense.settings.DataSyncFragment"
+        android:label="Data &amp; Sync" />
+
+    <!-- ST-1.6 -->
+    <fragment
+        android:id="@+id/displayUnitsFragment"
+        android:name="ca.team6.aquasense.settings.DisplayUnitsFragment"
+        android:label="Display &amp; Units" />
+
+    <!-- ST-1.6 -->
+    <fragment
+        android:id="@+id/sensorCalibrationFragment"
+        android:name="ca.team6.aquasense.settings.SensorCalibrationFragment"
+        android:label="Sensor Calibration" />
+
+    <!-- ST-1.6 -->
+    <fragment
+        android:id="@+id/contactSupportFragment"
+        android:name="ca.team6.aquasense.settings.ContactSupportFragment"
+        android:label="Contact &amp; Support" />
+
+</navigation>
