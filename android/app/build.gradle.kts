@@ -40,6 +40,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.runtime)
+    implementation(libs.androidx.navigation.ui)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.activity.compose)
