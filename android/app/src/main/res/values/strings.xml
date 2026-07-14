@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AquaSense</string>
+    <string name="offline">Offline</string>
+    <string name="online">Online</string>
+    <string name="warning">Warning</string>
+    <string name="error">Error</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="analytics">Analytics</string>
+    <string name="settings">Settings</string>
+    <string name="temperature">Temperature</string>
+    <string name="liquid_level">Liquid Level</string>
+    <string name="dissolved_solids">Dissolved Solids</string>
+    <string name="ph_level">pH Level</string>
+    <string name="unit_dimensionless"> </string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_parts_per_million">ppm</string>
+    <string name="sensor_info">SENSOR INFO</string>
+    <string name="sensor_info_liquid_level_title">Liquid Level Sensor</string>
+    <string name="sensor_info_liquid_level_desc">Measures liquid level.</string>
+    <string name="sensor_info_temperature_title">Temperature Sensor</string>
+    <string name="sensor_info_temperature_desc">Measures temperature level.</string>
+    <string name="sensor_info_dissolved_solids_title">Dissolved Solids Sensor</string>
+    <string name="sensor_info_dissolved_solids_desc">Measures dissolved solids.</string>
+    <string name="sensor_info_ph_level_title">pH Level Sensor</string>
+    <string name="sensor_info_ph_level_desc">Measures pH level.</string>
+    <string name="sensor_info_example_title">Example Title</string>
+    <string name="sensor_info_example_point">This is an example.</string>
+
+    <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_button">Settings</string>
     <string name="profile_name_placeholder">Jane Doe</string>
