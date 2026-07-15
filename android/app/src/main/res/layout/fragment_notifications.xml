@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── ALERT CHANNELS ───────────────────────────────── -->
+        <!-- ALERT CHANNELS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/push_notifications"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/email_alerts"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -119,13 +119,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sms_text"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/critical_alerts_only"
+                        android:text="@string/sms_text_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -140,7 +140,7 @@
 
         </LinearLayout>
 
-        <!-- ── FILTERS ──────────────────────────────────────── -->
+        <!-- FILTERS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -178,7 +178,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/critical_alerts_only"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -222,7 +222,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/quiet_hours"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -268,7 +268,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/start_time"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
@@ -308,7 +308,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/end_time"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
@@ -327,7 +327,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@color/divider" />
 
-            <!-- Feeding mode silence -->
+            <!-- Maintenance Mode -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -336,13 +336,27 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/feeding_mode_silence"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/maintenance_mode"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/maintenance_mode_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchFeedingSilence"
@@ -353,7 +367,7 @@
 
         </LinearLayout>
 
-        <!-- ── NOTIFICATION TYPES ────────────────────────────── -->
+        <!-- NOTIFICATION TYPES -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -385,7 +399,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/param_out_of_range"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -414,7 +428,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/sensor_offline"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -443,7 +457,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/equipment_failure"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -472,7 +486,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/daily_summary_digest"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -501,7 +515,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/firmware_update_available"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat

@@ -5,7 +5,7 @@
     android:id="@+id/nav_settings"
     app:startDestination="@id/settingsHubFragment">
 
-    <!-- Hub — the main settings list -->
+    <!-- Hub - the main settings list -->
     <fragment
         android:id="@+id/settingsHubFragment"
         android:name="ca.team6.aquasense.settings.SettingsHubFragment"
@@ -41,13 +41,32 @@
     <fragment
         android:id="@+id/accountsBackupFragment"
         android:name="ca.team6.aquasense.settings.AccountsBackupFragment"
-        android:label="Accounts &amp; Backup" />
+        android:label="Accounts &amp; Backup">
+        <action
+            android:id="@+id/action_accounts_to_editProfile"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
 
-    <!-- ST-1.4 — merged Privacy + Encryption + Firebase -->
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="ca.team6.aquasense.settings.EditProfileFragment"
+        android:label="@string/edit_profile" />
+
+    <!-- ST-1.4 - merged Privacy + Encryption + Firebase -->
     <fragment
         android:id="@+id/dataSyncFragment"
         android:name="ca.team6.aquasense.settings.DataSyncFragment"
-        android:label="Data &amp; Sync" />
+        android:label="Data &amp; Sync">
+        <action
+            android:id="@+id/action_dataSync_to_privacyPolicy"
+            app:destination="@id/privacyPolicyFragment" />
+    </fragment>
+
+    <!-- PRIVSEC - Privacy Policy (from Data &amp; Sync) -->
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="ca.team6.aquasense.settings.PrivacyPolicyFragment"
+        android:label="@string/privacy_policy" />
 
     <!-- ST-1.6 -->
     <fragment
@@ -65,6 +84,16 @@
     <fragment
         android:id="@+id/contactSupportFragment"
         android:name="ca.team6.aquasense.settings.ContactSupportFragment"
-        android:label="Contact &amp; Support" />
+        android:label="Contact &amp; Support">
+        <action
+            android:id="@+id/action_contactSupport_to_contactForm"
+            app:destination="@id/contactFormFragment" />
+    </fragment>
+
+    <!-- SETTINGS-02 - Contact Form -->
+    <fragment
+        android:id="@+id/contactFormFragment"
+        android:name="ca.team6.aquasense.settings.ContactFormFragment"
+        android:label="@string/contact_form" />
 
 </navigation>

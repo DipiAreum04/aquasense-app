@@ -4,12 +4,11 @@ import android.content.Context;
 
 public class SettingsRepository {
 
-    // ── Keys ─────────────────────────────────────────────────
+    // Keys
     public static final String KEY_TEMP_UNIT              = "tempUnit";
     public static final String KEY_METRIC_UNITS           = "metricUnits";
     public static final String KEY_DARK_MODE              = "darkMode";
     public static final String KEY_24H_CLOCK              = "use24HourClock";
-    public static final String KEY_EXTRA_DECIMAL          = "extraDecimalPrecision";
 
     public static final String KEY_PUSH_NOTIF             = "pushNotifications";
     public static final String KEY_EMAIL_ALERTS           = "emailAlerts";
@@ -31,18 +30,13 @@ public class SettingsRepository {
     public static final String KEY_AUTO_BACKUP            = "autoBackup";
 
     public static final String KEY_USAGE_ANALYTICS        = "usageAnalytics";
-    public static final String KEY_CRASH_REPORTS          = "crashReports";
     public static final String KEY_LOCATION_DATA          = "locationData";
-    public static final String KEY_E2E_ENCRYPTION         = "endToEndEncryption";
-    public static final String KEY_ENCRYPT_AT_REST        = "encryptAtRest";
     public static final String KEY_FIREBASE_SYNC          = "firebaseRealtimeSync";
-    public static final String KEY_REALTIME_DB            = "realtimeDatabase";
 
-    public static final String KEY_CALIB_PH              = "lastCalibratedPh";
+    public static final String KEY_CALIB_LIQUID          = "lastCalibratedLiquid";
     public static final String KEY_CALIB_TEMP            = "lastCalibratedTemp";
-    public static final String KEY_CALIB_SALINITY        = "lastCalibratedSalinity";
-    public static final String KEY_CALIB_AMMONIA         = "lastCalibratedAmmonia";
-    public static final String KEY_CALIB_DO2             = "lastCalibratedDissolvedO2";
+    public static final String KEY_CALIB_TDS             = "lastCalibratedTds";
+    public static final String KEY_CALIB_PH              = "lastCalibratedPh";
 
     private final SharedPreferenceHelper prefs;
 
@@ -61,7 +55,6 @@ public class SettingsRepository {
         s.metricUnits           = prefs.getBoolean(KEY_METRIC_UNITS, false);
         s.darkMode              = prefs.getBoolean(KEY_DARK_MODE, false);
         s.use24HourClock        = prefs.getBoolean(KEY_24H_CLOCK, true);
-        s.extraDecimalPrecision = prefs.getBoolean(KEY_EXTRA_DECIMAL, false);
 
         s.pushNotifications     = prefs.getBoolean(KEY_PUSH_NOTIF, true);
         s.emailAlerts           = prefs.getBoolean(KEY_EMAIL_ALERTS, false);
@@ -83,18 +76,13 @@ public class SettingsRepository {
         s.autoBackup            = prefs.getBoolean(KEY_AUTO_BACKUP, true);
 
         s.usageAnalytics        = prefs.getBoolean(KEY_USAGE_ANALYTICS, false);
-        s.crashReports          = prefs.getBoolean(KEY_CRASH_REPORTS, true);
         s.locationData          = prefs.getBoolean(KEY_LOCATION_DATA, false);
-        s.endToEndEncryption    = prefs.getBoolean(KEY_E2E_ENCRYPTION, true);
-        s.encryptAtRest         = prefs.getBoolean(KEY_ENCRYPT_AT_REST, true);
         s.firebaseRealtimeSync  = prefs.getBoolean(KEY_FIREBASE_SYNC, true);
-        s.realtimeDatabase      = prefs.getBoolean(KEY_REALTIME_DB, false);
 
-        s.lastCalibratedPh         = prefs.getLong(KEY_CALIB_PH, 0L);
+        s.lastCalibratedLiquid     = prefs.getLong(KEY_CALIB_LIQUID, 0L);
         s.lastCalibratedTemp       = prefs.getLong(KEY_CALIB_TEMP, 0L);
-        s.lastCalibratedSalinity   = prefs.getLong(KEY_CALIB_SALINITY, 0L);
-        s.lastCalibratedAmmonia    = prefs.getLong(KEY_CALIB_AMMONIA, 0L);
-        s.lastCalibratedDissolvedO2= prefs.getLong(KEY_CALIB_DO2, 0L);
+        s.lastCalibratedTds        = prefs.getLong(KEY_CALIB_TDS, 0L);
+        s.lastCalibratedPh         = prefs.getLong(KEY_CALIB_PH, 0L);
 
         callback.onLoaded(s);
     }

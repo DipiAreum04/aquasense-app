@@ -20,6 +20,8 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class NotificationsFragment extends Fragment {
 
+    // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
+    @SuppressWarnings("FieldCanBeLocal") 
     private SettingsRepository repo;
     private SharedPreferenceHelper prefs;
 
@@ -47,7 +49,7 @@ public class NotificationsFragment extends Fragment {
         SwitchCompat switchSms       = view.findViewById(R.id.switchSmsAlerts);
         SwitchCompat switchCritical  = view.findViewById(R.id.switchCriticalOnly);
         SwitchCompat switchQuiet     = view.findViewById(R.id.switchQuietHours);
-        SwitchCompat switchFeeding   = view.findViewById(R.id.switchFeedingSilence);
+        SwitchCompat switchMaintenance = view.findViewById(R.id.switchFeedingSilence);
         SwitchCompat switchParam     = view.findViewById(R.id.switchNotifyParam);
         SwitchCompat switchSensor    = view.findViewById(R.id.switchNotifySensor);
         SwitchCompat switchEquipment = view.findViewById(R.id.switchNotifyEquipment);
@@ -61,13 +63,14 @@ public class NotificationsFragment extends Fragment {
         tvQuietStart      = view.findViewById(R.id.tvQuietStart);
         tvQuietEnd        = view.findViewById(R.id.tvQuietEnd);
 
+        // Bind before listeners so the initial values do not toast.
         repo.loadSettings(s -> {
             switchPush.setChecked(s.pushNotifications);
             switchEmail.setChecked(s.emailAlerts);
             switchSms.setChecked(s.smsAlerts);
             switchCritical.setChecked(s.criticalAlertsOnly);
             switchQuiet.setChecked(s.quietHours);
-            switchFeeding.setChecked(s.feedingModeSilence);
+            switchMaintenance.setChecked(s.feedingModeSilence);
             switchParam.setChecked(s.notifyParamOutOfRange);
             switchSensor.setChecked(s.notifySensorOffline);
             switchEquipment.setChecked(s.notifyEquipmentFailure);
@@ -78,30 +81,62 @@ public class NotificationsFragment extends Fragment {
             setQuietRowsVisible(s.quietHours);
         });
 
-        switchPush.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_PUSH_NOTIF, v2));
-        switchEmail.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_EMAIL_ALERTS, v2));
-        switchSms.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_SMS_ALERTS, v2));
-        switchCritical.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_CRITICAL_ONLY, v2));
+        // TODO: Wire push notifications (FCM or local notifications).
+        switchPush.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_PUSH_NOTIF, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Wire email alerts (SMTP / SendGrid / backend API; Firebase not required).
+        switchEmail.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_EMAIL_ALERTS, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Wire SMS alerts (e.g. Twilio or similar).
+        switchSms.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_SMS_ALERTS, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Enforce critical-only filtering when sending alerts.
+        switchCritical.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_CRITICAL_ONLY, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Mute non-critical alerts during quiet hours; critical alerts always deliver.
         switchQuiet.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_QUIET_HOURS, checked);
             setQuietRowsVisible(checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        switchFeeding.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_FEEDING_SILENCE, v2));
-        switchParam.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_NOTIFY_PARAM, v2));
-        switchSensor.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, v2));
-        switchEquipment.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_NOTIFY_EQUIPMENT, v2));
-        switchSummary.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_NOTIFY_SUMMARY, v2));
-        switchFirmware.setOnCheckedChangeListener((b, v2) ->
-                prefs.updateField(SettingsRepository.KEY_NOTIFY_FIRMWARE, v2));
+        // TODO: Suppress all notifications while Maintenance Mode is on.
+        switchMaintenance.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_FEEDING_SILENCE, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Notify when a water parameter is out of range.
+        switchParam.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_PARAM, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Notify when a sensor goes offline.
+        switchSensor.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Notify on equipment failure.
+        switchEquipment.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_EQUIPMENT, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Send a daily summary digest.
+        switchSummary.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_SUMMARY, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        // TODO: Notify when a firmware update is available.
+        switchFirmware.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_FIRMWARE, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
 
         rowQuietStart.setOnClickListener(v2 ->
                 showTimePicker(tvQuietStart.getText().toString(),

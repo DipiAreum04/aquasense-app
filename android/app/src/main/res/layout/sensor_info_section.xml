@@ -9,8 +9,8 @@
     app:drawableStartCompat="@drawable/lightbulb_2_24px"
     android:drawablePadding="12dp"
     android:gravity="center_vertical"
-    android:textColor="#243247"
+    android:textColor="@color/sensor_info_title_color"
     android:textSize="22sp"
     android:textStyle="bold"
-    android:tint="#F4B400"
+    android:tint="@color/sensor_info_bulb_tint"
 />

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ocean gradient + soft top-left rim light (glass highlight). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base: lighter top-left to deeper navy bottom-right -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="315"
+                android:startColor="@color/launcher_ocean_start"
+                android:endColor="@color/launcher_ocean_end" />
+        </shape>
+    </item>
+
+    <!-- Soft rim light from the top-left (like light on glass) -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="72%"
+                android:centerX="0.18"
+                android:centerY="0.16"
+                android:startColor="@color/launcher_rim_light_start"
+                android:centerColor="@color/launcher_rim_light_center"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+
+</layer-list>

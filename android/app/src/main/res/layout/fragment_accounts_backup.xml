@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── Profile card ─────────────────────────────────── -->
+        <!-- Profile card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,8 +24,8 @@
                 android:id="@+id/tvProfileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_name_placeholder"
-                android:textColor="@android:color/black"
+                android:text="@string/profile_name_empty"
+                android:textColor="@color/text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@string/profile_email_placeholder"
+                android:text="@string/profile_email_empty"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
 
@@ -65,7 +65,7 @@
 
         </LinearLayout>
 
-        <!-- ── Cloud Backup section ──────────────────────────── -->
+        <!-- Cloud Backup section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/auto_backup"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -142,13 +142,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/last_backup"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
+                    android:id="@+id/tvLastBackup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/last_backup_value"
+                    android:text="@string/last_backup_never"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
@@ -163,24 +164,39 @@
             <!-- Storage used (info row) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/storage_used"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/storage_used"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/storage_used_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvStorageUsed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/storage_used_value"
+                    android:text="@string/storage_used_placeholder"
                     android:textColor="@color/accent"
                     android:textSize="14sp" />
 
@@ -188,7 +204,7 @@
 
         </LinearLayout>
 
-        <!-- ── Account Actions section ───────────────────────── -->
+        <!-- Account Actions section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -217,7 +233,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/export_all_data"
-                android:textColor="@android:color/black"
+                android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
             <View
@@ -237,7 +253,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/import_backup"
-                android:textColor="@android:color/black"
+                android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
             <View

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Inset icon + subtle drop shadow + soft glass shine. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Subtle shadow under the white mark -->
+    <item
+        android:left="2dp"
+        android:top="3dp"
+        android:right="-2dp"
+        android:bottom="-3dp">
+        <inset
+            android:drawable="@drawable/ic_aquarium_icon_shadow"
+            android:insetLeft="22%"
+            android:insetTop="22%"
+            android:insetRight="22%"
+            android:insetBottom="22%" />
+    </item>
+
+    <!-- Main mark -->
+    <item>
+        <inset
+            android:drawable="@drawable/ic_aquarium_icon_white"
+            android:insetLeft="22%"
+            android:insetTop="22%"
+            android:insetRight="22%"
+            android:insetBottom="22%" />
+    </item>
+
+    <!-- Soft glass highlight (reduced shine) -->
+    <item
+        android:gravity="center"
+        android:width="36dp"
+        android:height="108dp">
+        <rotate
+            android:fromDegrees="-28"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="rectangle">
+                <gradient
+                    android:type="linear"
+                    android:angle="0"
+                    android:startColor="@color/launcher_rim_light_edge"
+                    android:centerColor="@color/launcher_rim_light_center"
+                    android:endColor="@color/launcher_rim_light_edge" />
+            </shape>
+        </rotate>
+    </item>
+
+</layer-list>
