@@ -60,4 +60,12 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
     public int getItemCount() {
         return sensors.size();
     }
+
+    // Rebinds a single sensor card after changes (e.g. after the temperature unit preference changes)
+    public void notifySensorChanged(AquariumSensor sensor) {
+        int index = sensors.indexOf(sensor);
+        if (index != -1) {
+            notifyItemChanged(index);
+        }
+    }
 }

@@ -21,6 +21,8 @@ public class SensorCalibrationFragment extends Fragment {
 
     private static final long MS_PER_DAY = 1000L * 60 * 60 * 24;
 
+    // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
+    @SuppressWarnings("FieldCanBeLocal") 
     private SettingsRepository repo;
     private SharedPreferenceHelper prefs;
     private AppSettings currentSettings;
@@ -44,21 +46,19 @@ public class SensorCalibrationFragment extends Fragment {
             refreshStatus(view, s);
         });
 
-        view.findViewById(R.id.rowGuidePh).setOnClickListener(v ->
-                showGuide(R.string.guide_title_ph, R.string.guide_ph));
+        view.findViewById(R.id.rowGuideLiquid).setOnClickListener(v ->
+                showGuide(R.string.guide_title_liquid, R.string.guide_liquid));
         view.findViewById(R.id.rowGuideTemp).setOnClickListener(v ->
                 showGuide(R.string.guide_title_temp, R.string.guide_temp));
-        view.findViewById(R.id.rowGuideSalinity).setOnClickListener(v ->
-                showGuide(R.string.guide_title_salinity, R.string.guide_salinity));
-        view.findViewById(R.id.rowGuideAmmonia).setOnClickListener(v ->
-                showGuide(R.string.guide_title_ammonia, R.string.guide_ammonia));
-        view.findViewById(R.id.rowGuideDo2).setOnClickListener(v ->
-                showGuide(R.string.guide_title_do2, R.string.guide_do2));
+        view.findViewById(R.id.rowGuideTds).setOnClickListener(v ->
+                showGuide(R.string.guide_title_tds, R.string.guide_tds));
+        view.findViewById(R.id.rowGuidePh).setOnClickListener(v ->
+                showGuide(R.string.guide_title_ph, R.string.guide_ph));
 
-        view.findViewById(R.id.btnCalibratePh).setOnClickListener(v -> {
+        view.findViewById(R.id.btnCalibrateLiquid).setOnClickListener(v -> {
             long now = System.currentTimeMillis();
-            prefs.updateField(SettingsRepository.KEY_CALIB_PH, now);
-            currentSettings.lastCalibratedPh = now;
+            prefs.updateField(SettingsRepository.KEY_CALIB_LIQUID, now);
+            currentSettings.lastCalibratedLiquid = now;
             refreshStatus(view, currentSettings);
         });
         view.findViewById(R.id.btnCalibrateTemp).setOnClickListener(v -> {
@@ -67,37 +67,29 @@ public class SensorCalibrationFragment extends Fragment {
             currentSettings.lastCalibratedTemp = now;
             refreshStatus(view, currentSettings);
         });
-        view.findViewById(R.id.btnCalibrateSalinity).setOnClickListener(v -> {
+        view.findViewById(R.id.btnCalibrateTds).setOnClickListener(v -> {
             long now = System.currentTimeMillis();
-            prefs.updateField(SettingsRepository.KEY_CALIB_SALINITY, now);
-            currentSettings.lastCalibratedSalinity = now;
+            prefs.updateField(SettingsRepository.KEY_CALIB_TDS, now);
+            currentSettings.lastCalibratedTds = now;
             refreshStatus(view, currentSettings);
         });
-        view.findViewById(R.id.btnCalibrateAmmonia).setOnClickListener(v -> {
+        view.findViewById(R.id.btnCalibratePh).setOnClickListener(v -> {
             long now = System.currentTimeMillis();
-            prefs.updateField(SettingsRepository.KEY_CALIB_AMMONIA, now);
-            currentSettings.lastCalibratedAmmonia = now;
-            refreshStatus(view, currentSettings);
-        });
-        view.findViewById(R.id.btnCalibrateDo2).setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            prefs.updateField(SettingsRepository.KEY_CALIB_DO2, now);
-            currentSettings.lastCalibratedDissolvedO2 = now;
+            prefs.updateField(SettingsRepository.KEY_CALIB_PH, now);
+            currentSettings.lastCalibratedPh = now;
             refreshStatus(view, currentSettings);
         });
     }
 
     private void refreshStatus(View root, AppSettings s) {
         updateProbeRow(root,
-                R.id.tvPhStatus, R.id.tvPhDays, s.lastCalibratedPh);
+                R.id.tvLiquidStatus, R.id.tvLiquidDays, s.lastCalibratedLiquid);
         updateProbeRow(root,
                 R.id.tvTempStatus, R.id.tvTempDays, s.lastCalibratedTemp);
         updateProbeRow(root,
-                R.id.tvSalinityStatus, R.id.tvSalinityDays, s.lastCalibratedSalinity);
+                R.id.tvTdsStatus, R.id.tvTdsDays, s.lastCalibratedTds);
         updateProbeRow(root,
-                R.id.tvAmmoniaStatus, R.id.tvAmmoniaDays, s.lastCalibratedAmmonia);
-        updateProbeRow(root,
-                R.id.tvDo2Status, R.id.tvDo2Days, s.lastCalibratedDissolvedO2);
+                R.id.tvPhStatus, R.id.tvPhDays, s.lastCalibratedPh);
     }
 
     private void updateProbeRow(View root, int statusId, int daysId, long lastMs) {

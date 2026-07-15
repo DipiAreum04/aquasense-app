@@ -2,6 +2,11 @@ package ca.team6.aquasense.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatDelegate;
+
+import ca.team6.aquasense.R;
 
 public class SharedPreferenceHelper {
     private static SharedPreferenceHelper instance;
@@ -22,6 +27,28 @@ public class SharedPreferenceHelper {
         }
 
         return instance;
+    }
+
+    // Method to show a Toast for features that are not implemented yet
+    public static void showComingSoon(Context context) {
+        if (context == null) return;
+        Toast.makeText(context.getApplicationContext(), R.string.coming_soon, Toast.LENGTH_SHORT).show();
+    }
+
+    // Applies the saved dark mode preference at app startup.
+    public void applySavedDarkMode() {
+        applyDarkMode(getBoolean(SettingsRepository.KEY_DARK_MODE, false));
+    }
+
+    // Saves the preference and switches the app between light and dark theme.
+    public void setDarkModeEnabled(boolean enabled) {
+        setBoolean(SettingsRepository.KEY_DARK_MODE, enabled);
+        applyDarkMode(enabled);
+    }
+
+    private void applyDarkMode(boolean enabled) {
+        AppCompatDelegate.setDefaultNightMode(
+                enabled ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
     }
     
     public boolean getBoolean(String key, boolean defaultValue) {

@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── Profile card ─────────────────────────────────── -->
+        <!-- Profile card -->
         <LinearLayout
             android:id="@+id/rowProfile"
             android:layout_width="match_parent"
@@ -34,17 +34,19 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvHubProfileName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/profile_name_placeholder"
-                    android:textColor="@android:color/black"
+                    android:text="@string/profile_name_empty"
+                    android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvHubProfileEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/profile_email_placeholder"
+                    android:text="@string/profile_email_empty"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
@@ -60,7 +62,7 @@
 
         </LinearLayout>
 
-        <!-- ── AQUARIUM section ──────────────────────────────── -->
+        <!-- AQUARIUM section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -102,7 +104,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tank_profiles"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -153,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_parameters"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -204,7 +206,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/lighting_pumps"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -255,7 +257,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_calibration"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -306,7 +308,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_units"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -330,7 +332,7 @@
 
         </LinearLayout>
 
-        <!-- ── APP & ACCOUNT section ─────────────────────────── -->
+        <!-- APP & ACCOUNT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -372,7 +374,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/notifications"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -423,7 +425,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/accounts_backup"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -451,7 +453,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@color/divider" />
 
-            <!-- Data & Sync (ours — merged Privacy+Encryption+Firebase) -->
+            <!-- Data & Sync (ours - merged Privacy+Encryption+Firebase) -->
             <LinearLayout
                 android:id="@+id/rowDataSync"
                 android:layout_width="match_parent"
@@ -474,7 +476,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/data_sync"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -525,7 +527,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_support"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView

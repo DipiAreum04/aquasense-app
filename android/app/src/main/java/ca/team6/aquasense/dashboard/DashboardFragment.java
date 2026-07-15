@@ -22,12 +22,15 @@ import ca.team6.aquasense.SettingsActivity;
 import ca.team6.aquasense.model.AquariumBoardStatus;
 import ca.team6.aquasense.model.AquariumSensor;
 import ca.team6.aquasense.model.GridSpacingItemDecoration;
+import ca.team6.aquasense.model.SettingsRepository;
+import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class DashboardFragment extends Fragment {
     @SuppressWarnings("FieldCanBeLocal") // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
     private DashboardHeaderController dashboardHeaderController;
     @SuppressWarnings("FieldCanBeLocal") // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
     private RecyclerView recycler;
+    private DashboardSensorAdapter sensorAdapter;
 
     @Nullable
     @Override
@@ -78,6 +81,28 @@ public class DashboardFragment extends Fragment {
         sensors.add(AquariumSensor.DISSOLVED_SOLIDS);
         sensors.add(AquariumSensor.PH_LEVEL);
 
-        recycler.setAdapter(new DashboardSensorAdapter(getParentFragmentManager(), sensors));
+        applyTemperatureUnitPreference();
+        sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), sensors);
+        recycler.setAdapter(sensorAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Re-apply when returning from Settings --> Display & Units.
+        applyTemperatureUnitPreference();
+        if (sensorAdapter != null) {
+            sensorAdapter.notifySensorChanged(AquariumSensor.TEMPERATURE);
+        }
+    }
+
+    /** Updates the Temperature card unit label from Display & Units (°C / °F). */
+    private void applyTemperatureUnitPreference() {
+        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
+        if (prefs == null) return;
+        String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, "F");
+        AquariumSensor.TEMPERATURE.unitResourceId =
+                "C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit;
+        // TODO: When live temperature values arrive, convert C↔F for display as well.
     }
 }

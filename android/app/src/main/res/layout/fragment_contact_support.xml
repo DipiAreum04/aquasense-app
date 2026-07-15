@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── SUPPORT section ───────────────────────────────── -->
+        <!-- SUPPORT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,13 +53,64 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/email_support"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/support_email"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/icon_gray" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/divider" />
+
+            <!-- Contact Form -->
+            <LinearLayout
+                android:id="@+id/rowContactForm"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contact_form"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contact_form_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -104,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/live_chat"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -155,7 +206,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/documentation"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -179,7 +230,7 @@
 
         </LinearLayout>
 
-        <!-- ── ABOUT section ─────────────────────────────────── -->
+        <!-- ABOUT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -210,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/app_version"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
@@ -242,7 +293,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/firmware"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
@@ -273,14 +324,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/device_id"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvDeviceId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/device_id_value"
+                    android:text="@string/device_id_not_connected"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 

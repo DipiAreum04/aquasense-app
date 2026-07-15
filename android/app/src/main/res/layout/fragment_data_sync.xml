@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── PRIVACY section ───────────────────────────────── -->
+        <!-- PRIVACY section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/usage_analytics"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -63,36 +63,6 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchUsageAnalytics"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Crash reports -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/crash_reports"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchCrashReports"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -123,7 +93,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/location_data"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -144,7 +114,7 @@
 
         </LinearLayout>
 
-        <!-- ── DATA RIGHTS section ───────────────────────────── -->
+        <!-- Data Rights section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -180,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/download_my_data"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -216,7 +186,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/privacy_policy"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -231,13 +201,13 @@
 
         </LinearLayout>
 
-        <!-- ── ENCRYPTION section ────────────────────────────── -->
+        <!-- Cloud Sync section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
-            android:text="@string/section_encryption"
+            android:text="@string/section_cloud_sync"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
@@ -250,7 +220,7 @@
             android:elevation="2dp"
             android:orientation="vertical">
 
-            <!-- End-to-end encryption -->
+            <!-- Cloud sync -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -268,117 +238,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/end_to_end_encryption"
-                        android:textColor="@android:color/black"
+                        android:text="@string/cloud_sync"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/end_to_end_encryption_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchE2EEncryption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Encrypt at rest -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/encrypt_at_rest"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/encrypt_at_rest_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchEncryptAtRest"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- ── FIREBASE SYNC section ─────────────────────────── -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/section_firebase_sync"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/bg_settings_card"
-            android:elevation="2dp"
-            android:orientation="vertical">
-
-            <!-- Firebase Realtime Sync -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/firebase_realtime_sync"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/firebase_realtime_sync_desc"
+                        android:text="@string/cloud_sync_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -386,50 +253,6 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchFirebaseSync"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Realtime Database -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/realtime_database"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/realtime_database_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchRealtimeDb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -453,7 +276,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/force_full_sync"
-                android:textColor="@android:color/black"
+                android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
             <View

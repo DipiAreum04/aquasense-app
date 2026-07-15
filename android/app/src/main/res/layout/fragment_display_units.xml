@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ── TEMPERATURE ───────────────────────────────────── -->
+        <!-- TEMPERATURE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
                     android:text="@string/celsius"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <RadioButton
@@ -54,14 +54,14 @@
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
                     android:text="@string/fahrenheit"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
             </RadioGroup>
 
         </LinearLayout>
 
-        <!-- ── MEASUREMENT ──────────────────────────────────── -->
+        <!-- MEASUREMENT -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/metric_units"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <RadioButton
@@ -107,14 +107,14 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/imperial_units"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
             </RadioGroup>
 
         </LinearLayout>
 
-        <!-- ── INTERFACE ─────────────────────────────────────── -->
+        <!-- INTERFACE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/dark_mode"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
@@ -191,41 +191,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/twenty_four_hour_clock"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch24HourClock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Extra decimal precision -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/extra_decimal_precision"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchExtraDecimal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

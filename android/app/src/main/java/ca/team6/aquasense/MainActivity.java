@@ -1,8 +1,6 @@
 package ca.team6.aquasense;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,8 +12,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         prefs = SharedPreferenceHelper.getInstance(this);
+        if (prefs != null) {
+            prefs.applySavedDarkMode();
+        }
+        setContentView(R.layout.activity_main);
 
         getSupportFragmentManager().findFragmentById(R.id.nav_host_dashboard);
     }

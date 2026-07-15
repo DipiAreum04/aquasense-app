@@ -2,14 +2,13 @@ package ca.team6.aquasense.model;
 
 public class AppSettings {
 
-    // ── Display & Units ──────────────────────────────────────
+    // Display & Units
     public String tempUnit = "F";           // "C" or "F"
     public boolean metricUnits = false;
     public boolean darkMode = false;
     public boolean use24HourClock = true;
-    public boolean extraDecimalPrecision = false;
 
-    // ── Notifications ────────────────────────────────────────
+    // Notifications
     public boolean pushNotifications = true;
     public boolean emailAlerts = false;
     public boolean smsAlerts = true;
@@ -24,31 +23,24 @@ public class AppSettings {
     public boolean notifyDailySummary = false;
     public boolean notifyFirmwareUpdate = true;
 
-    // ── Accounts & Backup ────────────────────────────────────
+    // Accounts & Backup
     public String profileName = "";
     public String profileEmail = "";
     public String profilePlan = "";
     public boolean autoBackup = true;
 
-    // ── Data & Sync — Privacy ────────────────────────────────
+    // Data & Sync: Privacy
     public boolean usageAnalytics = false;
-    public boolean crashReports = true;
     public boolean locationData = false;
 
-    // ── Data & Sync — Encryption ─────────────────────────────
-    public boolean endToEndEncryption = true;
-    public boolean encryptAtRest = true;
-
-    // ── Data & Sync — Firebase ───────────────────────────────
+    // Data & Sync: Cloud sync
     public boolean firebaseRealtimeSync = true;
-    public boolean realtimeDatabase = false;
 
-    // ── Sensor Calibration — last calibrated timestamps (ms) ─
-    public long lastCalibratedPh = 0L;
+    // Sensor Calibration: last calibrated timestamps (ms)
+    public long lastCalibratedLiquid = 0L;
     public long lastCalibratedTemp = 0L;
-    public long lastCalibratedSalinity = 0L;
-    public long lastCalibratedAmmonia = 0L;
-    public long lastCalibratedDissolvedO2 = 0L;
+    public long lastCalibratedTds = 0L;
+    public long lastCalibratedPh = 0L;
 
     public AppSettings() {}
 }

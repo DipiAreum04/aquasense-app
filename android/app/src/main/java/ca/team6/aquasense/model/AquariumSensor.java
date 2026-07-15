@@ -112,7 +112,8 @@ public class AquariumSensor {
 
     public final int titleIconResourceId;
     public final int nameResourceId;
-    public final int unitResourceId;
+    /** Mutable so Display & Units can switch temperature between °C and °F. */
+    public int unitResourceId;
     public int statusIconResourceId;
     public int statusTextResourceId;
     public int statusColorResourceId;

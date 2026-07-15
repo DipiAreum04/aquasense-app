@@ -14,6 +14,7 @@
     <string name="ph_level">pH Level</string>
     <string name="unit_dimensionless"> </string>
     <string name="unit_celsius">°C</string>
+    <string name="unit_fahrenheit">°F</string>
     <string name="unit_parts_per_million">ppm</string>
     <string name="sensor_info">SENSOR INFO</string>
     <string name="sensor_info_liquid_level_title">Liquid Level Sensor</string>
@@ -32,6 +33,8 @@
     <string name="settings_button">Settings</string>
     <string name="profile_name_placeholder">Jane Doe</string>
     <string name="profile_email_placeholder">janedoe@example.com</string>
+    <string name="profile_name_empty">No name</string>
+    <string name="profile_email_empty">No email</string>
     <string name="profile_plan_placeholder">Free Plan</string>
 
     <!-- Settings hub -->
@@ -58,17 +61,32 @@
 
     <!-- Accounts & Backup -->
     <string name="edit_profile">Edit Profile</string>
+    <string name="edit_profile_name">Name</string>
+    <string name="edit_profile_email">Email</string>
+    <string name="edit_profile_save">SAVE</string>
+    <string name="edit_profile_saved">Profile saved</string>
+    <string name="edit_profile_name_required">Please enter your name.</string>
+    <string name="edit_profile_name_invalid">Name can only contain letters, spaces, hyphens, or apostrophes.</string>
+    <string name="edit_profile_email_required">Please enter your email.</string>
+    <string name="edit_profile_email_invalid">Please enter a valid email address.</string>
     <string name="section_cloud_backup">CLOUD BACKUP</string>
     <string name="auto_backup">Auto-backup</string>
     <string name="auto_backup_desc">Every 6 hours</string>
     <string name="last_backup">Last backup</string>
-    <string name="last_backup_value">2h ago</string>
+    <string name="last_backup_never">Never</string>
     <string name="storage_used">Storage used</string>
-    <string name="storage_used_value">1.2 / 10 GB</string>
+    <string name="storage_used_desc">Shows local app data only (temporary)</string>
+    <string name="storage_used_placeholder">—</string>
+    <string name="storage_used_format">%1$s used</string>
     <string name="section_account_actions">ACCOUNT ACTIONS</string>
     <string name="export_all_data">Export All Data</string>
     <string name="import_backup">Import Backup</string>
     <string name="delete_account">Delete Account</string>
+    <string name="delete_profile_title">Delete profile?</string>
+    <string name="delete_profile_message">This clears your local name and email on this device. Cloud account deletion will be available after Firebase Auth is set up.</string>
+    <string name="delete_profile_confirm">Delete</string>
+    <string name="delete_profile_cancel">Cancel</string>
+    <string name="delete_profile_done">Profile deleted</string>
 
     <!-- Display & Units -->
     <string name="section_temperature">TEMPERATURE</string>
@@ -81,7 +99,6 @@
     <string name="dark_mode">Dark mode</string>
     <string name="dark_mode_desc">Ocean-depth dark theme</string>
     <string name="twenty_four_hour_clock">24-hour clock</string>
-    <string name="extra_decimal_precision">Extra decimal precision</string>
 
     <!-- Notifications -->
     <string name="section_alert_channels">ALERT CHANNELS</string>
@@ -89,16 +106,18 @@
     <string name="push_notifications_desc">In-app and device alerts</string>
     <string name="email_alerts">Email alerts</string>
     <string name="sms_text">SMS / Text</string>
+    <string name="sms_text_desc">Text message alerts</string>
     <string name="critical_alerts_only">Critical alerts only</string>
     <string name="section_filters">FILTERS</string>
     <string name="critical_alerts_desc">Suppress non-urgent warnings</string>
     <string name="quiet_hours">Quiet hours</string>
-    <string name="quiet_hours_desc">Mute non-critical alerts on a schedule</string>
+    <string name="quiet_hours_desc">Mute non-critical alerts on a schedule. Critical alerts always break quiet hours.</string>
     <string name="start_time">Start time</string>
     <string name="end_time">End time</string>
     <string name="default_quiet_start">22:00</string>
     <string name="default_quiet_end">07:00</string>
-    <string name="feeding_mode_silence">Feeding mode silence</string>
+    <string name="maintenance_mode">Maintenance Mode</string>
+    <string name="maintenance_mode_desc">Suppresses all notifications when this mode is on</string>
     <string name="section_notification_types">NOTIFICATION TYPES</string>
     <string name="param_out_of_range">Parameter out of range</string>
     <string name="sensor_offline">Sensor offline</string>
@@ -110,22 +129,14 @@
     <string name="section_privacy">PRIVACY</string>
     <string name="usage_analytics">Usage analytics</string>
     <string name="usage_analytics_desc">Anonymous usage data</string>
-    <string name="crash_reports">Crash reports</string>
     <string name="location_data">Location data</string>
     <string name="location_data_desc">Regional water quality benchmarks</string>
     <string name="section_data_rights">DATA RIGHTS</string>
     <string name="download_my_data">Download My Data</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="section_encryption">ENCRYPTION</string>
-    <string name="end_to_end_encryption">End-to-end encryption</string>
-    <string name="end_to_end_encryption_desc">Encrypt before cloud upload</string>
-    <string name="encrypt_at_rest">Encrypt at rest</string>
-    <string name="encrypt_at_rest_desc">Local database encryption</string>
-    <string name="section_firebase_sync">FIREBASE SYNC</string>
-    <string name="firebase_realtime_sync">Firebase Realtime Sync</string>
-    <string name="firebase_realtime_sync_desc">Stream data to Firestore</string>
-    <string name="realtime_database">Realtime Database</string>
-    <string name="realtime_database_desc">Low-latency live updates</string>
+    <string name="section_cloud_sync">CLOUD SYNC</string>
+    <string name="cloud_sync">Cloud sync</string>
+    <string name="cloud_sync_desc">Stream data to Firebase</string>
     <string name="force_full_sync">Force Full Sync</string>
     <string name="disconnect_firebase">Disconnect Firebase</string>
 
@@ -133,28 +144,54 @@
     <string name="section_support">SUPPORT</string>
     <string name="email_support">Email Support</string>
     <string name="support_email">automaticaquariummonitoringsystem@outlook.com</string>
+    <string name="contact_form">Contact Form</string>
+    <string name="contact_form_desc">Feedback or support request</string>
+    <string name="contact_purpose">Purpose</string>
+    <string name="contact_purpose_feedback">Provide Feedback</string>
+    <string name="contact_purpose_support">Need Help / Ask a Question</string>
+    <string name="contact_name">Your name (optional)</string>
+    <string name="contact_email">Your email</string>
+    <string name="contact_email_hint">name@example.com</string>
+    <string name="contact_email_required">Please enter your email address.</string>
+    <string name="contact_email_invalid">Please enter a valid email address (must include @, max 100 characters).</string>
+    <string name="contact_name_invalid">Name can only contain letters, spaces, hyphens, or apostrophes (max 100 characters).</string>
+    <string name="contact_issue_with">Issue with</string>
+    <string name="contact_issue_hardware">Hardware Hub</string>
+    <string name="contact_issue_app">Mobile App</string>
+    <string name="contact_issue_na">Not Applicable</string>
+    <string name="contact_message">Message</string>
+    <string name="contact_message_hint">Type your message here</string>
+    <string name="contact_send">SEND</string>
+    <string name="contact_choose_email_app">Send Email</string>
+    <string name="contact_message_required">Please enter a message before sending.</string>
+    <string name="contact_subject_feedback">[AAMS] Feedback</string>
+    <string name="contact_subject_support">[AAMS] Support Request</string>
+    <string name="contact_body_feedback_intro">I would like to share feedback about AquaSense / AAMS:</string>
+    <string name="contact_body_support_intro">I need help with AquaSense:</string>
+    <string name="contact_body_from">From</string>
+    <string name="contact_body_issue_with_label">Issue with</string>
     <string name="live_chat">Live Chat</string>
-    <string name="live_chat_hours">Mon–Fri, 9 AM – 6 PM EST</string>
+    <string name="live_chat_hours">Mon-Fri, 9 AM - 6 PM EST</string>
     <string name="documentation">Documentation</string>
     <string name="docs_url">guides.aquasense.io</string>
     <string name="section_about">ABOUT</string>
     <string name="app_version">App Version</string>
     <string name="app_version_value">1.0</string>
     <string name="firmware">Firmware</string>
-    <string name="firmware_value">1.8.4</string>
+    <string name="firmware_value">1.0</string>
     <string name="device_id">Device ID</string>
-    <string name="device_id_value">AS-0x4A2F</string>
+    <string name="device_id_not_connected">Not connected</string>
+    <string name="coming_soon">Coming soon</string>
 
-    <!-- Sensor Calibration -->
-    <string name="calibration_intro">Tap a probe name to view the calibration guide.</string>
-    <string name="ph_probe">pH Probe</string>
-    <string name="temperature_sensor">Temperature Sensor</string>
-    <string name="salinity_conductivity">Salinity / Conductivity</string>
-    <string name="ammonia_probe">Ammonia Probe</string>
-    <string name="dissolved_o2_probe">Dissolved O₂ Probe</string>
+    <!-- Sensor Calibration (matches dashboard sensors; settings-only display names) -->
+    <string name="calibration_intro">Tap a sensor name to view the calibration guide.</string>
+    <string name="calib_water_level_sensor">Water Level Sensor</string>
+    <string name="calib_temperature_sensor">Temperature Sensor</string>
+    <string name="calib_dissolved_solids_sensor">Dissolved Solids Sensor</string>
+    <string name="calib_ph_level_sensor">pH Level Sensor</string>
     <string name="never_calibrated">Never calibrated</string>
     <string name="never">Never</string>
-    <string name="calibrate">Calibrate</string>
+    <string name="calibrate">Calibrated</string>
     <string name="calib_status_good">Good</string>
     <string name="calib_status_overdue">Overdue</string>
     <string name="calib_status_replace">Replace</string>
@@ -162,14 +199,12 @@
     <string name="calib_days_ago">%1$d days ago</string>
     <string name="calib_day_ago">%1$d day ago</string>
     <string name="got_it">Got it</string>
-    <string name="guide_title_ph">pH Probe: Calibration Guide</string>
+    <string name="guide_title_liquid">Water Level Sensor: Calibration Guide</string>
     <string name="guide_title_temp">Temperature Sensor: Calibration Guide</string>
-    <string name="guide_title_salinity">Salinity / Conductivity: Calibration Guide</string>
-    <string name="guide_title_ammonia">Ammonia Probe: Calibration Guide</string>
-    <string name="guide_title_do2">Dissolved O₂ Probe: Calibration Guide</string>
-    <string name="guide_ph">1. Rinse probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. Probe is ready.</string>
-    <string name="guide_temp">1. Place sensor in a verified ice-water bath (0 °C / 32 °F).\n2. Wait 60 seconds for reading to stabilise.\n3. Repeat with boiling water (100 °C / 212 °F) if possible.\n4. Note any offset and adjust in your controller if needed.</string>
-    <string name="guide_salinity">1. Rinse probe with distilled water.\n2. Submerge in a certified seawater reference solution (e.g. 35 ppt).\n3. Wait 30 seconds and verify the reading matches the solution value.\n4. Rinse with distilled water after use.</string>
-    <string name="guide_ammonia">1. Use 0 ppm and 2 ppm NH₃ standard solutions.\n2. Rinse probe with distilled water between measurements.\n3. Submerge in each solution for 60 seconds.\n4. Allow full stabilisation before recording values.</string>
-    <string name="guide_do2">1. Expose the membrane cap to open air for 120 seconds (100% saturation reference).\n2. Optionally use a 0% saturation solution (sodium sulfite) for zero calibration.\n3. Rinse membrane with distilled water before returning to tank.</string>
+    <string name="guide_title_tds">Dissolved Solids Sensor: Calibration Guide</string>
+    <string name="guide_title_ph">pH Level Sensor: Calibration Guide</string>
+    <string name="guide_liquid">1. Empty or lower the tank water below the sensor trigger point.\n2. Confirm the app shows a low / empty reading.\n3. Raise the water to the normal fill line.\n4. Confirm the app shows a full / normal reading.\n5. Adjust the sensor position if the trigger point is off.</string>
+    <string name="guide_temp">1. Place the sensor in a verified ice-water bath (0 °C / 32 °F).\n2. Wait 60 seconds for the reading to stabilise.\n3. Optionally repeat with a warm reference (e.g. 40 °C / 104 °F).\n4. Note any offset and adjust in your controller if needed.</string>
+    <string name="guide_tds">1. Rinse the probe with distilled water.\n2. Submerge in a 0 ppm (DI) solution and wait 30 seconds for a near-zero reading.\n3. Rinse, then submerge in a known TDS calibration solution (e.g. 342 ppm or 1000 ppm).\n4. Wait for the reading to match the solution value, then rinse before returning to the tank.</string>
+    <string name="guide_ph">1. Rinse the probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. The probe is ready.</string>
 </resources>
