@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumSensor;
+import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.InfoSheetSection;
 import ca.team6.aquasense.model.ScopedLogger;
 
@@ -29,10 +29,13 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         SensorInfoBottomSheet fragment = new SensorInfoBottomSheet();
 
         Bundle args = new Bundle();
-        args.putInt(ICON_KEY, sensor.titleIconResourceId);
-        args.putInt(TITLE_KEY, sensor.infoTitle);
-        args.putInt(DESCRIPTION_KEY, sensor.infoDesc);
-        args.putByteArray(SECTIONS_KEY, InfoSheetSection.serialize(sensor.infoSections));
+        args.putInt(ICON_KEY, sensor.getTitleIconResId());
+        args.putInt(TITLE_KEY, sensor.getInfoSheetTitleResId());
+        args.putInt(DESCRIPTION_KEY, sensor.getInfoSheetDescResId());
+        args.putByteArray(
+                SECTIONS_KEY,
+                InfoSheetSection.serialize(sensor.getInfoSheetSections())
+        );
         fragment.setArguments(args);
 
         return fragment;

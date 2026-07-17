@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumSensor;
+import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 
 public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensorViewHolder> {
     private final FragmentManager fragmentManager;
@@ -36,19 +36,19 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
     public void onBindViewHolder(@NonNull DashboardSensorViewHolder holder, int position) {
         AquariumSensor sensor = sensors.get(position);
 
-        holder.sensorTitleIcon.setImageResource(sensor.titleIconResourceId);
-        holder.sensorName.setText(sensor.nameResourceId);
+        holder.sensorTitleIcon.setImageResource(sensor.getTitleIconResId());
+        holder.sensorName.setText(sensor.getNameResId());
         holder.sensorTooltipIcon.setImageResource(R.drawable.info_24px);
-        holder.sensorStatusIcon.setImageResource(sensor.statusIconResourceId);
-        holder.sensorStatusText.setText(sensor.statusTextResourceId);
+        holder.sensorStatusIcon.setImageResource(sensor.getStatusIconResId());
+        holder.sensorStatusText.setText(sensor.getStatusTextResId());
         holder.sensorStatusText.setTextColor(
                 ContextCompat.getColor(
                         holder.sensorStatusText.getContext(),
-                        sensor.statusColorResourceId
+                        sensor.getStatusColorResId()
                 )
         );
-        holder.sensorValue.setText(sensor.value);
-        holder.sensorUnit.setText(sensor.unitResourceId);
+        holder.sensorValue.setText(sensor.getValue());
+        holder.sensorUnit.setText(sensor.getUnitResId());
 
         holder.sensorTooltipIcon.setOnClickListener(v -> {
             SensorInfoBottomSheet sheet = SensorInfoBottomSheet.from(sensor);

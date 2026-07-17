@@ -16,6 +16,8 @@ public class ScopedLogger {
                 );
     }
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 3
+    @SuppressWarnings("unused")
     public static synchronized void debug(String message) {
         String tag = getTag();
         if (tag == null) return;
@@ -23,6 +25,8 @@ public class ScopedLogger {
         Log.d(tag, message);
     }
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 3
+    @SuppressWarnings("unused")
     public static synchronized void info(String message) {
         String tag = getTag();
         if (tag == null) return;
@@ -30,6 +34,8 @@ public class ScopedLogger {
         Log.i(tag, message);
     }
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 3
+    @SuppressWarnings("unused")
     public static synchronized void warn(String message) {
         String tag = getTag();
         if (tag == null) return;

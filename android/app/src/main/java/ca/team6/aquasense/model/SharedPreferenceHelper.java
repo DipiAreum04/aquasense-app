@@ -12,8 +12,6 @@ public class SharedPreferenceHelper {
     private static SharedPreferenceHelper instance;
     private static SharedPreferences sharedPreferences;
 
-    private SharedPreferenceHelper() {}
-    
     private SharedPreferenceHelper(Context context) {
         Context appContext = context.getApplicationContext();
         sharedPreferences = appContext.getSharedPreferences("ENGR390-SUMMER2026-TEAM6", Context.MODE_PRIVATE);
@@ -75,6 +73,8 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().putLong(key, value).apply();
     }
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
+    @SuppressWarnings("unused")
     private void remove(String key) {
         sharedPreferences.edit().remove(key).apply();
     }
