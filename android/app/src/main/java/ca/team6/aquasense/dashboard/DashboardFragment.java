@@ -20,8 +20,12 @@ import java.util.List;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.SettingsActivity;
 import ca.team6.aquasense.model.AquariumBoardStatus;
-import ca.team6.aquasense.model.AquariumSensor;
+import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.GridSpacingItemDecoration;
+import ca.team6.aquasense.model.aquarium_sensors.DissolvedSolidsSensor;
+import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
+import ca.team6.aquasense.model.aquarium_sensors.PhLevelSensor;
+import ca.team6.aquasense.model.aquarium_sensors.TemperatureSensor;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
@@ -31,6 +35,12 @@ public class DashboardFragment extends Fragment {
     @SuppressWarnings("FieldCanBeLocal") // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
     private RecyclerView recycler;
     private DashboardSensorAdapter sensorAdapter;
+
+    // TODO: NOT SURE ABOUT THIS; NEED TO DECIDE BY END OF SPRINT 2.
+    private static final AquariumSensor TEMPERATURE = new TemperatureSensor();
+    private static final AquariumSensor WATER_LEVEL = new WaterLevelSensor();
+    private static final AquariumSensor DISSOLVED_SOLIDS = new DissolvedSolidsSensor();
+    private static final AquariumSensor PH_LEVEL = new PhLevelSensor();
 
     @Nullable
     @Override
@@ -56,9 +66,9 @@ public class DashboardFragment extends Fragment {
         navbarDashboard.setOnClickListener(v -> {});
         navbarNotifications.setOnClickListener(v -> {});
         navbarAnalytics.setOnClickListener(v -> {});
-        navbarSettings.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), SettingsActivity.class));
-        });
+        navbarSettings.setOnClickListener(v ->
+                startActivity(new Intent(v.getContext(), SettingsActivity.class))
+        );
 
         this.dashboardHeaderController = new DashboardHeaderController(view);
 
@@ -76,10 +86,10 @@ public class DashboardFragment extends Fragment {
         ));
 
         List<AquariumSensor> sensors = new ArrayList<>();
-        sensors.add(AquariumSensor.LIQUID_LEVEL);
-        sensors.add(AquariumSensor.TEMPERATURE);
-        sensors.add(AquariumSensor.DISSOLVED_SOLIDS);
-        sensors.add(AquariumSensor.PH_LEVEL);
+        sensors.add(WATER_LEVEL);
+        sensors.add(TEMPERATURE);
+        sensors.add(DISSOLVED_SOLIDS);
+        sensors.add(PH_LEVEL);
 
         applyTemperatureUnitPreference();
         sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), sensors);
@@ -92,7 +102,7 @@ public class DashboardFragment extends Fragment {
         // Re-apply when returning from Settings --> Display & Units.
         applyTemperatureUnitPreference();
         if (sensorAdapter != null) {
-            sensorAdapter.notifySensorChanged(AquariumSensor.TEMPERATURE);
+            sensorAdapter.notifySensorChanged(TEMPERATURE);
         }
     }
 
@@ -101,8 +111,7 @@ public class DashboardFragment extends Fragment {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null) return;
         String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, "F");
-        AquariumSensor.TEMPERATURE.unitResourceId =
-                "C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit;
+        TEMPERATURE.setUnitResId("C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit);
         // TODO: When live temperature values arrive, convert C↔F for display as well.
     }
 }

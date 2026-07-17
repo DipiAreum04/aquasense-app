@@ -53,12 +53,16 @@ public class ContactSupportFragment extends Fragment {
     }
 
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
+    @SuppressWarnings("unused")
     // TODO: After Firebase is set up, fetch the linked device ID from Firestore and pass it into this method
     private void bindDeviceId(@NonNull TextView tvDeviceId) {
         String deviceId = null; // TODO: replace with Firebase fetch 
-        displayDeviceId(tvDeviceId, deviceId);
+        // displayDeviceId(tvDeviceId, deviceId);
     }
 
+    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
+    @SuppressWarnings("unused")
     private void displayDeviceId(@NonNull TextView tvDeviceId, @Nullable String deviceId) {
         if (TextUtils.isEmpty(deviceId)) {
             tvDeviceId.setText(R.string.device_id_not_connected);
