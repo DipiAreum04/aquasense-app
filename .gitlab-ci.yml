@@ -16,18 +16,9 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-include:
-  - component: gitlab.com/google-gitlab-components/artifact-registry/upload-artifact-registry@main
-    inputs:
-      stage: mirror
-      source: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-      target: $GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_LOCATION-docker.pkg.dev/$GOOGLE_ARTIFACT_REGISTRY_PROJECT_ID/$GOOGLE_ARTIFACT_REGISTRY_REPOSITORY_NAME/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
-
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - deploy
-  - mirror
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -48,10 +39,3 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code... This will take about 1 second."
     - sleep 1
     - echo "No lint issues found."
-
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  environment: production
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
