@@ -19,6 +19,7 @@ build-all:
 test-scripts:
   stage: test
   needs: ["build-all"]
+  resource_group: database
   script:
     - cd scripts
     - cp "$APP_CONFIG_JSON" ./appConfig.json
