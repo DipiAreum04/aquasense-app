@@ -9,4 +9,17 @@ dependencies = [
     "jsonschema>=4.26.0",
     "pyrebase4>=4.9.0",
     "pytest>=9.1.1",
+    "types-jsonschema>=4.26.0.20260518",
+    "types-requests>=2.31.0.6",
+]
+
+[tool.pyrefly]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
+[dependency-groups]
+dev = [
+    "pyrefly>=1.1.1",
 ]
