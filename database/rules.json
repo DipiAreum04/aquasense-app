@@ -1,16 +1,8 @@
 {
   "rules": {
-    "users": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
-      }
-    },
-    "aquariums": {
-      "$aquarium_id": {
-        ".read": "auth != null",
-        ".write": "auth != null && newData.child('users').child(auth.uid).val() === 'o'"
-      }
+    "$uid": {
+      ".read": "auth != null && auth.uid === $uid && now < 1788220800000",
+      ".write": "auth != null && auth.uid === $uid && now < 1788220800000"
     }
   }
 }

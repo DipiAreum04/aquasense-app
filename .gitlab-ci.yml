@@ -6,8 +6,9 @@ image: ghcr.io/astral-sh/uv:python3.14-bookworm-slim
 stages:
   - build
   - test
+  - validate
 
-build-all:
+build-scripts:
   stage: build
   script:
     - cd scripts && uv sync
@@ -18,11 +19,21 @@ build-all:
 
 test-scripts:
   stage: test
-  needs: ["build-all"]
+  needs: ["build-scripts"]
   resource_group: database
   script:
     - cd scripts
-    - cp "$APP_CONFIG_JSON" ./appConfig.json
-    - cp "$SERVICE_ACCOUNT_KEY" ./serviceAccountKey.json
+    - cp "$DEV_APP_CONFIG_JSON" ./DevDbAppConfig.json
+    - cp "$DEV_SERVICE_ACCOUNT_KEY" ./DevDbServiceAccountKey.json
     - source .venv/bin/activate
-    - pytest -vv
+    - pytest -vv tests/test_database_schema.py
+
+validate-database:
+  stage: validate
+  needs: ["build-scripts"]
+  script:
+    - cd scripts
+    - cp "$PROD_APP_CONFIG_JSON" ./ProdDbAppConfig.json
+    - cp "$PROD_SERVICE_ACCOUNT_KEY" ./ProdDbServiceAccountKey.json
+    - source .venv/bin/activate
+    - pytest -vv tests/test_production_database.py
