@@ -3,23 +3,94 @@
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/#stages.
 image: ghcr.io/astral-sh/uv:python3.14-bookworm-slim
 
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+
 stages:
-  - build
+  - setup
   - test
+  - build
+  - lint
   - validate
 
-build-scripts:
-  stage: build
+
+setup-scripts:
+  stage: setup
   script:
     - cd scripts && uv sync
   artifacts:
+    expire_in: 1 hour
     paths:
       - scripts/.venv
-    expire_in: 1 hour
 
-test-scripts:
+setup-firmware:
+  image: ubuntu:22.04
+  stage: setup
+  rules:
+    - changes:
+        - firmware/**/*
+  variables:
+    ARDUINO_CLI_VERSION: "1.5.1"
+    ARDUINO_DIRECTORIES_DATA: "${CI_PROJECT_DIR}/.arduino15"
+    ARDUINO_DIRECTORIES_DOWNLOADS: "${CI_PROJECT_DIR}/.arduino-downloads"
+    ARDUINO_DIRECTORIES_USER: "${CI_PROJECT_DIR}/Arduino"
+  script:
+    - apt-get update && apt-get install -y curl
+    - mkdir -p "${CI_PROJECT_DIR}/bin"
+    - curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR="${CI_PROJECT_DIR}/bin" sh -s v${ARDUINO_CLI_VERSION}
+    - export PATH="${CI_PROJECT_DIR}/bin:$PATH"
+    - arduino-cli config init
+    - arduino-cli core update-index
+    - arduino-cli core install arduino:renesas_uno
+    - arduino-cli lib update-index
+    - arduino-cli lib install "OneWire"
+    - arduino-cli lib install "Firebase"
+    - arduino-cli lib install "DallasTemperature"
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - bin/
+      - .arduino15/
+      - .arduino-downloads/
+      - Arduino/
+
+setup-android:
+  image: eclipse-temurin:17-jdk
+  stage: setup
+  rules:
+    - changes:
+        - android/**/*
+  variables:
+    ANDROID_COMPILE_SDK: "36"
+    ANDROID_BUILD_TOOLS: "36.0.0"
+    ANDROID_SDK_TOOLS: "11076708"
+  script:
+    - cd android
+    - apt-get --quiet update --yes
+    - apt-get --quiet install --yes wget unzip
+    - cp "$GOOGLE_SERVICES_JSON" app/google-services.json
+    - export ANDROID_HOME="${PWD}/android-sdk-root"
+    - install -d $ANDROID_HOME
+    - wget --quiet --output-document=$ANDROID_HOME/cmdline-tools.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip"
+    - unzip -q -d "$ANDROID_HOME/cmdline-tools" "$ANDROID_HOME/cmdline-tools.zip"
+    - mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+    - export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+    - yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses > /dev/null || true
+    - sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-${ANDROID_COMPILE_SDK}" "build-tools;${ANDROID_BUILD_TOOLS}"
+    - chmod +x ./gradlew
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - android/android-sdk-root/
+
+
+test-database:
   stage: test
-  needs: ["build-scripts"]
+  needs:
+    - job: setup-scripts
+      artifacts: true
   resource_group: database
   script:
     - cd scripts
@@ -28,9 +99,120 @@ test-scripts:
     - source .venv/bin/activate
     - pytest -vv tests/test_database_schema.py
 
-validate-database:
+
+build-firmware:
+  image: ubuntu:22.04
+  stage: build
+  rules:
+    - changes:
+        - firmware/**/*
+  needs:
+    - job: setup-firmware
+      artifacts: true
+  variables:
+    FQBN: "arduino:renesas_uno:unor4wifi"
+    ARDUINO_DIRECTORIES_DATA: "${CI_PROJECT_DIR}/.arduino15"
+    ARDUINO_DIRECTORIES_DOWNLOADS: "${CI_PROJECT_DIR}/.arduino-downloads"
+    ARDUINO_DIRECTORIES_USER: "${CI_PROJECT_DIR}/Arduino"
+  before_script:
+    - cd firmware/src
+    - f=(*.ino); mv -n "$f" "$(basename "$PWD").ino"
+    - export PATH="${CI_PROJECT_DIR}/bin:$PATH"
+  script:
+    - arduino-cli compile --fqbn $FQBN .
+
+build-android:
+  image: eclipse-temurin:17-jdk
+  stage: build
+  rules:
+    - changes:
+        - android/**/*
+  needs:
+    - job: setup-android
+      artifacts: true
+  before_script:
+    - cd android
+    - cp "$GOOGLE_SERVICES_JSON" app/google-services.json
+    - export ANDROID_HOME="${PWD}/android-sdk-root"
+    - export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew assembleDebug --stacktrace
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - "**/build/outputs/apk/debug/*.apk"
+    when: on_success
+  cache:
+    key: ${CI_PROJECT_ID}
+    paths:
+      - .gradle/
+
+
+lint-firmware:
+  image: ubuntu:22.04
+  stage: lint
+  rules:
+    - changes:
+        - firmware/**/*
+  needs:
+    - job: setup-firmware
+      artifacts: true
+  variables:
+    FQBN: "arduino:renesas_uno:unor4wifi"
+    ARDUINO_DIRECTORIES_DATA: "${CI_PROJECT_DIR}/.arduino15"
+    ARDUINO_DIRECTORIES_DOWNLOADS: "${CI_PROJECT_DIR}/.arduino-downloads"
+    ARDUINO_DIRECTORIES_USER: "${CI_PROJECT_DIR}/Arduino"
+  before_script:
+    - cd firmware/src
+    - apt-get update && apt-get install -y clang-tidy jq
+    - export PATH="${CI_PROJECT_DIR}/bin:$PATH"
+  script:
+    - arduino-cli compile --fqbn $FQBN --only-compilation-database --build-path build .
+    - GXX_BIN=$(find "${CI_PROJECT_DIR}/.arduino15/packages/arduino/tools/arm-none-eabi-gcc" -name "arm-none-eabi-g++" | head -n1)
+    - echo "Using compiler at $GXX_BIN"
+    - INCLUDE_DIRS=$("$GXX_BIN" -E -x c++ - -v < /dev/null 2>&1 | sed -n '/#include <...> search starts here:/,/End of search list/p' | sed '1d;$d' | sed 's/^ *//')
+    - echo "Discovered include dirs:"
+    - echo "$INCLUDE_DIRS"
+    - EXTRA_ARGS=""
+    - for dir in $INCLUDE_DIRS; do EXTRA_ARGS="$EXTRA_ARGS --extra-arg=-isystem$dir"; done
+    - jq -r '.[].file' build/compile_commands.json | grep "$(pwd)" | sort -u > files_to_lint.txt
+    - xargs -r clang-tidy -p build --extra-arg=--target=arm-none-eabi $EXTRA_ARGS < files_to_lint.txt
+
+lint-android:
+  image: eclipse-temurin:17-jdk
+  stage: lint
+  rules:
+    - changes:
+        - android/**/*
+  needs:
+    - job: setup-android
+      artifacts: true
+  before_script:
+    - cd android
+    - cp "$GOOGLE_SERVICES_JSON" app/google-services.json
+    - export ANDROID_HOME="${PWD}/android-sdk-root"
+    - export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew lintDebug --stacktrace
+  artifacts:
+    expire_in: 1 hour
+    when: always
+    paths:
+      - "**/build/reports/lint-results-debug.html"
+      - "**/build/reports/lint-results-debug.xml"
+  cache:
+    key: ${CI_PROJECT_ID}
+    paths:
+      - .gradle/
+
+
+prod-database:
   stage: validate
-  needs: ["build-scripts"]
+  needs:
+    - job: setup-scripts
+      artifacts: true
   script:
     - cd scripts
     - cp "$PROD_APP_CONFIG_JSON" ./ProdDbAppConfig.json
