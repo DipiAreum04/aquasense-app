@@ -30,7 +30,7 @@ setup-firmware:
   stage: setup
   rules:
     - changes:
-        - firmware/**/*
+      - firmware/**/*
   variables:
     ARDUINO_CLI_VERSION: "1.5.1"
     ARDUINO_DIRECTORIES_DATA: "${CI_PROJECT_DIR}/.arduino15"
@@ -61,7 +61,7 @@ setup-android:
   stage: setup
   rules:
     - changes:
-        - android/**/*
+      - android/**/*
   variables:
     ANDROID_COMPILE_SDK: "36"
     ANDROID_BUILD_TOOLS: "36.0.0"
@@ -88,6 +88,11 @@ setup-android:
 
 test-database:
   stage: test
+  rules:
+    - changes:
+      - android/**/*
+      - database/**/*
+      - firmware/**/*
   needs:
     - job: setup-scripts
       artifacts: true
@@ -105,7 +110,7 @@ build-firmware:
   stage: build
   rules:
     - changes:
-        - firmware/**/*
+      - firmware/**/*
   needs:
     - job: setup-firmware
       artifacts: true
@@ -126,7 +131,7 @@ build-android:
   stage: build
   rules:
     - changes:
-        - android/**/*
+      - android/**/*
   needs:
     - job: setup-android
       artifacts: true
@@ -154,7 +159,7 @@ lint-firmware:
   stage: lint
   rules:
     - changes:
-        - firmware/**/*
+      - firmware/**/*
   needs:
     - job: setup-firmware
       artifacts: true
@@ -184,7 +189,7 @@ lint-android:
   stage: lint
   rules:
     - changes:
-        - android/**/*
+      - android/**/*
   needs:
     - job: setup-android
       artifacts: true
