@@ -40,4 +40,24 @@
     <color name="sensor_info_bulb_tint">#FFF4B400</color>
     <color name="bottom_sheet_handle">#FFBDBDBD</color>
     <color name="bullet_circle">#FFCDD5E1</color>
+    <color name="alpha_0x22_white">#22F2F4F8</color>
+    <color name="alpha_0x60_white">#60F2F4F8</color>
+    <color name="alpha_0xC0_white">#C0F2F4F8</color>
+    <color name="alpha_0xD0_white">#D0F2F4F8</color>
+    <color name="alpha_0xF0_white">#F0F2F4F8</color>
+    <color name="alpha_0x22_background">#22F2F4F8</color>
+    <color name="alpha_0x60_background">#60F2F4F8</color>
+    <color name="alpha_0xC0_background">#C0F2F4F8</color>
+    <color name="alpha_0xD0_background">#D0F2F4F8</color>
+    <color name="alpha_0xF0_background">#F0F2F4F8</color>
+    <color name="aquarium_sensors_status_sunny_gradient_start">#FF45B9F8</color>
+    <color name="aquarium_sensors_status_sunny_gradient_end">#FF0B6CB8</color>
+    <color name="aquarium_sensors_status_fair_gradient_start">#C9A94A</color>
+    <color name="aquarium_sensors_status_fair_gradient_end">#A86616</color>
+    <color name="aquarium_sensors_status_cloudy_gradient_start">#C27A3D</color>
+    <color name="aquarium_sensors_status_cloudy_gradient_end">#9A4315</color>
+    <color name="aquarium_sensors_status_rainy_gradient_start">#C94A4A</color>
+    <color name="aquarium_sensors_status_rainy_gradient_end">#8B2720</color>
+    <color name="aquarium_sensors_status_stormy_gradient_start">#7552C7</color>
+    <color name="aquarium_sensors_status_stormy_gradient_end">#35105F</color>
 </resources>

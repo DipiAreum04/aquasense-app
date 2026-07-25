@@ -75,9 +75,14 @@ public class DashboardFragment extends Fragment {
         // FIXME: MY AQUARIUM PLACEHOLDER SHOULD BE REPLACED WITH LOCALIZED STRING.
         this.dashboardHeaderController.setDashboardHeaderTitle("My Aquarium");
 
+        // FIXME: SHOULD BE REPLACED WITH VALUE FROM SENSORS.
         this.dashboardHeaderController.setDashboardSensorsStatus(0);
 
+        // FIXME: SHOULD BE REPLACED WITH VALUE FROM BOARD.
         this.dashboardHeaderController.setDashboardBoardStatus(AquariumBoardStatus.OFFLINE);
+
+        // TODO: IMPLEMENT AQUARIUM SELECTOR REDIRECTION HERE.
+        this.dashboardHeaderController.setOnClickAquariumSelector(v -> {});
 
         recycler = view.findViewById(R.id.sensorGrid);
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(), 2));

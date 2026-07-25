@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_uppercase">AQUASENSE</string>
     <string name="app_name">AquaSense</string>
     <string name="offline">Offline</string>
     <string name="online">Online</string>
@@ -29,6 +30,21 @@
     <string name="sensor_info_ph_level_desc">Measures pH level.</string>
     <string name="sensor_info_example_title">Example Title</string>
     <string name="sensor_info_example_point">This is an example.</string>
+    <string name="aquarium_sensors_status_sunny_icon">☀️</string>
+    <string name="aquarium_sensors_status_sunny_heading">No Issues</string>
+    <string name="aquarium_sensors_status_sunny_description">All sensors are reading normally.</string>
+    <string name="aquarium_sensors_status_fair_icon">⛅</string>
+    <string name="aquarium_sensors_status_fair_heading">Needs Attention</string>
+    <string name="aquarium_sensors_status_fair_description">Some sensors are reporting occasional spikes.</string>
+    <string name="aquarium_sensors_status_cloudy_icon">☁️</string>
+    <string name="aquarium_sensors_status_cloudy_heading">Warning</string>
+    <string name="aquarium_sensors_status_cloudy_description">Some sensors are nearing their thresholds.</string>
+    <string name="aquarium_sensors_status_rainy_icon">🌧️</string>
+    <string name="aquarium_sensors_status_rainy_heading">Critical</string>
+    <string name="aquarium_sensors_status_rainy_description">Some sensors have crossed their thresholds.</string>
+    <string name="aquarium_sensors_status_stormy_icon">🌩️</string>
+    <string name="aquarium_sensors_status_stormy_heading">Disconnected</string>
+    <string name="aquarium_sensors_status_stormy_description">Some sensors cannot be contacted.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

@@ -7,91 +7,147 @@
     android:background="@color/background"
     android:orientation="vertical"
 >
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/dashboardHeader"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:orientation="vertical"
-        android:layout_margin="16dp"
+        app:cardElevation="0dp"
     >
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dashboardHeaderGradient"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_settings_card"
-            android:clickable="true"
-            android:elevation="2dp"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_dashboard_header"
         >
-            <LinearLayout
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/aquariumHeader"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusIcon"
             >
-                <TextView
-                    android:id="@+id/aquariumTitleIcon"
+                <!-- Aquarium Selector -->
+                <LinearLayout
+                    android:id="@+id/aquariumSelector"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="36sp"
-                />
-                <LinearLayout
-                    android:layout_marginStart="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_chip_0x22_alpha"
+                    android:gravity="center"
                     android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/rounded_ripple_20dp_radius"
                 >
                     <TextView
+                        android:text="@string/app_name_uppercase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:text="@string/app_name"
-                        android:textSize="16sp"
+                        android:textColor="@color/alpha_0x60_white"
+                        android:textSize="12sp"
                         android:textStyle="bold"
+                        android:letterSpacing="0.25"
                     />
                     <TextView
                         android:id="@+id/aquariumTitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
+                        android:textColor="@color/alpha_0xD0_white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
                     />
                 </LinearLayout>
-            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/aquariumBoardStatusIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/gray_circle_24"
-                android:contentDescription="@null"
-            />
+                <!-- Aquarium Board Status -->
+                <LinearLayout
+                    android:id="@+id/aquariumBoardStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_chip_0xf0_alpha"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                >
+                    <ImageView
+                        android:id="@+id/aquariumBoardStatusIcon"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/gray_circle_24"
+                        android:contentDescription="@null"
+                    />
+                    <TextView
+                        android:id="@+id/aquariumBoardStatusText"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                    />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Aquarium Sensors Status Icon -->
             <TextView
-                android:id="@+id/aquariumBoardStatusText"
+                android:id="@+id/aquariumSensorsStatusIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:layout_marginVertical="10dp"
+                android:textSize="72sp"
+                app:layout_constraintTop_toBottomOf="@id/aquariumHeader"
+                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusHeading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
             />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/rounded_arrow_drop_down_24"
-                android:contentDescription="@null"
+            <!-- Aquarium Sensor Status Title -->
+            <TextView
+                android:id="@+id/aquariumSensorsStatusHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/alpha_0xF0_white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusIcon"
+                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
             />
-        </LinearLayout>
-    </LinearLayout>
+
+            <!-- Aquarium Sensor Text -->
+            <TextView
+                android:id="@+id/aquariumSensorsStatusDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/alpha_0xC0_white"
+                android:textSize="16sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="20dp"
+                android:paddingHorizontal="50dp"
+                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusHeading"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorGrid"
         app:layout_constraintTop_toBottomOf="@id/dashboardHeader"
@@ -103,6 +159,7 @@
         android:padding="16dp"
         android:clipToPadding="false"
     />
+
     <LinearLayout
         android:id="@+id/dashboardFooter"
         app:layout_constraintBottom_toBottomOf="parent"
