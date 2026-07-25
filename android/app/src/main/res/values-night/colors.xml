@@ -14,4 +14,9 @@
     <color name="sensor_info_banner_purple">#FF2A2438</color>
     <color name="sensor_info_gray_color">#FFA0A8B4</color>
     <color name="sensor_info_title_color">#FFF2F4F8</color>
+    <color name="alpha_0x22_background">#220F1419</color>
+    <color name="alpha_0x60_background">#600F1419</color>
+    <color name="alpha_0xC0_background">#C00F1419</color>
+    <color name="alpha_0xD0_background">#D00F1419</color>
+    <color name="alpha_0xF0_background">#F00F1419</color>
 </resources>
