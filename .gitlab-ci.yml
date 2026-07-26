@@ -48,6 +48,7 @@ setup-firmware:
     - arduino-cli lib install "OneWire"
     - arduino-cli lib install "Firebase"
     - arduino-cli lib install "DallasTemperature"
+    - arduino-cli lib install "ArduinoBLE"
   artifacts:
     expire_in: 1 hour
     paths:
