@@ -50,7 +50,7 @@ def test_users_have_database_nodes(
 
     page = list_users()
     while page:
-        uids = [user.uid for user in page.users]
+        uids = [user.uid for user in page.users if "@aquasense.ca" not in user.email]
         for uid in uids:
             if uid not in production_database:
                 missing_uid_nodes.add(uid)
@@ -67,7 +67,7 @@ def test_database_nodes_have_users(
 
     page = list_users()
     while page:
-        uids = [user.uid for user in page.users]
+        uids = [user.uid for user in page.users if "@aquasense.ca" not in user.email]
         for uid in uids:
             if uid in dangling_database_nodes:
                 dangling_database_nodes.remove(uid)

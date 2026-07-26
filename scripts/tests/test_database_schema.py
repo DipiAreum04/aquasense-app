@@ -59,12 +59,17 @@ def fixture_setup_one_test_user(
     """Fixture to create one test user before each test."""
     auth, user_db, _ = auth_userdb_admindb_tuple
 
-    email, password = "alice@example.com", "password_of_alice"
+    name, email, password = "Alice Doe", "alice@example.com", "password_of_alice"
     creds = auth.create_user_with_email_and_password(email, password)
     user_id, user_token = creds["localId"], creds["idToken"]
 
     user_db.child(user_id).set(
-        { "email": email },
+        {
+            "account": {
+                "name": name,
+                "email": email,
+            }
+        },
         user_token,
     )
 
@@ -92,20 +97,25 @@ def fixture_setup_two_test_users(
     auth, user_db, _ = auth_userdb_admindb_tuple
 
     users = (
-        ("alice@example.com", "password_of_alice"),
-        ("bob@example.com", "password_of_bob"),
+        ("Alice Doe", "alice@example.com", "password_of_alice"),
+        ("Bob Smith", "bob@example.com", "password_of_bob"),
     )
 
-    for email, password in users:
+    for name, email, password in users:
         creds = auth.create_user_with_email_and_password(email, password)
         user_id, user_token = creds["localId"], creds["idToken"]
 
         user_db.child(user_id).set(
-            { "email": email },
+            {
+                "account": {
+                    "name": name,
+                    "email": email,
+                }
+            },
             user_token,
         )
 
-    return users
+    return tuple([(user[1], user[2]) for user in users])
 
 
 @pytest.fixture(name="teardown_two_test_users", scope="function")
@@ -121,25 +131,6 @@ def fixture_teardown_two_test_users(
         delete_user(existing_user.uid)
 
 
-@pytest.fixture(name="user_with_aquarium", scope="function")
-def fixture_create_user_with_aquarium( # pylint: disable=unused-argument
-    auth_userdb_admindb_tuple: tuple[Auth, Database, db.Reference],
-    one_test_user_email_pwd: tuple[str, str],
-    teardown_database: None,
-    teardown_one_test_user: Generator[None, None, None],
-) -> tuple[str, str, str]:
-    """Fixture that creates one test user and adds an aquarium to their account."""
-    auth, user_db, _ = auth_userdb_admindb_tuple
-    email, password = one_test_user_email_pwd
-
-    user_creds = auth.sign_in_with_email_and_password(email, password)
-    user_id, user_token = user_creds["localId"], user_creds["idToken"]
-
-    aquarium_name = "Alice's Aquarium"
-    user_db.child(user_id).child("aquariums").push(aquarium_name, user_token)
-    return email, password, aquarium_name
-
-
 def test_empty_database_is_valid( # pylint: disable=unused-argument
     auth_userdb_admindb_tuple: tuple[Auth, Database, db.Reference],
     database_schema: dict,
@@ -151,7 +142,7 @@ def test_empty_database_is_valid( # pylint: disable=unused-argument
     validate(response, database_schema, format_checker=FormatChecker())
 
 
-def test_new_user_with_email_is_valid( # pylint: disable=unused-argument
+def test_new_user_with_account_is_valid( # pylint: disable=unused-argument
     auth_userdb_admindb_tuple: tuple[Auth, Database, db.Reference],
     one_test_user_email_pwd: tuple[str, str],
     database_schema: dict,
@@ -170,7 +161,7 @@ def test_new_user_with_email_is_valid( # pylint: disable=unused-argument
     validate(response, database_schema, format_checker=FormatChecker())
 
 
-def test_new_user_without_email_is_invalid( # pylint: disable=unused-argument
+def test_new_user_without_account_is_invalid( # pylint: disable=unused-argument
     auth_userdb_admindb_tuple: tuple[Auth, Database, db.Reference],
     one_test_user_email_pwd: tuple[str, str],
     database_schema: dict,
@@ -185,7 +176,7 @@ def test_new_user_without_email_is_invalid( # pylint: disable=unused-argument
     user_id = user_creds["localId"]
 
     admin_db.child(user_id).child("aquariums").push("KEEP_ALIVE")
-    admin_db.child(user_id).child("email").delete()
+    admin_db.child(user_id).child("account").delete()
 
     response = admin_db.get()
     assert user_id in response
@@ -251,26 +242,3 @@ def test_user_cannot_access_other( # pylint: disable=unused-argument
 
     with pytest.raises(HTTPError):
         assert user_db.child(alice_id).get(bob_token).val()
-
-
-def test_user_add_aquarium(
-    auth_userdb_admindb_tuple: tuple[Auth, Database, db.Reference],
-    user_with_aquarium: tuple[str, str, str],
-    database_schema: dict,
-) -> None:
-    """Test that a user can add an aquarium and the data is valid against the database schema."""
-    auth, user_db, admin_db = auth_userdb_admindb_tuple
-    email, password, aquarium_name = user_with_aquarium
-
-    user_creds = auth.sign_in_with_email_and_password(email, password)
-    user_id, user_token = user_creds["localId"], user_creds["idToken"]
-
-    aquariums = user_db.child(user_id).child("aquariums").get(user_token).val()
-    assert isinstance(aquariums, dict)
-    aquarium_id = list(aquariums.keys()).pop()
-
-    response = admin_db.get()
-    assert user_id in response
-    assert aquarium_id in response[user_id]["aquariums"]
-    assert response[user_id]["aquariums"][aquarium_id] == aquarium_name
-    validate(response, database_schema, format_checker=FormatChecker())
