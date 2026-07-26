@@ -8,7 +8,8 @@
       "properties": {
         "timestamp": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 1777608000,
+          "maximum": 1788235200
         },
         "value": {
           "type": "number"
@@ -27,13 +28,14 @@
         },
         "timestamp": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 1777608000,
+          "maximum": 1788235200
         },
         "values": {
           "type": "object",
           "additionalProperties": false,
           "patternProperties": {
-            "^([0-9]|[1-9][0-9])$": {
+            "^B([0-9]|[1-9][0-9])$": {
               "type": "number"
             }
           }
@@ -45,11 +47,12 @@
       "additionalProperties": false,
       "properties": {
         "last_instant": { "$ref": "#/$defs/instant" },
-        "last_hour": { "$ref": "#/$defs/period" },
-        "last_day": { "$ref": "#/$defs/period" },
-        "last_week": { "$ref": "#/$defs/period" },
-        "last_month": { "$ref": "#/$defs/period" },
-        "last_year": { "$ref": "#/$defs/period" }
+        "last_1h": { "$ref": "#/$defs/period" },
+        "last_1d": { "$ref": "#/$defs/period" },
+        "last_1w": { "$ref": "#/$defs/period" },
+        "last_1m": { "$ref": "#/$defs/period" },
+        "last_6m": { "$ref": "#/$defs/period" },
+        "last_1y": { "$ref": "#/$defs/period" }
       }
     }
   },
@@ -58,18 +61,28 @@
   "patternProperties": {
     "^[A-Za-z0-9_-]{28}$": {
       "type": "object",
-      "required": ["email"],
+      "required": ["account"],
       "additionalProperties": false,
       "properties": {
-        "email": {
-          "type": "string",
-          "format": "email"
+        "account": {
+          "type": "object",
+          "required": ["name", "email"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
         },
         "aquariums": {
           "type": "object",
           "additionalProperties": false,
           "patternProperties": {
-            "^[A-Za-z0-9_-]{20}$": {
+            "^[A-Za-z0-9_-]{28}$": {
               "type": "string"
             }
           }
@@ -78,7 +91,7 @@
           "type": "object",
           "additionalProperties": false,
           "patternProperties": {
-            "^[A-Za-z0-9_-]{20}$": {
+            "^[A-Za-z0-9_-]{28}$": {
               "type": "object",
               "required": ["temperature", "water_level", "dissolved_solids", "ph_level"],
               "additionalProperties": false,
