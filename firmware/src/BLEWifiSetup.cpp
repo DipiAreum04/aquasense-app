@@ -1,4 +1,4 @@
-#include "BLEWifiSetup.h"
+#include "BLEWifiSetup.hpp"
 
 BLEWifiSetup::BLEWifiSetup() {}
 

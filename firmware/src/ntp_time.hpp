@@ -1,5 +1,5 @@
-#ifndef NTP_TIME_H
-#define NTP_TIME_H
+#ifndef NTP_TIME_HPP
+#define NTP_TIME_HPP
 
 #include <WiFiUdp.h>
 

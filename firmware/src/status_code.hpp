@@ -1,5 +1,5 @@
-#ifndef STATUS_CODE_H
-#define STATUS_CODE_H
+#ifndef STATUS_CODE_HPP
+#define STATUS_CODE_HPP
 
 class StatusCode {
 public:

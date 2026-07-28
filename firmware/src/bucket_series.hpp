@@ -1,7 +1,8 @@
-#ifndef BUCKET_SERIES_H
-#define BUCKET_SERIES_H
+#ifndef BUCKET_SERIES_HPP
+#define BUCKET_SERIES_HPP
 
 #include <Arduino.h>
+
 
 class BucketSeries {
 public:
@@ -12,7 +13,7 @@ public:
     void push(float value, unsigned long timestamp);
 
     // Builds: {"values":[...],"timestamp":<epoch>,"index":<int>}
-    String toJsonObject() const;
+    String toJsonObjectConst() const;
 
 private:
     float values[BUCKET_COUNT];

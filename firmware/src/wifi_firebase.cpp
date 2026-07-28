@@ -1,4 +1,4 @@
-#include "wifi_firebase.h"
+#include "wifi_firebase.hpp"
 
 WiFiFirebase::WiFiFirebase(const char* dbUrl)
     : dbUrl(dbUrl), fb(dbUrl) {}

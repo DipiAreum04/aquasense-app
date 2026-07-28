@@ -1,4 +1,4 @@
-#include "tds_sensor.h"
+#include "tds_sensor.hpp"
 
 #define VREF 5.0
 #define ADC_RES 16383.0

@@ -1,4 +1,4 @@
-#include "pairing_data.h"
+#include "pairing_data.hpp"
 
 PairingData::PairingData() {}
 

@@ -3,7 +3,7 @@
 
 #include <WiFiS3.h>
 #include <Firebase.h>
-#include "status_code.h"
+#include "status_code.hpp"
 
 class WiFiFirebase {
 public:
@@ -11,7 +11,6 @@ public:
 
     void begin();
     bool sendJSON(const char* path, const String& json);
-  
 
 private:
     const char* dbUrl;

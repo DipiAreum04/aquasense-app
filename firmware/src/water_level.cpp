@@ -1,4 +1,4 @@
-#include "water_level.h"
+#include "water_level.hpp"
 
 WaterLevel::WaterLevel(uint8_t pin) : _pin(pin) {}
 

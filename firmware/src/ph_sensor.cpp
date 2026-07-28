@@ -1,4 +1,4 @@
-#include "ph_sensor.h"
+#include "ph_sensor.hpp"
 
 PhSensor::PhSensor(uint8_t pin, float neutralVoltage, float acidSlope, float tempCoefficient)
     : _pin(pin), _neutralVoltage(neutralVoltage), _acidSlope(acidSlope), _tempCoefficient(tempCoefficient) {}
