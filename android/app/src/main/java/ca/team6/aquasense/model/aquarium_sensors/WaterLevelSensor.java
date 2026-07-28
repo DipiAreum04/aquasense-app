@@ -1,6 +1,7 @@
 package ca.team6.aquasense.model.aquarium_sensors;
 
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.InfoSheetSection;
 
 public class WaterLevelSensor extends AquariumSensor {
@@ -16,7 +17,7 @@ public class WaterLevelSensor extends AquariumSensor {
 
     @Override
     public String getId() {
-        return "water_level";
+        return DatabaseSchema.WATER_LEVEL_KEY;
     }
 
     @Override

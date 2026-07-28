@@ -2,6 +2,7 @@
 <resources>
     <color name="background">#FF0F1419</color>
     <color name="card_background">#FF1C2430</color>
+    <color name="card_shadow">#FF000000</color>
     <color name="text_primary">#FFF2F4F8</color>
     <color name="icon_gray">#FF8A93A3</color>
     <color name="text_secondary">#FFA0A8B4</color>
@@ -9,6 +10,7 @@
     <color name="divider">#FF2A3441</color>
     <color name="accent">#FF64B5F6</color>
     <color name="toolbar_ocean">#FF15202B</color>
+    <color name="danger_on_toolbar">#FFEF5350</color>
     <color name="toolbar_gradient_start">#FF1a3940</color>
     <color name="toolbar_gradient_end">#FF4C4366</color>
     <color name="status_success">#FF81C784</color>

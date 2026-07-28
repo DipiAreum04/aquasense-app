@@ -10,7 +10,8 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
-        style="@style/Widget.AquaSense.Toolbar" />
+        style="@style/Widget.AquaSense.Toolbar"
+        android:paddingEnd="20dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_settings"

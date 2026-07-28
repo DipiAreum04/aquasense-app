@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,8 +18,6 @@ import androidx.navigation.Navigation;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.ProfileInputValidator;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class EditProfileFragment extends Fragment {
 
@@ -35,10 +34,9 @@ public class EditProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         EditText etName = view.findViewById(R.id.etEditProfileName);
-        EditText etEmail = view.findViewById(R.id.etEditProfileEmail);
+        TextView tvEmail = view.findViewById(R.id.tvEditProfileEmail);
         Button btnSave = view.findViewById(R.id.btnSaveProfile);
 
-        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         AuthRepository authRepository = new AuthRepository(requireContext());
         authRepository.syncProfileCacheFromFirebase();
 
@@ -48,15 +46,12 @@ public class EditProfileFragment extends Fragment {
             etName.setText(name);
         }
         if (!TextUtils.isEmpty(email)) {
-            etEmail.setText(email);
+            tvEmail.setText(email);
         }
 
         btnSave.setOnClickListener(v -> {
             String editedName = etName.getText() != null
                     ? etName.getText().toString().trim()
-                    : "";
-            String editedEmail = etEmail.getText() != null
-                    ? etEmail.getText().toString().trim()
                     : "";
 
             if (TextUtils.isEmpty(editedName)) {
@@ -71,28 +66,41 @@ public class EditProfileFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (TextUtils.isEmpty(editedEmail)) {
-                Toast.makeText(requireContext(),
-                        R.string.email_required,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (ProfileInputValidator.isInvalidEmail(editedEmail)) {
-                Toast.makeText(requireContext(),
-                        R.string.email_invalid,
-                        Toast.LENGTH_SHORT).show();
+            // If the name is unchanged, do nothing
+            if (editedName.equals(name)) {
+                Navigation.findNavController(v).navigateUp();
                 return;
             }
 
-            // TODO: After Firebase is set up, sync profile to Firebase Auth / Firestore.
-            // Implement Registration and Login functionality first.
-            prefs.updateField(SettingsRepository.KEY_PROFILE_NAME, editedName);
-            prefs.updateField(SettingsRepository.KEY_PROFILE_EMAIL, editedEmail);
+            setSaving(btnSave, true);
+            authRepository.updateProfileName(editedName, new AuthRepository.ActionCallback() {
+                @Override
+                public void onSuccess() {
+                    if (!isAdded()) {
+                        return;
+                    }
+                    Toast.makeText(requireContext(),
+                            R.string.edit_profile_saved,
+                            Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(requireView()).navigateUp();
+                }
 
-            Toast.makeText(requireContext(),
-                    R.string.edit_profile_saved,
-                    Toast.LENGTH_SHORT).show();
-            Navigation.findNavController(v).navigateUp();
+                @Override
+                public void onError(int messageResId) {
+                    if (!isAdded()) {
+                        return;
+                    }
+                    setSaving(btnSave, false);
+                    Toast.makeText(requireContext(), messageResId, Toast.LENGTH_LONG).show();
+                }
+            });
         });
+    }
+
+    // Firebase Auth and the database node are two sequential writes, so block a second tap
+    // from starting a competing rename while the first is still in flight.
+    private void setSaving(@NonNull Button btnSave, boolean saving) {
+        btnSave.setEnabled(!saving);
+        btnSave.setText(saving ? R.string.edit_profile_saving : R.string.edit_profile_save);
     }
 }

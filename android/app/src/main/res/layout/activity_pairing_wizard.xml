@@ -14,15 +14,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:orientation="vertical"
         android:padding="24dp">
 
         <LinearLayout
+            style="@style/Widget.AquaSense.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:background="@drawable/bg_settings_card"
-            android:elevation="2dp"
             android:orientation="vertical"
             android:padding="20dp">
 
@@ -45,15 +46,16 @@
 
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPairingContinue"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:backgroundTint="@color/accent"
+            android:background="@drawable/bg_auth_primary_button"
             android:text="@string/pairing_wizard_continue"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            app:backgroundTint="@null" />
 
     </LinearLayout>
 

@@ -28,13 +28,11 @@ import ca.team6.aquasense.ui.InputFieldError;
 public class RegisterFragment extends Fragment {
 
     private AuthRepository authRepository;
-    private EditText etFirstName;
-    private EditText etLastName;
+    private EditText etFullName;
     private EditText etEmail;
     private EditText etPassword;
     private EditText etConfirmPassword;
-    private View boxFirstName;
-    private View boxLastName;
+    private View boxFullName;
     private View boxEmail;
     private View boxPassword;
     private View boxConfirmPassword;
@@ -61,13 +59,11 @@ public class RegisterFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         authRepository = new AuthRepository(requireContext());
-        etFirstName = view.findViewById(R.id.etRegisterFirstName);
-        etLastName = view.findViewById(R.id.etRegisterLastName);
+        etFullName = view.findViewById(R.id.etRegisterFullName);
         etEmail = view.findViewById(R.id.etRegisterEmail);
         etPassword = view.findViewById(R.id.etRegisterPassword);
         etConfirmPassword = view.findViewById(R.id.etRegisterConfirmPassword);
-        boxFirstName = view.findViewById(R.id.boxRegisterFirstName);
-        boxLastName = view.findViewById(R.id.boxRegisterLastName);
+        boxFullName = view.findViewById(R.id.boxRegisterFullName);
         boxEmail = view.findViewById(R.id.boxRegisterEmail);
         boxPassword = view.findViewById(R.id.boxRegisterPassword);
         boxConfirmPassword = view.findViewById(R.id.boxRegisterConfirmPassword);
@@ -79,10 +75,8 @@ public class RegisterFragment extends Fragment {
         btnToggleConfirmPassword = view.findViewById(R.id.btnToggleRegisterConfirmPassword);
         TextView linkLogin = view.findViewById(R.id.tvGoToLogin);
 
-        InputFieldError.track(etFirstName, boxFirstName,
-                () -> nameErrorFor(textOf(etFirstName), R.string.auth_first_name_required) == 0);
-        InputFieldError.track(etLastName, boxLastName,
-                () -> nameErrorFor(textOf(etLastName), R.string.auth_last_name_required) == 0);
+        InputFieldError.track(etFullName, boxFullName,
+                () -> nameErrorFor(textOf(etFullName), R.string.auth_full_name_required) == 0);
         InputFieldError.track(etEmail, boxEmail,
                 () -> emailErrorFor(textOf(etEmail)) == 0);
 
@@ -123,28 +117,25 @@ public class RegisterFragment extends Fragment {
             return;
         }
 
-        String firstName = textOf(etFirstName);
-        String lastName = textOf(etLastName);
+        String fullName = textOf(etFullName);
         String email = textOf(etEmail);
         String password = rawTextOf(etPassword);
         String confirmPassword = rawTextOf(etConfirmPassword);
 
         // Re-check every field on each submit so outlines reflect the current state
-        int firstNameError = nameErrorFor(firstName, R.string.auth_first_name_required);
-        int lastNameError = nameErrorFor(lastName, R.string.auth_last_name_required);
+        int fullNameError = nameErrorFor(fullName, R.string.auth_full_name_required);
         int emailError = emailErrorFor(email);
         int passwordError = ProfileInputValidator.getPasswordErrorResId(password);
         int confirmPasswordError = confirmPasswordErrorFor(password, confirmPassword);
 
-        InputFieldError.set(boxFirstName, stateFor(firstNameError));
-        InputFieldError.set(boxLastName, stateFor(lastNameError));
+        InputFieldError.set(boxFullName, stateFor(fullNameError));
         InputFieldError.set(boxEmail, stateFor(emailError));
         InputFieldError.set(boxPassword, passStateFor(passwordError), icPasswordValid);
         InputFieldError.set(boxConfirmPassword, passStateFor(confirmPasswordError),
                 icConfirmPasswordValid);
 
         // Every failing field is outlined, but only the first message is toasted.
-        int firstError = firstNonZero(firstNameError, lastNameError, emailError,
+        int firstError = firstNonZero(fullNameError, emailError,
                 passwordError, confirmPasswordError);
         if (firstError != 0) {
             toast(firstError);
@@ -152,7 +143,7 @@ public class RegisterFragment extends Fragment {
         }
 
         setSubmitting(true);
-        authRepository.register(firstName, lastName, email, password,
+        authRepository.register(fullName, email, password,
                 new AuthRepository.AuthCallback() {
                     @Override
                     public void onSuccess(@NonNull FirebaseUser user) {
