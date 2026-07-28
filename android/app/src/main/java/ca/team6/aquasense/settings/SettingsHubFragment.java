@@ -13,15 +13,14 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.SettingsRepository;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class SettingsHubFragment extends Fragment {
 
     private TextView tvHubProfileName;
     private TextView tvHubProfileEmail;
-    private SettingsRepository repo;
+    private AuthRepository authRepository;
 
     @Nullable
     @Override
@@ -34,7 +33,7 @@ public class SettingsHubFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        repo = new SettingsRepository(requireContext());
+        authRepository = new AuthRepository(requireContext());
         tvHubProfileName = view.findViewById(R.id.tvHubProfileName);
         tvHubProfileEmail = view.findViewById(R.id.tvHubProfileEmail);
 
@@ -73,12 +72,12 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_contactSupport));
 
-        // Rows owned by other teams - placeholder until they wire up their screens
+        // TODO: Rows to be added by others - not implemented yet
         View.OnClickListener comingSoon = v ->
                 SharedPreferenceHelper.showComingSoon(requireContext());
         view.findViewById(R.id.rowTankProfiles).setOnClickListener(comingSoon);
         view.findViewById(R.id.rowWaterParameters).setOnClickListener(comingSoon);
-        view.findViewById(R.id.rowLightingPumps).setOnClickListener(comingSoon);
+        view.findViewById(R.id.rowTroubleshootingGuide).setOnClickListener(comingSoon);
     }
 
     @Override
@@ -88,18 +87,18 @@ public class SettingsHubFragment extends Fragment {
     }
 
     private void bindProfile() {
-        if (repo == null || tvHubProfileName == null || tvHubProfileEmail == null) {
+        if (authRepository == null || tvHubProfileName == null || tvHubProfileEmail == null) {
             return;
         }
-        repo.loadSettings(this::applyProfile);
-    }
+        authRepository.syncProfileCacheFromFirebase();
 
-    private void applyProfile(AppSettings settings) {
-        tvHubProfileName.setText(TextUtils.isEmpty(settings.profileName)
+        String name = authRepository.getProfileDisplayName();
+        String email = authRepository.getProfileEmail();
+        tvHubProfileName.setText(TextUtils.isEmpty(name)
                 ? getString(R.string.profile_name_empty)
-                : settings.profileName);
-        tvHubProfileEmail.setText(TextUtils.isEmpty(settings.profileEmail)
+                : name);
+        tvHubProfileEmail.setText(TextUtils.isEmpty(email)
                 ? getString(R.string.profile_email_empty)
-                : settings.profileEmail);
+                : email);
     }
 }

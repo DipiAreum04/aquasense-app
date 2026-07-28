@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="72dp"
+    android:viewportWidth="360"
+    android:viewportHeight="72">
+    <path
+        android:fillColor="@color/auth_wave"
+        android:pathData="M0,36 C60,12 120,60 180,36 C240,12 300,54 360,30 L360,72 L0,72 Z" />
+    <path
+        android:fillColor="@color/auth_wave_soft"
+        android:pathData="M0,48 C80,24 140,66 220,42 C280,24 320,58 360,44 L360,72 L0,72 Z" />
+</vector>

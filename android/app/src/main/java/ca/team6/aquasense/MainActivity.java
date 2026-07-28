@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ca.team6.aquasense.auth.AuthNavigator;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,6 +18,17 @@ public class MainActivity extends AppCompatActivity {
         if (prefs != null) {
             prefs.applySavedDarkMode();
         }
+
+        AuthRepository authRepository = new AuthRepository(this);
+        if (!authRepository.isLoggedIn()) {
+            AuthNavigator.goToLogin(this);
+            return;
+        }
+        if (authRepository.needsPairing()) {
+            AuthNavigator.continueAfterAuth(this, authRepository);
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         getSupportFragmentManager().findFragmentById(R.id.nav_host_dashboard);

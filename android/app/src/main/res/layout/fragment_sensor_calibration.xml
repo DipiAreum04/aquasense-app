@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/calib_water_level_sensor"
+                        android:text="@string/sensor_info_water_level_title"
                         android:textColor="@color/accent"
                         android:textSize="15sp" />
 
@@ -115,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/calib_temperature_sensor"
+                        android:text="@string/sensor_info_temperature_title"
                         android:textColor="@color/accent"
                         android:textSize="15sp" />
 
@@ -180,7 +180,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/calib_dissolved_solids_sensor"
+                        android:text="@string/sensor_info_dissolved_solids_title"
                         android:textColor="@color/accent"
                         android:textSize="15sp" />
 
@@ -245,7 +245,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/calib_ph_level_sensor"
+                        android:text="@string/sensor_info_ph_level_title"
                         android:textColor="@color/accent"
                         android:textSize="15sp" />
 

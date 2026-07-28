@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_auth_screen">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_gravity="bottom"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_auth_wave" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="32dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_launcher_ocean_gradient">
+
+                    <ImageView
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_aquarium_icon_white" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/auth_join_title"
+                android:textColor="@color/auth_heading"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="18dp"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:text="@string/auth_tagline_register"
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_auth_card"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/auth_first_name"
+                    android:textAllCaps="true"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.02" />
+
+                <LinearLayout
+                    android:id="@+id/boxRegisterFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/person_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etRegisterFirstName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="personGivenName"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/auth_first_name_hint"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLength="100"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/auth_last_name"
+                    android:textAllCaps="true"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.02" />
+
+                <LinearLayout
+                    android:id="@+id/boxRegisterLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/account_circle_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etRegisterLastName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="personFamilyName"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/auth_last_name_hint"
+                        android:inputType="textPersonName|textCapWords"
+                        android:maxLength="100"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/auth_email"
+                    android:textAllCaps="true"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.02" />
+
+                <LinearLayout
+                    android:id="@+id/boxRegisterEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/mail_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etRegisterEmail"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="emailAddress"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/email_hint"
+                        android:inputType="textEmailAddress"
+                        android:maxLength="100"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/auth_password"
+                    android:textAllCaps="true"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.02" />
+
+                <LinearLayout
+                    android:id="@+id/boxRegisterPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/lock_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etRegisterPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="newPassword"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/auth_password_hint"
+                        android:inputType="textPassword"
+                        android:maxLength="100"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:id="@+id/icRegisterPasswordValid"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@string/auth_password_valid"
+                        android:src="@drawable/check_24px"
+                        android:visibility="gone"
+                        app:tint="@color/auth_input_valid_stroke" />
+
+                    <ImageButton
+                        android:id="@+id/btnToggleRegisterPassword"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/auth_show_password"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/visibility_24px"
+                        app:tint="@color/text_secondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/auth_confirm_password"
+                    android:textAllCaps="true"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.02" />
+
+                <LinearLayout
+                    android:id="@+id/boxRegisterConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/password_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etRegisterConfirmPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="newPassword"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/auth_password_hint"
+                        android:inputType="textPassword"
+                        android:maxLength="100"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:id="@+id/icRegisterConfirmPasswordValid"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="@string/auth_passwords_match"
+                        android:src="@drawable/check_24px"
+                        android:visibility="gone"
+                        app:tint="@color/auth_input_valid_stroke" />
+
+                    <ImageButton
+                        android:id="@+id/btnToggleRegisterConfirmPassword"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/auth_show_password"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/visibility_24px"
+                        app:tint="@color/text_secondary" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_auth_primary_button"
+                    android:letterSpacing="0"
+                    android:text="@string/auth_register_button"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@null"
+                    app:icon="@drawable/arrow_forward_24px"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="8dp"
+                    app:iconTint="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginBottom="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/divider" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="12dp"
+                        android:text="@string/auth_or_continue_with"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"
+                        android:background="@color/divider" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoogleRegister"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_auth_google_button"
+                    android:letterSpacing="0"
+                    android:text="@string/auth_continue_google"
+                    android:textAllCaps="false"
+                    android:textColor="@color/auth_heading"
+                    android:textSize="16sp"
+                    app:backgroundTint="@color/auth_google_button_bg"
+                    app:icon="@drawable/google_official_logo"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"
+                    app:iconSize="20dp"
+                    app:iconTint="@null"
+                    app:strokeWidth="0dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:padding="8dp"
+                android:text="@string/auth_go_to_login"
+                android:textColor="@color/accent"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
