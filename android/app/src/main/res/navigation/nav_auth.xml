@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_auth"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="ca.team6.aquasense.auth.LoginFragment"
+        android:label="@string/auth_login_button">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="ca.team6.aquasense.auth.RegisterFragment"
+        android:label="@string/auth_register_title">
+        <action
+            android:id="@+id/action_register_to_login"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+</navigation>

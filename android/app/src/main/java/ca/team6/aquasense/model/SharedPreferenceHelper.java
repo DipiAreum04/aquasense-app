@@ -35,7 +35,7 @@ public class SharedPreferenceHelper {
 
     // Applies the saved dark mode preference at app startup.
     public void applySavedDarkMode() {
-        applyDarkMode(getBoolean(SettingsRepository.KEY_DARK_MODE, false));
+        applyDarkMode(getBoolean(SettingsRepository.KEY_DARK_MODE, new AppSettings().darkMode));
     }
 
     // Saves the preference and switches the app between light and dark theme.

@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#FFF2F4F8</color>
     <color name="card_background">#FFFFFFFF</color>
@@ -22,7 +16,6 @@
     <color name="toolbar_ocean">#FFE8F5F8</color>
     <color name="launcher_ocean_start">#FF2B8BC8</color>
     <color name="launcher_ocean_end">#FF0A3A6B</color>
-    <color name="ic_launcher_background">@color/launcher_ocean_end</color>
     <color name="launcher_rim_light_start">#66FFFFFF</color>
     <color name="launcher_rim_light_center">#22FFFFFF</color>
     <color name="launcher_rim_light_edge">#00FFFFFF</color>
@@ -40,15 +33,12 @@
     <color name="sensor_info_bulb_tint">#FFF4B400</color>
     <color name="bottom_sheet_handle">#FFBDBDBD</color>
     <color name="bullet_circle">#FFCDD5E1</color>
-    <color name="alpha_0x22_white">#22F2F4F8</color>
+
     <color name="alpha_0x60_white">#60F2F4F8</color>
     <color name="alpha_0xC0_white">#C0F2F4F8</color>
     <color name="alpha_0xD0_white">#D0F2F4F8</color>
     <color name="alpha_0xF0_white">#F0F2F4F8</color>
     <color name="alpha_0x22_background">#22F2F4F8</color>
-    <color name="alpha_0x60_background">#60F2F4F8</color>
-    <color name="alpha_0xC0_background">#C0F2F4F8</color>
-    <color name="alpha_0xD0_background">#D0F2F4F8</color>
     <color name="alpha_0xF0_background">#F0F2F4F8</color>
     <color name="aquarium_sensors_status_sunny_gradient_start">#FF45B9F8</color>
     <color name="aquarium_sensors_status_sunny_gradient_end">#FF0B6CB8</color>
@@ -60,4 +50,15 @@
     <color name="aquarium_sensors_status_rainy_gradient_end">#8B2720</color>
     <color name="aquarium_sensors_status_stormy_gradient_start">#7552C7</color>
     <color name="aquarium_sensors_status_stormy_gradient_end">#35105F</color>
+
+    <!-- Auth screens -->
+    <color name="auth_bg_start">#FFEAF6FB</color>
+    <color name="auth_bg_end">#FFF7FBFD</color>
+    <color name="auth_input_fill">#FFF1F5F9</color>
+    <color name="auth_input_error_stroke">@color/danger</color>
+    <color name="auth_input_valid_stroke">@color/status_green</color>
+    <color name="auth_heading">#FF043D5C</color>
+    <color name="auth_wave">#FFD7ECF5</color>
+    <color name="auth_wave_soft">#FFE8F4F9</color>
+    <color name="auth_google_button_bg">#FFDCEEF8</color>
 </resources>

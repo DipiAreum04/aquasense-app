@@ -1,10 +1,10 @@
 package ca.team6.aquasense.model;
 
+// Single source of truth for settings defaults.
 public class AppSettings {
 
     // Display & Units
     public String tempUnit = "F";           // "C" or "F"
-    public boolean metricUnits = false;
     public boolean darkMode = false;
     public boolean use24HourClock = true;
 

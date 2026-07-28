@@ -15,8 +15,15 @@
     <color name="sensor_info_gray_color">#FFA0A8B4</color>
     <color name="sensor_info_title_color">#FFF2F4F8</color>
     <color name="alpha_0x22_background">#220F1419</color>
-    <color name="alpha_0x60_background">#600F1419</color>
-    <color name="alpha_0xC0_background">#C00F1419</color>
-    <color name="alpha_0xD0_background">#D00F1419</color>
     <color name="alpha_0xF0_background">#F00F1419</color>
+
+    <!-- Auth screens -->
+    <color name="auth_bg_start">#FF0F1419</color>
+    <color name="auth_bg_end">#FF15202B</color>
+    <color name="auth_input_fill">#FF243041</color>
+    <color name="auth_input_error_stroke">@color/status_red</color>
+    <color name="auth_heading">#FFF2F4F8</color>
+    <color name="auth_wave">#FF1A2A38</color>
+    <color name="auth_wave_soft">#FF152430</color>
+    <color name="auth_google_button_bg">#FF1E3348</color>
 </resources>

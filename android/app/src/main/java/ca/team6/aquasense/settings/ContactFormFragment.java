@@ -115,7 +115,7 @@ public class ContactFormFragment extends Fragment {
                 body.append(userEmail);
             }
             body.append("\n")
-                    .append(getString(R.string.contact_body_issue_with_label))
+                    .append(getString(R.string.contact_issue_with))
                     .append(": ")
                     .append(issueWith)
                     .append("\n\n")

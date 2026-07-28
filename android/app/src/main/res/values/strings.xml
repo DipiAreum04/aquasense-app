@@ -47,8 +47,6 @@
     <string name="aquarium_sensors_status_stormy_description">Some sensors cannot be contacted.</string>
 
     <!-- Settings -->
-    <string name="settings_title">Settings</string>
-    <string name="settings_button">Settings</string>
     <string name="profile_name_placeholder">Jane Doe</string>
     <string name="profile_email_placeholder">janedoe@example.com</string>
     <string name="profile_name_empty">No name</string>
@@ -59,23 +57,23 @@
     <string name="section_aquarium">AQUARIUM</string>
     <string name="section_app_account">APP &amp; ACCOUNT</string>
     <string name="tank_profiles">Tank Profiles</string>
-    <string name="tank_profiles_desc">Manage tanks and switch active tank</string>
+    <string name="tank_profiles_desc">Manage aquariums &amp; awitch active aquarium</string>
     <string name="water_parameters">Water Parameters</string>
-    <string name="water_parameters_desc">pH, temperature and alert thresholds</string>
-    <string name="lighting_pumps">Lighting &amp; Pumps</string>
-    <string name="lighting_pumps_desc">Light cycles and equipment timers</string>
+    <string name="water_parameters_desc">Configure sensor parameter alert thresholds</string>
     <string name="sensor_calibration">Sensor Calibration</string>
-    <string name="sensor_calibration_desc">Calibrate probes and check status</string>
+    <string name="sensor_calibration_desc">Calibrate probes &amp; check status</string>
     <string name="display_units">Display &amp; Units</string>
-    <string name="display_units_desc">°C / °F, metric or imperial</string>
+    <string name="display_units_desc">Change temperature units &amp; enable dark mode</string>
     <string name="notifications">Notifications</string>
-    <string name="notifications_desc">Push, email, and SMS alert channels</string>
+    <string name="notifications_desc">Push, email, &amp; SMS alert configuration</string>
     <string name="accounts_backup">Accounts &amp; Backup</string>
-    <string name="accounts_backup_desc">Profile, cloud backup and data export</string>
+    <string name="accounts_backup_desc">Profile, cloud backup &amp; data export</string>
     <string name="data_sync">Data &amp; Sync</string>
-    <string name="data_sync_desc">Privacy, encryption and Firebase sync</string>
+    <string name="data_sync_desc">Privacy, encryption &amp; firebase sync</string>
+    <string name="troubleshooting_guide">Troubleshooting Guide</string>
+    <string name="troubleshooting_guide_desc">Common issue fixes &amp; setup tips</string>
     <string name="contact_support">Contact &amp; Support</string>
-    <string name="contact_support_desc">Help, documentation and app info</string>
+    <string name="contact_support_desc">Help, documentation &amp; app info</string>
 
     <!-- Accounts & Backup -->
     <string name="edit_profile">Edit Profile</string>
@@ -85,13 +83,10 @@
     <string name="edit_profile_saved">Profile saved</string>
     <string name="edit_profile_name_required">Please enter your name.</string>
     <string name="edit_profile_name_invalid">Name can only contain letters, spaces, hyphens, or apostrophes.</string>
-    <string name="edit_profile_email_required">Please enter your email.</string>
-    <string name="edit_profile_email_invalid">Please enter a valid email address.</string>
     <string name="section_cloud_backup">CLOUD BACKUP</string>
     <string name="auto_backup">Auto-backup</string>
     <string name="auto_backup_desc">Every 6 hours</string>
     <string name="last_backup">Last backup</string>
-    <string name="last_backup_never">Never</string>
     <string name="storage_used">Storage used</string>
     <string name="storage_used_desc">Shows local app data only (temporary)</string>
     <string name="storage_used_placeholder">—</string>
@@ -99,6 +94,9 @@
     <string name="section_account_actions">ACCOUNT ACTIONS</string>
     <string name="export_all_data">Export All Data</string>
     <string name="import_backup">Import Backup</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_title">Sign Out?</string>
+    <string name="sign_out_message">You will need to sign in again to manage your aquariums on this device.</string>
     <string name="delete_account">Delete Account</string>
     <string name="delete_profile_title">Delete profile?</string>
     <string name="delete_profile_message">This clears your local name and email on this device. Cloud account deletion will be available after Firebase Auth is set up.</string>
@@ -110,9 +108,6 @@
     <string name="section_temperature">TEMPERATURE</string>
     <string name="celsius">Celsius (°C)</string>
     <string name="fahrenheit">Fahrenheit (°F)</string>
-    <string name="section_measurement">MEASUREMENT</string>
-    <string name="metric_units">Metric units  (Litres, cm, grams)</string>
-    <string name="imperial_units">Imperial units  (Gallons, inches, lbs)</string>
     <string name="section_interface">INTERFACE</string>
     <string name="dark_mode">Dark mode</string>
     <string name="dark_mode_desc">Ocean-depth dark theme</string>
@@ -168,8 +163,6 @@
     <string name="contact_purpose_feedback">Provide Feedback</string>
     <string name="contact_purpose_support">Need Help / Ask a Question</string>
     <string name="contact_name">Your name (optional)</string>
-    <string name="contact_email">Your email</string>
-    <string name="contact_email_hint">name@example.com</string>
     <string name="contact_email_required">Please enter your email address.</string>
     <string name="contact_email_invalid">Please enter a valid email address (must include @, max 100 characters).</string>
     <string name="contact_name_invalid">Name can only contain letters, spaces, hyphens, or apostrophes (max 100 characters).</string>
@@ -187,7 +180,6 @@
     <string name="contact_body_feedback_intro">I would like to share feedback about AquaSense / AAMS:</string>
     <string name="contact_body_support_intro">I need help with AquaSense:</string>
     <string name="contact_body_from">From</string>
-    <string name="contact_body_issue_with_label">Issue with</string>
     <string name="live_chat">Live Chat</string>
     <string name="live_chat_hours">Mon-Fri, 9 AM - 6 PM EST</string>
     <string name="documentation">Documentation</string>
@@ -203,10 +195,6 @@
 
     <!-- Sensor Calibration (matches dashboard sensors; settings-only display names) -->
     <string name="calibration_intro">Tap a sensor name to view the calibration guide.</string>
-    <string name="calib_water_level_sensor">Water Level Sensor</string>
-    <string name="calib_temperature_sensor">Temperature Sensor</string>
-    <string name="calib_dissolved_solids_sensor">Dissolved Solids Sensor</string>
-    <string name="calib_ph_level_sensor">pH Level Sensor</string>
     <string name="never_calibrated">Never calibrated</string>
     <string name="never">Never</string>
     <string name="calibrate">Calibrated</string>
@@ -225,4 +213,65 @@
     <string name="guide_temp">1. Place the sensor in a verified ice-water bath (0 °C / 32 °F).\n2. Wait 60 seconds for the reading to stabilise.\n3. Optionally repeat with a warm reference (e.g. 40 °C / 104 °F).\n4. Note any offset and adjust in your controller if needed.</string>
     <string name="guide_tds">1. Rinse the probe with distilled water.\n2. Submerge in a 0 ppm (DI) solution and wait 30 seconds for a near-zero reading.\n3. Rinse, then submerge in a known TDS calibration solution (e.g. 342 ppm or 1000 ppm).\n4. Wait for the reading to match the solution value, then rinse before returning to the tank.</string>
     <string name="guide_ph">1. Rinse the probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. The probe is ready.</string>
+
+    <!-- Shared email (auth, settings, contact) -->
+    <string name="email_hint">name@example.com</string>
+    <string name="email_required">Please enter your email.</string>
+    <string name="email_invalid">Please enter a valid email address.</string>
+
+    <!-- Auth (FIREBASE-02 / FB-2.2) -->
+    <string name="auth_tagline_login">Your aquariums, always in sight</string>
+    <string name="auth_tagline_register">Monitor your aquatic worlds with precision</string>
+    <string name="auth_welcome_back">Welcome back!</string>
+    <string name="auth_welcome_back_subtitle">Sign in to manage your aquatic environment</string>
+    <string name="auth_join_title">Join AquaSense</string>
+    <string name="auth_register_title">Create Account</string>
+    <string name="auth_first_name">First Name</string>
+    <string name="auth_last_name">Last Name</string>
+    <string name="auth_first_name_hint">Jane</string>
+    <string name="auth_last_name_hint">Doe</string>
+    <string name="auth_email">Email Address</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_confirm_password">Confirm Password</string>
+    <string name="auth_password_hint">At least 6 characters</string>
+    <string name="auth_login_button">Log In</string>
+    <string name="auth_register_button">Sign Up</string>
+    <string name="auth_or">OR</string>
+    <string name="auth_or_continue_with">OR CONTINUE WITH</string>
+    <string name="auth_continue_google">Continue with Google</string>
+    <string name="auth_go_to_register">New to AquaSense? Create an account</string>
+    <string name="auth_go_to_login">Already have an account? Log in</string>
+    <string name="auth_password_valid">Password meets all requirements</string>
+    <string name="auth_passwords_match">Passwords match</string>
+    <string name="auth_show_password">Show Password</string>
+    <string name="auth_hide_password">Hide Password</string>
+    <string name="auth_first_name_required">Please enter your first name.</string>
+    <string name="auth_last_name_required">Please enter your last name.</string>
+    <string name="auth_password_required">Please enter your password.</string>
+    <string name="auth_password_too_short">Password must be at least 6 characters.</string>
+    <string name="auth_password_too_long">Password must be at most 100 characters.</string>
+    <string name="auth_password_needs_upper">Password must include at least one uppercase letter.</string>
+    <string name="auth_password_needs_lower">Password must include at least one lowercase letter.</string>
+    <string name="auth_password_needs_number">Password must include at least one number.</string>
+    <string name="auth_password_needs_special">Password must include at least one special character.</string>
+    <string name="auth_confirm_password_required">Please confirm your password.</string>
+    <string name="auth_passwords_do_not_match">Passwords do not match.</string>
+    <string name="auth_error_invalid_credentials">Invalid email or password.</string>
+    <string name="auth_error_user_not_found">No account found with this email.</string>
+    <string name="auth_error_wrong_password">Incorrect password.</string>
+    <string name="auth_error_email_in_use">An account already exists with this email.</string>
+    <string name="auth_error_account_exists_with_password">This email is already registered with a password. Sign in with your password instead.</string>
+    <string name="auth_error_weak_password">Password is too weak. Use at least 6 characters with uppercase, lowercase, a number, and a special character.</string>
+    <string name="auth_error_network">Network error. Check your connection and try again.</string>
+    <string name="auth_error_google_cancelled">Google sign-in was cancelled.</string>
+    <string name="auth_error_google_no_account">No Google account is available on this device! Add one in your device settings, then try again.</string>
+    <string name="auth_error_google">Google sign-in failed. Please try again.</string>
+    <string name="auth_error_generic">Something went wrong. Please try again.</string>
+    <string name="auth_error_profile_save">Account created, but profile saving failed. Check your connection and try signing in again.</string>
+   
+    <!-- SETTINGS-03 pairing wizard placeholder (entry after first login) -->
+    <string name="pairing_wizard_title">Hardware setup</string>
+    <string name="pairing_wizard_heading">Set up your aquarium</string>
+    <string name="pairing_wizard_body">Next you\'ll pair your hardware hub and create your first aquarium. Full guided steps arrive with SETTINGS-03.</string>
+    <string name="pairing_wizard_continue">Continue to dashboard</string>
 </resources>

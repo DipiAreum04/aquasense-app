@@ -20,13 +20,14 @@ import androidx.navigation.Navigation;
 import java.io.File;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AppSettings;
+import ca.team6.aquasense.auth.AuthNavigator;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class AccountsBackupFragment extends Fragment {
 
-    private SettingsRepository repo;
+    private AuthRepository authRepository;
     private SharedPreferenceHelper prefs;
     private TextView tvProfileName;
     private TextView tvProfileEmail;
@@ -46,8 +47,9 @@ public class AccountsBackupFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        repo = new SettingsRepository(requireContext());
+        authRepository = new AuthRepository(requireContext());
         prefs = SharedPreferenceHelper.getInstance(requireContext());
+        SettingsRepository repo = new SettingsRepository(requireContext());
 
         tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
@@ -76,6 +78,8 @@ public class AccountsBackupFragment extends Fragment {
         view.findViewById(R.id.btnImportBackup).setOnClickListener(v ->
                 SharedPreferenceHelper.showComingSoon(requireContext()));
 
+        view.findViewById(R.id.btnSignOut).setOnClickListener(v -> showSignOutDialog());
+
         view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> showDeleteProfileDialog());
     }
 
@@ -88,16 +92,16 @@ public class AccountsBackupFragment extends Fragment {
     }
 
     private void bindProfile() {
-        repo.loadSettings(this::applySettings);
-    }
+        authRepository.syncProfileCacheFromFirebase();
 
-    private void applySettings(AppSettings settings) {
-        tvProfileName.setText(TextUtils.isEmpty(settings.profileName)
+        String name = authRepository.getProfileDisplayName();
+        String email = authRepository.getProfileEmail();
+        tvProfileName.setText(TextUtils.isEmpty(name)
                 ? getString(R.string.profile_name_empty)
-                : settings.profileName);
-        tvProfileEmail.setText(TextUtils.isEmpty(settings.profileEmail)
+                : name);
+        tvProfileEmail.setText(TextUtils.isEmpty(email)
                 ? getString(R.string.profile_email_empty)
-                : settings.profileEmail);
+                : email);
 
         // TODO: After Firebase Auth is set up, read users/{uid}.plan from Firestore
         // and display it here (e.g. Free / Pro). Until then always show Free Plan.
@@ -106,7 +110,7 @@ public class AccountsBackupFragment extends Fragment {
 
     private void bindLastBackup() {
         // TODO: After cloud backup exists, show the timestamp of the last successful backup.
-        tvLastBackup.setText(R.string.last_backup_never);
+        tvLastBackup.setText(R.string.never);
     }
 
     private void bindStorageUsed() {
@@ -146,6 +150,18 @@ public class AccountsBackupFragment extends Fragment {
             total += sizeOf(child);
         }
         return total;
+    }
+
+    private void showSignOutDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sign_out_title)
+                .setMessage(R.string.sign_out_message)
+                .setNegativeButton(R.string.delete_profile_cancel, null)
+                .setPositiveButton(R.string.sign_out, (dialog, which) -> {
+                    authRepository.signOut();
+                    AuthNavigator.goToLogin(requireActivity());
+                })
+                .show();
     }
 
     private void showDeleteProfileDialog() {

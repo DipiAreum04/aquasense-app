@@ -149,7 +149,7 @@
                     android:id="@+id/tvLastBackup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/last_backup_never"
+                    android:text="@string/never"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
@@ -263,6 +263,26 @@
                 android:background="@color/divider" />
 
             <TextView
+                android:id="@+id/btnSignOut"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/sign_out"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/divider" />
+
+            <TextView
                 android:id="@+id/btnDeleteAccount"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
@@ -272,7 +292,7 @@
                 android:gravity="center_vertical"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Delete Account"
+                android:text="@string/delete_account"
                 android:textColor="@color/danger"
                 android:textSize="15sp" />
 

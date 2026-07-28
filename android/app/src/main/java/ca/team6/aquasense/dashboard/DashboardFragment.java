@@ -19,6 +19,7 @@ import java.util.List;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.SettingsActivity;
+import ca.team6.aquasense.model.AppSettings;
 import ca.team6.aquasense.model.AquariumBoardStatus;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.GridSpacingItemDecoration;
@@ -115,7 +116,7 @@ public class DashboardFragment extends Fragment {
     private void applyTemperatureUnitPreference() {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null) return;
-        String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, "F");
+        String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, new AppSettings().tempUnit);
         TEMPERATURE.setUnitResId("C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit);
         // TODO: When live temperature values arrive, convert C↔F for display as well.
     }

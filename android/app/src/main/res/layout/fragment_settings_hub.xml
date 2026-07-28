@@ -71,7 +71,7 @@
             android:text="@string/section_aquarium"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -162,57 +162,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_parameters_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@null"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/icon_gray" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Lighting & Pumps (other team) -->
-            <LinearLayout
-                android:id="@+id/rowLightingPumps"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lighting_pumps"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lighting_pumps_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -341,7 +290,7 @@
             android:text="@string/section_app_account"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -483,6 +432,57 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/data_sync_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/icon_gray" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/divider" />
+
+            <!-- Troubleshooting Guide -->
+            <LinearLayout
+                android:id="@+id/rowTroubleshootingGuide"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/troubleshooting_guide"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/troubleshooting_guide_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 

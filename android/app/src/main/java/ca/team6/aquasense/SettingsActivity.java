@@ -9,6 +9,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import ca.team6.aquasense.auth.AuthNavigator;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -23,6 +25,13 @@ public class SettingsActivity extends AppCompatActivity {
         if (prefs != null) {
             prefs.applySavedDarkMode();
         }
+
+        AuthRepository authRepository = new AuthRepository(this);
+        if (!authRepository.isLoggedIn()) {
+            AuthNavigator.goToLogin(this);
+            return;
+        }
+
         setContentView(R.layout.activity_settings);
 
         Toolbar toolbar = findViewById(R.id.toolbar_settings);
@@ -32,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .findFragmentById(R.id.nav_host_settings);
         if (navHost != null) {
             navController = navHost.getNavController();
-            
+
             appBarConfiguration = new AppBarConfiguration.Builder()
                     .setFallbackOnNavigateUpListener(() -> {
                         finish();

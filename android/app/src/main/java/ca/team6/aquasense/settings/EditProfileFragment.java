@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.ProfileInputValidator;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
@@ -38,53 +39,55 @@ public class EditProfileFragment extends Fragment {
         Button btnSave = view.findViewById(R.id.btnSaveProfile);
 
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
-        SettingsRepository repo = new SettingsRepository(requireContext());
-        repo.loadSettings(settings -> {
-            if (!TextUtils.isEmpty(settings.profileName)) {
-                etName.setText(settings.profileName);
-            }
-            if (!TextUtils.isEmpty(settings.profileEmail)) {
-                etEmail.setText(settings.profileEmail);
-            }
-        });
+        AuthRepository authRepository = new AuthRepository(requireContext());
+        authRepository.syncProfileCacheFromFirebase();
+
+        String name = authRepository.getProfileDisplayName();
+        String email = authRepository.getProfileEmail();
+        if (!TextUtils.isEmpty(name)) {
+            etName.setText(name);
+        }
+        if (!TextUtils.isEmpty(email)) {
+            etEmail.setText(email);
+        }
 
         btnSave.setOnClickListener(v -> {
-            String name = etName.getText() != null
+            String editedName = etName.getText() != null
                     ? etName.getText().toString().trim()
                     : "";
-            String email = etEmail.getText() != null
+            String editedEmail = etEmail.getText() != null
                     ? etEmail.getText().toString().trim()
                     : "";
 
-            if (TextUtils.isEmpty(name)) {
+            if (TextUtils.isEmpty(editedName)) {
                 Toast.makeText(requireContext(),
                         R.string.edit_profile_name_required,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (ProfileInputValidator.isInvalidName(name)) {
+            if (ProfileInputValidator.isInvalidName(editedName)) {
                 Toast.makeText(requireContext(),
                         R.string.edit_profile_name_invalid,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (TextUtils.isEmpty(email)) {
+            if (TextUtils.isEmpty(editedEmail)) {
                 Toast.makeText(requireContext(),
-                        R.string.edit_profile_email_required,
+                        R.string.email_required,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (ProfileInputValidator.isInvalidEmail(email)) {
+            if (ProfileInputValidator.isInvalidEmail(editedEmail)) {
                 Toast.makeText(requireContext(),
-                        R.string.edit_profile_email_invalid,
+                        R.string.email_invalid,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // TODO: After Firebase is set up, sync profile to Firebase Auth / Firestore.
             // Implement Registration and Login functionality first.
-            prefs.updateField(SettingsRepository.KEY_PROFILE_NAME, name);
-            prefs.updateField(SettingsRepository.KEY_PROFILE_EMAIL, email);
+            prefs.updateField(SettingsRepository.KEY_PROFILE_NAME, editedName);
+            prefs.updateField(SettingsRepository.KEY_PROFILE_EMAIL, editedEmail);
 
             Toast.makeText(requireContext(),
                     R.string.edit_profile_saved,

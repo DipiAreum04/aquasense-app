@@ -37,13 +37,11 @@ public class DisplayUnitsFragment extends Fragment {
         prefs = SharedPreferenceHelper.getInstance(requireContext());
 
         RadioGroup rgTemp        = view.findViewById(R.id.rgTempUnit);
-        RadioGroup rgMeasurement = view.findViewById(R.id.rgMeasurement);
         SwitchCompat switchDark  = view.findViewById(R.id.switchDarkMode);
         SwitchCompat switch24h   = view.findViewById(R.id.switch24HourClock);
 
         repo.loadSettings(s -> {
             rgTemp.check("C".equals(s.tempUnit) ? R.id.rbCelsius : R.id.rbFahrenheit);
-            rgMeasurement.check(s.metricUnits ? R.id.rbMetric : R.id.rbImperial);
             switchDark.setChecked(s.darkMode);
             switch24h.setChecked(s.use24HourClock);
         });
@@ -53,11 +51,6 @@ public class DisplayUnitsFragment extends Fragment {
             String unit = (checkedId == R.id.rbCelsius) ? "C" : "F";
             prefs.updateField(SettingsRepository.KEY_TEMP_UNIT, unit);
         });
-
-        // TODO: Decide whether to keep measurement units; not wired to dashboard yet.
-        rgMeasurement.setOnCheckedChangeListener((group, checkedId) ->
-                prefs.updateField(SettingsRepository.KEY_METRIC_UNITS,
-                        checkedId == R.id.rbMetric));
 
         switchDark.setOnCheckedChangeListener((b, checked) ->
                 prefs.setDarkModeEnabled(checked));
