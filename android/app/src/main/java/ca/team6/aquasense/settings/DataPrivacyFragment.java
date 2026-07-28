@@ -15,7 +15,7 @@ import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
-public class DataSyncFragment extends Fragment {
+public class DataPrivacyFragment extends Fragment {
 
     // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
     @SuppressWarnings("FieldCanBeLocal") 
@@ -27,7 +27,7 @@ public class DataSyncFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_data_sync, container, false);
+        return inflater.inflate(R.layout.fragment_data_privacy, container, false);
     }
 
     @Override
@@ -38,12 +38,10 @@ public class DataSyncFragment extends Fragment {
 
         SwitchCompat switchUsageAnalytics = view.findViewById(R.id.switchUsageAnalytics);
         SwitchCompat switchLocationData   = view.findViewById(R.id.switchLocationData);
-        SwitchCompat switchFirebaseSync   = view.findViewById(R.id.switchFirebaseSync);
 
         repo.loadSettings(s -> {
             switchUsageAnalytics.setChecked(s.usageAnalytics);
             switchLocationData.setChecked(s.locationData);
-            switchFirebaseSync.setChecked(s.firebaseRealtimeSync);
         });
 
         // Toggles persist locally but underlying features are not wired yet.
@@ -56,22 +54,11 @@ public class DataSyncFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_LOCATION_DATA, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        switchFirebaseSync.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_FIREBASE_SYNC, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
-        });
-
         view.findViewById(R.id.rowDownloadData).setOnClickListener(v ->
                 SharedPreferenceHelper.showComingSoon(requireContext()));
 
         view.findViewById(R.id.rowPrivacyPolicy).setOnClickListener(v ->
                 Navigation.findNavController(v)
-                        .navigate(R.id.action_dataSync_to_privacyPolicy));
-
-        view.findViewById(R.id.btnForceSync).setOnClickListener(v ->
-                SharedPreferenceHelper.showComingSoon(requireContext()));
-
-        view.findViewById(R.id.btnDisconnectFirebase).setOnClickListener(v ->
-                SharedPreferenceHelper.showComingSoon(requireContext()));
+                        .navigate(R.id.action_dataPrivacy_to_privacyPolicy));
     }
 }

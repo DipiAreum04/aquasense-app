@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class ContactSupportFragment extends Fragment {
 
@@ -44,12 +43,6 @@ public class ContactSupportFragment extends Fragment {
         view.findViewById(R.id.rowContactForm).setOnClickListener(v ->
                 Navigation.findNavController(v)
                         .navigate(R.id.action_contactSupport_to_contactForm));
-
-        view.findViewById(R.id.rowLiveChat).setOnClickListener(v ->
-                SharedPreferenceHelper.showComingSoon(requireContext()));
-
-        view.findViewById(R.id.rowDocumentation).setOnClickListener(v ->
-                SharedPreferenceHelper.showComingSoon(requireContext()));
     }
 
 

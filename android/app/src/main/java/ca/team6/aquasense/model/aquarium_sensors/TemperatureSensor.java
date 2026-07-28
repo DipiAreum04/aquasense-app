@@ -16,6 +16,11 @@ public class TemperatureSensor extends AquariumSensor {
     }
 
     @Override
+    public String getId() {
+        return "temperature";
+    }
+
+    @Override
     public int getTitleIconResId() {
         return R.drawable.thermometer_24px;
     }

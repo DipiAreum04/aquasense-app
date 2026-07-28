@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,20 +38,6 @@
                 android:textSize="13sp" />
 
             <TextView
-                android:id="@+id/tvProfilePlan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/plan_badge_bg"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:text="@string/profile_plan_placeholder"
-                android:textColor="@color/plan_badge_text"
-                android:textSize="12sp" />
-
-            <TextView
                 android:id="@+id/btnEditProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +59,7 @@
             android:text="@string/section_cloud_backup"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -202,40 +187,6 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Account Actions section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/section_account_actions"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_settings_card"
-            android:elevation="2dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/btnExportData"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/export_all_data"
-                android:textColor="@color/text_primary"
-                android:textSize="15sp" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
@@ -256,11 +207,25 @@
                 android:textColor="@color/text_primary"
                 android:textSize="15sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
+        </LinearLayout>
+
+        <!-- Account Actions section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/section_account_actions"
+            android:textAllCaps="true"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_settings_card"
+            android:elevation="2dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/btnSignOut"

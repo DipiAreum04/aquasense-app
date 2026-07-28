@@ -51,29 +51,29 @@
     <string name="profile_email_placeholder">janedoe@example.com</string>
     <string name="profile_name_empty">No name</string>
     <string name="profile_email_empty">No email</string>
-    <string name="profile_plan_placeholder">Free Plan</string>
 
     <!-- Settings hub -->
     <string name="section_aquarium">AQUARIUM</string>
     <string name="section_app_account">APP &amp; ACCOUNT</string>
-    <string name="tank_profiles">Tank Profiles</string>
-    <string name="tank_profiles_desc">Manage aquariums &amp; awitch active aquarium</string>
+    <string name="section_help_support">HELP &amp; SUPPORT</string>
+    <string name="tank_profiles">Aquarium Profiles</string>
+    <string name="tank_profiles_desc">Manage aquariums &amp; switch active aquarium</string>
     <string name="water_parameters">Water Parameters</string>
     <string name="water_parameters_desc">Configure sensor parameter alert thresholds</string>
     <string name="sensor_calibration">Sensor Calibration</string>
-    <string name="sensor_calibration_desc">Calibrate probes &amp; check status</string>
+    <string name="sensor_calibration_desc">Calibrate sensors &amp; check status</string>
     <string name="display_units">Display &amp; Units</string>
-    <string name="display_units_desc">Change temperature units &amp; enable dark mode</string>
+    <string name="display_units_desc">Configure display settings &amp; dark mode</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_desc">Push, email, &amp; SMS alert configuration</string>
     <string name="accounts_backup">Accounts &amp; Backup</string>
-    <string name="accounts_backup_desc">Profile, cloud backup &amp; data export</string>
-    <string name="data_sync">Data &amp; Sync</string>
-    <string name="data_sync_desc">Privacy, encryption &amp; firebase sync</string>
+    <string name="accounts_backup_desc">Profile, cloud backup &amp; import</string>
+    <string name="privacy_data">Data &amp; Privacy</string>
+    <string name="privacy_data_desc">Privacy policy &amp; data controls</string>
     <string name="troubleshooting_guide">Troubleshooting Guide</string>
     <string name="troubleshooting_guide_desc">Common issue fixes &amp; setup tips</string>
     <string name="contact_support">Contact &amp; Support</string>
-    <string name="contact_support_desc">Help, documentation &amp; app info</string>
+    <string name="contact_support_desc">Help, contact form &amp; app info</string>
 
     <!-- Accounts & Backup -->
     <string name="edit_profile">Edit Profile</string>
@@ -92,7 +92,6 @@
     <string name="storage_used_placeholder">—</string>
     <string name="storage_used_format">%1$s used</string>
     <string name="section_account_actions">ACCOUNT ACTIONS</string>
-    <string name="export_all_data">Export All Data</string>
     <string name="import_backup">Import Backup</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_title">Sign Out?</string>
@@ -108,10 +107,28 @@
     <string name="section_temperature">TEMPERATURE</string>
     <string name="celsius">Celsius (°C)</string>
     <string name="fahrenheit">Fahrenheit (°F)</string>
+
+    <string name="section_theme">THEME</string>
+    <string name="theme_follow_system">Follow Device</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_desc">Follow Device matches your device\'s light or dark setting.</string>
+
     <string name="section_interface">INTERFACE</string>
-    <string name="dark_mode">Dark mode</string>
-    <string name="dark_mode_desc">Ocean-depth dark theme</string>
-    <string name="twenty_four_hour_clock">24-hour clock</string>
+    <string name="twenty_four_hour_clock">24-hour Clock</string>
+
+    <string name="section_precision">READING PRECISION</string>
+    <string name="precision_standard">Standard</string>
+    <string name="precision_standard_desc">Example: 24.5 °C · pH 7.2 · 342 ppm</string>
+    <string name="precision_precise">Precise</string>
+    <string name="precision_precise_desc">Example: 24.53 °C · pH 7.18 · 342.4 ppm</string>
+
+
+    <string name="section_dashboard_cards">DASHBOARD CARDS</string>
+    <string name="dashboard_cards_desc">Reorder cards or hide the ones you don\'t need.</string>
+    <string name="dashboard_card_move_up">Move up</string>
+    <string name="dashboard_card_move_down">Move down</string>
+    <string name="dashboard_card_last_visible">At least one card must stay visible.</string>
 
     <!-- Notifications -->
     <string name="section_alert_channels">ALERT CHANNELS</string>
@@ -134,11 +151,10 @@
     <string name="section_notification_types">NOTIFICATION TYPES</string>
     <string name="param_out_of_range">Parameter out of range</string>
     <string name="sensor_offline">Sensor offline</string>
-    <string name="equipment_failure">Equipment failure</string>
+    <string name="hub_disconnected">Hub disconnected</string>
     <string name="daily_summary_digest">Daily summary digest</string>
-    <string name="firmware_update_available">Firmware update available</string>
 
-    <!-- Data & Sync -->
+    <!-- Data & Privacy -->
     <string name="section_privacy">PRIVACY</string>
     <string name="usage_analytics">Usage analytics</string>
     <string name="usage_analytics_desc">Anonymous usage data</string>
@@ -147,6 +163,7 @@
     <string name="section_data_rights">DATA RIGHTS</string>
     <string name="download_my_data">Download My Data</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_link_failed">No app available to open this link.</string>
     <string name="section_cloud_sync">CLOUD SYNC</string>
     <string name="cloud_sync">Cloud sync</string>
     <string name="cloud_sync_desc">Stream data to Firebase</string>
@@ -180,10 +197,6 @@
     <string name="contact_body_feedback_intro">I would like to share feedback about AquaSense / AAMS:</string>
     <string name="contact_body_support_intro">I need help with AquaSense:</string>
     <string name="contact_body_from">From</string>
-    <string name="live_chat">Live Chat</string>
-    <string name="live_chat_hours">Mon-Fri, 9 AM - 6 PM EST</string>
-    <string name="documentation">Documentation</string>
-    <string name="docs_url">guides.aquasense.io</string>
     <string name="section_about">ABOUT</string>
     <string name="app_version">App Version</string>
     <string name="app_version_value">1.0</string>
@@ -268,7 +281,7 @@
     <string name="auth_error_google">Google sign-in failed. Please try again.</string>
     <string name="auth_error_generic">Something went wrong. Please try again.</string>
     <string name="auth_error_profile_save">Account created, but profile saving failed. Check your connection and try signing in again.</string>
-   
+
     <!-- SETTINGS-03 pairing wizard placeholder (entry after first login) -->
     <string name="pairing_wizard_title">Hardware setup</string>
     <string name="pairing_wizard_heading">Set up your aquarium</string>

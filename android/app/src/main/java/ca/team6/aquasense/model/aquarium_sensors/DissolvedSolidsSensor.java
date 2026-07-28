@@ -16,6 +16,11 @@ public class DissolvedSolidsSensor extends AquariumSensor {
     }
 
     @Override
+    public String getId() {
+        return "dissolved_solids";
+    }
+
+    @Override
     public int getTitleIconResId() {
         return R.drawable.total_dissolved_solids_24px;
     }

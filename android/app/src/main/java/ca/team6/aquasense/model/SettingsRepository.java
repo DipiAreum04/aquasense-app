@@ -6,8 +6,20 @@ public class SettingsRepository {
 
     // Keys
     public static final String KEY_TEMP_UNIT              = "tempUnit";
-    public static final String KEY_DARK_MODE              = "darkMode";
+    public static final String KEY_THEME_MODE             = "themeMode";
     public static final String KEY_24H_CLOCK              = "use24HourClock";
+    public static final String KEY_READING_PRECISION      = "readingPrecision";
+    public static final String KEY_SENSOR_ORDER           = "sensorCardOrder";
+    public static final String KEY_SENSOR_HIDDEN          = "sensorCardHidden";
+
+    // KEY_THEME_MODE values
+    public static final String THEME_SYSTEM = "system";
+    public static final String THEME_LIGHT  = "light";
+    public static final String THEME_DARK   = "dark";
+
+    // KEY_READING_PRECISION values
+    public static final String PRECISION_STANDARD = "standard";
+    public static final String PRECISION_PRECISE  = "precise";
 
     public static final String KEY_PUSH_NOTIF             = "pushNotifications";
     public static final String KEY_EMAIL_ALERTS           = "emailAlerts";
@@ -19,13 +31,11 @@ public class SettingsRepository {
     public static final String KEY_FEEDING_SILENCE        = "feedingModeSilence";
     public static final String KEY_NOTIFY_PARAM           = "notifyParamOutOfRange";
     public static final String KEY_NOTIFY_SENSOR          = "notifySensorOffline";
-    public static final String KEY_NOTIFY_EQUIPMENT       = "notifyEquipmentFailure";
+    public static final String KEY_NOTIFY_HUB_DISCONNECTED = "notifyHubDisconnected";
     public static final String KEY_NOTIFY_SUMMARY         = "notifyDailySummary";
-    public static final String KEY_NOTIFY_FIRMWARE        = "notifyFirmwareUpdate";
 
     public static final String KEY_PROFILE_NAME           = "profileName";
     public static final String KEY_PROFILE_EMAIL          = "profileEmail";
-    public static final String KEY_PROFILE_PLAN           = "profilePlan";
     public static final String KEY_AUTO_BACKUP            = "autoBackup";
 
     // True after the SETTINGS-03 pairing wizard has been completed on this device on first install
@@ -59,8 +69,9 @@ public class SettingsRepository {
         AppSettings s = new AppSettings();
 
         s.tempUnit              = prefs.getString(KEY_TEMP_UNIT, d.tempUnit);
-        s.darkMode              = prefs.getBoolean(KEY_DARK_MODE, d.darkMode);
         s.use24HourClock        = prefs.getBoolean(KEY_24H_CLOCK, d.use24HourClock);
+        s.themeMode             = prefs.getString(KEY_THEME_MODE, d.themeMode);
+        s.readingPrecision      = prefs.getString(KEY_READING_PRECISION, d.readingPrecision);
 
         s.pushNotifications     = prefs.getBoolean(KEY_PUSH_NOTIF, d.pushNotifications);
         s.emailAlerts           = prefs.getBoolean(KEY_EMAIL_ALERTS, d.emailAlerts);
@@ -72,13 +83,11 @@ public class SettingsRepository {
         s.feedingModeSilence    = prefs.getBoolean(KEY_FEEDING_SILENCE, d.feedingModeSilence);
         s.notifyParamOutOfRange = prefs.getBoolean(KEY_NOTIFY_PARAM, d.notifyParamOutOfRange);
         s.notifySensorOffline   = prefs.getBoolean(KEY_NOTIFY_SENSOR, d.notifySensorOffline);
-        s.notifyEquipmentFailure= prefs.getBoolean(KEY_NOTIFY_EQUIPMENT, d.notifyEquipmentFailure);
+        s.notifyHubDisconnected = prefs.getBoolean(KEY_NOTIFY_HUB_DISCONNECTED, d.notifyHubDisconnected);
         s.notifyDailySummary    = prefs.getBoolean(KEY_NOTIFY_SUMMARY, d.notifyDailySummary);
-        s.notifyFirmwareUpdate  = prefs.getBoolean(KEY_NOTIFY_FIRMWARE, d.notifyFirmwareUpdate);
 
         s.profileName           = prefs.getString(KEY_PROFILE_NAME, d.profileName);
         s.profileEmail          = prefs.getString(KEY_PROFILE_EMAIL, d.profileEmail);
-        s.profilePlan           = prefs.getString(KEY_PROFILE_PLAN, d.profilePlan);
         s.autoBackup            = prefs.getBoolean(KEY_AUTO_BACKUP, d.autoBackup);
 
         s.usageAnalytics        = prefs.getBoolean(KEY_USAGE_ANALYTICS, d.usageAnalytics);

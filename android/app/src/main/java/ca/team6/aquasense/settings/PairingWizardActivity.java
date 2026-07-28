@@ -25,7 +25,7 @@ public class PairingWizardActivity extends AppCompatActivity {
 
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(this);
         if (prefs != null) {
-            prefs.applySavedDarkMode();
+            prefs.applySavedThemeMode();
         }
 
         AuthRepository authRepository = new AuthRepository(this);

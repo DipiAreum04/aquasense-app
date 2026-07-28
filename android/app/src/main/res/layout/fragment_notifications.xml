@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:text="@string/section_alert_channels"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -149,7 +148,7 @@
             android:text="@string/section_filters"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -376,7 +375,7 @@
             android:text="@string/section_notification_types"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -456,12 +455,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/equipment_failure"
+                    android:text="@string/hub_disconnected"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchNotifyEquipment"
+                    android:id="@+id/switchNotifyHubDisconnected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -491,35 +490,6 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchNotifySummary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/firmware_update_available"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchNotifyFirmware"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

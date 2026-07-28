@@ -31,7 +31,6 @@ public class AccountsBackupFragment extends Fragment {
     private SharedPreferenceHelper prefs;
     private TextView tvProfileName;
     private TextView tvProfileEmail;
-    private TextView tvProfilePlan;
     private TextView tvLastBackup;
     private TextView tvStorageUsed;
     private SwitchCompat switchAutoBackup;
@@ -53,7 +52,6 @@ public class AccountsBackupFragment extends Fragment {
 
         tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
-        tvProfilePlan = view.findViewById(R.id.tvProfilePlan);
         tvLastBackup = view.findViewById(R.id.tvLastBackup);
         tvStorageUsed = view.findViewById(R.id.tvStorageUsed);
         switchAutoBackup = view.findViewById(R.id.switchAutoBackup);
@@ -71,9 +69,6 @@ public class AccountsBackupFragment extends Fragment {
         view.findViewById(R.id.btnEditProfile).setOnClickListener(v ->
                 Navigation.findNavController(v)
                         .navigate(R.id.action_accounts_to_editProfile));
-
-        view.findViewById(R.id.btnExportData).setOnClickListener(v ->
-                SharedPreferenceHelper.showComingSoon(requireContext()));
 
         view.findViewById(R.id.btnImportBackup).setOnClickListener(v ->
                 SharedPreferenceHelper.showComingSoon(requireContext()));
@@ -102,10 +97,6 @@ public class AccountsBackupFragment extends Fragment {
         tvProfileEmail.setText(TextUtils.isEmpty(email)
                 ? getString(R.string.profile_email_empty)
                 : email);
-
-        // TODO: After Firebase Auth is set up, read users/{uid}.plan from Firestore
-        // and display it here (e.g. Free / Pro). Until then always show Free Plan.
-        tvProfilePlan.setText(R.string.profile_plan_placeholder);
     }
 
     private void bindLastBackup() {

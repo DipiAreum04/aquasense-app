@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:fillViewport="false">
 
     <LinearLayout
@@ -27,6 +26,18 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="14dp"
+                android:background="@drawable/bg_settings_icon"
+                android:backgroundTint="@color/settings_icon_blue_bg"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:padding="8dp"
+                android:src="@drawable/manage_accounts_24px"
+                app:tint="@color/settings_icon_blue" />
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -39,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_name_empty"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -48,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_email_empty"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -71,7 +82,7 @@
             android:text="@string/section_aquarium"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -94,6 +105,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_cyan_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/water_24px"
+                    app:tint="@color/settings_icon_cyan" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -105,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/tank_profiles"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -126,10 +149,11 @@
 
             </LinearLayout>
 
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
             <!-- Water Parameters (other team) -->
@@ -145,6 +169,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_teal_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/equalizer_24px"
+                    app:tint="@color/settings_icon_teal" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -156,7 +192,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/water_parameters"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -177,10 +213,11 @@
 
             </LinearLayout>
 
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
             <!-- Sensor Calibration (ours) -->
@@ -196,6 +233,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_green_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/compass_calibration_24px"
+                    app:tint="@color/settings_icon_green" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -207,63 +256,12 @@
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_calibration"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_calibration_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@null"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/icon_gray" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Display & Units (ours) -->
-            <LinearLayout
-                android:id="@+id/rowDisplayUnits"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_units"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/display_units_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -290,7 +288,7 @@
             android:text="@string/section_app_account"
             android:textAllCaps="true"
             android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -300,7 +298,70 @@
             android:elevation="2dp"
             android:orientation="vertical">
 
-            <!-- Notifications (ours) -->
+            <!-- Display & Units section -->
+            <LinearLayout
+                android:id="@+id/rowDisplayUnits"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_purple_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/display_settings_24px"
+                    app:tint="@color/settings_icon_purple" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_units"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/display_units_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/icon_gray" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="62dp"
+                android:background="@color/divider" />
+
+            <!-- Notifications section -->
             <LinearLayout
                 android:id="@+id/rowNotifications"
                 android:layout_width="match_parent"
@@ -313,6 +374,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_indigo_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/notifications_24px"
+                    app:tint="@color/settings_icon_indigo" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -324,7 +397,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/notifications"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -345,10 +418,11 @@
 
             </LinearLayout>
 
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
             <!-- Accounts & Backup (ours) -->
@@ -364,6 +438,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_blue_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/backup_24px"
+                    app:tint="@color/settings_icon_blue" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -375,7 +461,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/accounts_backup"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -396,15 +482,16 @@
 
             </LinearLayout>
 
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Data & Sync (ours - merged Privacy+Encryption+Firebase) -->
+            <!-- Data & Privacy section -->
             <LinearLayout
-                android:id="@+id/rowDataSync"
+                android:id="@+id/rowDataPrivacy"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:clickable="true"
@@ -415,6 +502,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_cyan_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/sync_24px"
+                    app:tint="@color/settings_icon_cyan" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -424,14 +523,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/data_sync"
+                        android:text="@string/privacy_data"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/data_sync_desc"
+                        android:text="@string/privacy_data_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -447,11 +546,26 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
+        </LinearLayout>
+
+        <!-- HELP & SUPPORT section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/section_help_support"
+            android:textAllCaps="true"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_settings_card"
+            android:elevation="2dp"
+            android:orientation="vertical">
 
             <!-- Troubleshooting Guide -->
             <LinearLayout
@@ -466,6 +580,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_green_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/troubleshoot_24px"
+                    app:tint="@color/settings_icon_green" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -477,7 +603,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/troubleshooting_guide"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -498,10 +624,11 @@
 
             </LinearLayout>
 
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
             <!-- Contact & Support (ours) -->
@@ -517,6 +644,18 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_purple_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/contact_support_24px"
+                    app:tint="@color/settings_icon_purple" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -528,7 +667,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/contact_support"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"

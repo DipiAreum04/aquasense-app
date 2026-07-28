@@ -5,8 +5,9 @@ public class AppSettings {
 
     // Display & Units
     public String tempUnit = "F";           // "C" or "F"
-    public boolean darkMode = false;
+    public String themeMode = SettingsRepository.THEME_SYSTEM;
     public boolean use24HourClock = true;
+    public String readingPrecision = SettingsRepository.PRECISION_STANDARD;
 
     // Notifications
     public boolean pushNotifications = true;
@@ -19,14 +20,12 @@ public class AppSettings {
     public boolean feedingModeSilence = false;
     public boolean notifyParamOutOfRange = true;
     public boolean notifySensorOffline = true;
-    public boolean notifyEquipmentFailure = true;
+    public boolean notifyHubDisconnected = true;
     public boolean notifyDailySummary = false;
-    public boolean notifyFirmwareUpdate = true;
 
     // Accounts & Backup
     public String profileName = "";
     public String profileEmail = "";
-    public String profilePlan = "";
     public boolean autoBackup = true;
 
     // Data & Sync: Privacy

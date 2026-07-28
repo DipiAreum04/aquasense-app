@@ -2,6 +2,7 @@
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_settings"
     app:startDestination="@id/settingsHubFragment">
 
@@ -9,6 +10,7 @@
     <fragment
         android:id="@+id/settingsHubFragment"
         android:name="ca.team6.aquasense.settings.SettingsHubFragment"
+        tools:layout="@layout/fragment_settings_hub"
         android:label="Settings">
 
         <action
@@ -18,8 +20,8 @@
             android:id="@+id/action_hub_to_accounts"
             app:destination="@id/accountsBackupFragment" />
         <action
-            android:id="@+id/action_hub_to_dataSync"
-            app:destination="@id/dataSyncFragment" />
+            android:id="@+id/action_hub_to_dataPrivacy"
+            app:destination="@id/dataPrivacyFragment" />
         <action
             android:id="@+id/action_hub_to_displayUnits"
             app:destination="@id/displayUnitsFragment" />
@@ -35,12 +37,14 @@
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="ca.team6.aquasense.settings.NotificationsFragment"
+        tools:layout="@layout/fragment_notifications"
         android:label="Notifications" />
 
     <!-- ST-1.3 -->
     <fragment
         android:id="@+id/accountsBackupFragment"
         android:name="ca.team6.aquasense.settings.AccountsBackupFragment"
+        tools:layout="@layout/fragment_accounts_backup"
         android:label="Accounts &amp; Backup">
         <action
             android:id="@+id/action_accounts_to_editProfile"
@@ -50,40 +54,46 @@
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="ca.team6.aquasense.settings.EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile"
         android:label="@string/edit_profile" />
 
     <!-- ST-1.4 - merged Privacy + Encryption + Firebase -->
     <fragment
-        android:id="@+id/dataSyncFragment"
-        android:name="ca.team6.aquasense.settings.DataSyncFragment"
-        android:label="Data &amp; Sync">
+        android:id="@+id/dataPrivacyFragment"
+        android:name="ca.team6.aquasense.settings.DataPrivacyFragment"
+        tools:layout="@layout/fragment_data_privacy"
+        android:label="@string/privacy_data">
         <action
-            android:id="@+id/action_dataSync_to_privacyPolicy"
+            android:id="@+id/action_dataPrivacy_to_privacyPolicy"
             app:destination="@id/privacyPolicyFragment" />
     </fragment>
 
-    <!-- PRIVSEC - Privacy Policy (from Data &amp; Sync) -->
+    <!-- PRIVSEC - Privacy Policy (from Data & Privacy) -->
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="ca.team6.aquasense.settings.PrivacyPolicyFragment"
+        tools:layout="@layout/fragment_privacy_policy"
         android:label="@string/privacy_policy" />
 
     <!-- ST-1.6 -->
     <fragment
         android:id="@+id/displayUnitsFragment"
         android:name="ca.team6.aquasense.settings.DisplayUnitsFragment"
+        tools:layout="@layout/fragment_display_units"
         android:label="Display &amp; Units" />
 
     <!-- ST-1.6 -->
     <fragment
         android:id="@+id/sensorCalibrationFragment"
         android:name="ca.team6.aquasense.settings.SensorCalibrationFragment"
+        tools:layout="@layout/fragment_sensor_calibration"
         android:label="Sensor Calibration" />
 
     <!-- ST-1.6 -->
     <fragment
         android:id="@+id/contactSupportFragment"
         android:name="ca.team6.aquasense.settings.ContactSupportFragment"
+        tools:layout="@layout/fragment_contact_support"
         android:label="Contact &amp; Support">
         <action
             android:id="@+id/action_contactSupport_to_contactForm"
@@ -94,6 +104,7 @@
     <fragment
         android:id="@+id/contactFormFragment"
         android:name="ca.team6.aquasense.settings.ContactFormFragment"
+        tools:layout="@layout/fragment_contact_form"
         android:label="@string/contact_form" />
 
 </navigation>

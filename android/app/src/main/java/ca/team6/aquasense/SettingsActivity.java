@@ -23,7 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(this);
         if (prefs != null) {
-            prefs.applySavedDarkMode();
+            prefs.applySavedThemeMode();
         }
 
         AuthRepository authRepository = new AuthRepository(this);

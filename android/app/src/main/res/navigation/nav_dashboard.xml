@@ -2,12 +2,14 @@
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_dashboard"
     app:startDestination="@id/dashboardFragment"
 >
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="ca.team6.aquasense.dashboard.DashboardFragment"
+        tools:layout="@layout/fragment_dashboard"
         android:label="Dashboard"
     />
 </navigation>
