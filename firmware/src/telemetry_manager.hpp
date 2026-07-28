@@ -1,10 +1,10 @@
-#ifndef TELEMETRY_MANAGER_H
-#define TELEMETRY_MANAGER_H
+#ifndef TELEMETRY_MANAGER_HPP
+#define TELEMETRY_MANAGER_HPP
 
 #include <Arduino.h>
-#include "sensor_series.h"
-#include "resolutions.h"
-#include "wifi_firebase.h"
+#include "sensor_series.hpp"
+#include "resolutions.hpp"
+#include "wifi_firebase.hpp"
 
 class TelemetryManager {
 public:
@@ -23,14 +23,16 @@ private:
     };
 
     WiFiFirebase& _firebase;
-    const char* _aquariumId;
+    const char* aqId;
+    const char* uid;
 
-    SensorSeries temperatureSeries;
-    SensorSeries waterLevelSeries;
-    SensorSeries dissolvedSolidsSeries;
-    SensorSeries phLevelSeries;
+    SensorSeries temperatureSeries{SENSOR_TEMPERATURE};
+    SensorSeries waterLevelSeries{SENSOR_WATER_LEVEL};
+    SensorSeries dissolvedSolidsSeries{SENSOR_TDS};
+    SensorSeries phLevelSeries{SENSOR_PH};
 
     unsigned long elapsedSeconds;
+    unsigned long lastBucketEpoch[RESOLUTION_COUNT] = {0};
 
     void uploadInstant(const char* sensorName, const String& instantJson);
     void uploadResolution(const char* sensorName, const Resolution& res, const BucketSeries& bucket);

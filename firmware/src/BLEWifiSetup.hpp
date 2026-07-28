@@ -1,5 +1,5 @@
-#ifndef BLE_WIFI_SETUP_H
-#define BLE_WIFI_SETUP_H
+#ifndef BLE_WIFI_SETUP_HPP
+#define BLE_WIFI_SETUP_HPP
 
 #include <Arduino.h>
 #include <ArduinoBLE.h>

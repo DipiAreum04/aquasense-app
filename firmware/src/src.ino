@@ -1,15 +1,15 @@
 #include <Arduino.h>
 #include <WiFiS3.h>
 
-#include "BLEWifiSetup.h"
-#include "temp_sensor.h"
-#include "ph_sensor.h"
-#include "tds_sensor.h"
-#include "water_level.h"
-#include "wifi_firebase.h"
-#include "ntp_time.h"
-#include "pairing_data.h"
-#include "telemetry_manager.h"
+#include "BLEWifiSetup.hpp"
+#include "temp_sensor.hpp"
+#include "ph_sensor.hpp"
+#include "tds_sensor.hpp"
+#include "water_level.hpp"
+#include "wifi_firebase.hpp"
+#include "ntp_time.hpp"
+#include "pairing_data.hpp"
+#include "telemetry_manager.hpp"
 
 TempSensor tempSensor(4);
 PhSensor   phSensor(A0, 2.535, -5.70, 0.03);
@@ -86,23 +86,38 @@ void loop() {
 
     unsigned long epoch = ntp.getEpoch();
 
-    float tempC          = tempSensor.readTemperatureC();
-    float phValue        = phSensor.readPH(tempC);
+    static unsigned long lastGoodEpoch = 0;
+
+    if (epoch == 0) {
+        epoch = lastGoodEpoch;   // fallback
+    } else {
+        lastGoodEpoch = epoch;
+    }
+
+    float tempC           = tempSensor.readTemperatureC();
+    float phValue         = phSensor.readPH(tempC);
     float tdsPpm          = tdsSensor.readTdsPpm();
     bool  waterDetected   = waterSensor.isDetected();
+    // 0 means "no water detected", which is a normal reading. It must stay 0 so the app can
+    // tell it apart from a sensor error, which is reported as -1.
     float waterLevelValue = waterDetected ? 1.0f : 0.0f;
+
+    float safeTemp = (tempC == -127 || tempC == 85 || isnan(tempC)) ? -1000 : tempC;
+    float safePh   = (phValue <= 0 || phValue > 14 || isnan(phValue)) ? -1 : phValue;
+    // Clean water can have TDS values well below 30 ppm, so only negative/NaN is an error.
+    float safeTds  = (tdsPpm < 0 || isnan(tdsPpm)) ? -1 : tdsPpm;
 
     Serial.print("Epoch: ");
     Serial.print(epoch);
     Serial.print(" | Temp: ");
-    Serial.print(tempC);
+    Serial.print(safeTemp);
     Serial.print(" C");
     Serial.print(" | pH: ");
-    Serial.print(phValue);
+    Serial.print(safePh);
     Serial.print(" | TDS: ");
-    Serial.print(tdsPpm);
+    Serial.print(safeTds);
     Serial.print(" | Water Level Anomaly: ");
     Serial.println(waterDetected ? "DETECTED" : "NONE");
 
-    telemetry.tick(epoch, tempC, waterLevelValue, tdsPpm, phValue);
+    telemetry.tick(epoch, safeTemp, waterLevelValue, safeTds, safePh);
 }

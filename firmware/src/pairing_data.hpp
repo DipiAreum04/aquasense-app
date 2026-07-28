@@ -1,5 +1,5 @@
-#ifndef PAIRING_DATA_H
-#define PAIRING_DATA_H
+#ifndef PAIRING_DATA_HPP
+#define PAIRING_DATA_HPP
 
 #include <Arduino.h>
 

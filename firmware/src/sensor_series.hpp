@@ -1,13 +1,20 @@
-#ifndef SENSOR_SERIES_H
-#define SENSOR_SERIES_H
+#ifndef SENSOR_SERIES_HPP
+#define SENSOR_SERIES_HPP
 
 #include <Arduino.h>
-#include "bucket_series.h"
-#include "resolutions.h"
+#include "bucket_series.hpp"
+#include "resolutions.hpp"
+
+enum SensorType {
+    SENSOR_TEMPERATURE,
+    SENSOR_WATER_LEVEL,
+    SENSOR_TDS,
+    SENSOR_PH
+};
 
 class SensorSeries {
 public:
-    SensorSeries();
+    SensorSeries(SensorType type);
 
     void updateInstant(float value, unsigned long timestamp);
 
@@ -18,6 +25,9 @@ public:
     const BucketSeries& getBucketSeries(int resolutionIndex) const;
 
 private:
+
+    float sanitizeValue(float value, SensorType type) const;
+    SensorType type;
     float lastInstantValue;
     unsigned long lastInstantTimestamp;
     BucketSeries buckets[RESOLUTION_COUNT];

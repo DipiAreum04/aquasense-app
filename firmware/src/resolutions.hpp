@@ -1,5 +1,5 @@
-#ifndef RESOLUTIONS_H
-#define RESOLUTIONS_H
+#ifndef RESOLUTIONS_HPP
+#define RESOLUTIONS_HPP
 
 #include <Arduino.h>
 
@@ -11,16 +11,15 @@ struct Resolution {
         return periodSeconds / 100UL;
     }
 };
-
+//hi
 static const Resolution RESOLUTIONS[] = {
-    { "last_hour", 3600UL },
-    { "last_day",  86400UL },
-    { "last_week", 604800UL },
-    { "last_month", 2592000UL },
-    { "last_6_months", 15768000UL },
-    { "last_year",  31536000UL },
+    { "last_1h", 3600UL },
+    { "last_1d", 86400UL },
+    { "last_1w", 604800UL },
+    { "last_1m", 2592000UL },
+    { "last_6m", 15768000UL },
+    { "last_1y", 31536000UL },
 };
-
 static const int RESOLUTION_COUNT = sizeof(RESOLUTIONS) / sizeof(RESOLUTIONS[0]);
 
 #endif

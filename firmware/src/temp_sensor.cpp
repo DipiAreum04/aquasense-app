@@ -1,4 +1,4 @@
-#include "temp_sensor.h"
+#include "temp_sensor.hpp"
 
 TempSensor::TempSensor(uint8_t pin) : _pin(pin) {
     _oneWire = new OneWire(_pin);
