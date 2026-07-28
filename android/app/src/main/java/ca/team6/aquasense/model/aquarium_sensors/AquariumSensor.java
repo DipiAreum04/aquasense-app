@@ -102,6 +102,10 @@ public abstract class AquariumSensor {
         this.status = SensorStatus.OFFLINE;
     }
 
+    // Stable identifier used to persist per-sensor preferences (dashboard card order and visibility).
+    // Values match the telemetry node names in database/schema.json.
+    public abstract String getId();
+
     public abstract int getTitleIconResId();
     
     public abstract int getNameResId();

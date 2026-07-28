@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Shared top navigation/action bar. Any activity that wants the AquaSense toolbar should apply
+         style="@style/Widget.AquaSense.Toolbar" instead of repeating these attributes -->
+    <style name="Widget.AquaSense.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">@drawable/bg_toolbar_gradient</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.DayNight.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.DayNight</item>
+        <item name="titleTextColor">@color/sensor_info_title_color</item>
+        <item name="navigationIconTint">@color/sensor_info_title_color</item>
+    </style>
+
+</resources>

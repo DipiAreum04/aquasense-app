@@ -52,9 +52,8 @@ public class NotificationsFragment extends Fragment {
         SwitchCompat switchMaintenance = view.findViewById(R.id.switchFeedingSilence);
         SwitchCompat switchParam     = view.findViewById(R.id.switchNotifyParam);
         SwitchCompat switchSensor    = view.findViewById(R.id.switchNotifySensor);
-        SwitchCompat switchEquipment = view.findViewById(R.id.switchNotifyEquipment);
+        SwitchCompat switchHubOffline = view.findViewById(R.id.switchNotifyHubDisconnected);
         SwitchCompat switchSummary   = view.findViewById(R.id.switchNotifySummary);
-        SwitchCompat switchFirmware  = view.findViewById(R.id.switchNotifyFirmware);
 
         dividerQuietStart = view.findViewById(R.id.dividerQuietStart);
         dividerQuietEnd   = view.findViewById(R.id.dividerQuietEnd);
@@ -73,9 +72,8 @@ public class NotificationsFragment extends Fragment {
             switchMaintenance.setChecked(s.feedingModeSilence);
             switchParam.setChecked(s.notifyParamOutOfRange);
             switchSensor.setChecked(s.notifySensorOffline);
-            switchEquipment.setChecked(s.notifyEquipmentFailure);
+            switchHubOffline.setChecked(s.notifyHubDisconnected);
             switchSummary.setChecked(s.notifyDailySummary);
-            switchFirmware.setChecked(s.notifyFirmwareUpdate);
             tvQuietStart.setText(s.quietHoursStart);
             tvQuietEnd.setText(s.quietHoursEnd);
             setQuietRowsVisible(s.quietHours);
@@ -122,19 +120,14 @@ public class NotificationsFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        // TODO: Notify on equipment failure.
-        switchEquipment.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_NOTIFY_EQUIPMENT, checked);
+        // TODO: Notify when the hub stops reporting.
+        switchHubOffline.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_HUB_DISCONNECTED, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
         // TODO: Send a daily summary digest.
         switchSummary.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SUMMARY, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
-        });
-        // TODO: Notify when a firmware update is available.
-        switchFirmware.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_NOTIFY_FIRMWARE, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
 

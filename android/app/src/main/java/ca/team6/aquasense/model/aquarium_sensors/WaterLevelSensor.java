@@ -15,6 +15,11 @@ public class WaterLevelSensor extends AquariumSensor {
     }
 
     @Override
+    public String getId() {
+        return "water_level";
+    }
+
+    @Override
     public int getTitleIconResId() {
         return R.drawable.water_24px;
     }

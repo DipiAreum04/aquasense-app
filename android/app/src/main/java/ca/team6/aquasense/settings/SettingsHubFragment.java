@@ -62,10 +62,10 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_accounts));
 
-        // Data & Sync
-        view.findViewById(R.id.rowDataSync)
+        // Data & Privacy
+        view.findViewById(R.id.rowDataPrivacy)
                 .setOnClickListener(v -> Navigation.findNavController(v)
-                        .navigate(R.id.action_hub_to_dataSync));
+                        .navigate(R.id.action_hub_to_dataPrivacy));
 
         // Contact & Support
         view.findViewById(R.id.rowContactSupport)

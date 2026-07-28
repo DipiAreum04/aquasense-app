@@ -91,14 +91,8 @@ public class DashboardFragment extends Fragment {
                 this.getResources().getDisplayMetrics()
         ));
 
-        List<AquariumSensor> sensors = new ArrayList<>();
-        sensors.add(WATER_LEVEL);
-        sensors.add(TEMPERATURE);
-        sensors.add(DISSOLVED_SOLIDS);
-        sensors.add(PH_LEVEL);
-
         applyTemperatureUnitPreference();
-        sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), sensors);
+        sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), visibleSensors());
         recycler.setAdapter(sensorAdapter);
     }
 
@@ -108,8 +102,43 @@ public class DashboardFragment extends Fragment {
         // Re-apply when returning from Settings --> Display & Units.
         applyTemperatureUnitPreference();
         if (sensorAdapter != null) {
+            sensorAdapter.setSensors(visibleSensors());
             sensorAdapter.notifySensorChanged(TEMPERATURE);
         }
+    }
+
+    // Builds the card list using the order and visibility saved in Display & Units.
+    // Falls back to the declaration order below when no preference has been saved yet.
+    private List<AquariumSensor> visibleSensors() {
+        List<AquariumSensor> all = new ArrayList<>();
+        all.add(WATER_LEVEL);
+        all.add(TEMPERATURE);
+        all.add(DISSOLVED_SOLIDS);
+        all.add(PH_LEVEL);
+
+        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
+        if (prefs == null) {
+            return all;
+        }
+
+        List<String> knownIds = new ArrayList<>();
+        for (AquariumSensor sensor : all) {
+            knownIds.add(sensor.getId());
+        }
+
+        List<AquariumSensor> ordered = new ArrayList<>();
+        for (String id : prefs.getSensorOrder(knownIds)) {
+            if (prefs.isSensorHidden(id)) {
+                continue;
+            }
+            for (AquariumSensor sensor : all) {
+                if (sensor.getId().equals(id)) {
+                    ordered.add(sensor);
+                    break;
+                }
+            }
+        }
+        return ordered;
     }
 
     /** Updates the Temperature card unit label from Display & Units (°C / °F). */

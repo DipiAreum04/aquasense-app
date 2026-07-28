@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -9,13 +10,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/toolbar_ocean"
-        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-        app:navigationIconTint="@color/sensor_info_title_color"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
-        app:titleTextColor="@color/sensor_info_title_color" />
+        style="@style/Widget.AquaSense.Toolbar" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_settings"
@@ -23,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_settings" />
+        app:navGraph="@navigation/nav_settings"
+        tools:layout="@layout/fragment_settings_hub" />
 
 </LinearLayout>

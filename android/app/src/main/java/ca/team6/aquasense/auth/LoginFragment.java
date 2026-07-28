@@ -171,7 +171,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * True for errors that mean "this email and password combination is invalid". 
+     * True for errors that mean "this email and password combination is invalid".
      * Network and generic failures are excluded on purpose.
      */
     private static boolean isCredentialError(int messageResId) {

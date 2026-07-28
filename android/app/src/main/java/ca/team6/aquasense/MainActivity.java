@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefs = SharedPreferenceHelper.getInstance(this);
         if (prefs != null) {
-            prefs.applySavedDarkMode();
+            prefs.applySavedThemeMode();
         }
 
         AuthRepository authRepository = new AuthRepository(this);

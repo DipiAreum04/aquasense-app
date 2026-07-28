@@ -1,5 +1,6 @@
 package ca.team6.aquasense.dashboard;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.team6.aquasense.R;
@@ -20,7 +22,16 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
 
     public DashboardSensorAdapter(FragmentManager fragmentManager, List<AquariumSensor> sensors) {
         this.fragmentManager = fragmentManager;
-        this.sensors = sensors;
+        this.sensors = new ArrayList<>(sensors);
+    }
+
+    // Replaces the card list after the order / visibility preference changes.
+    // The list is at most four cards, so a full rebind is cheaper than diffing it.
+    @SuppressLint("NotifyDataSetChanged")
+    public void setSensors(List<AquariumSensor> updated) {
+        sensors.clear();
+        sensors.addAll(updated);
+        notifyDataSetChanged();
     }
 
     @NonNull

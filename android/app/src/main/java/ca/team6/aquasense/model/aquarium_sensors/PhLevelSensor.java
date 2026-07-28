@@ -15,6 +15,11 @@ public class PhLevelSensor extends AquariumSensor {
     }
 
     @Override
+    public String getId() {
+        return "ph_level";
+    }
+
+    @Override
     public int getTitleIconResId() {
         return R.drawable.water_ph_24px;
     }

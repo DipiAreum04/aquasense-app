@@ -13,7 +13,9 @@
     <color name="text_muted">#FF555555</color>
     <color name="divider">#FFE0E0E0</color>
     <color name="accent">#FF1565C0</color>
-    <color name="toolbar_ocean">#FFE8F5F8</color>
+    <color name="toolbar_ocean">#FFDAF1F5</color>
+    <color name="toolbar_gradient_start">#FFC1DFE0</color>
+    <color name="toolbar_gradient_end">#FFCFC1DE</color>
     <color name="launcher_ocean_start">#FF2B8BC8</color>
     <color name="launcher_ocean_end">#FF0A3A6B</color>
     <color name="launcher_rim_light_start">#66FFFFFF</color>
@@ -25,8 +27,21 @@
     <color name="transparent">#00000000</color>
     <color name="danger">#FFC62828</color>
     <color name="warning">#FFE65100</color>
-    <color name="plan_badge_bg">#FFE8F5E9</color>
-    <color name="plan_badge_text">#FF2E7D32</color>
+    <color name="status_success">#FF2E7D32</color>
+    <color name="settings_icon_bg">#401565C0</color>
+
+    <color name="settings_icon_cyan">#FF00ACC1</color>
+    <color name="settings_icon_cyan_bg">#4D00ACC1</color>
+    <color name="settings_icon_teal">#FF00897B</color>
+    <color name="settings_icon_teal_bg">#4D00897B</color>
+    <color name="settings_icon_green">#FF2E7D32</color>
+    <color name="settings_icon_green_bg">#4D2E7D32</color>
+    <color name="settings_icon_blue">#FF1565C0</color>
+    <color name="settings_icon_blue_bg">#4D1565C0</color>
+    <color name="settings_icon_indigo">#FF3F51B5</color>
+    <color name="settings_icon_indigo_bg">#4D3F51B5</color>
+    <color name="settings_icon_purple">#FF6A1B9A</color>
+    <color name="settings_icon_purple_bg">#4D6A1B9A</color>
     <color name="sensor_info_banner_purple">#FFF3F0FF</color>
     <color name="sensor_info_gray_color">#FF566173</color>
     <color name="sensor_info_title_color">#FF243247</color>

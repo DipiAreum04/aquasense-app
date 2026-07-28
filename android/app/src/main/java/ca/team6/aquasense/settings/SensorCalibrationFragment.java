@@ -114,7 +114,7 @@ public class SensorCalibrationFragment extends Fragment {
 
         if (days < 30) {
             tvStatus.setText(R.string.calib_status_good);
-            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.plan_badge_text));
+            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.status_success));
         } else if (days < 90) {
             tvStatus.setText(R.string.calib_status_overdue);
             tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.warning));
