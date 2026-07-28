@@ -20,12 +20,12 @@ public final class ReadingFormatter {
     // Water level is a float switch reporting 0 or 1, so it never gains decimals.
     private static int decimalsFor(String sensorId, boolean precise) {
         switch (sensorId) {
-            case "temperature":
-            case "ph_level":
+            case DatabaseSchema.TEMPERATURE_KEY:
+            case DatabaseSchema.PH_LEVEL_KEY:
                 return precise ? 2 : 1;
-            case "dissolved_solids":
+            case DatabaseSchema.DISSOLVED_SOLIDS_KEY:
                 return precise ? 1 : 0;
-            case "water_level":
+            case DatabaseSchema.WATER_LEVEL_KEY:
                 return 0;
             default:
                 ScopedLogger.error("Unknown sensor ID " + sensorId + ", defaulting to 1 decimal.");

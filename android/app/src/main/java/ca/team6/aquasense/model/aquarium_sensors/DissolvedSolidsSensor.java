@@ -1,6 +1,7 @@
 package ca.team6.aquasense.model.aquarium_sensors;
 
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.InfoSheetSection;
 
 public class DissolvedSolidsSensor extends AquariumSensor {
@@ -17,7 +18,7 @@ public class DissolvedSolidsSensor extends AquariumSensor {
 
     @Override
     public String getId() {
-        return "dissolved_solids";
+        return DatabaseSchema.DISSOLVED_SOLIDS_KEY;
     }
 
     @Override

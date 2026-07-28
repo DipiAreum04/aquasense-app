@@ -3,6 +3,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background">#FFF2F4F8</color>
     <color name="card_background">#FFFFFFFF</color>
+    <color name="card_shadow">#FF123A4D</color>
     <color name="text_primary">#FF000000</color>
     <color name="icon_gray">#FFBBBBBB</color>
     <color name="status_red">#FFDA3E44</color>
@@ -26,6 +27,7 @@
     <color name="launcher_shadow_soft">#22000000</color>
     <color name="transparent">#00000000</color>
     <color name="danger">#FFC62828</color>
+    <color name="danger_on_toolbar">#FFC62828</color>
     <color name="warning">#FFE65100</color>
     <color name="status_success">#FF2E7D32</color>
     <color name="settings_icon_bg">#401565C0</color>

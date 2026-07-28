@@ -23,6 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
@@ -71,11 +72,24 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/tvGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:text="@string/auth_go_to_login"
+                android:textColor="@color/accent"
+                android:textSize="14sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_auth_card"
-                android:elevation="6dp"
+                style="@style/Widget.AquaSense.Card.Auth"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -83,14 +97,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="@string/auth_first_name"
+                    android:text="@string/auth_full_name"
                     android:textAllCaps="true"
                     android:textColor="@color/auth_heading"
                     android:textSize="12sp"
                     android:letterSpacing="0.02" />
 
                 <LinearLayout
-                    android:id="@+id/boxRegisterFirstName"
+                    android:id="@+id/boxRegisterFullName"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginBottom="12dp"
@@ -107,57 +121,14 @@
                         app:tint="@color/text_secondary" />
 
                     <EditText
-                        android:id="@+id/etRegisterFirstName"
+                        android:id="@+id/etRegisterFullName"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:autofillHints="personGivenName"
+                        android:autofillHints="name"
                         android:background="@android:color/transparent"
-                        android:hint="@string/auth_first_name_hint"
-                        android:inputType="textPersonName|textCapWords"
-                        android:maxLength="100"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_secondary"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:text="@string/auth_last_name"
-                    android:textAllCaps="true"
-                    android:textColor="@color/auth_heading"
-                    android:textSize="12sp"
-                    android:letterSpacing="0.02" />
-
-                <LinearLayout
-                    android:id="@+id/boxRegisterLastName"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_auth_input"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="14dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/account_circle_24px"
-                        app:tint="@color/text_secondary" />
-
-                    <EditText
-                        android:id="@+id/etRegisterLastName"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:autofillHints="personFamilyName"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/auth_last_name_hint"
+                        android:hint="@string/auth_full_name_hint"
                         android:inputType="textPersonName|textCapWords"
                         android:maxLength="100"
                         android:textColor="@color/text_primary"
@@ -401,16 +372,6 @@
                     app:strokeWidth="0dp" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvGoToLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:padding="8dp"
-                android:text="@string/auth_go_to_login"
-                android:textColor="@color/accent"
-                android:textSize="14sp" />
 
         </LinearLayout>
     </ScrollView>

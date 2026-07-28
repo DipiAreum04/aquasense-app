@@ -23,6 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
@@ -64,17 +65,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/auth_tagline_login"
                 android:textColor="@color/text_secondary"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/tvGoToRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:text="@string/auth_go_to_register"
+                android:textColor="@color/accent"
+                android:textSize="14sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_auth_card"
-                android:elevation="6dp"
+                style="@style/Widget.AquaSense.Card.Auth"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -192,6 +206,21 @@
                         app:tint="@color/text_secondary" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvForgotPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="14dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="@string/auth_forgot_password"
+                    android:textColor="@color/accent"
+                    android:textSize="14sp" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogin"
                     android:layout_width="match_parent"
@@ -260,16 +289,6 @@
                     app:strokeWidth="0dp" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvGoToRegister"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:padding="8dp"
-                android:text="@string/auth_go_to_register"
-                android:textColor="@color/accent"
-                android:textSize="14sp" />
 
         </LinearLayout>
     </ScrollView>

@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--
+      Shared elevation styles for the shape-backed cards used across the app.
+
+      Shadow tint is pulled toward the app's ocean blue so it does not read as
+      dirty grey on the near-white backgrounds.
+    -->
+    <style name="Widget.AquaSense.Card" parent="">
+        <item name="android:elevation">6dp</item>
+        <item name="android:outlineAmbientShadowColor">@color/card_shadow</item>
+        <item name="android:outlineSpotShadowColor">@color/card_shadow</item>
+    </style>
+
+    <!-- Auth cards use a 24dp radius, so they need a correspondingly wider blur. -->
+    <style name="Widget.AquaSense.Card.Auth">
+        <item name="android:elevation">14dp</item>
+    </style>
+
     <!-- Shared top navigation/action bar. Any activity that wants the AquaSense toolbar should apply
          style="@style/Widget.AquaSense.Toolbar" instead of repeating these attributes -->
     <style name="Widget.AquaSense.Toolbar" parent="Widget.AppCompat.Toolbar">

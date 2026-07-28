@@ -8,6 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipToPadding="false"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -19,7 +20,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_settings_card"
             android:clickable="true"
-            android:elevation="2dp"
+            style="@style/Widget.AquaSense.Card"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center_vertical"
@@ -89,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_settings_card"
-            android:elevation="2dp"
+            style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
             <!-- Tank Profiles (other team) -->
@@ -295,7 +296,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_settings_card"
-            android:elevation="2dp"
+            style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
             <!-- Display & Units section -->
@@ -631,7 +632,7 @@
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Contact & Support (ours) -->
+            <!-- Contact & Support -->
             <LinearLayout
                 android:id="@+id/rowContactSupport"
                 android:layout_width="match_parent"

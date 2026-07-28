@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -59,6 +60,7 @@ public class LoginFragment extends Fragment {
         btnGoogle = view.findViewById(R.id.btnGoogleLogin);
         btnTogglePassword = view.findViewById(R.id.btnToggleLoginPassword);
         TextView linkRegister = view.findViewById(R.id.tvGoToRegister);
+        TextView linkForgotPassword = view.findViewById(R.id.tvForgotPassword);
 
         InputFieldError.track(etEmail, boxEmail,
                 () -> emailErrorFor(textOf(etEmail)) == 0);
@@ -70,6 +72,7 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> attemptLogin());
         btnGoogle.setOnClickListener(v -> attemptGoogleSignIn());
         btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
+        linkForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
         linkRegister.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigate(R.id.action_login_to_register)); // TODO: check if this is correct
     }
@@ -153,6 +156,72 @@ public class LoginFragment extends Fragment {
         });
     }
 
+    private void showForgotPasswordDialog() {
+        View content = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
+        EditText etResetEmail = content.findViewById(R.id.etForgotPasswordEmail);
+        // Carry over whatever they already typed so the common case is one tap.
+        etResetEmail.setText(textOf(etEmail));
+        etResetEmail.setSelection(etResetEmail.getText().length());
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.auth_forgot_password_title)
+                .setView(content)
+                .setNegativeButton(R.string.delete_profile_cancel, null)
+                .setPositiveButton(R.string.auth_forgot_password_send, null)
+                .create();
+
+        // Bound after show() so a validation failure does not dismiss the dialog.
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    String email = textOf(etResetEmail);
+                    if (TextUtils.isEmpty(email)) {
+                        etResetEmail.setError(getString(R.string.email_required));
+                        return;
+                    }
+                    if (ProfileInputValidator.isInvalidEmail(email)) {
+                        etResetEmail.setError(getString(R.string.email_invalid));
+                        return;
+                    }
+                    setResetDialogBusy(dialog, true);
+                    authRepository.sendPasswordReset(email, new AuthRepository.ActionCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (!isAdded()) {
+                                return;
+                            }
+                            dialog.dismiss();
+                            showResetSentDialog(email);
+                        }
+
+                        @Override
+                        public void onError(int messageResId) {
+                            if (!isAdded()) {
+                                return;
+                            }
+                            setResetDialogBusy(dialog, false);
+                            toast(messageResId);
+                        }
+                    });
+                }));
+        dialog.show();
+    }
+
+    private void showResetSentDialog(@NonNull String email) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.auth_forgot_password_sent_title)
+                .setMessage(getString(R.string.auth_forgot_password_sent, email))
+                .setPositiveButton(R.string.got_it, null)
+                .show();
+    }
+
+    private void setResetDialogBusy(@NonNull AlertDialog dialog, boolean busy) {
+        dialog.setCancelable(!busy);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(!busy);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText(busy
+                ? R.string.auth_forgot_password_sending
+                : R.string.auth_forgot_password_send);
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(!busy);
+    }
     private void togglePasswordVisibility() {
         passwordVisible = !passwordVisible;
         int selection = etPassword.getSelectionEnd();
