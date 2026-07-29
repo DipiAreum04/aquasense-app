@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaSense Troubleshooting</title>
+  <style>
+    /* No webfont @import: the page is loaded from assets with a null base URL,
+       so remote fonts never resolve. These stacks fall back to the system UI font. */
+    :root {
+      --page-bg: #f4f5f9;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --heading: #683796;
+      --item-title: #1e293b;
+      --item-desc: #485363;
+      --badge-bg: #efeaff;
+      --badge-text: #5b32a8;
+      --accent: #7c3aed;
+      --bar-start: #382468;
+      --bar-end: #7a65a9;
+      --card-shadow: rgba(0,0,0,0.04);
+    }
+    /* Dark mode.
+       Values mirror res/values-night/colors.xml so the page matches the app chrome. */
+    :root.dark {
+      --page-bg: #0f1419;
+      --card-bg: #1c2430;
+      --text: #f2f4f8;
+      --heading: #e9ccf9;
+      --item-title: #f2f4f8;
+      --item-desc: #b1b9c4;
+      --badge-bg: #2a2438;
+      --badge-text: #ba68c8;
+      --accent: #ba68c8;
+      --bar-start: #3c1a45;
+      --bar-end: #774b80;
+      --card-shadow: rgba(0,0,0,0.35);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--page-bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .top-bar {
+      background: linear-gradient(180deg, var(--bar-start) 0%, var(--bar-end) 100%);
+      color: #ffffff;
+      padding: 32px 24px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      text-align: center;
+    }
+
+    .top-bar h1 {
+      font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .top-bar p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .content {
+      max-width: 700px;
+      margin: -20px auto 30px;
+      padding: 0 16px;
+    }
+
+    .grid-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px var(--card-shadow);
+    }
+
+    .badge {
+      display: inline-block;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0 0 12px 0;
+      font-size: 19px;
+      color: var(--heading);
+    }
+
+    .item {
+      margin-top: 12px;
+      padding-left: 12px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--item-title);
+    }
+
+    .item-desc {
+      font-size: 14px;
+      color: var(--item-desc);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Troubleshooting</h1>
+  <p>Common issue fixes & setup tips</p>
+</div>
+
+<div class="content">
+
+  <div class="grid-card">
+    <span class="badge">HUB ISSUES</span>
+    <h3>Dashboard says "Hub Disconnected"</h3>
+    <div class="item">
+      <div class="item-title">Start With Power</div>
+      <div class="item-desc">• Make sure your hub is plugged in and switched on.</div>
+      <div class="item-desc">• Check that the power outlet is live.</div>
+      <div class="item-desc">• Unplug the hub, wait 10 seconds, and plug it back in.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Check The Cables</div>
+      <div class="item-desc">• Follow each sensor cable from the aquarium to the hub and press any loose plugs firmly back in.</div>
+      <div class="item-desc">• Look for cracked or damaged cable. A damaged cable will need replacing.</div>
+      <div class="item-desc">• Make sure the hub itself is dry and above the waterline.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Give It A Moment</div>
+      <div class="item-desc">• After replugging, the hub may take 1 to 2 minutes to reappear. Close the app and reopen it to refresh the dashboard.</div>
+    </div>
+  </div>
+
+  <div class="grid-card">
+    <span class="badge">READING ISSUES</span>
+    <h3>Readings are Wrong or Stagnant</h3>
+    <div class="item">
+      <div class="item-title">Check The Sensor</div>
+      <div class="item-desc">• The sensor must be fully submerged in water. If the water level is low, fill the aquarium up.</div>
+      <div class="item-desc">• Move the sensor away from filter outlets and air stones, where bubbles may confuse the reading.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Clean The Sensor</div>
+      <div class="item-desc">• Algae, slime, and hard water layers can throw readings off.</div>
+      <div class="item-desc">• Wipe the sensor gently and rinse it. Never scrub the sensor tip.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Calibrate</div>
+      <div class="item-desc">• Sensor values may drift over time. This is normal and expected.</div>
+      <div class="item-desc">• Go to Settings &rarr; Sensor Calibration and tap the sensor for step-by-step instructions.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Wait After A Water Change</div>
+      <div class="item-desc">• Readings swing for a while after water changes or new treatments. Give the aquarium an hour to settle before worrying.</div>
+    </div>
+  </div>
+
+  <div class="grid-card">
+    <span class="badge">SENSOR SPECIFIC</span>
+    <h3>Tips for Each Sensor</h3>
+    <div class="item">
+      <div class="item-title">Water Level</div>
+      <div class="item-desc">• The sensor needs flat firm contact with the aquarium wall. Adjust if it has slipped.</div>
+      <div class="item-desc">• Clear away algae and debris around it.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Temperature</div>
+      <div class="item-desc">• Ensure the sensor is properly submerged in water.</div>
+      <div class="item-desc">• Keep it away from the heater to ensure accurate readings.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">pH Level</div>
+      <div class="item-desc">• As this sensor is very sensitive, rinse it with clean water from time to time.</div>
+      <div class="item-desc">• Never let the sensor tip dry out. If it has dried, it may need replacing.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Total Dissolved Solids</div>
+      <div class="item-desc">• Ensure the sensor is properly submerged in water.</div>
+      <div class="item-desc">• Needs steady contact with flowing water. Make sure it is not resting against the glass or gravel.</div>
+    </div>
+  </div>
+
+  <div class="grid-card">
+    <span class="badge">APP ISSUES</span>
+    <h3>App is Not Updating Data</h3>
+    <div class="item">
+      <div class="item-title">Check Your Connection</div>
+      <div class="item-desc">• Confirm your phone has working Wi-Fi or mobile data.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Check The Hub's Connection</div>
+      <div class="item-desc">• The hub needs your home Wi-Fi. If you changed your network name or password, pair the hub again.</div>
+      <div class="item-desc">• A hub far from the WiFi router may have a weak signal. Move the router closer or add an extender to fix the connection.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">Refresh The App</div>
+      <div class="item-desc">• Close the app fully and reopen it to refresh the parameter readings.</div>
+    </div>
+  </div>
+
+  <div class="grid-card">
+    <span class="badge">ALERT ISSUES</span>
+    <h3>Issues with Alerts</h3>
+    <div class="item">
+      <div class="item-title">Too Many Alerts</div>
+      <div class="item-desc">• Your safe ranges may be stricter than your aquarium's needs. Widen them in Settings &rarr; Water Parameters.</div>
+      <div class="item-desc">• Turn on Critical alerts only or set Quiet hours in Settings &rarr; Notifications.</div>
+    </div>
+    <div class="item">
+      <div class="item-title">No Alerts At All</div>
+      <div class="item-desc">• Check that Maintenance Mode is off. This mode silences all alerts.</div>
+      <div class="item-desc">• Ensure that Quiet hours is not covering the time you expect alerts.</div>
+      <div class="item-desc">• Confirm your phone allows notifications from the AquaSense app.</div>
+    </div>
+  </div>
+
+  <div class="grid-card">
+    <span class="badge">STILL STUCK?</span>
+    <h3>We Can Help!</h3>
+    <div class="item">
+      <div class="item-title">Get In Touch</div>
+      <div class="item-desc">• Go to Settings &rarr; Contact &amp; Support and send us a message.</div>
+      <div class="item-desc">• Tell us which sensor is affected and what you have already tried. It helps us answer faster!</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
