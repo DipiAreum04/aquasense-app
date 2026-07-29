@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_hub_to_contactSupport"
             app:destination="@id/contactSupportFragment" />
+        <action
+            android:id="@+id/action_hub_to_troubleshootingGuide"
+            app:destination="@id/troubleshootingGuideFragment" />
     </fragment>
 
     <!-- ST-1.5 -->
@@ -99,6 +102,13 @@
             android:id="@+id/action_contactSupport_to_contactForm"
             app:destination="@id/contactFormFragment" />
     </fragment>
+
+    <!-- SETTINGS-05 / ST-5.2 - Troubleshooting Guide -->
+    <fragment
+        android:id="@+id/troubleshootingGuideFragment"
+        android:name="ca.team6.aquasense.settings.TroubleshootingGuideFragment"
+        tools:layout="@layout/fragment_troubleshooting_guide"
+        android:label="@string/troubleshooting_guide" />
 
     <!-- SETTINGS-02 - Contact Form -->
     <fragment

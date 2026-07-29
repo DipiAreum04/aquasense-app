@@ -80,12 +80,16 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_contactSupport));
 
+        // Troubleshooting Guide
+        view.findViewById(R.id.rowTroubleshootingGuide)
+                .setOnClickListener(v -> Navigation.findNavController(v)
+                        .navigate(R.id.action_hub_to_troubleshootingGuide));
+
         // TODO: Rows to be added by others - not implemented yet
         View.OnClickListener comingSoon = v ->
                 SharedPreferenceHelper.showComingSoon(requireContext());
         view.findViewById(R.id.rowTankProfiles).setOnClickListener(comingSoon);
         view.findViewById(R.id.rowWaterParameters).setOnClickListener(comingSoon);
-        view.findViewById(R.id.rowTroubleshootingGuide).setOnClickListener(comingSoon);
     }
 
     /**
