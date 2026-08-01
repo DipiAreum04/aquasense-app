@@ -7,8 +7,10 @@ requires-python = ">=3.14"
 dependencies = [
     "firebase-admin>=7.5.0",
     "jsonschema>=4.26.0",
+    "numpy>=2.5.1",
     "pyrebase4>=4.9.0",
     "pytest>=9.1.1",
+    "rstr>=3.2.2",
     "types-jsonschema>=4.26.0.20260518",
     "types-requests>=2.31.0.6",
 ]

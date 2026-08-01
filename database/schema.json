@@ -1,6 +1,66 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
+    "thresholds": {
+      "type": "object",
+      "required": ["warn_low", "safe_low", "safe_high", "warn_high"],
+      "additionalProperties": false,
+      "properties": {
+        "warn_low": {
+          "type": "number"
+        },
+        "safe_low": {
+          "type": "number"
+        },
+        "safe_high": {
+          "type": "number"
+        },
+        "warn_high": {
+          "type": "number"
+        }
+      }
+    },
+    "aquarium": {
+      "type": "object",
+      "required": ["name", "water_type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "water_type": {
+          "type": "string",
+          "enum": ["freshwater", "saltwater"]
+        },
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "temperature": { "$ref": "#/$defs/thresholds" },
+            "dissolved_solids": { "$ref": "#/$defs/thresholds" },
+            "ph_level": { "$ref": "#/$defs/thresholds" }
+          }
+        },
+        "spike_deltas": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "temperature": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "dissolved_solids": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "ph_level": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      }
+    },
     "instant": {
       "type": "object",
       "required": ["timestamp", "value"],
@@ -18,7 +78,7 @@
     },
     "period": {
       "type": "object",
-      "required": ["index", "timestamp", "values"],
+      "required": ["index", "buckets"],
       "additionalProperties": false,
       "properties": {
         "index": {
@@ -26,17 +86,24 @@
           "minimum": 0,
           "maximum": 99
         },
-        "timestamp": {
-          "type": "integer",
-          "minimum": 1777608000,
-          "maximum": 1788235200
-        },
-        "values": {
+        "buckets": {
           "type": "object",
           "additionalProperties": false,
           "patternProperties": {
-            "^B([0-9]|[1-9][0-9])$": {
-              "type": "number"
+            "^B([0-9][0-9])$": {
+              "type": "object",
+              "required": ["timestamp", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "timestamp": {
+                  "type": "integer",
+                  "minimum": 1777608000,
+                  "maximum": 1788235200
+                },
+                "value": {
+                  "type": "number"
+                }
+              }
             }
           }
         }
@@ -82,9 +149,7 @@
           "type": "object",
           "additionalProperties": false,
           "patternProperties": {
-            "^[A-Za-z0-9_-]{28}$": {
-              "type": "string"
-            }
+            "^[A-Za-z0-9_-]{28}$": { "$ref": "#/$defs/aquarium" }
           }
         },
         "telemetry": {
