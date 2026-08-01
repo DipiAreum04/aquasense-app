@@ -28,7 +28,7 @@ public class AuthActivity extends AppCompatActivity {
             prefs.applySavedThemeMode();
         }
 
-        AuthRepository authRepository = new AuthRepository(this);
+        AuthRepository authRepository = AuthRepository.getInstance(this);
         if (authRepository.isLoggedIn()) {
             AuthNavigator.continueAfterAuth(this, authRepository);
             return;

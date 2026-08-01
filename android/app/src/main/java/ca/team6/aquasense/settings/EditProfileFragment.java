@@ -37,7 +37,7 @@ public class EditProfileFragment extends Fragment {
         TextView tvEmail = view.findViewById(R.id.tvEditProfileEmail);
         Button btnSave = view.findViewById(R.id.btnSaveProfile);
 
-        AuthRepository authRepository = new AuthRepository(requireContext());
+        AuthRepository authRepository = AuthRepository.getInstance(requireContext());
         authRepository.syncProfileCacheFromFirebase();
 
         String name = authRepository.getProfileDisplayName();

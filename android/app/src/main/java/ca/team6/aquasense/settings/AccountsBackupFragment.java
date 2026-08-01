@@ -51,7 +51,7 @@ public class AccountsBackupFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        authRepository = new AuthRepository(requireContext());
+        authRepository = AuthRepository.getInstance(requireContext());
         prefs = SharedPreferenceHelper.getInstance(requireContext());
         SettingsRepository repo = new SettingsRepository(requireContext());
 
