@@ -34,7 +34,17 @@
         <action
             android:id="@+id/action_hub_to_troubleshootingGuide"
             app:destination="@id/troubleshootingGuideFragment" />
+        <action
+            android:id="@+id/action_hub_to_aquariumTemplates"
+            app:destination="@id/aquariumTemplatesFragment" />
     </fragment>
+
+    <!-- SETTINGS-04 / ST-4.2 - Aquarium Templates -->
+    <fragment
+        android:id="@+id/aquariumTemplatesFragment"
+        android:name="ca.team6.aquasense.settings.AquariumTemplatesFragment"
+        tools:layout="@layout/fragment_aquarium_templates"
+        android:label="@string/aquarium_templates" />
 
     <!-- ST-1.5 -->
     <fragment

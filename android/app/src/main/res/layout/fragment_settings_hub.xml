@@ -157,6 +157,70 @@
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
+            <!-- SETTINGS-04 / ST-4.2 - Aquarium Templates -->
+            <LinearLayout
+                android:id="@+id/rowAquariumTemplates"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_blue_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/book_6_24px"
+                    app:tint="@color/settings_icon_blue" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/aquarium_templates"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/aquarium_templates_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/icon_gray" />
+
+            </LinearLayout>
+
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="62dp"
+                android:background="@color/divider" />
+
             <!-- Water Parameters (other team) -->
             <LinearLayout
                 android:id="@+id/rowWaterParameters"

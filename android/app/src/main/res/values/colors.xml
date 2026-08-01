@@ -78,4 +78,20 @@
     <color name="auth_wave">#FFD7ECF5</color>
     <color name="auth_wave_soft">#FFE8F4F9</color>
     <color name="auth_google_button_bg">#FFDCEEF8</color>
+
+    <color name="template_accent_freshwater">#FF1565C0</color>
+    <color name="template_accent_coldwater">#FF0097A7</color>
+    <color name="template_accent_hardwater">#FFD98324</color>
+    <color name="template_accent_saltwater">#FF574C9B</color>
+    <color name="template_heading">#FF043D5C</color>
+    <color name="template_chip_bg">#FFEDF1F6</color>
+    <color name="template_chip_text">#FF3C4858</color>
+
+    <color name="template_header_text">#FF063D54</color>
+    <color name="template_header_text_muted">#FF3D6C80</color>
+    <color name="template_header_badge_bg">#26043D5C</color>
+
+    <color name="water_badge_freshwater">#FF2E7D32</color>
+    <color name="water_badge_saltwater">#FF1565C0</color>
+    <color name="water_badge_text">#FFFFFFFF</color>
 </resources>
