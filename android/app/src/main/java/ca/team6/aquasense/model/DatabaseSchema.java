@@ -1,5 +1,7 @@
 package ca.team6.aquasense.model;
 
+import java.util.Locale;
+
 /**
  * This class contains all the Realtime Database keys used in the app.
  *
@@ -8,9 +10,9 @@ package ca.team6.aquasense.model;
  * <p>Tree shape:
  * <pre>
  * /{uid}/account/{name,email}
- * /{uid}/aquariums/{aquariumId}
+ * /{uid}/aquariums/{aquariumId}/{name,water_type,thresholds,spike_deltas}
  * /{uid}/telemetry/{aquariumId}/{sensor}/last_instant/{timestamp,value}
- * /{uid}/telemetry/{aquariumId}/{sensor}/{period}/{index,timestamp,values/B0..B99}
+ * /{uid}/telemetry/{aquariumId}/{sensor}/{period}/{index,buckets/B00..B99/{timestamp,value}}
  * </pre>
  */
 public final class DatabaseSchema {
@@ -26,8 +28,24 @@ public final class DatabaseSchema {
     public static final String NAME_KEY = "name";
     public static final String EMAIL_KEY = "email";
 
-    // Sensor nodes under /{uid}/telemetry/{aquariumId}. These double as the sensor IDs the
-    // dashboard uses, so AquariumSensor.getId() returns these same values.
+    // /{uid}/aquariums/{aquariumId}. Only name and water_type are required by the schema;
+    // thresholds and spike_deltas are optional, so the app must supply defaults when absent.
+    public static final String WATER_TYPE_KEY = "water_type";
+    public static final String THRESHOLDS_KEY = "thresholds";
+    public static final String SPIKE_DELTAS_KEY = "spike_deltas";
+
+    // Permitted water_type values.
+    public static final String WATER_TYPE_FRESHWATER = "freshwater";
+    public static final String WATER_TYPE_SALTWATER = "saltwater";
+
+    // Fields of a thresholds band under /{uid}/aquariums/{aquariumId}/thresholds/{sensor}.
+    // All four are required together, so a sensor is either fully configured or absent.
+    public static final String WARN_LOW_KEY = "warn_low";
+    public static final String SAFE_LOW_KEY = "safe_low";
+    public static final String SAFE_HIGH_KEY = "safe_high";
+    public static final String WARN_HIGH_KEY = "warn_high";
+
+    // Sensor nodes under /{uid}/telemetry/{aquariumId}
     public static final String TEMPERATURE_KEY = "temperature";
     public static final String WATER_LEVEL_KEY = "water_level";
     public static final String DISSOLVED_SOLIDS_KEY = "dissolved_solids";
@@ -42,19 +60,23 @@ public final class DatabaseSchema {
     public static final String LAST_6M_KEY = "last_6m";
     public static final String LAST_1Y_KEY = "last_1y";
 
-    // Fields of a last_instant node.
+    // Fields of a last_instant node, and of every bucket inside a period. Each bucket carries its
+    // own timestamp, so a period has no timestamp of its own.
     public static final String TIMESTAMP_KEY = "timestamp";
     public static final String VALUE_KEY = "value";
 
-    // Fields of a period node. `index` is the ring-buffer write cursor and `values` holds the
-    // buckets B0..B(BUCKET_COUNT - 1).
+    // Fields of a period node. `index` is the ring-buffer write cursor pointing at the most
+    // recently committed bucket, and `buckets` holds B0..B(BUCKET_COUNT - 1).
     public static final String INDEX_KEY = "index";
-    public static final String VALUES_KEY = "values";
+    public static final String BUCKETS_KEY = "buckets";
     public static final String BUCKET_PREFIX = "B";
     public static final int BUCKET_COUNT = 100;
 
-    /** Bucket child key for a slot in a period's {@code values} node, e.g. {@code B7}. */
+    /**
+     * Bucket child key for a slot in a period's {@code buckets} node, e.g. {@code B07}.
+     *
+     */
     public static String bucketKey(int slot) {
-        return BUCKET_PREFIX + slot;
+        return String.format(Locale.ROOT, BUCKET_PREFIX + "%02d", slot);
     }
 }

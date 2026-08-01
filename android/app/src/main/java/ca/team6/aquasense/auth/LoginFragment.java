@@ -51,7 +51,7 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        authRepository = new AuthRepository(requireContext());
+        authRepository = AuthRepository.getInstance(requireContext());
         etEmail = view.findViewById(R.id.etLoginEmail);
         etPassword = view.findViewById(R.id.etLoginPassword);
         boxEmail = view.findViewById(R.id.boxLoginEmail);

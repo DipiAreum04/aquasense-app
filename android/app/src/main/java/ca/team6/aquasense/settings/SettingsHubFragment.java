@@ -39,7 +39,7 @@ public class SettingsHubFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        authRepository = new AuthRepository(requireContext());
+        authRepository = AuthRepository.getInstance(requireContext());
         tvHubProfileName = view.findViewById(R.id.tvHubProfileName);
         tvHubProfileEmail = view.findViewById(R.id.tvHubProfileEmail);
 

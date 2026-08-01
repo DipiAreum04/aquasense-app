@@ -30,16 +30,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Locale;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.DatabaseSchema;
+import ca.team6.aquasense.model.FirebaseDatabaseHelper;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
@@ -66,16 +64,35 @@ public class AuthRepository {
         void onError(@StringRes int messageResId);
     }
 
+    private static volatile AuthRepository instance;
+
     private final Context appContext;
     private final FirebaseAuth firebaseAuth;
     private final SharedPreferenceHelper prefs;
     private final CredentialManager credentialManager;
+    private final FirebaseDatabaseHelper database;
+    // Credential Manager needs a background executor to deliver its result on. One shared pool
+    // for the app, since a new pool per sign-in attempt would never be shut down.
+    private final ExecutorService credentialExecutor;
 
-    public AuthRepository(@NonNull Context context) {
-        this.appContext = context.getApplicationContext();
+    private AuthRepository(@NonNull Context appContext) {
+        this.appContext = appContext;
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.prefs = SharedPreferenceHelper.getInstance(appContext);
         this.credentialManager = CredentialManager.create(appContext);
+        this.database = FirebaseDatabaseHelper.getInstance();
+        this.credentialExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    public static AuthRepository getInstance(@NonNull Context context) {
+        if (instance == null) {
+            synchronized (AuthRepository.class) {
+                if (instance == null) {
+                    instance = new AuthRepository(context.getApplicationContext());
+                }
+            }
+        }
+        return instance;
     }
 
     @Nullable
@@ -85,6 +102,14 @@ public class AuthRepository {
 
     public boolean isLoggedIn() {
         return getCurrentUser() != null;
+    }
+
+    // The UID is the root key of the database tree, so screens that read telemetry need it.
+    // Exposed as a plain String to keep FirebaseUser out of the UI layer.
+    @Nullable
+    public String getUid() {
+        FirebaseUser user = getCurrentUser();
+        return user != null ? user.getUid() : null;
     }
 
     public boolean needsPairing() {
@@ -162,7 +187,7 @@ public class AuthRepository {
                 activity,
                 request,
                 new CancellationSignal(),
-                Executors.newSingleThreadExecutor(),
+                credentialExecutor,
                 new CredentialManagerCallback<>() {
                     @Override
                     public void onResult(GetCredentialResponse result) {
@@ -301,23 +326,21 @@ public class AuthRepository {
                 callback.onError(mapError(profileTask.getException()));
                 return;
             }
-            FirebaseDatabase.getInstance()
-                    .getReference()
-                    .child(user.getUid())
-                    .child(DatabaseSchema.ACCOUNT_KEY)
-                    .child(DatabaseSchema.NAME_KEY)
-                    .setValue(name)
-                    .addOnCompleteListener(dbTask -> {
-                        if (!dbTask.isSuccessful()) {
-                            // Auth already took the new name, so the cache follows it and the
-                            // next sign-in rewrites /{uid}/account from Auth.
-                            cacheProfileName(name);
-                            callback.onError(R.string.edit_profile_save_failed);
-                            return;
-                        }
-                        cacheProfileName(name);
-                        callback.onSuccess();
-                    });
+            database.updateAccountName(user.getUid(), name, new FirebaseDatabaseHelper.DbCallback() {
+                @Override
+                public void onSuccess() {
+                    cacheProfileName(name);
+                    callback.onSuccess();
+                }
+
+                @Override
+                public void onError(@Nullable Exception exception) {
+                    // Auth already took the new name, so the cache follows it and the
+                    // next sign-in rewrites /{uid}/account from Auth.
+                    cacheProfileName(name);
+                    callback.onError(R.string.edit_profile_save_failed);
+                }
+            });
         });
     }
 
@@ -404,27 +427,27 @@ public class AuthRepository {
     // user first would leave the node orphaned with no signed-in user able to remove it.
     private void deleteProfileNodeThenUser(@NonNull FirebaseUser user,
                                            @NonNull ActionCallback callback) {
-        FirebaseDatabase.getInstance()
-                .getReference()
-                .child(user.getUid())
-                .removeValue()
-                .addOnCompleteListener(dbTask -> {
-                    if (!dbTask.isSuccessful()) {
-                        // Auth user is untouched, so the account still works and can retry.
-                        callback.onError(R.string.delete_profile_error_data);
+        database.deleteUserNode(user.getUid(), new FirebaseDatabaseHelper.DbCallback() {
+            @Override
+            public void onSuccess() {
+                user.delete().addOnCompleteListener(deleteTask -> {
+                    if (!deleteTask.isSuccessful()) {
+                        // Schema node is gone but the login survives; writeUserProfile()
+                        // restores /{uid}/account on the next successful sign-in.
+                        callback.onError(mapError(deleteTask.getException()));
                         return;
                     }
-                    user.delete().addOnCompleteListener(deleteTask -> {
-                        if (!deleteTask.isSuccessful()) {
-                            // Schema node is gone but the login survives; writeUserProfile()
-                            // restores /{uid}/account on the next successful sign-in.
-                            callback.onError(mapError(deleteTask.getException()));
-                            return;
-                        }
-                        clearSessionAfterDelete();
-                        callback.onSuccess();
-                    });
+                    clearSessionAfterDelete();
+                    callback.onSuccess();
                 });
+            }
+
+            @Override
+            public void onError(@Nullable Exception exception) {
+                // Auth user is untouched, so the account still works and can retry.
+                callback.onError(R.string.delete_profile_error_data);
+            }
+        });
     }
 
     // Unlike signOut(), a deleted account has nothing to return to, so send the next
@@ -522,28 +545,24 @@ public class AuthRepository {
                                   boolean isNewAccount,
                                   @NonNull FirebaseUser user,
                                   @NonNull AuthCallback callback) {
-        Map<String, Object> account = new HashMap<>();
-        account.put(DatabaseSchema.NAME_KEY, name != null ? name : "");
-        account.put(DatabaseSchema.EMAIL_KEY, email);
-
-        FirebaseDatabase.getInstance()
-                .getReference()
-                .child(uid)
-                .child(DatabaseSchema.ACCOUNT_KEY)
-                .setValue(account)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+        database.writeAccount(uid, name != null ? name : "", email,
+                new FirebaseDatabaseHelper.DbCallback() {
+                    @Override
+                    public void onSuccess() {
                         callback.onSuccess(user);
-                        return;
                     }
-                    if (isNewAccount) {
-                        // Auth user may already exist, so clear the local session to allow retry.
-                        signOut();
-                        callback.onError(R.string.auth_error_profile_save);
-                        return;
+
+                    @Override
+                    public void onError(@Nullable Exception exception) {
+                        if (isNewAccount) {
+                            // Auth user may already exist, so clear the local session to allow retry.
+                            signOut();
+                            callback.onError(R.string.auth_error_profile_save);
+                            return;
+                        }
+                        // TODO: FIX THIS LATER:Schema write is retried on the next auth success if it fails.
+                        callback.onSuccess(user);
                     }
-                    // TODO: FIX THIS LATER:Schema write is retried on the next auth success if it fails.
-                    callback.onSuccess(user);
                 });
     }
 

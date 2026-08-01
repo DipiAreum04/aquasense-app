@@ -58,7 +58,7 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        authRepository = new AuthRepository(requireContext());
+        authRepository = AuthRepository.getInstance(requireContext());
         etFullName = view.findViewById(R.id.etRegisterFullName);
         etEmail = view.findViewById(R.id.etRegisterEmail);
         etPassword = view.findViewById(R.id.etRegisterPassword);

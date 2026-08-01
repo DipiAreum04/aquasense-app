@@ -26,7 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
             prefs.applySavedThemeMode();
         }
 
-        AuthRepository authRepository = new AuthRepository(this);
+        AuthRepository authRepository = AuthRepository.getInstance(this);
         if (!authRepository.isLoggedIn()) {
             AuthNavigator.goToLogin(this);
             return;
