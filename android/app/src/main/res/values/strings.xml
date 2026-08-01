@@ -56,8 +56,8 @@
     <string name="section_aquarium">AQUARIUM</string>
     <string name="section_app_account">APP &amp; ACCOUNT</string>
     <string name="section_help_support">HELP &amp; SUPPORT</string>
-    <string name="tank_profiles">Aquarium Profiles</string>
-    <string name="tank_profiles_desc">Manage aquariums &amp; switch active aquarium</string>
+    <string name="tank_profiles">My Aquariums</string>
+    <string name="tank_profiles_desc">Add, edit &amp; manage your aquariums</string>
     <string name="water_parameters">Water Parameters</string>
     <string name="water_parameters_desc">Configure sensor parameter alert thresholds</string>
     <string name="sensor_calibration">Sensor Calibration</string>
@@ -302,4 +302,64 @@
     <string name="pairing_wizard_heading">Set up your aquarium</string>
     <string name="pairing_wizard_body">Next you\'ll pair your hardware hub and create your first aquarium. Full guided steps arrive with SETTINGS-03.</string>
     <string name="pairing_wizard_continue">Continue to dashboard</string>
+
+    <!-- SETTINGS-04 built-in aquarium templates -->
+    <string name="template_freshwater">Freshwater: Tropical</string>
+    <string name="template_freshwater_desc">Warm, near-neutral water. This is the most common community aquarium.</string>
+    <string-array name="template_freshwater_species">
+        <item>Tetras</item>
+        <item>Guppies</item>
+        <item>Platies</item>
+        <item>Mollies</item>
+        <item>Betta</item>
+        <item>Swordtails</item>
+        <item>Corydoras Catfish</item>
+    </string-array>
+
+    <string name="template_coldwater">Coldwater: Goldfish</string>
+    <string name="template_coldwater_desc">Cool, unheated water with a slight alkaline balance.</string>
+    <string-array name="template_coldwater_species">
+        <item>Goldfish</item>
+        <item>White Cloud Minnows</item>
+        <item>Rosy Barbs</item>
+        <item>Dojo Loaches</item>
+    </string-array>
+
+    <string name="template_hardwater">Hardwater: African Cichlid</string>
+    <string name="template_hardwater_desc">Warm, alkaline, mineral-rich water. This is suitable for African cichlids only; American cichlids belong in Tropical Freshwater.</string>
+    <string-array name="template_hardwater_species">
+        <item>Lake Malawi Peacocks</item>
+        <item>Tanganyika Cichlids</item>
+    </string-array>
+
+    <string name="template_saltwater">Saltwater: Marine</string>
+    <string name="template_saltwater_desc">Warm, alkaline saltwater with tight tolerances.</string>
+    <string-array name="template_saltwater_species">
+        <item>Clownfish</item>
+        <item>Damselfish</item>
+        <item>Tangs</item>
+        <item>Coral reefs</item>
+        <item>Angelfish</item>
+        <item>Gobies</item>
+        <item>Banggai Cardinalfish</item>
+    </string-array>
+
+    <string name="template_tds_disabled_saltwater">TDS sensor range (0-1000 ppm) is below saltwater levels, so it is disabled for saltwater aquariums. Marine salinity can be measured with a refractometer or a salinity sensor instead.</string>
+
+    <!-- Aquarium Templates screen (ST-4.2) -->
+    <string name="aquarium_templates">Aquarium Templates</string>
+    <string name="aquarium_templates_desc">View built-in template thresholds &amp; species</string>
+    <string name="aquarium_templates_intro">Here you can view the built-in template thresholds &amp; example species to help you get started with your aquarium! Each template presets the safe, warning, and critical thresholds for your water parameters. Pick a template when you add an aquarium and you can change any threshold value later on!</string>
+    <string name="aquarium_templates_count">4 Built-In Aquarium Templates</string>
+    <string name="template_common_species">Example Species</string>
+    <string name="template_range_thresholds">Range Thresholds</string>
+    <string name="water_type_freshwater">Freshwater</string>
+    <string name="water_type_saltwater">Saltwater</string>
+    <string name="template_parameter_with_unit">%1$s (%2$s)</string>
+    <string name="template_band_range">%1$s - %2$s</string>
+    <string name="template_bound_below">&lt; %1$s</string>
+    <string name="template_bound_above">&gt; %1$s</string>
+    <string name="template_legend_safe">Safe</string>
+    <string name="template_legend_warning">Warning</string>
+    <string name="template_legend_critical">Critical</string>
 </resources>

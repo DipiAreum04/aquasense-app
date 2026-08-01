@@ -43,4 +43,18 @@
     <color name="auth_wave">#FF1A2A38</color>
     <color name="auth_wave_soft">#FF152430</color>
     <color name="auth_google_button_bg">#FF1E3348</color>
+
+    <!-- Aquarium templates -->
+    <color name="template_accent_freshwater">#FF64B5F6</color>
+    <color name="template_accent_coldwater">#FF4DD0E1</color>
+    <color name="template_accent_hardwater">#FFFFB74D</color>
+    <color name="template_accent_saltwater">#FF9D95DE</color>
+    <color name="template_heading">#FFD6E6F2</color>
+    <color name="template_chip_bg">#FF243041</color>
+    <color name="template_chip_text">#FFC5CEDA</color>
+    <color name="template_header_text">#FFD3E4EC</color>
+    <color name="template_header_text_muted">#FF95B3C1</color>
+    <color name="template_header_badge_bg">#26FFFFFF</color>
+    <color name="water_badge_freshwater">#FF43A047</color>
+    <color name="water_badge_saltwater">#FF1E88E5</color>
 </resources>

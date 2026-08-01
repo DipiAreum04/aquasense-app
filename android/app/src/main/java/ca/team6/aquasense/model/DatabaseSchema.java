@@ -65,6 +65,14 @@ public final class DatabaseSchema {
     public static final String TIMESTAMP_KEY = "timestamp";
     public static final String VALUE_KEY = "value";
 
+    // This value expresses when a sensor is offline or its reading failed.
+    public static final double OFFLINE_SENTINEL = Integer.MIN_VALUE;
+
+    // True when a telemetry value is the offline sentinel rather than a measurement.
+    public static boolean isOffline(double value) {
+        return value == OFFLINE_SENTINEL;
+    }
+
     // Fields of a period node. `index` is the ring-buffer write cursor pointing at the most
     // recently committed bucket, and `buckets` holds B0..B(BUCKET_COUNT - 1).
     public static final String INDEX_KEY = "index";

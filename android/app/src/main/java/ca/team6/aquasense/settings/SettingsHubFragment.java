@@ -85,6 +85,11 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_troubleshootingGuide));
 
+        // Aquarium Templates
+        view.findViewById(R.id.rowAquariumTemplates)
+                .setOnClickListener(v -> Navigation.findNavController(v)
+                        .navigate(R.id.action_hub_to_aquariumTemplates));
+
         // TODO: Rows to be added by others - not implemented yet
         View.OnClickListener comingSoon = v ->
                 SharedPreferenceHelper.showComingSoon(requireContext());
