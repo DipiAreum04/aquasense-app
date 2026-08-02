@@ -3,7 +3,7 @@
 import logging
 
 from simulations.database.real_database import RealDatabase
-from simulations.database.resolution import RESOLUTION
+from simulations.hardware.consts import RESOLUTION, OFFLINE_VALUE
 
 class Buckets:
     """Represents a collection of telemetry buckets."""
@@ -35,6 +35,15 @@ class Buckets:
             (current_index+1) % self._number_of_buckets if current_index is not None else 0
         )
 
+        last_online = current_time
+        if current_index is not None:
+            last_online = (database.telemetry_aquarium_node
+                .child(sensor_kind)
+                .child(self._kind)
+                .child("buckets")
+                .child(f"B{current_index:0{len(str(RESOLUTION-1))}d}")
+                .child("timestamp").get().val())
+
         logger.info(
             "Initialized %d %s::%s buckets of size %d seconds starting at index %d",
             self._number_of_buckets,
@@ -44,17 +53,23 @@ class Buckets:
             self._bucket_index,
         )
 
+        self.try_commit(
+            database, sensor_kind, current_time, current_time-last_online >= self._bucket_size
+        )
+
     def add(self, value: float) -> None:
         """Add a value to the current bucket."""
-        if value != -2147483648:
+        if value != OFFLINE_VALUE:
             self._value_total += value
             self._value_count += 1
 
-    def try_commit(self, database: RealDatabase, sensor_kind: str, current_time: int) -> bool:
+    def try_commit(
+        self, database: RealDatabase, sensor_kind: str, current_time: int, force: bool = False
+    ) -> bool:
         """Check if the current bucket should be committed and do so."""
         logger = logging.getLogger(__name__)
 
-        if current_time-self._last_commit < self._bucket_size:
+        if not force and current_time-self._last_commit < self._bucket_size:
             return False
 
         (database.telemetry_aquarium_node
@@ -66,7 +81,7 @@ class Buckets:
                 "timestamp": current_time,
                 "value": (
                     self._value_total / self._value_count
-                    if self._value_count > 0 else -2147483648
+                    if self._value_count > 0 else OFFLINE_VALUE
                 ),
             }))
         (database.telemetry_aquarium_node
