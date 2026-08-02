@@ -94,6 +94,45 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
+    // Allocates the database key for a new aquarium. Generated client-side by push(), so the
+    // caller holds the ID before the write lands and can address the aquarium immediately.
+    @Nullable
+    public String newAquariumId(@NonNull String uid) {
+        return aquariumsRef(uid).push().getKey();
+    }
+
+    // Writes the two required keys of /{uid}/aquariums/{aquariumId}. Merges rather than replaces,
+    // so renaming an aquarium leaves its thresholds and spike deltas untouched.
+    public void writeAquarium(@NonNull String uid,
+                              @NonNull String aquariumId,
+                              @NonNull String name,
+                              @NonNull String waterType,
+                              @NonNull DbCallback callback) {
+        Map<String, Object> aquarium = new HashMap<>();
+        aquarium.put(DatabaseSchema.NAME_KEY, name);
+        aquarium.put(DatabaseSchema.WATER_TYPE_KEY, waterType);
+
+        aquariumsRef(uid)
+                .child(aquariumId)
+                .updateChildren(aquarium)
+                .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
+    }
+
+    // Removes an aquarium along with the telemetry recorded under it. Both paths go in one
+    // update so the aquarium can never vanish from the picker while its telemetry subtree
+    // survives with no owner to ever delete it.
+    public void deleteAquarium(@NonNull String uid,
+                               @NonNull String aquariumId,
+                               @NonNull DbCallback callback) {
+        Map<String, Object> removals = new HashMap<>();
+        removals.put(DatabaseSchema.AQUARIUMS_KEY + "/" + aquariumId, null);
+        removals.put(DatabaseSchema.TELEMETRY_KEY + "/" + aquariumId, null);
+
+        userRef(uid)
+                .updateChildren(removals)
+                .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
+    }
+
     // Removes the whole /{uid} subtree: account, aquariums and telemetry.
     public void deleteUserNode(@NonNull String uid, @NonNull DbCallback callback) {
         userRef(uid)

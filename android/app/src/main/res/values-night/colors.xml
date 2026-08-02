@@ -34,6 +34,13 @@
     <color name="alpha_0x22_background">#220F1419</color>
     <color name="alpha_0xF0_background">#F00F1419</color>
 
+    <!-- Aquarium screens (DS-4): dark-mode counterparts for values/colors.xml -->
+    <color name="gray_900">#FFF2F4F8</color>
+    <color name="gray_500">#FFA0A8B4</color>
+    <color name="gray_400">#FF8A93A3</color>
+    <color name="slate_900">#FF3B4A63</color>
+    <color name="sky_600">#FF4FC3F7</color>
+    <color name="active_badge_bg">#FF163A52</color>
     <!-- Auth screens -->
     <color name="auth_bg_start">#FF0F1419</color>
     <color name="auth_bg_end">#FF15202B</color>

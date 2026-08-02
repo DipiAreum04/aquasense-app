@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
+import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
             AuthNavigator.continueAfterAuth(this, authRepository);
             return;
         }
+
+        // Subscribes to the signed-in user's aquariums. Done before the dashboard is inflated so
+        // its first snapshot is already in flight by the time the header asks for it.
+        AquariumRepository.getInstance(this);
 
         setContentView(R.layout.activity_main);
 

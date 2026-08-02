@@ -28,6 +28,8 @@
     <string name="sensor_info_dissolved_solids_desc">Measures dissolved solids.</string>
     <string name="sensor_info_ph_level_title">pH Level Sensor</string>
     <string name="sensor_info_ph_level_desc">Measures pH level.</string>
+    <string name="no_aquariums">No aquariums found</string>
+    <string name="loading_aquariums">Loading your aquariums…</string>
     <string name="sensor_info_example_title">Example Title</string>
     <string name="sensor_info_example_point">This is an example.</string>
     <string name="aquarium_sensors_status_sunny_icon">☀️</string>
@@ -237,6 +239,63 @@
     <string name="guide_temp">1. Place the sensor in a verified ice-water bath (0 °C / 32 °F).\n2. Wait 60 seconds for the reading to stabilise.\n3. Optionally repeat with a warm reference (e.g. 40 °C / 104 °F).\n4. Note any offset and adjust in your controller if needed.</string>
     <string name="guide_tds">1. Rinse the probe with distilled water.\n2. Submerge in a 0 ppm (DI) solution and wait 30 seconds for a near-zero reading.\n3. Rinse, then submerge in a known TDS calibration solution (e.g. 342 ppm or 1000 ppm).\n4. Wait for the reading to match the solution value, then rinse before returning to the tank.</string>
     <string name="guide_ph">1. Rinse the probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. The probe is ready.</string>
+
+    <!-- Aquarium Management & Templates -->
+    <string name="title_my_aquariums">My Aquariums</string>
+    <string name="action_add_new_aquarium">+ Add New Aquarium</string>
+    <string name="title_add_aquarium">Add Aquarium</string>
+    <string name="label_aquarium_name">AQUARIUM NAME</string>
+    <string name="hint_aquarium_name">e.g. Living Room Tank</string>
+    <string name="label_choose_template">CHOOSE A TEMPLATE</string>
+    <!-- The Add Aquarium screen lists the built-in templates themselves; only Custom needs its
+         own name and description here, the rest come from BuiltInTemplates. -->
+    <string name="template_custom_title">Custom</string>
+    <string name="template_custom_desc">Define all settings manually from scratch.</string>
+    <string name="label_advanced_settings">Advanced Settings</string>
+    <string name="action_expand_advanced_settings">Expand advanced settings</string>
+    <string name="label_tank_volume">TANK VOLUME (GALLONS)</string>
+    <string name="hint_tank_volume">e.g. 20</string>
+    <string name="label_aquarium_notes">NOTES</string>
+    <string name="hint_aquarium_notes">Optional notes about this aquarium</string>
+    <string name="action_create_aquarium">Create Aquarium</string>
+    <string name="toast_enter_aquarium_name">Please enter an aquarium name</string>
+    <string name="toast_invalid_aquarium_name">Name can only contain letters, spaces, hyphens, or apostrophes.</string>
+    <string name="toast_duplicate_aquarium_name">You already have an aquarium named \"%1$s\".</string>
+    <string name="toast_created_aquarium">Created: %1$s</string>
+    <string name="toast_create_aquarium_failed">Couldn\'t create the aquarium. Check your connection and try again.</string>
+    <string name="toast_selected_aquarium">Selected: %1$s</string>
+    <string name="aquarium_status_line">%1$s • %2$s</string>
+    <string name="badge_active">Active</string>
+    <string name="chevron_symbol">›</string>
+    <string name="dialog_limit_reached_title">Limit Reached</string>
+    <string name="dialog_limit_reached_message">You can register a maximum of %1$d aquariums.</string>
+    <string name="action_ok">OK</string>
+    <string name="action_delete">Delete</string>
+    <string name="delete_aquarium_title">Delete aquarium?</string>
+    <string name="delete_aquarium_message">Are you sure you want to delete "%1$s"? This action cannot be undone.</string>
+    <string name="delete_aquarium_confirm">Delete</string>
+    <string name="delete_aquarium_cancel">Cancel</string>
+    <string name="delete_aquarium_done">Deleted: %1$s</string>
+    <string name="delete_aquarium_failed">Couldn\'t delete the aquarium. Check your connection and try again.</string>
+    <string name="dialog_min_aquarium_title">Can\'t Delete</string>
+    <string name="dialog_min_aquarium_message">You must have at least one aquarium. Add another before deleting this one.</string>
+
+    <!-- Advanced Aquarium Settings (DS-4.4, inside Add Aquarium) -->
+    <string name="label_min">MIN</string>
+    <string name="label_max">MAX</string>
+    <string name="hint_threshold_value">e.g. 50</string>
+    <string name="label_dissolved_solids_threshold">Dissolved Solids (ppm)</string>
+    <string name="label_water_level_alert">Alert when water level is low</string>
+    <string name="label_temperature_threshold">Temperature (%1$s)</string>
+    <string name="label_sensor_history">SENSOR HISTORY</string>
+    <string name="question_sensor_history">How long would you like to keep your sensor history?</string>
+    <string name="history_retention_none">Don\'t save any history</string>
+    <string name="history_retention_1_hour">1 Hour</string>
+    <string name="history_retention_1_day">1 Day</string>
+    <string name="history_retention_7_days">7 Days</string>
+    <string name="history_retention_1_month">1 Month</string>
+    <string name="history_retention_6_months">6 Months</string>
+    <string name="history_retention_1_year">1 Year</string>
 
     <!-- Shared email (auth, settings, contact) -->
     <string name="email_hint">name@example.com</string>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/aquariumCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    android:background="@drawable/bg_settings_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="32dp">
+
+    <ImageView
+        android:id="@+id/ivAquariumIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_settings_card"
+        android:contentDescription="@null"
+        android:padding="24dp"
+        android:scaleType="center"
+        android:src="@drawable/fish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnDeleteAquarium"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@string/action_delete"
+        android:scaleType="center"
+        android:src="@drawable/delete_aquarium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvChevron"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvChevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chevron_symbol"
+        android:textColor="@color/gray_400"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvAquariumName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/gray_900"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/tvActiveBadge"
+        app:layout_constraintEnd_toStartOf="@id/btnDeleteAquarium"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/ivAquariumIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="My Aquarium" />
+
+    <TextView
+        android:id="@+id/tvActiveBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/active_badge_bg"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:text="@string/badge_active"
+        android:textColor="@color/sky_600"
+        android:textSize="11sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tvAquariumStatus"
+        app:layout_constraintStart_toStartOf="@id/tvAquariumName"
+        app:layout_constraintTop_toBottomOf="@id/tvAquariumName"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvAquariumStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/gray_500"
+        android:textSize="12sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnDeleteAquarium"
+        app:layout_constraintStart_toStartOf="@id/tvAquariumName"
+        app:layout_constraintTop_toBottomOf="@id/tvActiveBadge"
+        tools:text="00:1A:2B:3C:4D:5E • All Clear" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
