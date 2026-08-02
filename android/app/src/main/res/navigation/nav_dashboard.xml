@@ -9,7 +9,29 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="ca.team6.aquasense.dashboard.DashboardFragment"
+        android:label="@string/dashboard"
+    >
+        <action
+            android:id="@+id/action_dashboardFragment_to_aquariumSelectorFragment"
+            app:destination="@id/aquariumSelectorFragment"
+        />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aquariumSelectorFragment"
+        android:name="ca.team6.aquasense.dashboard.AquariumSelectorFragment"
+        android:label="@string/title_my_aquariums"
+    >
+        <action
+            android:id="@+id/action_aquariumSelectorFragment_to_addAquariumFragment"
+            app:destination="@id/addAquariumFragment"
+        />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addAquariumFragment"
+        android:name="ca.team6.aquasense.dashboard.AddAquariumFragment"
+        android:label="@string/title_add_aquarium"
         tools:layout="@layout/fragment_dashboard"
-        android:label="Dashboard"
     />
 </navigation>

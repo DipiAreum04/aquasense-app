@@ -29,6 +29,9 @@
     <color name="danger">#FFC62828</color>
     <color name="danger_on_toolbar">#FFC62828</color>
     <color name="warning">#FFE65100</color>
+    <color name="plan_badge_bg">#FFE8F5E9</color>
+    <color name="plan_badge_text">#FF2E7D32</color>
+    <color name="active_badge_bg">#FFE3F2FD</color>
     <color name="status_success">#FF2E7D32</color>
     <color name="settings_icon_bg">#401565C0</color>
 
@@ -50,6 +53,12 @@
     <color name="sensor_info_bulb_tint">#FFF4B400</color>
     <color name="bottom_sheet_handle">#FFBDBDBD</color>
     <color name="bullet_circle">#FFCDD5E1</color>
+    <color name="gray_400">#FF9CA3AF</color>
+    <color name="gray_500">#FF6B7280</color>
+    <color name="gray_900">#FF111827</color>
+    <color name="slate_900">#FF0F172A</color>
+    <color name="sky_600">#FF0284C7</color>
+    <color name="alpha_0x22_white">#22F2F4F8</color>
 
     <color name="alpha_0x60_white">#60F2F4F8</color>
     <color name="alpha_0xC0_white">#C0F2F4F8</color>
