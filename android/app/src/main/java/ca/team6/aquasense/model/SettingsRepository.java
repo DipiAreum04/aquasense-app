@@ -30,9 +30,15 @@ public class SettingsRepository {
     public static final String KEY_QUIET_END              = "quietHoursEnd";
     public static final String KEY_FEEDING_SILENCE        = "feedingModeSilence";
     public static final String KEY_NOTIFY_PARAM           = "notifyParamOutOfRange";
+    public static final String KEY_NOTIFY_ABNORMAL_JUMPS  = "notifyAbnormalJumps";
     public static final String KEY_NOTIFY_SENSOR          = "notifySensorOffline";
     public static final String KEY_NOTIFY_HUB_DISCONNECTED = "notifyHubDisconnected";
-    public static final String KEY_NOTIFY_SUMMARY         = "notifyDailySummary";
+
+    // A sensor set to false suppresses every notification type for that sensor except for critical alerts
+    public static final String KEY_SENSOR_ALERTS_TEMP     = "sensorAlertsTemperature";
+    public static final String KEY_SENSOR_ALERTS_LEVEL    = "sensorAlertsWaterLevel";
+    public static final String KEY_SENSOR_ALERTS_TDS      = "sensorAlertsDissolvedSolids";
+    public static final String KEY_SENSOR_ALERTS_PH       = "sensorAlertsPhLevel";
 
     public static final String KEY_PROFILE_NAME           = "profileName";
     public static final String KEY_PROFILE_EMAIL          = "profileEmail";
@@ -46,7 +52,6 @@ public class SettingsRepository {
 
     public static final String KEY_USAGE_ANALYTICS        = "usageAnalytics";
     public static final String KEY_LOCATION_DATA          = "locationData";
-    public static final String KEY_FIREBASE_SYNC          = "firebaseRealtimeSync";
 
     public static final String KEY_CALIB_LIQUID          = "lastCalibratedLiquid";
     public static final String KEY_CALIB_TEMP            = "lastCalibratedTemp";
@@ -82,17 +87,21 @@ public class SettingsRepository {
         s.quietHoursEnd         = prefs.getString(KEY_QUIET_END, d.quietHoursEnd);
         s.feedingModeSilence    = prefs.getBoolean(KEY_FEEDING_SILENCE, d.feedingModeSilence);
         s.notifyParamOutOfRange = prefs.getBoolean(KEY_NOTIFY_PARAM, d.notifyParamOutOfRange);
+        s.notifyAbnormalJumps   = prefs.getBoolean(KEY_NOTIFY_ABNORMAL_JUMPS, d.notifyAbnormalJumps);
         s.notifySensorOffline   = prefs.getBoolean(KEY_NOTIFY_SENSOR, d.notifySensorOffline);
         s.notifyHubDisconnected = prefs.getBoolean(KEY_NOTIFY_HUB_DISCONNECTED, d.notifyHubDisconnected);
-        s.notifyDailySummary    = prefs.getBoolean(KEY_NOTIFY_SUMMARY, d.notifyDailySummary);
 
         s.profileName           = prefs.getString(KEY_PROFILE_NAME, d.profileName);
         s.profileEmail          = prefs.getString(KEY_PROFILE_EMAIL, d.profileEmail);
         s.autoBackup            = prefs.getBoolean(KEY_AUTO_BACKUP, d.autoBackup);
 
+        s.sensorAlertsTemperature     = prefs.getBoolean(KEY_SENSOR_ALERTS_TEMP, d.sensorAlertsTemperature);
+        s.sensorAlertsWaterLevel      = prefs.getBoolean(KEY_SENSOR_ALERTS_LEVEL, d.sensorAlertsWaterLevel);
+        s.sensorAlertsDissolvedSolids = prefs.getBoolean(KEY_SENSOR_ALERTS_TDS, d.sensorAlertsDissolvedSolids);
+        s.sensorAlertsPhLevel         = prefs.getBoolean(KEY_SENSOR_ALERTS_PH, d.sensorAlertsPhLevel);
+
         s.usageAnalytics        = prefs.getBoolean(KEY_USAGE_ANALYTICS, d.usageAnalytics);
         s.locationData          = prefs.getBoolean(KEY_LOCATION_DATA, d.locationData);
-        s.firebaseRealtimeSync  = prefs.getBoolean(KEY_FIREBASE_SYNC, d.firebaseRealtimeSync);
 
         s.lastCalibratedLiquid     = prefs.getLong(KEY_CALIB_LIQUID, d.lastCalibratedLiquid);
         s.lastCalibratedTemp       = prefs.getLong(KEY_CALIB_TEMP, d.lastCalibratedTemp);

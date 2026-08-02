@@ -19,9 +19,15 @@ public class AppSettings {
     public String quietHoursEnd = "07:00";
     public boolean feedingModeSilence = false;
     public boolean notifyParamOutOfRange = true;
+    public boolean notifyAbnormalJumps = true;
     public boolean notifySensorOffline = true;
     public boolean notifyHubDisconnected = true;
-    public boolean notifyDailySummary = false;
+
+    // A sensor set to false suppresses every notification type for that sensor except for critical alerts
+    public boolean sensorAlertsTemperature = true;
+    public boolean sensorAlertsWaterLevel = true;
+    public boolean sensorAlertsDissolvedSolids = true;
+    public boolean sensorAlertsPhLevel = true;
 
     // Accounts & Backup
     public String profileName = "";
@@ -31,9 +37,6 @@ public class AppSettings {
     // Data & Sync: Privacy
     public boolean usageAnalytics = false;
     public boolean locationData = false;
-
-    // Data & Sync: Cloud sync
-    public boolean firebaseRealtimeSync = true;
 
     // Sensor Calibration: last calibrated timestamps (ms)
     public long lastCalibratedLiquid = 0L;

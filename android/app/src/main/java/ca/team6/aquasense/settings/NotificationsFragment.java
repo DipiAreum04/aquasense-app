@@ -21,7 +21,7 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 public class NotificationsFragment extends Fragment {
 
     // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
-    @SuppressWarnings("FieldCanBeLocal") 
+    @SuppressWarnings("FieldCanBeLocal")
     private SettingsRepository repo;
     private SharedPreferenceHelper prefs;
 
@@ -51,9 +51,9 @@ public class NotificationsFragment extends Fragment {
         SwitchCompat switchQuiet     = view.findViewById(R.id.switchQuietHours);
         SwitchCompat switchMaintenance = view.findViewById(R.id.switchFeedingSilence);
         SwitchCompat switchParam     = view.findViewById(R.id.switchNotifyParam);
+        SwitchCompat switchJumps     = view.findViewById(R.id.switchNotifyAbnormalJumps);
         SwitchCompat switchSensor    = view.findViewById(R.id.switchNotifySensor);
         SwitchCompat switchHubOffline = view.findViewById(R.id.switchNotifyHubDisconnected);
-        SwitchCompat switchSummary   = view.findViewById(R.id.switchNotifySummary);
 
         dividerQuietStart = view.findViewById(R.id.dividerQuietStart);
         dividerQuietEnd   = view.findViewById(R.id.dividerQuietEnd);
@@ -61,6 +61,11 @@ public class NotificationsFragment extends Fragment {
         rowQuietEnd       = view.findViewById(R.id.rowQuietEnd);
         tvQuietStart      = view.findViewById(R.id.tvQuietStart);
         tvQuietEnd        = view.findViewById(R.id.tvQuietEnd);
+
+        SwitchCompat switchSensorTemp  = view.findViewById(R.id.switchSensorAlertsTemperature);
+        SwitchCompat switchSensorLevel = view.findViewById(R.id.switchSensorAlertsWaterLevel);
+        SwitchCompat switchSensorTds   = view.findViewById(R.id.switchSensorAlertsDissolvedSolids);
+        SwitchCompat switchSensorPh    = view.findViewById(R.id.switchSensorAlertsPhLevel);
 
         // Bind before listeners so the initial values do not toast.
         repo.loadSettings(s -> {
@@ -71,9 +76,13 @@ public class NotificationsFragment extends Fragment {
             switchQuiet.setChecked(s.quietHours);
             switchMaintenance.setChecked(s.feedingModeSilence);
             switchParam.setChecked(s.notifyParamOutOfRange);
+            switchJumps.setChecked(s.notifyAbnormalJumps);
+            switchSensorTemp.setChecked(s.sensorAlertsTemperature);
+            switchSensorLevel.setChecked(s.sensorAlertsWaterLevel);
+            switchSensorTds.setChecked(s.sensorAlertsDissolvedSolids);
+            switchSensorPh.setChecked(s.sensorAlertsPhLevel);
             switchSensor.setChecked(s.notifySensorOffline);
             switchHubOffline.setChecked(s.notifyHubDisconnected);
-            switchSummary.setChecked(s.notifyDailySummary);
             tvQuietStart.setText(s.quietHoursStart);
             tvQuietEnd.setText(s.quietHoursEnd);
             setQuietRowsVisible(s.quietHours);
@@ -115,6 +124,35 @@ public class NotificationsFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_PARAM, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
+        // TODO: ARMAAN: Wire this to the notification logic.
+        
+        // Detect abnormal value jumps that stay inside the safe range.
+        // Runs alongside the threshold check, not instead of it.
+        switchJumps.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_NOTIFY_ABNORMAL_JUMPS, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+
+        // Before sending a notification, check the flag for the sensor it concerns
+        // If false, drop the alert regardless of the notification-type toggles. 
+        // Critical alerts are the one exception and must still deliver.
+        switchSensorTemp.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_TEMP, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        switchSensorLevel.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_LEVEL, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        switchSensorTds.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_TDS, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+        switchSensorPh.setOnCheckedChangeListener((b, checked) -> {
+            prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_PH, checked);
+            SharedPreferenceHelper.showComingSoon(requireContext());
+        });
+
         // TODO: Notify when a sensor goes offline.
         switchSensor.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
@@ -123,11 +161,6 @@ public class NotificationsFragment extends Fragment {
         // TODO: Notify when the hub stops reporting.
         switchHubOffline.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_HUB_DISCONNECTED, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
-        });
-        // TODO: Send a daily summary digest.
-        switchSummary.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_NOTIFY_SUMMARY, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
 
