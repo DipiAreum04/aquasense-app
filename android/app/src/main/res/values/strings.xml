@@ -162,10 +162,16 @@
     <string name="maintenance_mode">Maintenance Mode</string>
     <string name="maintenance_mode_desc">Suppresses all notifications when this mode is on</string>
     <string name="section_notification_types">NOTIFICATION TYPES</string>
-    <string name="param_out_of_range">Parameter out of range</string>
+    <string name="param_out_of_range">Parameter safe range exceeded</string>
+    <string name="param_out_of_range_desc">Alert when a reading crosses its safe range</string>
+    <string name="abnormal_value_jumps">Abnormal value jump</string>
+    <string name="abnormal_value_jumps_desc">Alert on sharp value jumps/drops, even in safe range</string>
+    <string name="section_alerts_by_sensor">ALERTS PER SENSOR</string>
+    <string name="alerts_by_sensor_caption">Turning a sensor off silences all of its non-critical alerts</string>
     <string name="sensor_offline">Sensor offline</string>
+    <string name="sensor_offline_desc">Alert when a sensor stops sending readings</string>
     <string name="hub_disconnected">Hub disconnected</string>
-    <string name="daily_summary_digest">Daily summary digest</string>
+    <string name="hub_disconnected_desc">Alert when the board stops reporting readings</string>
 
     <!-- Data & Privacy -->
     <string name="section_privacy">PRIVACY</string>
@@ -177,11 +183,6 @@
     <string name="download_my_data">Download My Data</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_link_failed">No app available to open this link.</string>
-    <string name="section_cloud_sync">CLOUD SYNC</string>
-    <string name="cloud_sync">Cloud sync</string>
-    <string name="cloud_sync_desc">Stream data to Firebase</string>
-    <string name="force_full_sync">Force Full Sync</string>
-    <string name="disconnect_firebase">Disconnect Firebase</string>
 
     <!-- Contact & Support -->
     <string name="section_support">SUPPORT</string>
