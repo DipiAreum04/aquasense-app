@@ -66,39 +66,6 @@
                         android:textStyle="bold"
                     />
                 </LinearLayout>
-
-                <!-- Aquarium Board Status -->
-                <LinearLayout
-                    android:id="@+id/aquariumBoardStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_chip_0xf0_alpha"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="18dp"
-                    android:paddingVertical="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                >
-                    <ImageView
-                        android:id="@+id/aquariumBoardStatusIcon"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@drawable/gray_circle_24"
-                        android:contentDescription="@null"
-                    />
-                    <TextView
-                        android:id="@+id/aquariumBoardStatusText"
-                        android:layout_marginStart="8dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                    />
-                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Aquarium Sensors Status Icon -->

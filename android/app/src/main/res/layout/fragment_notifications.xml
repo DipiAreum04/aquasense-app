@@ -629,14 +629,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/sensor_offline"
+                        android:text="@string/sensor_disconnected"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/sensor_offline_desc"
+                        android:text="@string/sensor_disconnected_desc"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 

@@ -2,6 +2,8 @@ package ca.team6.aquasense.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +15,21 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.SettingsActivity;
 import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.AquariumBoardStatus;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.GridSpacingItemDecoration;
+import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.model.TelemetryRepository;
+import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.aquarium_sensors.DissolvedSolidsSensor;
 import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
 import ca.team6.aquasense.model.aquarium_sensors.PhLevelSensor;
@@ -39,17 +46,34 @@ public class DashboardFragment extends Fragment {
     private DashboardSensorAdapter sensorAdapter;
 
     private AquariumRepository aquariumRepository;
+    private TelemetryRepository telemetryRepository;
 
-    // The repository pushes the list on login and on every database change, so the header follows
-    // an aquarium being renamed, added or deleted without this screen polling for it.
     private final AquariumRepository.AquariumsObserver aquariumsObserver =
-            aquariums -> showActiveAquarium();
+            aquariums -> {
+                showActiveAquarium();
+                refreshTelemetrySubscription();
+            };
+
+    private final TelemetryRepository.TelemetryObserver telemetryObserver =
+            this::applyTelemetry;
+
+    private static final long STALENESS_CHECK_INTERVAL_MS = 10_000;
+    private final Handler stalenessHandler = new Handler(Looper.getMainLooper());
+    private final Runnable stalenessTick = new Runnable() {
+        @Override
+        public void run() {
+            applyTelemetry(telemetryRepository.getReadings());
+            stalenessHandler.postDelayed(this, STALENESS_CHECK_INTERVAL_MS);
+        }
+    };
 
     // TODO: NOT SURE ABOUT THIS; NEED TO DECIDE BY END OF SPRINT 2.
     private static final AquariumSensor TEMPERATURE = new TemperatureSensor();
     private static final AquariumSensor WATER_LEVEL = new WaterLevelSensor();
     private static final AquariumSensor DISSOLVED_SOLIDS = new DissolvedSolidsSensor();
     private static final AquariumSensor PH_LEVEL = new PhLevelSensor();
+    private static final List<AquariumSensor> ALL_SENSORS =
+            Arrays.asList(WATER_LEVEL, TEMPERATURE, DISSOLVED_SOLIDS, PH_LEVEL);
 
     @Nullable
     @Override
@@ -66,12 +90,13 @@ public class DashboardFragment extends Fragment {
 
         this.dashboardHeaderController = new DashboardHeaderController(view);
 
-        // Open dedicated "My Aquariums" fragment on click
         this.dashboardHeaderController.setOnClickAquariumSelector(v -> Navigation.findNavController(v)
                 .navigate(R.id.action_dashboardFragment_to_aquariumSelectorFragment));
 
+        telemetryRepository = TelemetryRepository.getInstance();
         aquariumRepository = AquariumRepository.getInstance(requireContext());
-        // Fills the header now and again on every change.
+
+        telemetryRepository.addObserver(telemetryObserver);
         aquariumRepository.addObserver(aquariumsObserver);
 
         LinearLayout navbarDashboard = view.findViewById(R.id.navbarDashboard);
@@ -86,9 +111,9 @@ public class DashboardFragment extends Fragment {
         });
         navbarAnalytics.setOnClickListener(v -> {
         });
-        navbarSettings.setOnClickListener(v -> {
-            startActivity(new Intent(v.getContext(), SettingsActivity.class));
-        });
+        navbarSettings.setOnClickListener(v ->
+            startActivity(new Intent(v.getContext(), SettingsActivity.class))
+        );
 
         // FIXME: SHOULD BE REPLACED WITH VALUE FROM SENSORS.
         this.dashboardHeaderController.setDashboardSensorsStatus(0);
@@ -97,6 +122,15 @@ public class DashboardFragment extends Fragment {
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         recycler.addItemDecoration(new GridSpacingItemDecoration(
                 this.getResources().getDisplayMetrics()));
+
+        // A payload-less notifyItemChanged() makes the default animator cross-fade a second
+        // ViewHolder over the old one, which reads as the card flashing. Readings land about
+        // once a second, so that fires constantly; add/remove/move animations are left on for
+        // the sensor order / visibility preference.
+        RecyclerView.ItemAnimator itemAnimator = recycler.getItemAnimator();
+        if (itemAnimator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
+        }
 
         applyTemperatureUnitPreference();
         sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), visibleSensors());
@@ -108,9 +142,6 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
-        // Until the first snapshot lands the list is empty because nothing has been fetched yet,
-        // not because the user has no aquariums. Claiming "no aquariums" here would be wrong for
-        // most users and would visibly correct itself a moment later.
         if (!aquariumRepository.isLoaded()) {
             this.dashboardHeaderController.setDashboardHeaderTitle(getString(R.string.loading_aquariums));
             return;
@@ -123,48 +154,72 @@ public class DashboardFragment extends Fragment {
         }
 
         this.dashboardHeaderController.setDashboardHeaderTitle(activeAquarium.getName());
-        // TODO: /{uid}/aquariums carries no board status. Derive it from how recently the
-        // aquarium's telemetry was written once this screen subscribes to /{uid}/telemetry.
-        this.dashboardHeaderController.setDashboardBoardStatus(AquariumBoardStatus.OFFLINE);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // The observer holds this fragment, and through it the destroyed view hierarchy.
         aquariumRepository.removeObserver(aquariumsObserver);
+        telemetryRepository.removeObserver(telemetryObserver);
+        // Deliberately not calling telemetryRepository.unwatch() here: the RTDB subscription is
+        // meant to keep running for the whole signed-in session (it only tears down on sign-out,
+        // see TelemetryRepository#onAuthChanged) so a future background-alerts feature can act on
+        // live telemetry while the dashboard isn't on screen.
         dashboardHeaderController = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stalenessHandler.removeCallbacks(stalenessTick);
+    }
+
+    private void refreshTelemetrySubscription() {
+        Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
+        if (activeAquarium == null) {
+            telemetryRepository.unwatch();
+            return;
+        }
+        telemetryRepository.watchAquarium(activeAquarium.getId());
+    }
+
+    private void applyTelemetry(Map<String, SensorReading> readingsBySensorId) {
+        Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
+        long nowMillis = telemetryRepository.nowMillis();
+        for (AquariumSensor sensor : ALL_SENSORS) {
+            SensorReading reading = readingsBySensorId.get(sensor.getId());
+            ThresholdBand thresholdBand =
+                    activeAquarium != null ? activeAquarium.thresholdFor(sensor.getId()) : null;
+            boolean changed = sensor.applyReading(requireContext(), reading, thresholdBand, nowMillis);
+            if (changed && sensorAdapter != null) {
+                sensorAdapter.notifySensorChanged(sensor);
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Re-apply when returning from Settings --> Display & Units.
+        showActiveAquarium();
+        refreshTelemetrySubscription();
+
         applyTemperatureUnitPreference();
         if (sensorAdapter != null) {
             sensorAdapter.setSensors(visibleSensors());
             sensorAdapter.notifySensorChanged(TEMPERATURE);
         }
+        stalenessHandler.post(stalenessTick);
     }
 
-    // Builds the card list using the order and visibility saved in Display & Units.
-    // Falls back to the declaration order below when no preference has been saved
-    // yet.
     private List<AquariumSensor> visibleSensors() {
-        List<AquariumSensor> all = new ArrayList<>();
-        all.add(WATER_LEVEL);
-        all.add(TEMPERATURE);
-        all.add(DISSOLVED_SOLIDS);
-        all.add(PH_LEVEL);
-
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null) {
-            return all;
+            return ALL_SENSORS;
         }
 
         List<String> knownIds = new ArrayList<>();
-        for (AquariumSensor sensor : all) {
+        for (AquariumSensor sensor : ALL_SENSORS) {
             knownIds.add(sensor.getId());
         }
 
@@ -173,7 +228,7 @@ public class DashboardFragment extends Fragment {
             if (prefs.isSensorHidden(id)) {
                 continue;
             }
-            for (AquariumSensor sensor : all) {
+            for (AquariumSensor sensor : ALL_SENSORS) {
                 if (sensor.getId().equals(id)) {
                     ordered.add(sensor);
                     break;
@@ -183,7 +238,6 @@ public class DashboardFragment extends Fragment {
         return ordered;
     }
 
-    /** Updates the Temperature card unit label from Display & Units (°C / °F). */
     private void applyTemperatureUnitPreference() {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null)

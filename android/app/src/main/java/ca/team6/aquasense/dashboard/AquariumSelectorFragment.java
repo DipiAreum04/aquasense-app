@@ -22,7 +22,6 @@ import androidx.navigation.ui.NavigationUI;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumBoardStatus;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.WaterType;
@@ -103,14 +102,6 @@ public class AquariumSelectorFragment extends Fragment {
 
             TextView activeBadge = card.findViewById(R.id.tvActiveBadge);
             activeBadge.setVisibility(isActive ? View.VISIBLE : View.GONE);
-
-            // TODO: /{uid}/aquariums carries no board status, so every card reads OFFLINE.
-            // Derive it from how recently the aquarium's telemetry was written.
-            AquariumBoardStatus status = AquariumBoardStatus.OFFLINE;
-            TextView statusView = card.findViewById(R.id.tvAquariumStatus);
-            statusView.setText(getString(R.string.aquarium_status_line,
-                    waterTypeLabel(aquarium), getString(status.textResourceId)));
-            statusView.setTextColor(ContextCompat.getColor(requireContext(), status.colorResourceId));
 
             ImageView deleteButton = card.findViewById(R.id.btnDeleteAquarium);
             deleteButton.setOnClickListener(v -> confirmDeleteAquarium(aquarium));

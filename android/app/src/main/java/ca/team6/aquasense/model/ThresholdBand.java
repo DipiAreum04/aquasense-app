@@ -15,7 +15,7 @@ import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
  *
  * <p> The schema requires all four together, so a sensor is either fully configured or has no band
  * at all. </p>
- * <p>A reading in [safeLow, safeHigh] is {@link SensorStatus#NOMINAL}.
+ * <p>A reading in [safeLow, safeHigh] is {@link SensorStatus#NORMAL}.
  * Outside that but within [warnLow, warnHigh] is {@link SensorStatus#WARNING}.
  * Strictly below warnLow or above warnHigh is {@link SensorStatus#CRITICAL}.
  */
@@ -77,7 +77,7 @@ public final class ThresholdBand {
         if (value < this.safeLow || value > this.safeHigh) {
             return SensorStatus.WARNING;
         }
-        return SensorStatus.NOMINAL;
+        return SensorStatus.NORMAL;
     }
 
     public double getWarnLow() {

@@ -9,12 +9,6 @@ public class PhLevelSensor extends AquariumSensor {
         super();
     }
 
-    // TODO: STATUS SHOULD BE MADE DYNAMIC
-    @Override
-    protected void updateSensorStatus() {
-        this.status = SensorStatus.OFFLINE;
-    }
-
     @Override
     public String getId() {
         return DatabaseSchema.PH_LEVEL_KEY;
@@ -42,7 +36,7 @@ public class PhLevelSensor extends AquariumSensor {
 
     // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForOffline() {
+    public InfoSheetSection[] getInfoSheetSectionsForDisconnected() {
         return new InfoSheetSection[] {
                 new InfoSheetSection(
                         R.string.sensor_info_example_title,
@@ -111,7 +105,7 @@ public class PhLevelSensor extends AquariumSensor {
 
     // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForNominal() {
+    public InfoSheetSection[] getInfoSheetSectionsForNormal() {
         return new InfoSheetSection[] {
                 new InfoSheetSection(
                         R.string.sensor_info_example_title,

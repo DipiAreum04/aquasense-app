@@ -10,12 +10,6 @@ public class DissolvedSolidsSensor extends AquariumSensor {
         this.setUnitResId(R.string.unit_parts_per_million);
     }
 
-    // TODO: STATUS SHOULD BE MADE DYNAMIC
-    @Override
-    protected void updateSensorStatus() {
-        this.status = SensorStatus.OFFLINE;
-    }
-
     @Override
     public String getId() {
         return DatabaseSchema.DISSOLVED_SOLIDS_KEY;
@@ -43,7 +37,7 @@ public class DissolvedSolidsSensor extends AquariumSensor {
 
     // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForOffline() {
+    public InfoSheetSection[] getInfoSheetSectionsForDisconnected() {
         return new InfoSheetSection[] {
                 new InfoSheetSection(
                         R.string.sensor_info_example_title,
@@ -112,7 +106,7 @@ public class DissolvedSolidsSensor extends AquariumSensor {
 
     // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForNominal() {
+    public InfoSheetSection[] getInfoSheetSectionsForNormal() {
         return new InfoSheetSection[] {
                 new InfoSheetSection(
                         R.string.sensor_info_example_title,
