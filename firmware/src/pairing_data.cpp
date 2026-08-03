@@ -6,6 +6,14 @@ const char* PairingData::getDbUrl() const {
     return dbUrl;
 }
 
-const char* PairingData::getAquariumId() const {
-    return aquariumId;
+const char* PairingData::getWebApiKey() const {
+    return webApiKey;
+}
+
+const char* PairingData::getDeviceEmail() const {
+    return deviceEmail;
+}
+
+const char* PairingData::getDevicePassword() const {
+    return devicePassword;
 }

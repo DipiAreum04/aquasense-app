@@ -11,27 +11,31 @@
 #include "pairing_data.hpp"
 #include "telemetry_manager.hpp"
 
-TempSensor tempSensor(4);
-PhSensor   phSensor(A0, 2.535, -5.70, 0.03);
-TdsSensor  tdsSensor(A1);
-WaterLevel waterSensor(7);
+void run() {
+    TempSensor tempSensor(4);
+    PhSensor   phSensor(A0, 2.535, -1.70, 0.03);
+    TdsSensor  tdsSensor(A1);
+    WaterLevel waterSensor(7);
 
-BLEWifiSetup bleWifi;
-bool provisioningMode = false;
+    BLEWifiSetup bleWifi;
+    bool provisioningMode = false;
 
-PairingData pairingData;
-WiFiFirebase cloud(pairingData.getDbUrl());
-TelemetryManager telemetry(cloud, pairingData.getAquariumId());
+    PairingData pairingData;
+    WiFiFirebase cloud(
+        pairingData.getDbUrl(),
+        pairingData.getWebApiKey(),
+        pairingData.getDeviceEmail(),
+        pairingData.getDevicePassword()
+    );
+    TelemetryManager telemetry(cloud);
 
-NTPTime ntp;
+    NTPTime ntp;
 
-unsigned long lastTickMillis = 0;
-const unsigned long TICK_INTERVAL_MS = 1000;
+    unsigned long lastTickMillis = millis();
+    const unsigned long TICK_INTERVAL_MS = 1000;
 
-
-void setup() {
     Serial.begin(115200);
-    delay(500); //cant lower it more than this
+    delay(500); // cant lower it more than this
 
     Serial.println("Starting MULTI-SENSOR + Epoch + Firebase telemetry (BLE WiFi provisioning)...");
 
@@ -51,73 +55,63 @@ void setup() {
 
     ntp.begin();
 
-    if (!provisioningMode && WiFi.status() == WL_CONNECTED) {
-        cloud.begin();
-    }
-}
+    while (true) {
+        bleWifi.poll();
 
+        if (provisioningMode) {
+            delay(200); // cant lower it more than this
+            continue;
+        }
 
-void loop() {
-    bleWifi.poll();
+        if (WiFi.status() != WL_CONNECTED) {
+            Serial.println("WiFi lost. Trying reconnect via stored BLE credentials...");
 
-    if (provisioningMode) {
-        delay(200);//cant lower it more than this
-        return;
-    }
+            if (bleWifi.tryConnectStored()) {
+                Serial.println("WiFi reconnected.");
+            } else {
+                Serial.println("WiFi reconnect failed. Still waiting for valid credentials.");
+                delay(1000); // give time before retrying the reconnect
+                continue;
+            }
+        }
 
-    if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi lost. Trying reconnect via stored BLE credentials...");
+        unsigned long nowMillis = millis();
+        if (nowMillis - lastTickMillis < TICK_INTERVAL_MS) {
+            continue;
+        }
+        lastTickMillis = nowMillis;
 
-        if (bleWifi.tryConnectStored()) {
-            Serial.println("WiFi reconnected.");
-            cloud.begin();
-        } else {
-            Serial.println("WiFi reconnect failed. Still waiting for valid credentials.");
-            delay(1000); //need to give time to try snd reconnect to wifi
-            return;
+        unsigned long epoch = ntp.getEpoch();
+        if (epoch == 0) {
+            Serial.println("NTP time not yet available. Retrying...");
+            continue;
+        }
+
+        float tempC           = tempSensor.readTemperatureC();
+        float phValue         = phSensor.readPH(tempC);
+        float tdsPpm          = tdsSensor.readTdsPpm();
+        float waterLevelValue = waterSensor.isDetected() ? 1.0f : 0.0f;
+
+        Serial.print("Epoch: ");
+        Serial.print(epoch);
+        Serial.print(" | Temp: ");
+        Serial.print(tempC);
+        Serial.print(" C");
+        Serial.print(" | pH: ");
+        Serial.print(phValue);
+        Serial.print(" | TDS: ");
+        Serial.print(tdsPpm);
+        Serial.print(" | Water Level: ");
+        Serial.println(waterLevelValue);
+
+        if (!telemetry.tick(epoch, tempC, waterLevelValue, tdsPpm, phValue)) {
+            Serial.println("Could not reach the database. Will retry on the next tick.");
         }
     }
-
-    unsigned long nowMillis = millis();
-    if (nowMillis - lastTickMillis < TICK_INTERVAL_MS) {
-        return;
-    }
-    lastTickMillis = nowMillis;
-
-    unsigned long epoch = ntp.getEpoch();
-
-    static unsigned long lastGoodEpoch = 0;
-
-    if (epoch == 0) {
-        epoch = lastGoodEpoch;   // fallback
-    } else {
-        lastGoodEpoch = epoch;
-    }
-
-    float tempC           = tempSensor.readTemperatureC();
-    float phValue         = phSensor.readPH(tempC);
-    float tdsPpm          = tdsSensor.readTdsPpm();
-    bool  waterDetected   = waterSensor.isDetected();
-    // 0 means "no water detected", which is a normal reading. It must stay 0 so the app can
-    // tell it apart from a sensor error, which is reported as -1.
-    float waterLevelValue = waterDetected ? 1.0f : 0.0f;
-
-    float safeTemp = (tempC == -127 || tempC == 85 || isnan(tempC)) ? -1000 : tempC;
-    float safePh   = (phValue <= 0 || phValue > 14 || isnan(phValue)) ? -1 : phValue;
-    // Clean water can have TDS values well below 30 ppm, so only negative/NaN is an error.
-    float safeTds  = (tdsPpm < 0 || isnan(tdsPpm)) ? -1 : tdsPpm;
-
-    Serial.print("Epoch: ");
-    Serial.print(epoch);
-    Serial.print(" | Temp: ");
-    Serial.print(safeTemp);
-    Serial.print(" C");
-    Serial.print(" | pH: ");
-    Serial.print(safePh);
-    Serial.print(" | TDS: ");
-    Serial.print(safeTds);
-    Serial.print(" | Water Level Anomaly: ");
-    Serial.println(waterDetected ? "DETECTED" : "NONE");
-
-    telemetry.tick(epoch, safeTemp, waterLevelValue, safeTds, safePh);
 }
+
+void setup() {
+    run();
+}
+
+void loop() {}
