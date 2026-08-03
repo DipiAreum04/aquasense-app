@@ -81,7 +81,7 @@ public class NotificationsFragment extends Fragment {
             switchSensorLevel.setChecked(s.sensorAlertsWaterLevel);
             switchSensorTds.setChecked(s.sensorAlertsDissolvedSolids);
             switchSensorPh.setChecked(s.sensorAlertsPhLevel);
-            switchSensor.setChecked(s.notifySensorOffline);
+            switchSensor.setChecked(s.notifySensorDisconnected);
             switchHubOffline.setChecked(s.notifyHubDisconnected);
             tvQuietStart.setText(s.quietHoursStart);
             tvQuietEnd.setText(s.quietHoursEnd);
@@ -153,7 +153,7 @@ public class NotificationsFragment extends Fragment {
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
 
-        // TODO: Notify when a sensor goes offline.
+        // TODO: Notify when a sensor gets disconnected.
         switchSensor.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());

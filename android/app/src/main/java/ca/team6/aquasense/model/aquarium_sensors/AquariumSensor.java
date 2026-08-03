@@ -1,24 +1,34 @@
 package ca.team6.aquasense.model.aquarium_sensors;
 
+import android.content.Context;
+
+import androidx.annotation.Nullable;
+
+import java.util.Objects;
+
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.InfoSheetSection;
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.model.ReadingFormatter;
+import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.model.ThresholdBand;
 
 public abstract class AquariumSensor {
+    private static final long STALE_THRESHOLD_SECONDS = 30;
+
     private int unitResId;
     private String value;
     protected SensorStatus status;
 
     protected AquariumSensor() {
         this.setUnitResId(R.string.unit_dimensionless);
-        this.setValue("-");
-        this.updateSensorStatus();
+        this.value = "-";
+        this.status = SensorStatus.DISCONNECTED;
     }
 
     public int getUnitResId() {
         return this.unitResId;
     }
-    
+
     public String getValue() {
         return this.value;
     }
@@ -27,83 +37,53 @@ public abstract class AquariumSensor {
         this.unitResId = unitResId;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-        this.updateSensorStatus();
+    /** @return whether the displayed value or status actually changed, so callers can skip rebinding when it didn't. */
+    public boolean applyReading(Context context, @Nullable SensorReading reading, @Nullable ThresholdBand thresholdBand, long nowMillis) {
+        String previousValue = this.value;
+        SensorStatus previousStatus = this.status;
+
+        long nowSeconds = nowMillis / 1000L;
+        if (reading == null || reading.isOffline() || Math.abs(reading.ageSeconds(nowSeconds)) > STALE_THRESHOLD_SECONDS) {
+            this.value = "-";
+            this.status = SensorStatus.DISCONNECTED;
+        } else {
+            this.value = ReadingFormatter.format(context, this.getId(), reading.getValue());
+            this.status = thresholdBand != null ? thresholdBand.statusFor(reading.getValue()) : SensorStatus.NORMAL;
+        }
+
+        return !Objects.equals(previousValue, this.value) || previousStatus != this.status;
     }
 
-    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
     @SuppressWarnings("unused")
     public SensorStatus getSensorStatus() {
         return this.status;
     }
     
     public int getStatusIconResId() {
-        switch (this.status) {
-            case OFFLINE:
-                return R.drawable.gray_circle_24;
-            case CRITICAL:
-                return R.drawable.red_circle_24;
-            case WARNING:
-                return R.drawable.orange_circle_24;
-            case NOMINAL:
-                return R.drawable.green_circle_24;
-        }
-        ScopedLogger.error("Unknown SensorStatus enum "+this.status+", defaulting to offline.");
-        return R.drawable.gray_circle_24;
+        return this.status.iconResourceId;
     }
     
     public int getStatusTextResId() {
-        switch (this.status) {
-            case OFFLINE:
-                return R.string.offline;
-            case CRITICAL:
-                return R.string.critical;
-            case WARNING:
-                return R.string.warning;
-            case NOMINAL:
-                return R.string.nominal;
-        }
-        ScopedLogger.error("Unknown SensorStatus enum "+this.status+", defaulting to offline.");
-        return R.string.offline;
+        return this.status.textResourceId;
     }
     
     public int getStatusColorResId() {
-        switch (this.status) {
-            case OFFLINE:
-                return R.color.status_gray;
-            case CRITICAL:
-                return R.color.status_red;
-            case WARNING:
-                return R.color.status_orange;
-            case NOMINAL:
-                return R.color.status_green;
-        }
-        ScopedLogger.error("Unknown SensorStatus enum "+this.status+", defaulting to offline.");
-        return R.color.status_gray;
+        return this.status.colorResourceId;
     }
 
     public InfoSheetSection[] getInfoSheetSections() {
         switch (this.status) {
-            case OFFLINE:
-                return this.getInfoSheetSectionsForOffline();
+            case NORMAL:
+                return this.getInfoSheetSectionsForNormal();
             case CRITICAL:
                 return this.getInfoSheetSectionsForCritical();
             case WARNING:
                 return this.getInfoSheetSectionsForWarning();
-            case NOMINAL:
-                return this.getInfoSheetSectionsForNominal();
+            default:
+                return this.getInfoSheetSectionsForDisconnected();
         }
-        ScopedLogger.error("Unknown SensorStatus enum "+this.status+", defaulting to offline.");
-        return this.getInfoSheetSectionsForOffline();
     }
 
-    protected void updateSensorStatus() {
-        this.status = SensorStatus.OFFLINE;
-    }
-
-    // Stable identifier used to persist per-sensor preferences (dashboard card order and visibility).
-    // Values match the telemetry node names in database/schema.json.
     public abstract String getId();
 
     public abstract int getTitleIconResId();
@@ -114,11 +94,11 @@ public abstract class AquariumSensor {
     
     public abstract int getInfoSheetDescResId();
 
-    public abstract InfoSheetSection[] getInfoSheetSectionsForOffline();
+    public abstract InfoSheetSection[] getInfoSheetSectionsForDisconnected();
 
     public abstract InfoSheetSection[] getInfoSheetSectionsForCritical();
 
     public abstract InfoSheetSection[] getInfoSheetSectionsForWarning();
 
-    public abstract InfoSheetSection[] getInfoSheetSectionsForNominal();
+    public abstract InfoSheetSection[] getInfoSheetSectionsForNormal();
 }

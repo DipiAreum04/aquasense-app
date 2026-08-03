@@ -20,7 +20,7 @@ public class AppSettings {
     public boolean feedingModeSilence = false;
     public boolean notifyParamOutOfRange = true;
     public boolean notifyAbnormalJumps = true;
-    public boolean notifySensorOffline = true;
+    public boolean notifySensorDisconnected = true;
     public boolean notifyHubDisconnected = true;
 
     // A sensor set to false suppresses every notification type for that sensor except for critical alerts

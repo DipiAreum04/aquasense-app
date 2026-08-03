@@ -2,12 +2,11 @@
 <resources>
     <string name="app_name_uppercase">AQUASENSE</string>
     <string name="app_name">AquaSense</string>
-    <string name="offline">Offline</string>
-    <string name="online">Online</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="normal">Normal</string>
     <string name="warning">Warning</string>
     <string name="error">Error</string>
     <string name="critical">Critical</string>
-    <string name="nominal">Nominal</string>
     <string name="dashboard">Dashboard</string>
     <string name="analytics">Analytics</string>
     <string name="settings">Settings</string>
@@ -168,8 +167,8 @@
     <string name="abnormal_value_jumps_desc">Alert on sharp value jumps/drops, even in safe range</string>
     <string name="section_alerts_by_sensor">ALERTS PER SENSOR</string>
     <string name="alerts_by_sensor_caption">Turning a sensor off silences all of its non-critical alerts</string>
-    <string name="sensor_offline">Sensor offline</string>
-    <string name="sensor_offline_desc">Alert when a sensor stops sending readings</string>
+    <string name="sensor_disconnected">Sensor disconnected</string>
+    <string name="sensor_disconnected_desc">Alert when a sensor stops sending readings</string>
     <string name="hub_disconnected">Hub disconnected</string>
     <string name="hub_disconnected_desc">Alert when the board stops reporting readings</string>
 

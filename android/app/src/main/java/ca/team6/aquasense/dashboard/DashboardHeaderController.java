@@ -3,7 +3,6 @@ package ca.team6.aquasense.dashboard;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,15 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumBoardStatus;
-import ca.team6.aquasense.model.AquariumSensorsStatus;
+import ca.team6.aquasense.model.AquariumStatus;
 import ca.team6.aquasense.model.ScopedLogger;
 
 public class DashboardHeaderController {
     private final LinearLayout aquariumSelector;
     private final TextView aquariumTitleText;
-    private final ImageView aquariumBoardStatusIcon;
-    private final TextView aquariumBoardStatusText;
     private final TextView aquariumSensorsStatusIcon;
     private final TextView aquariumSensorsStatusHeading;
     private final TextView aquariumSensorsStatusDescription;
@@ -28,8 +24,6 @@ public class DashboardHeaderController {
     public DashboardHeaderController(@NonNull View view) {
         this.aquariumSelector = view.findViewById(R.id.aquariumSelector);
         this.aquariumTitleText = view.findViewById(R.id.aquariumTitleText);
-        this.aquariumBoardStatusIcon = view.findViewById(R.id.aquariumBoardStatusIcon);
-        this.aquariumBoardStatusText = view.findViewById(R.id.aquariumBoardStatusText);
         this.aquariumSensorsStatusIcon = view.findViewById(R.id.aquariumSensorsStatusIcon);
         this.aquariumSensorsStatusHeading = view.findViewById(R.id.aquariumSensorsStatusHeading);
         this.aquariumSensorsStatusDescription = view.findViewById(R.id.aquariumSensorsStatusDescription);
@@ -48,34 +42,23 @@ public class DashboardHeaderController {
     }
 
     public void setDashboardSensorsStatus(int score) {
-        AquariumSensorsStatus aquariumSensorsStatus = AquariumSensorsStatus.forScore(score);
-        this.aquariumSensorsStatusIcon.setText(aquariumSensorsStatus.iconResId);
-        this.aquariumSensorsStatusHeading.setText(aquariumSensorsStatus.headingResId);
-        this.aquariumSensorsStatusDescription.setText(aquariumSensorsStatus.descriptionResId);
+        AquariumStatus aquariumStatus = AquariumStatus.forScore(score);
+        this.aquariumSensorsStatusIcon.setText(aquariumStatus.iconResId);
+        this.aquariumSensorsStatusHeading.setText(aquariumStatus.headingResId);
+        this.aquariumSensorsStatusDescription.setText(aquariumStatus.descriptionResId);
 
         if (this.dashboardHeaderGradient != null) {
             this.dashboardHeaderGradient.setColors(new int[]{
                     ContextCompat.getColor(
                             this.aquariumSensorsStatusIcon.getContext(),
-                            aquariumSensorsStatus.gradientStartColorResId
+                            aquariumStatus.gradientStartColorResId
                     ),
                     ContextCompat.getColor(
                             this.aquariumSensorsStatusIcon.getContext(),
-                            aquariumSensorsStatus.gradientEndColorResId
+                            aquariumStatus.gradientEndColorResId
                     ),
             });
         }
-    }
-
-    public void setDashboardBoardStatus(AquariumBoardStatus aquariumBoardStatus) {
-        this.aquariumBoardStatusIcon.setImageResource(aquariumBoardStatus.iconResourceId);
-        this.aquariumBoardStatusText.setText(aquariumBoardStatus.textResourceId);
-        this.aquariumBoardStatusText.setTextColor(
-                ContextCompat.getColor(
-                        this.aquariumBoardStatusText.getContext(),
-                        aquariumBoardStatus.colorResourceId
-                )
-        );
     }
 
     public void setOnClickAquariumSelector(View.OnClickListener listener) {

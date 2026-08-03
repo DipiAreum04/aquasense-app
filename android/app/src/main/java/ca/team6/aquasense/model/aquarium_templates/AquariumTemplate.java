@@ -127,7 +127,7 @@ public final class AquariumTemplate {
     }
 
     /**
-     * Converts a reading for one sensor into a status (offline, critical, warning, nominal).
+     * Converts a reading for one sensor into a status (disconnected, critical, warning, normal).
      */
     @Nullable
     public SensorStatus statusFor(String sensorId, double value) {

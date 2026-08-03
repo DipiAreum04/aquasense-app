@@ -31,7 +31,7 @@ public class SettingsRepository {
     public static final String KEY_FEEDING_SILENCE        = "feedingModeSilence";
     public static final String KEY_NOTIFY_PARAM           = "notifyParamOutOfRange";
     public static final String KEY_NOTIFY_ABNORMAL_JUMPS  = "notifyAbnormalJumps";
-    public static final String KEY_NOTIFY_SENSOR          = "notifySensorOffline";
+    public static final String KEY_NOTIFY_SENSOR          = "notifySensorDisconnected";
     public static final String KEY_NOTIFY_HUB_DISCONNECTED = "notifyHubDisconnected";
 
     // A sensor set to false suppresses every notification type for that sensor except for critical alerts
@@ -88,7 +88,7 @@ public class SettingsRepository {
         s.feedingModeSilence    = prefs.getBoolean(KEY_FEEDING_SILENCE, d.feedingModeSilence);
         s.notifyParamOutOfRange = prefs.getBoolean(KEY_NOTIFY_PARAM, d.notifyParamOutOfRange);
         s.notifyAbnormalJumps   = prefs.getBoolean(KEY_NOTIFY_ABNORMAL_JUMPS, d.notifyAbnormalJumps);
-        s.notifySensorOffline   = prefs.getBoolean(KEY_NOTIFY_SENSOR, d.notifySensorOffline);
+        s.notifySensorDisconnected = prefs.getBoolean(KEY_NOTIFY_SENSOR, d.notifySensorDisconnected);
         s.notifyHubDisconnected = prefs.getBoolean(KEY_NOTIFY_HUB_DISCONNECTED, d.notifyHubDisconnected);
 
         s.profileName           = prefs.getString(KEY_PROFILE_NAME, d.profileName);
