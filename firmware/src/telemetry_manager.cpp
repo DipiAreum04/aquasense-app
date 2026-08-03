@@ -1,69 +1,58 @@
 #include "telemetry_manager.hpp"
+#include "sensor_sanitizer.hpp"
 
-// TODO: The user ID and aquarium ID are hardcoded to one test account for the demo, so every
-// board uploads into that same node. Wire these to the real signed-in user and the paired
-// aquarium (through PairingData / BLE provisioning) in sprint 3. Note the aquariumId
-// parameter below is ignored right now and should be used once this is hooked up properly.
-TelemetryManager::TelemetryManager(WiFiFirebase& firebase, const char* aquariumId)
-    : _firebase(firebase), uid("R7q2RW7bIoZccuFezvYYgrcBwrU2"), aqId("8DiVHQV9CNTkffiT4u9JDHObVrE2"), elapsedSeconds(0) {}
+TelemetryManager::TelemetryManager(WiFiFirebase& firebase)
+    : _firebase(firebase),
+      _periodsTemperature("temperature"),
+      _periodsWaterLevel("water_level"),
+      _periodsDissolvedSolids("dissolved_solids"),
+      _periodsPhLevel("ph_level") {}
 
-void TelemetryManager::tick(unsigned long epoch,
+/**
+ * Ticks the telemetry manager, which will account for the given sensor values and commit them to the database if necessary.
+ *
+ * @param epoch The current epoch time in seconds.
+ * @param temperature The current temperature value.
+ * @param waterLevel The current water level value.
+ * @param dissolvedSolids The current dissolved solids value.
+ * @param phLevel The current pH level value.
+ * @return true if the operation was successful, false if the Firebase sign-in/refresh
+ *   failed or if any database operation failed all 3 attempts.
+ */
+bool TelemetryManager::tick(
+    unsigned long epoch,
     float temperature,
     float waterLevel,
     float dissolvedSolids,
-    float phLevel) {
-
-    SensorSpec sensors[] = {
-        { "temperature",      &temperatureSeries },
-        { "water_level",      &waterLevelSeries },
-        { "dissolved_solids", &dissolvedSolidsSeries },
-        { "ph_level",         &phLevelSeries }
-    };
-    float values[] = { temperature, waterLevel, dissolvedSolids, phLevel };
-    const int sensorCount = sizeof(sensors) / sizeof(sensors[0]);
-
-    for (int s = 0; s < sensorCount; s++) {
-        sensors[s].series->updateInstant(values[s], epoch);
-        uploadInstant(sensors[s].name, sensors[s].series->getInstantJson());
+    float phLevel
+) {
+    if (!_firebase.ensureFreshToken()) {
+        return false;
     }
 
-    elapsedSeconds++;
+    if (!_synced) {
+        _synced = _periodsTemperature.sync(_firebase, epoch)
+            && _periodsWaterLevel.sync(_firebase, epoch)
+            && _periodsDissolvedSolids.sync(_firebase, epoch)
+            && _periodsPhLevel.sync(_firebase, epoch);
 
-    for (int r = 0; r < RESOLUTION_COUNT; r++) {
-        unsigned long interval = RESOLUTIONS[r].bucketIntervalSeconds();
-        if (interval == 0) continue;
-
-        // First-time initialization
-        if (lastBucketEpoch[r] == 0) {
-            lastBucketEpoch[r] = epoch;
-        }
-
-        // Check if enough real time has passed
-        if (epoch - lastBucketEpoch[r] >= interval) {
-
-            temperatureSeries.pushToResolution(r, temperature, epoch);
-            uploadResolution("temperature", RESOLUTIONS[r], temperatureSeries.getBucketSeries(r));
-
-            waterLevelSeries.pushToResolution(r, waterLevel, epoch);
-            uploadResolution("water_level", RESOLUTIONS[r], waterLevelSeries.getBucketSeries(r));
-
-            dissolvedSolidsSeries.pushToResolution(r, dissolvedSolids, epoch);
-            uploadResolution("dissolved_solids", RESOLUTIONS[r], dissolvedSolidsSeries.getBucketSeries(r));
-
-            phLevelSeries.pushToResolution(r, phLevel, epoch);
-            uploadResolution("ph_level", RESOLUTIONS[r], phLevelSeries.getBucketSeries(r));
-
-            lastBucketEpoch[r] += interval;
+        if (!_synced) {
+            return false;
         }
     }
-}
 
-void TelemetryManager::uploadInstant(const char* sensorName, const String& instantJson) {
-    String path =  String(uid) + "/" "telemetry" + "/" + String(aqId) + "/" + sensorName + "/last_instant";
-    _firebase.sendJSON(path.c_str(), instantJson);
-}
+    bool ok = _periodsTemperature.account(
+        _firebase, sanitizeSensorValue(SENSOR_TEMPERATURE, temperature), epoch
+    );
+    ok = _periodsWaterLevel.account(
+        _firebase, sanitizeSensorValue(SENSOR_WATER_LEVEL, waterLevel), epoch
+    ) && ok;
+    ok = _periodsDissolvedSolids.account(
+        _firebase, sanitizeSensorValue(SENSOR_TDS, dissolvedSolids), epoch
+    ) && ok;
+    ok = _periodsPhLevel.account(
+        _firebase, sanitizeSensorValue(SENSOR_PH, phLevel), epoch
+    ) && ok;
 
-void TelemetryManager::uploadResolution(const char* sensorName, const Resolution& res, const BucketSeries& bucket) {
-    String path = String(uid) + "/" "telemetry" + "/" + String(aqId) + "/" + sensorName + "/" + res.name;
-    _firebase.sendJSON(path.c_str(), bucket.toJsonObjectConst());
+    return ok;
 }
