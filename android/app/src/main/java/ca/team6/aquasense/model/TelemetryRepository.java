@@ -10,7 +10,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -36,8 +39,12 @@ public class TelemetryRepository {
     private String watchedUid;
     @Nullable
     private String watchedAquariumId;
-    @Nullable
-    private FirebaseDatabaseHelper.ListenerHandle handle;
+
+    // One subscription per sensor, each on that sensor's last_instant rather than one on their
+    // shared parent. The parent also holds six periods of a hundred buckets each, so watching it
+    // means syncing and caching hundreds of KB to read four numbers, and being woken every time a
+    // bucket closes - none of which this repository ever looks at.
+    private final List<FirebaseDatabaseHelper.ListenerHandle> handles = new ArrayList<>();
 
     private TelemetryRepository() {
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -96,22 +103,42 @@ public class TelemetryRepository {
 
         this.publish(Collections.emptyMap());
 
-        this.handle = this.database.observeTelemetry(uid, aquariumId,
-                new FirebaseDatabaseHelper.TelemetryListener() {
-                    @Override
-                    public void onTelemetry(@NonNull Map<String, SensorReading> readingsBySensorId) {
-                        publish(readingsBySensorId);
-                    }
+        for (String sensorId : DatabaseSchema.SENSOR_IDS) {
+            this.handles.add(this.database.observeLastInstant(uid, aquariumId, sensorId,
+                    new FirebaseDatabaseHelper.ReadingListener() {
+                        @Override
+                        public void onReading(@NonNull String id, @Nullable SensorReading reading) {
+                            merge(id, reading);
+                        }
 
-                    @Override
-                    public void onError(@NonNull DatabaseError error) {
-                        ScopedLogger.error("Telemetry subscription cancelled: " + error.getMessage());
-                        detach();
-                        watchedUid = null;
-                        watchedAquariumId = null;
-                        publish(Collections.emptyMap());
-                    }
-                });
+                        @Override
+                        public void onError(@NonNull DatabaseError error) {
+                            ScopedLogger.error("Telemetry subscription cancelled: " + error.getMessage());
+                            detach();
+                            watchedUid = null;
+                            watchedAquariumId = null;
+                            publish(Collections.emptyMap());
+                        }
+                    }));
+        }
+    }
+
+    /**
+     * Folds one sensor's latest reading into the published map. The readings now arrive on four
+     * separate callbacks rather than one, so each publish carries the newest of every sensor seen
+     * so far instead of a whole snapshot.
+     *
+     * <p>A null reading removes the key rather than storing a null, which keeps the previous
+     * behaviour of a sensor the board has not published yet being absent from the map.
+     */
+    private void merge(@NonNull String sensorId, @Nullable SensorReading reading) {
+        Map<String, SensorReading> merged = new LinkedHashMap<>(this.readings);
+        if (reading != null) {
+            merged.put(sensorId, reading);
+        } else {
+            merged.remove(sensorId);
+        }
+        this.publish(Collections.unmodifiableMap(merged));
     }
 
     public void unwatch() {
@@ -141,10 +168,10 @@ public class TelemetryRepository {
     }
 
     private void detach() {
-        if (this.handle != null) {
-            this.handle.remove();
-            this.handle = null;
+        for (FirebaseDatabaseHelper.ListenerHandle handle : this.handles) {
+            handle.remove();
         }
+        this.handles.clear();
     }
 
     private void publish(@NonNull Map<String, SensorReading> readings) {

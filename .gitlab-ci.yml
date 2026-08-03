@@ -46,10 +46,13 @@ setup-firmware:
     - arduino-cli core install arduino:renesas_uno
     - arduino-cli lib update-index
     - arduino-cli lib install "OneWire"
-    - arduino-cli lib install "Firebase"
     - arduino-cli lib install "DallasTemperature"
     - arduino-cli lib install "ArduinoBLE"
     - arduino-cli lib install "ArduinoHttpClient"
+    # The firmware talks to Firebase over plain REST via ArduinoHttpClient, so the
+    # Firebase library is no longer installed. ArduinoJson used to arrive as its
+    # transitive dependency and is now named directly.
+    - arduino-cli lib install "ArduinoJson"
   artifacts:
     expire_in: 1 hour
     paths:

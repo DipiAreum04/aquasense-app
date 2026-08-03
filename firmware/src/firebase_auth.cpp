@@ -2,6 +2,7 @@
 #include <ArduinoHttpClient.h>
 #include <WiFiS3.h>
 #include <ArduinoJson.h>
+#include "consts.hpp"
 
 #define HTTP_CODE_OK 200
 
@@ -10,16 +11,50 @@ namespace {
     const uint16_t SIGN_IN_PORT = 443;
     const unsigned long DEFAULT_LIFETIME_MS = 3600000UL;  // Google ID tokens are valid for 1h
     const unsigned long REFRESH_MARGIN_MS = 300000UL;     // refresh 5 min before expiry
+
+    /* How long to wait before attempting sign-in again after a failure, doubling up
+     * to the ceiling. An attempt can hold the main loop for HTTP_TIMEOUT_MS, so
+     * retrying on every tick would spend most of the loop blocked and leave no room
+     * for bleWifi.poll(); the ceiling bounds how late a recovery can be noticed.
+     */
+    const unsigned long RETRY_BACKOFF_MIN_MS = 1000UL;
+    const unsigned long RETRY_BACKOFF_MAX_MS = 60000UL;
 }
 
 FirebaseAuth::FirebaseAuth(const char* apiKey, const char* email, const char* password)
     : _apiKey(apiKey), _email(email), _password(password) {}
 
+/**
+ * Returns whether a usable token is in hand, signing in first if there is not one.
+ *
+ * A failed attempt starts a backoff, and while that is running this reports failure
+ * without attempting anything, so a sign-in endpoint that is down costs one blocked
+ * attempt per backoff interval rather than one per tick. Callers already treat false
+ * as "skip this tick", so nothing upstream has to know the difference.
+ */
 bool FirebaseAuth::ensureFreshToken() {
     if (_signedInOnce && (long) (millis() - _refreshAtMillis) < 0) {
         return true;
     }
-    return signIn();
+
+    if (_backoffMs != 0 && (long) (millis() - _retryAtMillis) < 0) {
+        return false;
+    }
+
+    if (signIn()) {
+        _backoffMs = 0;
+        return true;
+    }
+
+    unsigned long next = (_backoffMs == 0) ? RETRY_BACKOFF_MIN_MS : _backoffMs * 2;
+    if (next > RETRY_BACKOFF_MAX_MS) {
+        next = RETRY_BACKOFF_MAX_MS;
+    }
+    _backoffMs = next;
+    _retryAtMillis = millis() + _backoffMs;
+
+    Serial.println("Firebase sign-in retry in "+String(_backoffMs / 1000)+"s");
+    return false;
 }
 
 /**
@@ -32,6 +67,11 @@ bool FirebaseAuth::ensureFreshToken() {
 bool FirebaseAuth::signIn() {
     WiFiSSLClient tlsClient;
     HttpClient http(tlsClient, SIGN_IN_HOST, SIGN_IN_PORT);
+    // Both, not just the first: the response wait keeps an unresponsive endpoint from
+    // holding the main loop, and the read timeout is what the streamed parse below
+    // runs on - at Stream's 1s default a slow reply aborts part-way through its body.
+    http.setHttpResponseTimeout(HTTP_TIMEOUT_MS);
+    http.setTimeout(HTTP_TIMEOUT_MS);
 
     String path = String("/v1/accounts:signInWithPassword?key=") + _apiKey;
     String body = String("{\"email\":\"") + _email +

@@ -10,46 +10,139 @@ Periods::Periods(const String& kind)
       _buckets1y("last_1y", 31536000) {}
 
 /**
- * Synchronizes the periods with the database, retrieving the current bucket index and timestamp for each period.
+ * Synchronizes the periods with the database. Every period's bucket index arrives
+ * in one read, rather than each period round-tripping for its own, so the whole
+ * sensor costs a single request before any gap-marking commits.
  *
  * @param firebase The WiFiFirebase instance to use for database operations.
  * @param currentTime The current epoch time in seconds.
- * @return true if the operation was successful, false otherwise if any operation fails all 3 attempts.
+ * @return true if the operation was successful, false if the bootstrap read or a
+ *   gap-marking write failed. The next tick retries.
  */
 bool Periods::sync(WiFiFirebase& firebase, unsigned long currentTime) {
-    return _buckets1h.sync(firebase, _kind, currentTime)
-        && _buckets1d.sync(firebase, _kind, currentTime)
-        && _buckets1w.sync(firebase, _kind, currentTime)
-        && _buckets1m.sync(firebase, _kind, currentTime)
-        && _buckets6m.sync(firebase, _kind, currentTime)
-        && _buckets1y.sync(firebase, _kind, currentTime);
+    Buckets* periods[PERIOD_COUNT];
+    collect(periods);
+
+    String periodIds[PERIOD_COUNT];
+    for (int i = 0; i < PERIOD_COUNT; i++) {
+        periodIds[i] = periods[i]->kind();
+    }
+
+    long indices[PERIOD_COUNT];
+    unsigned long lastOnline = currentTime;
+    if (!firebase.getSensorBootstrap(_kind, periodIds, PERIOD_COUNT, indices, lastOnline)) {
+        return false;
+    }
+
+    bool force[PERIOD_COUNT];
+    for (int i = 0; i < PERIOD_COUNT; i++) {
+        // Decided before resume(), which needs to know: a period that is not marking
+        // a gap must keep both its pending samples and its place in the current
+        // bucket. gapElapsed reads only lastOnline and the bucket size, so nothing
+        // here depends on resume() having run.
+        force[i] = periods[i]->gapElapsed(currentTime, lastOnline);
+
+        periods[i]->resume(currentTime, indices[i], force[i]);
+
+        /* Anything still pending was sampled before the outage. Averaging it into
+         * the marker would report the gap as though readings had been taken across
+         * it, so it goes. Only the periods actually marking a gap are cleared: a
+         * short outage that last_1y rightly ignores must not cost last_1y the days
+         * of samples it has been gathering.
+         */
+        if (force[i]) {
+            periods[i]->discardPending();
+        }
+    }
+
+    return commit(firebase, currentTime, force);
 }
 
 /**
- * Accounts for a new sensor value, committing it to the database if necessary.
+ * Private helper which gathers the periods into an array so they can be walked
+ * rather than spelled out one by one.
+ *
+ * @param out An array of PERIOD_COUNT pointers to fill in.
+ */
+void Periods::collect(Buckets** out) {
+    out[0] = &_buckets1h;
+    out[1] = &_buckets1d;
+    out[2] = &_buckets1w;
+    out[3] = &_buckets1m;
+    out[4] = &_buckets6m;
+    out[5] = &_buckets1y;
+}
+
+/**
+ * Private helper which writes every period that reports a commit due. The whole
+ * sensor's worth goes up as one request, so a device marking a gap in all six
+ * periods at once costs one round trip rather than twelve.
  *
  * @param firebase The WiFiFirebase instance to use for database operations.
- * @param value The new sensor value to account for.
  * @param commitTime The current epoch time in seconds.
- * @return true if the operation was successful, false otherwise if any operation fails all 3 attempts.
+ * @param force One flag per period, forcing that period's commit.
+ * @return true if the operation was successful, false if a database write failed.
+ *   Failures are left for the next tick to retry rather than retried in place.
  */
-bool Periods::account(WiFiFirebase& firebase, float value, unsigned long commitTime) {
+bool Periods::commit(WiFiFirebase& firebase, unsigned long commitTime, const bool* force) {
+    Buckets* periods[PERIOD_COUNT];
+    collect(periods);
+
+    BucketCommit commits[PERIOD_COUNT];
+    Buckets* pending[PERIOD_COUNT];
+    int count = 0;
+
+    for (int i = 0; i < PERIOD_COUNT; i++) {
+        if (!periods[i]->needsCommit(commitTime, force[i])) {
+            continue;
+        }
+        periods[i]->describeCommit(commits[count], commitTime);
+        pending[count] = periods[i];
+        count++;
+    }
+
+    if (count == 0) {
+        return true;
+    }
+
+    if (!firebase.commitBuckets(_kind, commits, count)) {
+        return false;
+    }
+
+    // Only advance once the write has landed, so a failure retries the same slot.
+    for (int i = 0; i < count; i++) {
+        pending[i]->onCommitted(commitTime);
+    }
+
+    return true;
+}
+
+/**
+ * Accounts for a new sensor value in every period's running average. Touches no
+ * database: the reading itself is uploaded by TelemetryManager, which batches all
+ * four sensors' instants into one request.
+ *
+ * @param value The new sensor value to account for.
+ */
+void Periods::accumulate(float value) {
     _buckets1h.add(value);
     _buckets1d.add(value);
     _buckets1w.add(value);
     _buckets1m.add(value);
     _buckets6m.add(value);
     _buckets1y.add(value);
+}
 
-    if (!firebase.commitInstant(_kind, commitTime, value)) {
-        return false;
-    }
-
-    bool ok = _buckets1h.tryCommit(firebase, _kind, commitTime);
-    ok = _buckets1d.tryCommit(firebase, _kind, commitTime) && ok;
-    ok = _buckets1w.tryCommit(firebase, _kind, commitTime) && ok;
-    ok = _buckets1m.tryCommit(firebase, _kind, commitTime) && ok;
-    ok = _buckets6m.tryCommit(firebase, _kind, commitTime) && ok;
-    ok = _buckets1y.tryCommit(firebase, _kind, commitTime) && ok;
-    return ok;
+/**
+ * Commits whichever periods have reached the end of their current bucket. Most
+ * ticks this writes nothing, since the shortest bucket spans 36 seconds.
+ *
+ * @param firebase The WiFiFirebase instance to use for database operations.
+ * @param commitTime The current epoch time in seconds.
+ * @return true if the operation was successful, false if a database write failed.
+ *   Failures are left for the next tick to retry rather than retried in place.
+ */
+bool Periods::commitBuckets(WiFiFirebase& firebase, unsigned long commitTime) {
+    bool force[PERIOD_COUNT] = { false, false, false, false, false, false };
+    return commit(firebase, commitTime, force);
 }
