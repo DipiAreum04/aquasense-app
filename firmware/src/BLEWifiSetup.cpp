@@ -90,6 +90,12 @@ bool BLEWifiSetup::tryConnectStored() {
             Serial.println(WiFi.localIP());
             return true;
         }
+        /* Keep BLE serviced across the wait. This is the longest single block in the
+         * firmware, and it lands squarely in the window where the network is down and
+         * someone is most likely to be handing the device new credentials - which
+         * cannot be received while nothing is polling.
+         */
+        poll();
         delay(200);
     }
 

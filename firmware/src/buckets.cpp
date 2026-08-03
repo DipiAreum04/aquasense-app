@@ -1,5 +1,6 @@
 #include "buckets.hpp"
 #include "consts.hpp"
+#include "elapsed.hpp"
 
 Buckets::Buckets(
     const String& kind, unsigned long totalSpanSecs
@@ -9,26 +10,44 @@ Buckets::Buckets(
 {}
 
 /**
- * Synchronizes the buckets with the database, retrieving the current bucket index and timestamp.
+ * Resumes from where the database left off, writing into the slot after the last
+ * one it recorded.
  *
- * @param firebase The WiFiFirebase instance to use for database operations.
- * @param sensorKind The kind of sensor (e.g., "temperature", "water_level").
+ * The bucket clock is only restarted on the very first resume, or when this period
+ * is about to mark a gap. A sync is no longer the once-per-boot event it was: any
+ * stranding of a bucket's length or more sends every period back through here, and
+ * restarting all six clocks each time would mean a period whose bucket outlasts the
+ * interval between outages never reaches its boundary at all. On flaky WiFi that
+ * silently retires the long periods - last_1d needs only one outage every 14 minutes
+ * to stop recording, last_1w one every 1.7 hours.
+ *
+ * The index needs no such guard: a period that did not commit did not move the index
+ * either, so recomputing it from the database yields what it already held.
+ *
  * @param currentTime The current epoch time in seconds.
- * @return true if the operation was successful, false otherwise if any operation fails all 3 attempts.
+ * @param storedIndex The last bucket index the database holds, or -1 if it holds none.
+ * @param markingGap Whether this period is about to write a gap marker.
  */
-bool Buckets::sync(WiFiFirebase& firebase, const String& sensorKind, unsigned long currentTime) {
-    _lastCommit = currentTime;
+void Buckets::resume(unsigned long currentTime, long storedIndex, bool markingGap) {
+    _bucketIndex = (int) ((storedIndex + 1) % _numberOfBuckets);
 
-    long currentIndex = -1;
-    unsigned long lastOnline = currentTime;
-
-    if (!firebase.getCurrentBucketInfo(sensorKind, _kind, currentIndex, lastOnline)) {
-        return false;
+    if (markingGap || !_hasResumed) {
+        _lastCommit = currentTime;
     }
+    _hasResumed = true;
+}
 
-    _bucketIndex = (int) ((currentIndex + 1) % _numberOfBuckets);
-
-    return tryCommit(firebase, sensorKind, currentTime, currentTime - lastOnline >= _bucketSize);
+/**
+ * Whether the device has been away long enough for this period to have missed a
+ * bucket, and so owes one gap marker. One marker covers the whole outage however
+ * long it ran: the bucket's timestamp is what says when it ended.
+ *
+ * @param currentTime The current epoch time in seconds.
+ * @param lastOnline The epoch time the device last uploaded a reading.
+ * @return true if a gap marker is owed.
+ */
+bool Buckets::gapElapsed(unsigned long currentTime, unsigned long lastOnline) const {
+    return secondsSince(currentTime, lastOnline) >= _bucketSize;
 }
 
 /**
@@ -44,30 +63,48 @@ void Buckets::add(float value) {
 }
 
 /**
- * Attempts to commit the current bucket to the database if the bucket is full or if forced.
- *
- * @param firebase The WiFiFirebase instance to use for committing.
- * @param sensorKind The kind of sensor (e.g., "temperature", "water_level").
- * @param currentTime The current epoch time in seconds.
- * @param force If true, forces a commit regardless of whether the bucket is full.
- * @return true if the commit was successful, false if any operations fails all 3 attempts.
+ * Discards the samples gathered so far, so that the next commit reports
+ * OFFLINE_VALUE rather than an average of readings taken before an outage.
  */
-bool Buckets::tryCommit(
-    WiFiFirebase& firebase, const String& sensorKind, unsigned long currentTime, bool force
-) {
-    if (!force && currentTime - _lastCommit < _bucketSize) {
-        return true;
-    }
+void Buckets::discardPending() {
+    _valueCount = 0;
+    _valueTotal = 0;
+}
 
-    float value = (_valueCount > 0) ? (_valueTotal / _valueCount) : OFFLINE_VALUE;
-    if (!firebase.commitBucket(sensorKind, _kind, _bucketIndex, currentTime, value)) {
-        return false;
-    }
+/**
+ * Whether the current bucket has closed and is due to be written.
+ *
+ * @param currentTime The current epoch time in seconds.
+ * @param force If true, reports due regardless of whether the bucket is full.
+ * @return true if this period has a bucket to commit.
+ */
+bool Buckets::needsCommit(unsigned long currentTime, bool force) const {
+    return force || secondsSince(currentTime, _lastCommit) >= _bucketSize;
+}
 
+/**
+ * Describes the bucket this period would write, without writing it. A period that
+ * took no readings reports OFFLINE_VALUE, which is what marks a gap.
+ *
+ * @param out The commit to fill in.
+ * @param currentTime The current epoch time in seconds.
+ */
+void Buckets::describeCommit(BucketCommit& out, unsigned long currentTime) const {
+    out.periodId = _kind.c_str();
+    out.index = _bucketIndex;
+    out.timestamp = currentTime;
+    out.value = (_valueCount > 0) ? (_valueTotal / _valueCount) : OFFLINE_VALUE;
+}
+
+/**
+ * Advances to the next bucket. Only call once the write has actually landed, so a
+ * failed commit is retried into the same slot rather than skipping it.
+ *
+ * @param currentTime The current epoch time in seconds.
+ */
+void Buckets::onCommitted(unsigned long currentTime) {
     _bucketIndex = (_bucketIndex + 1) % _numberOfBuckets;
     _lastCommit = currentTime;
     _valueCount = 0;
     _valueTotal = 0;
-
-    return true;
 }

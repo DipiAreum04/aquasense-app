@@ -11,9 +11,21 @@ public:
 
     bool sync(WiFiFirebase& firebase, unsigned long currentTime);
 
-    bool account(WiFiFirebase& firebase, float value, unsigned long commitTime);
+    const String& kind() const { return _kind; }
+
+    void accumulate(float value);
+
+    bool commitBuckets(WiFiFirebase& firebase, unsigned long commitTime);
 
 private:
+    static const int PERIOD_COUNT = 6;
+
+    void collect(Buckets** out);
+
+    // Writes whichever periods report a commit due, all in one request. force
+    // carries one flag per period, for the gap markers sync() owes after an outage.
+    bool commit(WiFiFirebase& firebase, unsigned long commitTime, const bool* force);
+
     String _kind;
     Buckets _buckets1h;
     Buckets _buckets1d;

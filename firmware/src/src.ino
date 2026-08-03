@@ -34,6 +34,15 @@ void run() {
     unsigned long lastTickMillis = millis();
     const unsigned long TICK_INTERVAL_MS = 1000;
 
+    /* How long to spend servicing BLE between reconnect attempts. Measured from the
+     * end of an attempt, so it is time the loop actually spends polling rather than
+     * time swallowed by the attempt itself. Raising it trades slower WiFi recovery
+     * for a wider provisioning window, which is the thing that matters while the
+     * network is down.
+     */
+    unsigned long lastReconnectMillis = 0;
+    const unsigned long RECONNECT_INTERVAL_MS = 1000;
+
     Serial.begin(115200);
     delay(500); // cant lower it more than this
 
@@ -64,13 +73,22 @@ void run() {
         }
 
         if (WiFi.status() != WL_CONNECTED) {
+            // Keep looping on bleWifi.poll() between attempts rather than sleeping
+            // through the gap: someone trying to re-provision the device can only be
+            // heard while this loop is turning.
+            if (millis() - lastReconnectMillis < RECONNECT_INTERVAL_MS) {
+                continue;
+            }
+
             Serial.println("WiFi lost. Trying reconnect via stored BLE credentials...");
 
-            if (bleWifi.tryConnectStored()) {
+            bool reconnected = bleWifi.tryConnectStored();
+            lastReconnectMillis = millis();
+
+            if (reconnected) {
                 Serial.println("WiFi reconnected.");
             } else {
                 Serial.println("WiFi reconnect failed. Still waiting for valid credentials.");
-                delay(1000); // give time before retrying the reconnect
                 continue;
             }
         }

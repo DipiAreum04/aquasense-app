@@ -38,12 +38,6 @@ public final class FirebaseDatabaseHelper {
         void onError(@NonNull DatabaseError error);
     }
 
-    public interface TelemetryListener {
-        void onTelemetry(@NonNull Map<String, SensorReading> readingsBySensorId);
-
-        void onError(@NonNull DatabaseError error);
-    }
-
     public interface AquariumsListener {
         void onAquariums(@NonNull List<Aquarium> aquariums);
 
@@ -165,42 +159,14 @@ public final class FirebaseDatabaseHelper {
         });
     }
 
-    // Watches every sensor of one aquarium through a single subscription on
-    // /{uid}/telemetry/{aquariumId}. Preferred over four observeLastInstant() calls when a screen
-    // shows the whole set, since the four sensor nodes arrive in one snapshot.
-    @NonNull
-    public ListenerHandle observeTelemetry(@NonNull String uid,
-                                           @NonNull String aquariumId,
-                                           @NonNull TelemetryListener listener) {
-        return attach(telemetryRef(uid, aquariumId), new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Map<String, SensorReading> readings = new LinkedHashMap<>();
-                // Iterate what is present rather than the four known sensor keys, so a sensor the
-                // board has not published yet is simply absent instead of a null entry.
-                for (DataSnapshot sensorSnapshot : snapshot.getChildren()) {
-                    String sensorId = sensorSnapshot.getKey();
-                    if (sensorId == null) {
-                        continue;
-                    }
-                    SensorReading reading =
-                            parseInstant(sensorSnapshot.child(DatabaseSchema.LAST_INSTANT_KEY));
-                    if (reading != null) {
-                        readings.put(sensorId, reading);
-                    }
-                }
-                listener.onTelemetry(Collections.unmodifiableMap(readings));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                listener.onError(error);
-            }
-        });
-    }
-
-    // Watches a single sensor's latest sample. For one card or detail sheet; use observeTelemetry()
-    // when the screen needs the whole aquarium.
+    /**
+     * Watches a single sensor's latest sample, at
+     * /{uid}/telemetry/{aquariumId}/{sensorId}/last_instant.
+     *
+     * <p>Subscribe once per sensor rather than once on their shared parent. The parent also holds
+     * six periods of a hundred buckets each, so a listener there syncs and caches hundreds of KB
+     * to reach four numbers, and re-fires every time a bucket closes.
+     */
     @NonNull
     public ListenerHandle observeLastInstant(@NonNull String uid,
                                              @NonNull String aquariumId,

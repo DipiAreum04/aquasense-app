@@ -1,36 +1,82 @@
 #include "wifi_firebase.hpp"
+#include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>
 #include "consts.hpp"
 
 #define HTTP_CODE_OK 200
+
+namespace {
+    const uint16_t HTTPS_PORT = 443;
+}
 
 /* TODO: The user ID is hardcoded to one test account for the demo, so every board
  * uploads into that same node. Wire this to the real signed-in user (through
  * PairingData / BLE provisioning) in sprint 3.
  */
 WiFiFirebase::WiFiFirebase(const char* dbUrl, const char* apiKey, const char* email, const char* password)
-    : dbUrl(dbUrl),
+    : _dbHost(hostFromUrl(dbUrl)),
       _userId("6pkWpLZO4BYFl2j4OQivkPupXuB3"),
-      _auth(apiKey, email, password) {}
+      _http(_tls, _dbHost.c_str(), HTTPS_PORT),
+      _auth(apiKey, email, password) {
+    /* Reuse the connection instead of handshaking per request. HttpClient reconnects
+     * on its own whenever the socket has gone away, so nothing here has to track
+     * whether one is currently open. Unlike the response timeout, this flag survives
+     * stop(), so setting it once is enough.
+     */
+    _http.connectionKeepAlive();
 
-WiFiFirebase::~WiFiFirebase() {
-    delete fb;
+    // Stream reads default to a 1s timeout, which a 30KB body can outlast mid-transfer.
+    _http.setTimeout(HTTP_TIMEOUT_MS);
 }
 
 /**
- * Signs in (or refreshes) via _auth and, whenever the ID token changes, rebuilds
- * the underlying Firebase client with it. The Firebase library only accepts the
- * auth token through its constructor (no setter), so the client has to be
- * recreated on every refresh instead of updated in place.
+ * Private helper method which consumes whatever is left of the response body, so
+ * that the socket is lined up at the start of the next reply, and reports whether
+ * the connection can be trusted for another request.
+ *
+ * Only a reply that declared a Content-Length can be finished with certainty.
+ * ArduinoHttpClient cannot detect the end of a chunk-encoded body - endOfBodyReached()
+ * is hardwired to false without a Content-Length, and the library's own responseBody()
+ * gives up by waiting for a read timeout - so rather than stall a tick guessing where
+ * the body ended, those replies close the connection and the next request opens a
+ * fresh one. That is exactly what every request did before keep-alive, so the worst
+ * case here is the old behaviour rather than a regression.
+ */
+void WiFiFirebase::finishResponse() {
+    if (_http.contentLength() < 0) {
+        _http.stop();
+        return;
+    }
+
+    unsigned long start = millis();
+    while (!_http.endOfBodyReached() && millis() - start < HTTP_TIMEOUT_MS) {
+        if (_http.available()) {
+            _http.read();
+        } else if (_http.connected()) {
+            delay(1);
+        } else {
+            break;
+        }
+    }
+
+    // Stalled partway through the body: what is left would be read as the next
+    // reply's status line, so the socket cannot be handed on.
+    if (!_http.endOfBodyReached()) {
+        _http.stop();
+    }
+}
+
+/**
+ * Signs in (or refreshes) via _auth and keeps the token and device id the requests
+ * below are built from. Every request carries the token in its query string, so
+ * there is no client to rebuild when it changes - only these two copies.
  */
 bool WiFiFirebase::ensureFreshToken() {
     if (!_auth.ensureFreshToken()) {
         return false;
     }
 
-    if (fb == nullptr || _appliedIdToken != _auth.idToken()) {
-        delete fb;
-        fb = new Firebase(dbUrl, _auth.idToken());
+    if (_appliedIdToken != _auth.idToken()) {
         _appliedIdToken = _auth.idToken();
         _deviceId = _auth.localId();
     }
@@ -39,64 +85,154 @@ bool WiFiFirebase::ensureFreshToken() {
 }
 
 /**
- * Private helper method called by other WiFiFirebase API methods to set a JSON
- * string at a given Firebase path. Retries up to maxAttempts times on failure.
+ * Private helper method which reads a node and keeps only the fields named by
+ * filter, parsing straight off the socket rather than buffering the response.
  *
- * @param path The Firebase path to set.
- * @param json The JSON string to set.
- * @param maxAttempts How many attempts to make before giving up. getCurrentBucketInfo
- *   passes 1 here: its retry loop happens once per tick already (via the outer
- *   TelemetryManager re-attempting sync() every tick), so adding delay()-based
- *   retries underneath it would just block the main loop - and bleWifi.poll() with
- *   it - for several extra seconds per tick while the DB is unreachable.
- * @return true if the operation was successful within maxAttempts, false otherwise.
+ * A telemetry node carries every one of its buckets - up to 100 per period, so
+ * roughly 30KB for a whole sensor - which is more than the board's 32KB of SRAM.
+ * ArduinoJson's filter lets that stream past while only the handful of fields we
+ * asked for are ever materialised, so the cost is transfer time rather than
+ * memory. Reading the body into a String first would not fit.
+ *
+ * Makes a single attempt: TelemetryManager re-runs sync() every tick until it
+ * succeeds, so retrying here as well would just block the main loop - and
+ * bleWifi.poll() with it - while the DB is unreachable.
+ *
+ * @param path The Firebase path to read.
+ * @param filter An ArduinoJson filter naming the fields to keep.
+ * @param out The document to parse the filtered response into.
+ * @return true if the node was read and parsed, false otherwise.
  */
-bool WiFiFirebase::setJson(const String& path, const String& json, int maxAttempts) {
-    if (fb == nullptr) {
+bool WiFiFirebase::getJsonFiltered(const String& path, const JsonDocument& filter, JsonDocument& out) {
+    // stop() puts this back to the 30s default, so it is re-applied per request
+    // rather than set once alongside connectionKeepAlive().
+    _http.setHttpResponseTimeout(HTTP_TIMEOUT_MS);
+
+    bool ok = false;
+    int result = _http.get("/" + path + ".json?auth=" + _appliedIdToken);
+    if (result == HTTP_SUCCESS) {
+        result = _http.responseStatusCode();
+        if (result == HTTP_CODE_OK) {
+            _http.skipResponseHeaders();
+            DeserializationError err = deserializeJson(out, _http, DeserializationOption::Filter(filter));
+            ok = !err;
+            if (err) {
+                Serial.print("Failed to parse JSON from "+path+": ");
+                Serial.println(err.c_str());
+            }
+        }
+    }
+
+    if (ok) {
+        finishResponse();
+    } else {
+        // A failed exchange leaves the socket at an unknown offset; drop it so the
+        // next request cannot read this reply's leftovers as its own.
+        _http.stop();
+        if (result != HTTP_CODE_OK) {
+            Serial.println("HTTP "+String(result)+": Failed to read JSON from "+path);
+        }
+    }
+    return ok;
+}
+
+/**
+ * Private helper method which builds one multi-location PATCH request against the
+ * database and returns its HTTP status (or one of ArduinoHttpClient's negative
+ * error codes if the request never got that far).
+ *
+ * PATCH is how the REST API expresses a multi-location update: every key in the
+ * body is a path relative to rootPath, and the database fans them out server-side.
+ *
+ * @param rootPath The path the relative keys in json are resolved against.
+ * @param json A JSON object whose keys are paths relative to rootPath.
+ * @return The HTTP status code, or a negative HttpClient error code.
+ */
+int WiFiFirebase::patchJson(const String& rootPath, const String& json) {
+    // stop() puts this back to the 30s default, so it is re-applied per request
+    // rather than set once alongside connectionKeepAlive().
+    _http.setHttpResponseTimeout(HTTP_TIMEOUT_MS);
+
+    String path = "/" + rootPath + ".json?auth=" + _appliedIdToken;
+
+    _http.beginRequest();
+    int result = _http.patch(path);
+    if (result == HTTP_SUCCESS) {
+        _http.sendHeader("Content-Type", "application/json");
+        _http.sendHeader("Content-Length", (int) json.length());
+        _http.beginBody();
+        _http.print(json);
+        _http.endRequest();
+        result = _http.responseStatusCode();
+    }
+
+    if (result == HTTP_CODE_OK) {
+        // The body is the patched data echoed back. It is of no use to us, but it
+        // has to be read off the socket before the socket can carry anything else.
+        _http.skipResponseHeaders();
+        finishResponse();
+    } else {
+        // A failed exchange leaves the socket at an unknown offset; drop it so the
+        // next request cannot read this reply's leftovers as its own.
+        _http.stop();
+    }
+
+    return result;
+}
+
+/**
+ * Private helper method which writes several locations at once through a single
+ * PATCH, the REST equivalent of a multi-location update: the keys of json are
+ * paths relative to rootPath and the database fans them out server-side.
+ *
+ * One PATCH costs one TCP+TLS handshake, and on the R4's crypto hardware that
+ * handshake dominates the cost of a request - so batching n writes here is close
+ * to an n-fold saving over n setJson calls.
+ *
+ * Makes a single attempt, for the same reason getJsonFiltered does: the tick is
+ * already the retry loop, and it comes round every second. Retrying here instead
+ * would hold the main loop for a multiple of the request timeout with no
+ * bleWifi.poll() in between, to arrive at the same place a second later.
+ *
+ * @param rootPath The path the relative keys in json are resolved against.
+ * @param json A JSON object whose keys are paths relative to rootPath.
+ * @return true if the update was accepted, false otherwise.
+ */
+bool WiFiFirebase::setJsonMulti(const String& rootPath, const String& json) {
+    if (_appliedIdToken.length() == 0) {
         return false;
     }
-    for (int attempts = 0; attempts < maxAttempts; attempts++) {
-        int code = fb->setJson(path, json);
-        if (code == HTTP_CODE_OK) {
-            return true;
-        }
-        bool willRetry = attempts < maxAttempts - 1;
-        Serial.print("HTTP "+String(code)+": Failed to send JSON to "+path);
-        Serial.println(willRetry ? " Retrying in 1 second..." : "");
-        if (willRetry) {
-            delay(1000);
-        }
+
+    int code = patchJson(rootPath, json);
+    if (code == HTTP_CODE_OK) {
+        return true;
     }
+
+    Serial.println("HTTP "+String(code)+": Failed to patch JSON at "+rootPath);
     return false;
 }
 
 /**
- * Private helper method called by other WiFiFirebase API methods to get a JSON
- * string from a given Firebase path. Retries up to maxAttempts times on failure.
+ * Private helper method which strips the scheme and any path off a database URL,
+ * leaving the bare host that ArduinoHttpClient expects.
  *
- * @param path The Firebase path to get.
- * @param out The string to store the retrieved JSON.
- * @param maxAttempts How many attempts to make before giving up. See setJson's doc
- *   for why getCurrentBucketInfo passes 1 here.
- * @return true if the operation was successful within maxAttempts, false otherwise.
+ * @param url The database URL.
+ * @return The host portion of the URL.
  */
-bool WiFiFirebase::getJson(const String& path, String& out, int maxAttempts) {
-    if (fb == nullptr) {
-        return false;
+String WiFiFirebase::hostFromUrl(const char* url) {
+    String host(url);
+
+    int schemeEnd = host.indexOf("://");
+    if (schemeEnd >= 0) {
+        host.remove(0, schemeEnd + 3);
     }
-    for (int attempts = 0; attempts < maxAttempts; attempts++) {
-        int code = fb->getJson(path, out);
-        if (code == HTTP_CODE_OK) {
-            return true;
-        }
-        bool willRetry = attempts < maxAttempts - 1;
-        Serial.print("HTTP "+String(code)+": Failed to read JSON from "+path);
-        Serial.println(willRetry ? " Retrying in 1 second..." : "");
-        if (willRetry) {
-            delay(1000);
-        }
+
+    int pathStart = host.indexOf('/');
+    if (pathStart >= 0) {
+        host.remove(pathStart);
     }
-    return false;
+
+    return host;
 }
 
 /**
@@ -116,133 +252,145 @@ String WiFiFirebase::bucketKey(int index) {
 }
 
 /**
+ * Private helper method which constructs the telemetry path for this device. This
+ * is the node every sensor hangs off, and so the root the batched instant update
+ * is patched against.
+ *
+ * @return The telemetry path for this device.
+ */
+String WiFiFirebase::telemetryDevicePath() const {
+    return String(_userId) + "/telemetry/" + _deviceId;
+}
+
+/**
  * Private helper method which constructs the telemetry path for a given sensor.
  *
  * @param sensorId The sensor id.
  * @return The telemetry path for the given sensor.
  */
 String WiFiFirebase::telemetrySensorPath(const String& sensorId) const {
-    return String(_userId) + "/telemetry/" + _deviceId + "/" + sensorId;
+    return telemetryDevicePath() + "/" + sensorId;
 }
 
 /**
- * Private helper method which constructs the telemetry instant path for a given sensor.
+ * Reads one sensor's whole telemetry node and pulls out what the periods need to
+ * resume: every bucket index, and when the device last uploaded a reading.
+ *
+ * This is one request per sensor. Asking each period for its index and its current
+ * bucket's timestamp separately meant up to twelve, and since a handshake dominates
+ * the cost of a request on this board that bootstrap took longer than the first
+ * minute and a half of uptime.
+ *
+ * The offline gap is measured from last_instant rather than from each period's
+ * newest bucket. Firebase orders children lexicographically, so a period's buckets
+ * arrive before its index and a single streaming pass cannot tell which bucket the
+ * index points at - and keeping all of them is the memory problem getJsonFiltered
+ * exists to avoid. last_instant is written every tick, so it answers "when was this
+ * device last online" directly.
  *
  * @param sensorId The sensor id.
- * @return The telemetry instant path.
+ * @param periodIds The period ids to read indices for.
+ * @param periodCount How many period ids periodIds holds.
+ * @param outIndices Filled with one index per period, -1 where a period has no buckets yet.
+ * @param outLastOnline The epoch time of the last uploaded reading. Left untouched
+ *   if the device has never uploaded one.
+ * @return true if the node was read and parsed, false otherwise.
  */
-String WiFiFirebase::telemetrySensorInstantPath(const String& sensorId) const {
-    return telemetrySensorPath(sensorId) + "/last_instant";
-}
-
-/**
- * Private helper method which constructs the telemetry node path for a given sensor and period.
- *
- * @param sensorId The sensor id.
- * @param periodId The period id.
- * @return The telemetry node path.
- */
-String WiFiFirebase::telemetrySensorPeriodPath(const String& sensorId, const String& periodId) const {
-    return telemetrySensorPath(sensorId) + "/" + periodId;
-}
-
-/**
- * Private helper method which constructs the telemetry index path for a given sensor and period.
- *
- * @param sensorId The sensor id.
- * @param periodId The period id.
- * @return The telemetry index path.
- */
-String WiFiFirebase::telemetrySensorPeriodIndexPath(const String& sensorId, const String& periodId) const {
-    return telemetrySensorPeriodPath(sensorId, periodId) + "/index";
-}
-
-/**
- * Private helper method which constructs the telemetry bucket path for a given sensor, period, and index.
- *
- * @param sensorId The sensor id.
- * @param periodId The period id.
- * @param index The bucket index.
- * @return The telemetry bucket path.
- */
-String WiFiFirebase::telemetrySensorPeriodBucketPath(const String& sensorId, const String& periodId, int index) const {
-    return telemetrySensorPeriodPath(sensorId, periodId) + "/buckets/" + bucketKey(index);
-}
-
-/**
- * Private helper method which constructs the telemetry bucket timestamp path for a given sensor, period, and index.
- *
- * @param sensorId The sensor id.
- * @param periodId The period id.
- * @param index The bucket index.
- * @return The telemetry bucket timestamp path.
- */
-String WiFiFirebase::telemetrySensorPeriodBucketTimestampPath(const String& sensorId, const String& periodId, int index) const {
-    return telemetrySensorPeriodBucketPath(sensorId, periodId, index) + "/timestamp";
-}
-
-/**
- * Gets the current bucket index and timestamp for a given sensor and period from the database.
- *
- * @param sensorId The sensor id.
- * @param periodId The period id.
- * @param outIndex The output parameter to store the retrieved index. Will not be modified if no index is found.
- * @param outTimestamp The output parameter to store the retrieved timestamp of the current bucket. Will not be modified if no timestamp is found.
- * @return true if the operation was successful within 3 attempts, false otherwise.
- */
-bool WiFiFirebase::getCurrentBucketInfo(
-    const String& sensorId, const String& periodId, long& outIndex, unsigned long& outTimestamp
+bool WiFiFirebase::getSensorBootstrap(
+    const String& sensorId,
+    const String* periodIds,
+    int periodCount,
+    long* outIndices,
+    unsigned long& outLastOnline
 ) {
-    String indexPath = telemetrySensorPeriodIndexPath(sensorId, periodId);
-
-    String indexBody;
-    if (!getJson(indexPath, indexBody, 1)) {
+    if (_appliedIdToken.length() == 0) {
         return false;
     }
 
-    indexBody.trim();
-    if (indexBody.length() == 0 || indexBody == "null") {
-        return true;
-    } else {
-        outIndex = indexBody.toInt();
+    JsonDocument filter;
+    filter["last_instant"]["timestamp"] = true;
+    for (int i = 0; i < periodCount; i++) {
+        filter[periodIds[i]]["index"] = true;
     }
 
-    String timestampPath = telemetrySensorPeriodBucketTimestampPath(sensorId, periodId, outIndex);
-
-    String timestampBody;
-    if (!getJson(timestampPath, timestampBody, 1)) {
+    JsonDocument doc;
+    if (!getJsonFiltered(telemetrySensorPath(sensorId), filter, doc)) {
         return false;
     }
 
-    timestampBody.trim();
-    if (!(timestampBody.length() == 0 || timestampBody == "null")) {
-        outTimestamp = (unsigned long) timestampBody.toInt();
+    for (int i = 0; i < periodCount; i++) {
+        outIndices[i] = doc[periodIds[i]]["index"] | (long) -1;
+    }
+
+    unsigned long lastOnline = doc["last_instant"]["timestamp"] | (unsigned long) 0;
+    if (lastOnline != 0) {
+        outLastOnline = lastOnline;
     }
 
     return true;
 }
 
-bool WiFiFirebase::commitBucket(
-    const String& sensorKind, const String& kind, int index, unsigned long timestamp, float value
-) {
+/**
+ * Commits every closed bucket for one sensor in one request. Each period
+ * contributes two locations - the bucket itself and the period's index cursor -
+ * and all of them ride the same PATCH.
+ *
+ * A device coming back from a long outage marks a gap in all six periods at once,
+ * which used to be twelve requests per sensor. The index is written alongside its
+ * bucket rather than after it, so the two can no longer end up disagreeing because
+ * the second write failed.
+ *
+ * @param sensorId The sensor id.
+ * @param commits The bucket writes to commit.
+ * @param count How many writes commits holds.
+ * @return true if the update was accepted, false otherwise.
+ *   The update is atomic, so a false here means no bucket was written.
+ */
+bool WiFiFirebase::commitBuckets(const String& sensorId, const BucketCommit* commits, int count) {
+    if (count <= 0) {
+        return true;
+    }
+
     JsonDocument doc;
-    doc["timestamp"] = timestamp;
-    doc["value"] = serialized(String(value, 7));
+    for (int i = 0; i < count; i++) {
+        String periodPath = String(commits[i].periodId);
+
+        JsonObject bucket = doc[periodPath + "/buckets/" + bucketKey(commits[i].index)].to<JsonObject>();
+        bucket["timestamp"] = commits[i].timestamp;
+        bucket["value"] = serialized(String(commits[i].value, 7));
+
+        doc[periodPath + "/index"] = commits[i].index;
+    }
     String json;
     serializeJson(doc, json);
 
-    bool ok = true;
-    ok = ok && setJson(telemetrySensorPeriodBucketPath(sensorKind, kind, index), json);
-    ok = ok && setJson(telemetrySensorPeriodIndexPath(sensorKind, kind), String(index));
-    return ok;
+    return setJsonMulti(telemetrySensorPath(sensorId), json);
 }
 
-bool WiFiFirebase::commitInstant(const String& sensorKind, unsigned long timestamp, float value) {
+/**
+ * Commits every sensor's latest reading in one request, rather than one request
+ * per sensor. Each entry lands at <sensor>/last_instant exactly as a per-sensor
+ * write would; only the transport changes.
+ *
+ * @param instants The readings to commit.
+ * @param count How many readings instants holds.
+ * @param timestamp The epoch time in seconds the readings were taken at.
+ * @return true if the update was accepted, false otherwise.
+ *   The update is atomic, so a false here means no sensor was written.
+ */
+bool WiFiFirebase::commitInstants(const SensorInstant* instants, int count, unsigned long timestamp) {
+    if (count <= 0) {
+        return true;
+    }
+
     JsonDocument doc;
-    doc["timestamp"] = timestamp;
-    doc["value"] = serialized(String(value, 7));
+    for (int i = 0; i < count; i++) {
+        JsonObject instant = doc[String(instants[i].sensorId) + "/last_instant"].to<JsonObject>();
+        instant["timestamp"] = timestamp;
+        instant["value"] = serialized(String(instants[i].value, 7));
+    }
     String json;
     serializeJson(doc, json);
 
-    return setJson(telemetrySensorInstantPath(sensorKind), json);
+    return setJsonMulti(telemetryDevicePath(), json);
 }

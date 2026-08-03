@@ -1,5 +1,8 @@
 package ca.team6.aquasense.model;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -50,6 +53,15 @@ public final class DatabaseSchema {
     public static final String WATER_LEVEL_KEY = "water_level";
     public static final String DISSOLVED_SOLIDS_KEY = "dissolved_solids";
     public static final String PH_LEVEL_KEY = "ph_level";
+
+    // Every sensor the schema requires a board to publish, so a screen can subscribe to each one
+    // by name instead of watching their parent and discovering them. Watching the parent also
+    // pulls down every period's buckets, which is far more data than any caller of this wants.
+    public static final List<String> SENSOR_IDS = Collections.unmodifiableList(Arrays.asList(
+            TEMPERATURE_KEY,
+            WATER_LEVEL_KEY,
+            DISSOLVED_SOLIDS_KEY,
+            PH_LEVEL_KEY));
 
     // Period nodes under a sensor.
     public static final String LAST_INSTANT_KEY = "last_instant";
