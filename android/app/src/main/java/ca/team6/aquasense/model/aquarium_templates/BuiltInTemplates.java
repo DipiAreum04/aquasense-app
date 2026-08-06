@@ -129,6 +129,10 @@ public final class BuiltInTemplates {
         return FRESHWATER;
     }
 
+    public static AquariumTemplate forWaterType(@Nullable WaterType waterType) {
+        return waterType == WaterType.SALTWATER ? SALTWATER : FRESHWATER;
+    }
+
     /** Starts a threshold set for a template. */
     private static Bands bands() {
         return new Bands();

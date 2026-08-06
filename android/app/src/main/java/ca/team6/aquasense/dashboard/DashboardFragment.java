@@ -52,6 +52,7 @@ public class DashboardFragment extends Fragment {
             aquariums -> {
                 showActiveAquarium();
                 refreshTelemetrySubscription();
+                showSensorCards();
             };
 
     private final TelemetryRepository.TelemetryObserver telemetryObserver =
@@ -205,11 +206,19 @@ public class DashboardFragment extends Fragment {
         refreshTelemetrySubscription();
 
         applyTemperatureUnitPreference();
+        showSensorCards();
         if (sensorAdapter != null) {
-            sensorAdapter.setSensors(visibleSensors());
             sensorAdapter.notifySensorChanged(TEMPERATURE);
         }
         stalenessHandler.post(stalenessTick);
+    }
+
+    // Re-applies the card order and visibility
+    private void showSensorCards() {
+        if (sensorAdapter == null) {
+            return;
+        }
+        sensorAdapter.setSensors(visibleSensors());
     }
 
     private List<AquariumSensor> visibleSensors() {
@@ -218,6 +227,8 @@ public class DashboardFragment extends Fragment {
             return ALL_SENSORS;
         }
 
+        Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
+
         List<String> knownIds = new ArrayList<>();
         for (AquariumSensor sensor : ALL_SENSORS) {
             knownIds.add(sensor.getId());
@@ -225,6 +236,9 @@ public class DashboardFragment extends Fragment {
 
         List<AquariumSensor> ordered = new ArrayList<>();
         for (String id : prefs.getSensorOrder(knownIds)) {
+            if (activeAquarium != null && !activeAquarium.isSensorApplicable(id)) {
+                continue;
+            }
             if (prefs.isSensorHidden(id)) {
                 continue;
             }
@@ -238,13 +252,15 @@ public class DashboardFragment extends Fragment {
         return ordered;
     }
 
+    // Sets the unit shown on the temperature card. The reading itself is converted by
+    // ReadingFormatter, which runs per reading rather than per resume, so this only has to keep
+    // the label agreeing with it.
     private void applyTemperatureUnitPreference() {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null)
             return;
         String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, new AppSettings().tempUnit);
         TEMPERATURE.setUnitResId("C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit);
-        // TODO: When live temperature values arrive, convert C↔F for display as well.
     }
 
 }

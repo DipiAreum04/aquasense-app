@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
+
 /**
  * Live view of the signed-in user's /{uid}/aquariums node.
  *
@@ -50,6 +52,14 @@ public class AquariumRepository {
     // key from the old "activeDeviceId": that stored a mock hardware address, which matches
     // nothing in the database and would resolve to no aquarium at all.
     private static final String KEY_ACTIVE_AQUARIUM_ID = "activeAquariumId";
+
+    // An aquarium's database key is its board's Firebase UID, which the app only learns when the
+    // two are paired. Until then every aquarium is created on the mock board's UID, so a new tank
+    // lands on the mock telemetry subtree that actually has readings under it.
+    // TODO: Replace with the device UID handed back by BLE pairing. Two things follow from that:
+    //  creation has to fail, or wait, when no board has been paired yet, and the null-key guard
+    //  that FirebaseDatabaseHelper.newAquariumId() needed belongs back in addAquarium.
+    private static final String MOCK_AQUARIUM_ID = "L3UnzQFEq5WrRaHocFImFrwnuPK2";
 
     private static AquariumRepository instance;
 
@@ -170,8 +180,10 @@ public class AquariumRepository {
      * subscription reports the new aquarium, so the list has exactly one source and cannot drift
      * from what the database actually holds.
      */
+    // TODO: Add the custom aquarium template logic
     public void addAquarium(@NonNull String name,
                             @NonNull WaterType waterType,
+                            @Nullable AquariumTemplate template,
                             @NonNull WriteCallback callback) {
         String uid = this.currentUid();
         if (uid == null) {
@@ -180,14 +192,10 @@ public class AquariumRepository {
             return;
         }
 
-        String aquariumId = this.database.newAquariumId(uid);
-        if (aquariumId == null) {
-            ScopedLogger.error("Firebase returned no key for the new aquarium.");
-            callback.onError();
-            return;
-        }
+        String aquariumId = MOCK_AQUARIUM_ID;
 
         this.database.writeAquarium(uid, aquariumId, name, waterType.getKey(),
+                template != null ? template.getAllThresholds() : Collections.emptyMap(),
                 new FirebaseDatabaseHelper.DbCallback() {
                     @Override
                     public void onSuccess() {

@@ -102,10 +102,13 @@ public final class AquariumTemplate {
         return this.waterType;
     }
 
-    // TODO: The dashboard and the display settings screen both should filter on this before consulting the user's hide preference.
     /**
-     * Whether this sensor can be measured at all in this water type. 
+     * Whether this sensor can be measured at all in this water type.
      * An inapplicable sensor is a hardware limit and stays disabled.
+     *
+     * <p>The dashboard and the display settings screen both filter on this before consulting the
+     * user's hide preference, so an inapplicable sensor is never shown even if the preference
+     * says it should be.
      */
     public boolean isSensorApplicable(String sensorId) {
         return !this.disabledSensors.contains(sensorId);
@@ -124,6 +127,14 @@ public final class AquariumTemplate {
     @Nullable
     public ThresholdBand getThresholds(String sensorId) {
         return this.thresholds.get(sensorId);
+    }
+
+    /**
+     * Every band this template defines, keyed by sensor ID. Written to the aquarium as-is when one
+     * is created from this template, so the dashboard judges readings against these exact numbers.
+     */
+    public Map<String, ThresholdBand> getAllThresholds() {
+        return this.thresholds;
     }
 
     /**
