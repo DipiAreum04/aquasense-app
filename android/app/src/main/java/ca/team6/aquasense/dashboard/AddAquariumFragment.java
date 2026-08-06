@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,12 @@ import java.util.Map;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
+import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ProfileInputValidator;
+import ca.team6.aquasense.model.ReadingFormatter;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
@@ -45,6 +49,13 @@ public class AddAquariumFragment extends Fragment {
     // Identifies the Custom row in templateChoices. Cannot collide with a template ID, since
     // BuiltInTemplates keys those on the water chemistry family.
     private static final String CUSTOM_CHOICE_ID = "custom";
+
+    // Matches the template cards in Settings, so a bound reads the same on both screens.
+    private static final DecimalFormat BOUND_FORMAT = new DecimalFormat("0.##");
+
+    // How far a sensor card's title is dimmed when the chosen water type cannot be measured with
+    // it. The explanation below the title keeps its own opacity so it stays readable.
+    private static final float DISABLED_TITLE_ALPHA = 0.4f;
 
     private EditText etAquariumName;
     private LinearLayout advancedSettingsContent;
@@ -64,6 +75,9 @@ public class AddAquariumFragment extends Fragment {
     private EditText etTemperatureMin, etTemperatureMax;
     private EditText etDissolvedSolidsMin, etDissolvedSolidsMax;
     private EditText etPhLevelMin, etPhLevelMax;
+    private TextView tvDissolvedSolidsTitle;
+    private View dissolvedSolidsThresholdInputs;
+    private TextView tvDissolvedSolidsDisabledNote;
     private RadioGroup rgSensorHistoryRetention;
 
     @Nullable
@@ -84,12 +98,10 @@ public class AddAquariumFragment extends Fragment {
 
         etAquariumName = view.findViewById(R.id.etAquariumName);
 
-        // Advanced settings first: selecting Custom expands that section, so it has to exist by
-        // the time the rows are built.
         setupAdvancedSettingsToggle(view);
-        setupTemplateChoices(view);
         setupSensorThresholdFields(view);
         setupTemperatureUnitToggle(view);
+        setupTemplateChoices(view);
 
         btnCreate = view.findViewById(R.id.btnCreateAquarium);
         btnCreate.setOnClickListener(this::createAquarium);
@@ -134,9 +146,9 @@ public class AddAquariumFragment extends Fragment {
             return;
         }
 
-        // TODO: Persist the chosen template's ID and its thresholds, plus the tank volume, notes
+        // TODO: Persist the tank volume and notes, which have nowhere in the schema to go yet.
         setSubmitting(true);
-        repository.addAquarium(name, selectedWaterType(),
+        repository.addAquarium(name, selectedWaterType(), selectedTemplate(),
                 new AquariumRepository.WriteCallback() {
                     @Override
                     public void onSuccess() {
@@ -165,6 +177,13 @@ public class AddAquariumFragment extends Fragment {
                 });
     }
 
+    // TODO: Build the custom aquarium template UI and logic
+    /** The template the user picked, or null for Custom, which is not backed by one. */
+    @Nullable
+    private AquariumTemplate selectedTemplate() {
+        return BuiltInTemplates.fromId(selectedChoiceId);
+    }
+
     /**
      * The water type to store, taken from the selected template.
      *
@@ -174,8 +193,7 @@ public class AddAquariumFragment extends Fragment {
      */
     @NonNull
     private WaterType selectedWaterType() {
-        // Resolves to null for CUSTOM_CHOICE_ID, which is not a template.
-        AquariumTemplate template = BuiltInTemplates.fromId(selectedChoiceId);
+        AquariumTemplate template = selectedTemplate();
         return template != null
                 ? template.getWaterType()
                 : BuiltInTemplates.getDefault().getWaterType();
@@ -269,12 +287,12 @@ public class AddAquariumFragment extends Fragment {
         }
     }
 
-    /** Leaves exactly one row checked, the one named by {@link #selectedChoiceId}. */
     private void showSelectedChoice() {
         for (Map.Entry<String, View> choice : templateChoices.entrySet()) {
             RadioButton radio = choice.getValue().findViewById(R.id.rbTemplateChoice);
             radio.setChecked(choice.getKey().equals(selectedChoiceId));
         }
+        showTemplateThresholds();
     }
 
     /**
@@ -309,7 +327,79 @@ public class AddAquariumFragment extends Fragment {
         etDissolvedSolidsMax = view.findViewById(R.id.etDissolvedSolidsMax);
         etPhLevelMin = view.findViewById(R.id.etPhLevelMin);
         etPhLevelMax = view.findViewById(R.id.etPhLevelMax);
+        tvDissolvedSolidsTitle = view.findViewById(R.id.tvDissolvedSolidsTitle);
+        dissolvedSolidsThresholdInputs = view.findViewById(R.id.dissolvedSolidsThresholdInputs);
+        tvDissolvedSolidsDisabledNote = view.findViewById(R.id.tvDissolvedSolidsDisabledNote);
         rgSensorHistoryRetention = view.findViewById(R.id.rgSensorHistoryRetention);
+    }
+
+    /**
+     * Fills the threshold fields with the selected template's safe range, so the user sees
+     * the numbers the aquarium will be created with instead of a blank form.
+     */
+    
+    private void showTemplateThresholds() {
+        // Null for Custom, which clears the fields: it is defined by what the user types, and a
+        // template's numbers sitting in the boxes would misrepresent that.
+        AquariumTemplate template = selectedTemplate();
+
+        showBand(etTemperatureMin, etTemperatureMax,
+                template == null ? null : template.getThresholds(DatabaseSchema.TEMPERATURE_KEY),
+                true);
+        showBand(etPhLevelMin, etPhLevelMax,
+                template == null ? null : template.getThresholds(DatabaseSchema.PH_LEVEL_KEY),
+                false);
+        showBand(etDissolvedSolidsMin, etDissolvedSolidsMax,
+                template == null ? null : template.getThresholds(DatabaseSchema.DISSOLVED_SOLIDS_KEY),
+                false);
+
+        showDissolvedSolidsApplicable(template);
+    }
+
+    /**
+     * Writes one band's safe range into a min / max pair, or empties both when the template has no
+     * band for that sensor.
+     *
+     * @param isTemperature converts to whatever unit the toggle above the field is set to, since
+     *     templates hold Celsius but the field is labelled with the user's unit.
+     */
+    private void showBand(EditText min, EditText max, @Nullable ThresholdBand band, boolean isTemperature) {
+        if (band == null) {
+            min.setText("");
+            max.setText("");
+            return;
+        }
+        double low = isTemperature
+                ? ReadingFormatter.toDisplayTemperature(requireContext(), band.getSafeLow())
+                : band.getSafeLow();
+        double high = isTemperature
+                ? ReadingFormatter.toDisplayTemperature(requireContext(), band.getSafeHigh())
+                : band.getSafeHigh();
+        min.setText(BOUND_FORMAT.format(low));
+        max.setText(BOUND_FORMAT.format(high));
+    }
+
+    /**
+     * Greys out the TDS card for a template whose water the probe cannot read, which today
+     * is Saltwater only, and explains why in the template's own words.
+     */
+    private void showDissolvedSolidsApplicable(@Nullable AquariumTemplate template) {
+        boolean applicable = template == null
+                || template.isSensorApplicable(DatabaseSchema.DISSOLVED_SOLIDS_KEY);
+
+        tvDissolvedSolidsTitle.setAlpha(applicable ? 1f : DISABLED_TITLE_ALPHA);
+        dissolvedSolidsThresholdInputs.setVisibility(applicable ? View.VISIBLE : View.GONE);
+        etDissolvedSolidsMin.setEnabled(applicable);
+        etDissolvedSolidsMax.setEnabled(applicable);
+
+        // Every template that disables a sensor carries a note explaining it
+        int noteResId = template == null ? 0 : template.getDisabledNoteResId();
+        if (applicable || noteResId == 0) {
+            tvDissolvedSolidsDisabledNote.setVisibility(View.GONE);
+            return;
+        }
+        tvDissolvedSolidsDisabledNote.setText(noteResId);
+        tvDissolvedSolidsDisabledNote.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -335,6 +425,7 @@ public class AddAquariumFragment extends Fragment {
             String unit = (checkedId == R.id.rbAdvancedCelsius) ? "C" : "F";
             prefs.updateField(SettingsRepository.KEY_TEMP_UNIT, unit);
             updateTemperatureTitle(tvTemperatureTitle, unit);
+            showTemplateThresholds();
         });
     }
 

@@ -88,28 +88,56 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Allocates the database key for a new aquarium. Generated client-side by push(), so the
-    // caller holds the ID before the write lands and can address the aquarium immediately.
+    // TODO: Remove this and add a new method to allocate received deviceUID as the aquarium key
+    // Unused while AquariumRepository hardcodes the mock board's UID as the key; kept because an
+    // aquarium may yet need a key of its own before a board is paired to it.
+    @SuppressWarnings("unused")
     @Nullable
     public String newAquariumId(@NonNull String uid) {
         return aquariumsRef(uid).push().getKey();
     }
 
-    // Writes the two required keys of /{uid}/aquariums/{aquariumId}. Merges rather than replaces,
-    // so renaming an aquarium leaves its thresholds and spike deltas untouched.
+    /**
+     * Writes /{uid}/aquariums/{aquariumId}, whose key is the paired board's UID.
+     * Merges rather than replaces,so even if the user changes the aquarium name,
+     * the thresholds and spike deltas will still be there.
+     */
+    // TODO: editing one sensor's band must not wipe the whole thresholds node. 
+    // Update the deeper "thresholds/{sensor}" path, which Firebase merges per path segment.
     public void writeAquarium(@NonNull String uid,
                               @NonNull String aquariumId,
                               @NonNull String name,
                               @NonNull String waterType,
+                              @NonNull Map<String, ThresholdBand> thresholds,
                               @NonNull DbCallback callback) {
         Map<String, Object> aquarium = new HashMap<>();
         aquarium.put(DatabaseSchema.NAME_KEY, name);
         aquarium.put(DatabaseSchema.WATER_TYPE_KEY, waterType);
+        if (!thresholds.isEmpty()) {
+            aquarium.put(DatabaseSchema.THRESHOLDS_KEY, thresholdsToMap(thresholds));
+        }
 
         aquariumsRef(uid)
                 .child(aquariumId)
                 .updateChildren(aquarium)
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
+    }
+
+    // Turns bands into the four-key nodes the schema stores them as. All four go in together,
+    // since parseThresholds drops any band that is missing one of them.
+    @NonNull
+    private static Map<String, Object> thresholdsToMap(@NonNull Map<String, ThresholdBand> thresholds) {
+        Map<String, Object> bySensor = new HashMap<>();
+        for (Map.Entry<String, ThresholdBand> entry : thresholds.entrySet()) {
+            ThresholdBand band = entry.getValue();
+            Map<String, Object> bounds = new HashMap<>();
+            bounds.put(DatabaseSchema.WARN_LOW_KEY, band.getWarnLow());
+            bounds.put(DatabaseSchema.SAFE_LOW_KEY, band.getSafeLow());
+            bounds.put(DatabaseSchema.SAFE_HIGH_KEY, band.getSafeHigh());
+            bounds.put(DatabaseSchema.WARN_HIGH_KEY, band.getWarnHigh());
+            bySensor.put(entry.getKey(), bounds);
+        }
+        return bySensor;
     }
 
     // Removes an aquarium along with the telemetry recorded under it. Both paths go in one
@@ -227,7 +255,13 @@ public final class FirebaseDatabaseHelper {
                 ScopedLogger.error("Incomplete threshold band at " + sensorSnapshot.getRef());
                 continue;
             }
-            bands.put(sensorId, new ThresholdBand(warnLow, safeLow, safeHigh, warnHigh));
+
+            ThresholdBand band = ThresholdBand.fromValues(warnLow, safeLow, safeHigh, warnHigh);
+            if (band == null) {
+                ScopedLogger.error("Out-of-order threshold band at " + sensorSnapshot.getRef());
+                continue;
+            }
+            bands.put(sensorId, band);
         }
         return Collections.unmodifiableMap(bands);
     }

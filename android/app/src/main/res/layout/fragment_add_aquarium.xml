@@ -298,8 +298,10 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Dissolved Solids -->
+                <!-- Dissolved Solids. Greyed out by AddAquariumFragment for a template whose water
+                     type the TDS sensor cannot read -->
                 <LinearLayout
+                    android:id="@+id/dissolvedSolidsThresholdCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -308,6 +310,7 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:id="@+id/tvDissolvedSolidsTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawablePadding="12dp"
@@ -318,7 +321,19 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tvDissolvedSolidsDisabledNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/gray_500"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        tools:text="TDS sensor range is below saltwater levels."
+                        tools:visibility="visible" />
+
                     <LinearLayout
+                        android:id="@+id/dissolvedSolidsThresholdInputs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"

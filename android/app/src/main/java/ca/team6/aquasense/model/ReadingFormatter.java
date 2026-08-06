@@ -5,12 +5,11 @@ import android.content.Context;
 import java.util.Locale;
 
 /**
- * Formats numeric sensor readings for display using the Display &amp; Units reading-precision
- * preference.
+ * Formats numeric sensor readings for display using the Display &amp; Units preferences.
  *
  * <p>Decimal places are chosen per sensor rather than globally since a single "2 decimals everywhere"
  * setting would render pH as {@code 7.18} but dissolved solids as {@code 342.00}, which claims
- * precision the probe does not have.
+ * precision the sensor does not have.
  */
 public final class ReadingFormatter {
 
@@ -31,6 +30,20 @@ public final class ReadingFormatter {
                 ScopedLogger.error("Unknown sensor ID " + sensorId + ", defaulting to 1 decimal.");
                 return 1;
         }
+    }
+
+    // Converts a Celsius temperature to the unit the user reads the app in.
+    public static double toDisplayTemperature(Context context, double celsius) {
+        return isCelsius(context) ? celsius : celsius * 9 / 5 + 32;
+    }
+
+    private static boolean isCelsius(Context context) {
+        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(context);
+        if (prefs == null) {
+            return "C".equals(new AppSettings().tempUnit);
+        }
+        return "C".equals(prefs.getString(
+                SettingsRepository.KEY_TEMP_UNIT, new AppSettings().tempUnit));
     }
 
     public static boolean isPrecise(Context context) {
@@ -54,6 +67,9 @@ public final class ReadingFormatter {
     @SuppressWarnings("MalformedFormatString")
     public static String format(Context context, String sensorId, double value) {
         int decimals = decimalsFor(sensorId, isPrecise(context));
-        return String.format(Locale.getDefault(), "%." + decimals + "f", value);
+        double displayValue = DatabaseSchema.TEMPERATURE_KEY.equals(sensorId)
+                ? toDisplayTemperature(context, value)
+                : value;
+        return String.format(Locale.getDefault(), "%." + decimals + "f", displayValue);
     }
 }

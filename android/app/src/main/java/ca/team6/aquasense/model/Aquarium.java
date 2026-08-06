@@ -2,8 +2,12 @@ package ca.team6.aquasense.model;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import java.util.Map;
+
+import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
+import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 
 /**
  * One entry of /{uid}/aquariums. The database key is carried on the object as {@link #getId()},
@@ -46,6 +50,22 @@ public final class Aquarium {
     @NonNull
     public String getWaterType() {
         return waterType;
+    }
+
+    //Checks if the sensor is applicable to this aquarium's water type.
+    public boolean isSensorApplicable(@NonNull String sensorId) {
+        return template().isSensorApplicable(sensorId);
+    }
+
+    // Returns the resource ID of the note to display when a sensor is disabled due to water type.
+    @StringRes
+    public int getSensorDisabledNoteResId() {
+        return template().getDisabledNoteResId();
+    }
+
+    @NonNull
+    private AquariumTemplate template() {
+        return BuiltInTemplates.forWaterType(WaterType.fromKey(waterType));
     }
 
     @Nullable

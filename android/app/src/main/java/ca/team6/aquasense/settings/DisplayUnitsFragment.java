@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.model.Aquarium;
+import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
@@ -30,13 +32,23 @@ import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
 
 public class DisplayUnitsFragment extends Fragment {
 
+    // How far a card row is dimmed when the active aquarium's water cannot be measured with it.
+    private static final float DISABLED_ROW_ALPHA = 0.4f;
+
     private SettingsRepository repo;
     private SharedPreferenceHelper prefs;
+    private AquariumRepository aquariumRepository;
 
     private LinearLayout containerDashboardCards;
+    private TextView tvDashboardCardsDisabledNote;
 
     // Card rows are driven by this list; index order is the saved display order.
     private final List<AquariumSensor> orderedSensors = new ArrayList<>();
+
+    // Which sensors are measurable depends on the active aquarium, so the rows are redrawn when
+    // the list loads or changes rather than only when this screen is opened.
+    private final AquariumRepository.AquariumsObserver aquariumsObserver =
+            aquariums -> renderDashboardCardRows();
 
     @Nullable
     @Override
@@ -51,12 +63,14 @@ public class DisplayUnitsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         repo = new SettingsRepository(requireContext());
         prefs = SharedPreferenceHelper.getInstance(requireContext());
+        aquariumRepository = AquariumRepository.getInstance(requireContext());
 
         RadioGroup rgTemp       = view.findViewById(R.id.rgTempUnit);
         RadioGroup rgPrecision  = view.findViewById(R.id.rgPrecision);
         RadioGroup rgThemeMode  = view.findViewById(R.id.rgThemeMode);
         SwitchCompat switch24h  = view.findViewById(R.id.switch24HourClock);
         containerDashboardCards = view.findViewById(R.id.containerDashboardCards);
+        tvDashboardCardsDisabledNote = view.findViewById(R.id.tvDashboardCardsDisabledNote);
 
         repo.loadSettings(s -> {
             rgTemp.check("C".equals(s.tempUnit) ? R.id.rbCelsius : R.id.rbFahrenheit);
@@ -86,6 +100,13 @@ public class DisplayUnitsFragment extends Fragment {
                 prefs.updateField(SettingsRepository.KEY_24H_CLOCK, checked));
 
         setUpDashboardCardRows();
+        aquariumRepository.addObserver(aquariumsObserver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        aquariumRepository.removeObserver(aquariumsObserver);
     }
 
 
@@ -119,6 +140,8 @@ public class DisplayUnitsFragment extends Fragment {
         containerDashboardCards.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
+        showDisabledSensorNote();
+
         for (int i = 0; i < orderedSensors.size(); i++) {
             AquariumSensor sensor = orderedSensors.get(i);
             View row = inflater.inflate(
@@ -144,7 +167,13 @@ public class DisplayUnitsFragment extends Fragment {
             moveUp.setOnClickListener(v -> moveCard(position, position - 1));
             moveDown.setOnClickListener(v -> moveCard(position, position + 1));
 
-            visible.setChecked(!prefs.isSensorHidden(sensor.getId()));
+            boolean applicable = isSensorApplicable(sensor);
+            row.setAlpha(applicable ? 1f : DISABLED_ROW_ALPHA);
+            moveUp.setEnabled(moveUp.isEnabled() && applicable);
+            moveDown.setEnabled(moveDown.isEnabled() && applicable);
+            visible.setEnabled(applicable);
+
+            visible.setChecked(applicable && !prefs.isSensorHidden(sensor.getId()));
             visible.setOnCheckedChangeListener((b, checked) -> {
                 // Hiding every card would leave the dashboard blank with no way back to it.
                 if (!checked && countVisible() <= 1) {
@@ -175,14 +204,34 @@ public class DisplayUnitsFragment extends Fragment {
         renderDashboardCardRows();
     }
 
+    // Counts the cards the dashboard would actually draw, so a sensor that is off because this
+    // aquarium cannot measure it is not counted as one of the cards keeping the grid populated.
     private int countVisible() {
         int visible = 0;
         for (AquariumSensor sensor : orderedSensors) {
-            if (!prefs.isSensorHidden(sensor.getId())) {
+            if (isSensorApplicable(sensor) && !prefs.isSensorHidden(sensor.getId())) {
                 visible++;
             }
         }
         return visible;
+    }
+
+    // Whether the active aquarium's water can be measured with this sensor at all
+    private boolean isSensorApplicable(@NonNull AquariumSensor sensor) {
+        Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
+        return activeAquarium == null || activeAquarium.isSensorApplicable(sensor.getId());
+    }
+
+    // Explains the greyed-out rows as notes on the disabled sensors
+    private void showDisabledSensorNote() {
+        Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
+        int noteResId = activeAquarium == null ? 0 : activeAquarium.getSensorDisabledNoteResId();
+        if (noteResId == 0) {
+            tvDashboardCardsDisabledNote.setVisibility(View.GONE);
+            return;
+        }
+        tvDashboardCardsDisabledNote.setText(noteResId);
+        tvDashboardCardsDisabledNote.setVisibility(View.VISIBLE);
     }
 
     // Preference value <-> ID mapping
