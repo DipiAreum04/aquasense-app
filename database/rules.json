@@ -1,8 +1,103 @@
 {
   "rules": {
+    ".read": false,
+    ".write": false,
+
     "$uid": {
       ".read": "auth != null && auth.uid === $uid && now < 1788220800000",
-      ".write": "auth != null && auth.uid === $uid && now < 1788220800000"
+      ".write": "auth != null && auth.uid === $uid && now < 1788220800000",
+      ".validate": "$uid.matches(/^[A-Za-z0-9_-]{28}$/) && newData.hasChild('account')",
+
+      "account": {
+        ".validate": "newData.hasChildren(['name', 'email'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 254 && newData.val() === auth.token.email"
+        },
+        "$other": { ".validate": false }
+      },
+
+      "aquariums": {
+        "$aqId": {
+          ".validate": "$aqId.matches(/^[A-Za-z0-9_-]{28}$/) && newData.hasChildren(['name', 'water_type'])",
+
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+          },
+          "water_type": {
+            ".validate": "newData.isString() && (newData.val() === 'freshwater' || newData.val() === 'saltwater')"
+          },
+
+          "thresholds": {
+            "$sensor": {
+              ".validate": "($sensor === 'temperature' || $sensor === 'dissolved_solids' || $sensor === 'ph_level') && newData.hasChildren(['warn_low', 'safe_low', 'safe_high', 'warn_high']) && newData.child('warn_low').val() < newData.child('safe_low').val() && newData.child('safe_low').val() < newData.child('safe_high').val() && newData.child('safe_high').val() < newData.child('warn_high').val()",
+              "warn_low": { ".validate": "newData.isNumber()" },
+              "safe_low": { ".validate": "newData.isNumber()" },
+              "safe_high": { ".validate": "newData.isNumber()" },
+              "warn_high": { ".validate": "newData.isNumber()" },
+              "$other": { ".validate": false }
+            }
+          },
+
+          "spike_deltas": {
+            "$sensor": {
+              ".validate": "($sensor === 'temperature' || $sensor === 'dissolved_solids' || $sensor === 'ph_level') && newData.isNumber() && newData.val() > 0"
+            }
+          },
+
+          "$other": { ".validate": false }
+        }
+      },
+
+      "telemetry": {
+        "$aqId": {
+          ".read": "auth != null && auth.uid === $aqId && now < 1788220800000 && root.child($uid).child('aquariums').child($aqId).exists()",
+          ".write": "auth != null && auth.uid === $aqId && now < 1788220800000 && root.child($uid).child('aquariums').child($aqId).exists()",
+          ".validate": "newData.parent().parent().child('aquariums').child($aqId).exists()",
+
+          "$sensor": {
+            ".validate": "$sensor === 'temperature' || $sensor === 'water_level' || $sensor === 'dissolved_solids' || $sensor === 'ph_level'",
+
+            "last_instant": {
+              ".validate": "newData.hasChildren(['timestamp', 'value'])",
+              "timestamp": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1777608000 && newData.val() <= 1788235200"
+              },
+              "value": {
+                ".validate": "newData.isNumber()"
+              },
+              "$other": { ".validate": false }
+            },
+
+            "$window": {
+              ".validate": "$window === 'last_1h' || $window === 'last_1d' || $window === 'last_1w' || $window === 'last_1m' || $window === 'last_6m' || $window === 'last_1y'",
+
+              "index": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 99"
+              },
+
+              "buckets": {
+                "$slot": {
+                  ".validate": "$slot.matches(/^B[0-9][0-9]$/) && newData.hasChildren(['timestamp', 'value'])",
+                  "timestamp": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1777608000 && newData.val() <= 1788235200"
+                  },
+                  "value": {
+                    ".validate": "newData.isNumber()"
+                  },
+                  "$other": { ".validate": false }
+                }
+              },
+
+              "$other": { ".validate": false }
+            }
+          }
+        }
+      },
+
+      "$other": { ".validate": false }
     }
   }
 }

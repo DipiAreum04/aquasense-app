@@ -168,14 +168,14 @@ def test_new_user_without_account_is_invalid( # pylint: disable=unused-argument
     teardown_database: None,
     teardown_one_test_user: Generator[None, None, None],
 ) -> None:
-    """Test that a new user without an email is invalid against the database schema."""
+    """Test that a new user without an account is invalid against the database schema."""
     auth, _, admin_db = auth_userdb_admindb_tuple
     email, password = one_test_user_email_pwd
 
     user_creds = auth.sign_in_with_email_and_password(email, password)
     user_id = user_creds["localId"]
 
-    admin_db.child(user_id).child("aquariums").push("KEEP_ALIVE")
+    admin_db.child(user_id).child("aquariums").child("A" * 28).set("KEEP_ALIVE")
     admin_db.child(user_id).child("account").delete()
 
     response = admin_db.get()
