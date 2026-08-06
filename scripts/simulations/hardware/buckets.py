@@ -29,7 +29,7 @@ class Buckets:
             .child(sensor_kind)
             .child(self._kind)
             .child("index")
-            .get().val()
+            .get(database.device_token).val()
         )
         self._bucket_index = (
             (current_index+1) % self._number_of_buckets if current_index is not None else 0
@@ -42,7 +42,7 @@ class Buckets:
                 .child(self._kind)
                 .child("buckets")
                 .child(f"B{current_index:0{len(str(RESOLUTION-1))}d}")
-                .child("timestamp").get().val())
+                .child("timestamp").get(database.device_token).val())
 
         logger.info(
             "Initialized %d %s::%s buckets of size %d seconds starting at index %d",
@@ -83,12 +83,12 @@ class Buckets:
                     self._value_total / self._value_count
                     if self._value_count > 0 else OFFLINE_VALUE
                 ),
-            }))
+            }, database.device_token))
         (database.telemetry_aquarium_node
             .child(sensor_kind)
             .child(self._kind)
             .child("index")
-            .set(self._bucket_index))
+            .set(self._bucket_index, database.device_token))
 
         logger.info(
             "Committed %s::%s::B[%d] at %d",

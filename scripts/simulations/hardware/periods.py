@@ -34,7 +34,7 @@ class Periods:
         database.telemetry_aquarium_node.child(self._kind).child("last_instant").set({
             "timestamp": commit_time,
             "value": value,
-        })
+        }, database.device_token)
         logger.info(
             "Committed %s %f at %d",
             self._kind,
