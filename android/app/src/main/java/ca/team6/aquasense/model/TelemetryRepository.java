@@ -12,10 +12,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TelemetryRepository {
@@ -45,6 +47,12 @@ public class TelemetryRepository {
     // means syncing and caching hundreds of KB to read four numbers, and being woken every time a
     // bucket closes - none of which this repository ever looks at.
     private final List<FirebaseDatabaseHelper.ListenerHandle> handles = new ArrayList<>();
+
+    // Sensors whose last_instant has delivered at least one snapshot for the current subscription.
+    // The four listeners resolve independently, so the first few publishes carry only the sensors
+    // read so far; a caller aggregating one verdict across all of them has to wait for the set to
+    // fill or it reports a state built mostly from sensors that simply have not been read yet.
+    private final Set<String> readSensorIds = new HashSet<>();
 
     private TelemetryRepository() {
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -85,6 +93,15 @@ public class TelemetryRepository {
     @NonNull
     public Map<String, SensorReading> getReadings() {
         return this.readings;
+    }
+
+    /**
+     * Whether every sensor's last_instant has been read at least once since the current aquarium
+     * was watched. Until then the published readings are an incomplete view of the database, not a
+     * report that the missing sensors are offline.
+     */
+    public boolean hasReadAllSensors() {
+        return this.readSensorIds.size() == DatabaseSchema.SENSOR_IDS.size();
     }
 
     public void watchAquarium(@NonNull String aquariumId) {
@@ -132,6 +149,10 @@ public class TelemetryRepository {
      * behaviour of a sensor the board has not published yet being absent from the map.
      */
     private void merge(@NonNull String sensorId, @Nullable SensorReading reading) {
+        // A null reading still counts as read: the listener resolved, and "this sensor has never
+        // published" is an answer about the sensor rather than a gap in what we have fetched.
+        this.readSensorIds.add(sensorId);
+
         Map<String, SensorReading> merged = new LinkedHashMap<>(this.readings);
         if (reading != null) {
             merged.put(sensorId, reading);
@@ -172,6 +193,7 @@ public class TelemetryRepository {
             handle.remove();
         }
         this.handles.clear();
+        this.readSensorIds.clear();
     }
 
     private void publish(@NonNull Map<String, SensorReading> readings) {

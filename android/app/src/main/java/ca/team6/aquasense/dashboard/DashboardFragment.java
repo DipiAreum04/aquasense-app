@@ -1,12 +1,14 @@
 package ca.team6.aquasense.dashboard;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ import java.util.Map;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.SettingsActivity;
 import ca.team6.aquasense.model.AppSettings;
+import ca.team6.aquasense.model.AquariumStatus;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.GridSpacingItemDecoration;
 import ca.team6.aquasense.model.SensorReading;
@@ -38,6 +41,7 @@ import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
+import ca.team6.aquasense.model.WaterType;
 
 public class DashboardFragment extends Fragment {
     private DashboardHeaderController dashboardHeaderController;
@@ -47,6 +51,12 @@ public class DashboardFragment extends Fragment {
 
     private AquariumRepository aquariumRepository;
     private TelemetryRepository telemetryRepository;
+
+   
+    private List<View> headerSlackViews;
+    private int[] headerSlackMargins;
+    private View dashboardFooter;
+    private ViewTreeObserver.OnPreDrawListener headerFitListener;
 
     private final AquariumRepository.AquariumsObserver aquariumsObserver =
             aquariums -> {
@@ -116,8 +126,7 @@ public class DashboardFragment extends Fragment {
             startActivity(new Intent(v.getContext(), SettingsActivity.class))
         );
 
-        // FIXME: SHOULD BE REPLACED WITH VALUE FROM SENSORS.
-        this.dashboardHeaderController.setDashboardSensorsStatus(0);
+        showSensorsStatus();
 
         recycler = view.findViewById(R.id.sensorGrid);
         recycler.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
@@ -133,9 +142,84 @@ public class DashboardFragment extends Fragment {
             ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
         }
 
+        View dashboardHeader = view.findViewById(R.id.dashboardHeader);
+        dashboardFooter = view.findViewById(R.id.dashboardFooter);
+        headerSlackViews = Arrays.asList(
+                view.findViewById(R.id.aquariumSensorsStatusIconCircle),
+                view.findViewById(R.id.aquariumSensorsStatusHeading),
+                view.findViewById(R.id.dashboardHeaderWave));
+        headerSlackMargins = new int[headerSlackViews.size()];
+        for (int i = 0; i < headerSlackViews.size(); i++) {
+            headerSlackMargins[i] = topMarginOf(headerSlackViews.get(i));
+        }
+
+        headerFitListener = () -> fitHeaderAboveSensorGrid(view, dashboardHeader);
+        view.getViewTreeObserver().addOnPreDrawListener(headerFitListener);
+
         applyTemperatureUnitPreference();
         sensorAdapter = new DashboardSensorAdapter(getParentFragmentManager(), visibleSensors());
         recycler.setAdapter(sensorAdapter);
+    }
+
+    private boolean fitHeaderAboveSensorGrid(View root, View header) {
+        if (headerSlackViews == null || root.getHeight() == 0 || header.getHeight() == 0) {
+            return true;
+        }
+
+        // Halfway is still measured against the whole screen, footer included, so a screen with
+        // the room to spare draws exactly as it did before the grid got a say.
+        int target = root.getHeight() / 2;
+        if (recycler.getHeight() > 0) {
+            int leftByGrid = root.getHeight() - dashboardFooter.getHeight()
+                    - recycler.getHeight() - topMarginOf(recycler);
+            target = Math.min(target, leftByGrid);
+        }
+
+        int currentSlack = 0;
+        for (View slackView : headerSlackViews) {
+            currentSlack += topMarginOf(slackView);
+        }
+        int[] margins = distributeHeaderSlack(
+                Math.max(0, target - (header.getHeight() - currentSlack)));
+
+        boolean changed = false;
+        for (int i = 0; i < headerSlackViews.size(); i++) {
+            View slackView = headerSlackViews.get(i);
+            ViewGroup.MarginLayoutParams params =
+                    (ViewGroup.MarginLayoutParams) slackView.getLayoutParams();
+            if (params.topMargin == margins[i]) {
+                continue;
+            }
+            params.topMargin = margins[i];
+            slackView.setLayoutParams(params);
+            changed = true;
+        }
+        return !changed;
+    }
+
+    private int[] distributeHeaderSlack(int slack) {
+        int[] margins = headerSlackMargins.clone();
+        int declared = 0;
+        for (int margin : headerSlackMargins) {
+            declared += margin;
+        }
+
+        if (slack >= declared) {
+            margins[0] += Math.min(slack - declared, headerSlackMargins[0]);
+            return margins;
+        }
+
+        int remaining = slack;
+        for (int i = margins.length - 1; i > 0; i--) {
+            margins[i] = Math.round((float) headerSlackMargins[i] * slack / declared);
+            remaining -= margins[i];
+        }
+        margins[0] = Math.max(0, remaining);
+        return margins;
+    }
+
+    private static int topMarginOf(View view) {
+        return ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).topMargin;
     }
 
     private void showActiveAquarium() {
@@ -145,16 +229,74 @@ public class DashboardFragment extends Fragment {
 
         if (!aquariumRepository.isLoaded()) {
             this.dashboardHeaderController.setDashboardHeaderTitle(getString(R.string.loading_aquariums));
+            this.dashboardHeaderController.setDashboardWaterType(null);
             return;
         }
 
         Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
         if (activeAquarium == null) {
             this.dashboardHeaderController.setDashboardHeaderTitle(getString(R.string.no_aquariums));
+            this.dashboardHeaderController.setDashboardWaterType(null);
             return;
         }
 
         this.dashboardHeaderController.setDashboardHeaderTitle(activeAquarium.getName());
+        this.dashboardHeaderController.setDashboardWaterType(
+                WaterType.fromKey(activeAquarium.getWaterType()));
+    }
+
+    private void showSensorsStatus() {
+        if (dashboardHeaderController == null) {
+            return;
+        }
+
+        // The sensors arrive on four independent listeners, so deciding on every publish walks the
+        // header through DISCONNECTED > CRITICAL > NORMAL as they land. Hold it at DISCONNECTED
+        // until all four have been read, then decide once from a complete set.
+        AquariumStatus aquariumStatus = telemetryRepository.hasReadAllSensors()
+                ? AquariumStatus.forSensors(visibleSensors())
+                : AquariumStatus.DISCONNECTED;
+        this.dashboardHeaderController.setDashboardSensorsStatus(aquariumStatus);
+    }
+
+    private void showLastUpdated(Map<String, SensorReading> readingsBySensorId, long nowMillis) {
+        if (dashboardHeaderController == null) {
+            return;
+        }
+
+        // The sensors publish independently, so the header reports the freshest of them: that is
+        // the last moment the aquarium was known to be saying anything at all.
+        long newestSeconds = Long.MIN_VALUE;
+        for (SensorReading reading : readingsBySensorId.values()) {
+            if (!reading.isOffline() && reading.getTimestampSeconds() > newestSeconds) {
+                newestSeconds = reading.getTimestampSeconds();
+            }
+        }
+        if (newestSeconds == Long.MIN_VALUE) {
+            this.dashboardHeaderController.setDashboardLastUpdated(
+                    getString(R.string.dashboard_last_updated_pending));
+            return;
+        }
+
+        long ageSeconds = Math.max(0L, nowMillis / 1000L - newestSeconds);
+        Resources resources = getResources();
+        CharSequence lastUpdated;
+        if (ageSeconds < 60L) {
+            lastUpdated = getString(R.string.dashboard_last_updated_now);
+        } else if (ageSeconds < 3600L) {
+            int minutes = (int) (ageSeconds / 60L);
+            lastUpdated = resources.getQuantityString(
+                    R.plurals.dashboard_last_updated_minutes, minutes, minutes);
+        } else if (ageSeconds < 86400L) {
+            int hours = (int) (ageSeconds / 3600L);
+            lastUpdated = resources.getQuantityString(
+                    R.plurals.dashboard_last_updated_hours, hours, hours);
+        } else {
+            int days = (int) (ageSeconds / 86400L);
+            lastUpdated = resources.getQuantityString(
+                    R.plurals.dashboard_last_updated_days, days, days);
+        }
+        this.dashboardHeaderController.setDashboardLastUpdated(lastUpdated);
     }
 
     @Override
@@ -166,7 +308,18 @@ public class DashboardFragment extends Fragment {
         // meant to keep running for the whole signed-in session (it only tears down on sign-out,
         // see TelemetryRepository#onAuthChanged) so a future background-alerts feature can act on
         // live telemetry while the dashboard isn't on screen.
+        if (dashboardHeaderController != null) {
+            dashboardHeaderController.cancelStatusTransition();
+        }
         dashboardHeaderController = null;
+
+        View view = getView();
+        if (view != null && headerFitListener != null) {
+            view.getViewTreeObserver().removeOnPreDrawListener(headerFitListener);
+        }
+        headerFitListener = null;
+        headerSlackViews = null;
+        dashboardFooter = null;
     }
 
     @Override
@@ -196,6 +349,8 @@ public class DashboardFragment extends Fragment {
                 sensorAdapter.notifySensorChanged(sensor);
             }
         }
+        showSensorsStatus();
+        showLastUpdated(readingsBySensorId, nowMillis);
     }
 
     @Override

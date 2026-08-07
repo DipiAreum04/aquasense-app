@@ -62,7 +62,7 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/status_green" />
+                    android:background="@color/template_band_normal" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/status_orange" />
+                    android:background="@color/template_band_warning" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@color/status_red" />
+                    android:background="@color/template_band_critical" />
 
                 <TextView
                     android:layout_width="wrap_content"

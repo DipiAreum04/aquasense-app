@@ -31,32 +31,32 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/bg_band_start"
-            android:backgroundTint="@color/status_red" />
+            android:backgroundTint="@color/template_band_critical" />
 
         <View
             android:id="@+id/segmentWarningLow"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/status_orange" />
+            android:background="@color/template_band_warning" />
 
         <View
             android:id="@+id/segmentSafe"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/status_green" />
+            android:background="@color/template_band_normal" />
 
         <View
             android:id="@+id/segmentWarningHigh"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/status_orange" />
+            android:background="@color/template_band_warning" />
 
         <View
             android:id="@+id/segmentCriticalHigh"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/bg_band_end"
-            android:backgroundTint="@color/status_red" />
+            android:backgroundTint="@color/template_band_critical" />
 
     </LinearLayout>
 

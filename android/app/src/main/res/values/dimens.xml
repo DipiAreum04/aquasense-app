@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The four things in the dashboard header that are drawn at a fixed size, trimmed for a compact
+  screen. Only these four: the gaps around them are spent at runtime by DashboardFragment, and the
+  sensor cards are deliberately left alone at every screen size, since they are what the screen is
+  for.
+
+  Turning any of these down frees height for the gaps above the disc, the heading and the wave to
+  reopen, which is what stops the disc colliding with the aquarium chip on a short screen. The
+  disc is the biggest of the four and so the one worth turning first.
+-->
+<resources>
+    <dimen name="dashboard_status_disc_size">105dp</dimen>
+    <dimen name="dashboard_status_disc_icon_size">76dp</dimen>
+    <dimen name="dashboard_status_heading_text">25sp</dimen>
+    <dimen name="dashboard_header_wave_height">40dp</dimen>
+</resources>

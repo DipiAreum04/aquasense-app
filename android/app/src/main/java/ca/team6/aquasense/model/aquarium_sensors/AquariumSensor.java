@@ -48,13 +48,21 @@ public abstract class AquariumSensor {
             this.status = SensorStatus.DISCONNECTED;
         } else {
             this.value = ReadingFormatter.format(context, this.getId(), reading.getValue());
-            this.status = thresholdBand != null ? thresholdBand.statusFor(reading.getValue()) : SensorStatus.NORMAL;
+            this.status = this.statusFor(reading.getValue(), thresholdBand);
         }
 
         return !Objects.equals(previousValue, this.value) || previousStatus != this.status;
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Grades a live reading. A sensor with no band configured has nothing to be out of range of,
+     * so it reads as normal; a sensor whose reading carries a meaning of its own, regardless of
+     * any band, says so by overriding this.
+     */
+    protected SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
+        return thresholdBand != null ? thresholdBand.statusFor(value) : SensorStatus.NORMAL;
+    }
+
     public SensorStatus getSensorStatus() {
         return this.status;
     }
@@ -69,6 +77,22 @@ public abstract class AquariumSensor {
     
     public int getStatusColorResId() {
         return this.status.colorResourceId;
+    }
+
+    public int getStatusCardStrokeColorResId() {
+        return this.status.cardStrokeColorResourceId;
+    }
+
+    public int getStatusPillBackgroundColorResId() {
+        return this.status.pillBackgroundColorResourceId;
+    }
+
+    public int getValueColorResId() {
+        return this.status.valueColorResourceId;
+    }
+
+    public int getTitleIconColorResId() {
+        return this.status.titleIconColorResourceId;
     }
 
     public InfoSheetSection[] getInfoSheetSections() {
