@@ -14,6 +14,8 @@
     <string name="water_level">Water Level</string>
     <string name="dissolved_solids">Dissolved Solids</string>
     <string name="ph_level">pH Level</string>
+    <string name="water_level_low">Low</string>
+    <string name="water_level_safe">Safe</string>
     <string name="unit_dimensionless"> </string>
     <string name="unit_celsius">°C</string>
     <string name="unit_fahrenheit">°F</string>
@@ -31,21 +33,29 @@
     <string name="loading_aquariums">Loading your aquariums…</string>
     <string name="sensor_info_example_title">Example Title</string>
     <string name="sensor_info_example_point">This is an example.</string>
-    <string name="aquarium_sensors_status_sunny_icon">☀️</string>
-    <string name="aquarium_sensors_status_sunny_heading">No Issues</string>
-    <string name="aquarium_sensors_status_sunny_description">All sensors are reading normally.</string>
-    <string name="aquarium_sensors_status_fair_icon">⛅</string>
-    <string name="aquarium_sensors_status_fair_heading">Needs Attention</string>
-    <string name="aquarium_sensors_status_fair_description">Some sensors are reporting occasional spikes.</string>
-    <string name="aquarium_sensors_status_cloudy_icon">☁️</string>
-    <string name="aquarium_sensors_status_cloudy_heading">Warning</string>
-    <string name="aquarium_sensors_status_cloudy_description">Some sensors are nearing their thresholds.</string>
-    <string name="aquarium_sensors_status_rainy_icon">🌧️</string>
-    <string name="aquarium_sensors_status_rainy_heading">Critical</string>
-    <string name="aquarium_sensors_status_rainy_description">Some sensors have crossed their thresholds.</string>
-    <string name="aquarium_sensors_status_stormy_icon">🌩️</string>
-    <string name="aquarium_sensors_status_stormy_heading">Disconnected</string>
-    <string name="aquarium_sensors_status_stormy_description">Some sensors cannot be contacted.</string>
+    <string name="aquarium_sensors_status_normal_heading">All Good!</string>
+    <string name="aquarium_sensors_status_normal_description">Your aquarium is in an optimal state.</string>
+    <string name="aquarium_sensors_status_warning_heading">Something\'s Wrong…</string>
+    <string name="aquarium_sensors_status_warning_description">Some parameters are nearing thresholds!</string>
+    <string name="aquarium_sensors_status_critical_heading">Critical Issue!</string>
+    <string name="aquarium_sensors_status_critical_description">Your aquarium needs immediate attention!</string>
+    <string name="aquarium_sensors_status_disconnected_heading">Hub Disconnected</string>
+    <string name="aquarium_sensors_status_disconnected_description">Check your hub and try re-pairing.</string>
+    <string name="aquarium_sensors_status_icon_description">Aquarium status</string>
+    <string name="dashboard_last_updated_pending">Waiting for the first reading</string>
+    <string name="dashboard_last_updated_now">Updated just now</string>
+    <plurals name="dashboard_last_updated_minutes">
+        <item quantity="one">Updated %d minute ago</item>
+        <item quantity="other">Updated %d minutes ago</item>
+    </plurals>
+    <plurals name="dashboard_last_updated_hours">
+        <item quantity="one">Updated %d hour ago</item>
+        <item quantity="other">Updated %d hours ago</item>
+    </plurals>
+    <plurals name="dashboard_last_updated_days">
+        <item quantity="one">Updated %d day ago</item>
+        <item quantity="other">Updated %d days ago</item>
+    </plurals>
 
     <!-- Settings -->
     <string name="profile_name_placeholder">Jane Doe</string>

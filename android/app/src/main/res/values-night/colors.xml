@@ -29,6 +29,8 @@
     <color name="settings_icon_purple">#FFBA68C8</color>
     <color name="settings_icon_purple_bg">#4DBA68C8</color>
     <color name="sensor_info_banner_purple">#FF2A2438</color>
+    <!-- Lifted off the banner rather than dropped on it as white. -->
+    <color name="sensor_info_icon_circle">#FF3B3350</color>
     <color name="sensor_info_gray_color">#FFA0A8B4</color>
     <color name="sensor_info_title_color">#FFF2F4F8</color>
     <color name="alpha_0x22_background">#220F1419</color>
@@ -62,6 +64,123 @@
     <color name="template_header_text">#FFD3E4EC</color>
     <color name="template_header_text_muted">#FF95B3C1</color>
     <color name="template_header_badge_bg">#26FFFFFF</color>
+    <color name="template_band_normal">#247E09</color>
+    <color name="template_band_warning">#C59B26</color>
+    <color name="template_band_critical">#A92827</color>
     <color name="water_badge_freshwater">#FF43A047</color>
     <color name="water_badge_saltwater">#FF1E88E5</color>
+
+    <!--
+      Dashboard and sensor cards. The light scheme fixes an (L*, C*) per role and varies only the
+      hue per status; night does the same with its own constants, so a status keeps its identity
+      and only the ramp it sits on is rebuilt. Read the block in values/colors.xml first: the hues
+      below are that file's, unchanged.
+
+      Light                                       Night
+        pill label   L* 60, on white                L* 74, on a dark fill
+        pill fill    L* 93, a wash of the status    L* 24, a tint just above the card
+        card stroke  L* 88                          L* 38
+        gradient     L* 77 -> 88, pastel bands      L* 17 -> 28, deep bands
+        accent       L* 34, dark on the gradient    L* 82, light on the gradient
+        wave         L* 95, a shade off the bg      L* 10, a shade off the bg
+
+      Every chroma is scaled by how saturated its own status is (C*/30, capped at 1). Disconnected
+      is a near-neutral grey whose hue is noise at C* 4.6, and handing it the same chromatic target
+      as the others turned it into a periwinkle. The scale leaves the four coloured statuses at the
+      target and keeps grey grey.
+
+      The four dark tinted surfaces (both pill fill and stroke, both gradient bands) also take a
+      floor of 65% of whatever chroma their hue can hold at that lightness. sRGB's gamut narrows
+      as lightness drops, and by a different amount per hue: at L* 17 aqua can only hold about
+      C* 20, so the C* 14 above is most of it and reads as a saturated teal, but red can hold C* 43
+      there, so the same C* 14 was a third of it. A dark, unsaturated warm is precisely what brown
+      is, and critical came out looking like dried blood. The floor is only on those four because
+      brown lives at the bottom of the lightness scale: the pill label and the accent are light
+      colours that cannot go brown, and the wave is meant to sit a shade off the background rather
+      than carry the status. Aqua is inside the floor everywhere, so normal is untouched by it.
+
+      Warning needed one thing more, and chroma could not give it: yellow has no dark form. Every
+      other hue keeps its identity as it darkens, since dark blue is navy and dark red is maroon,
+      but dark yellow is brown by definition, so amber at the shared lightness read as gloom no
+      matter how saturated it was. Warning's four dark surfaces therefore sit higher up the ramp
+      than the others: gradient L* 25 and 38 rather than 17 and 28, pill fill 28, stroke 44. The
+      lift stops where the contrasts do, which is why it is not higher still.
+
+      scratchpad/rehue_night.py derives every value below.
+
+      This puts each pill label at 4.9:1 or better on its own fill and ~7.7:1 on the card, each
+      accent at 4.3:1 or better on the gradient, and the reading at 12:1 on the card. The two
+      lowest of those are warning's, bought with the lift: the pill label is 11sp bold and so is
+      held to 4.5:1, while the accent is a 24sp bold heading and a 76dp icon, large text at 3:1.
+    -->
+    <color name="status_blue">#FF01C8E2</color>
+    <color name="status_orange">#FFDEAE62</color>
+    <color name="status_red">#FFFF9B93</color>
+    <color name="status_gray">#FFB4B5C2</color>
+    <color name="status_green">#FF70C88B</color>
+
+    <!-- Pill fill: L* 24, a tint of the status sitting just above @color/card_background.
+         Warning is at L* 28, for the reason given above. -->
+    <color name="status_blue_soft">#FF1B3E45</color>
+    <color name="status_green_soft">#FF1E4029</color>
+    <color name="status_orange_soft">#FF543E1C</color>
+    <color name="status_red_soft">#FF662222</color>
+    <color name="status_gray_soft">#FF38393F</color>
+
+    <!-- Card stroke: L* 38. Day puts this at 42% of the status chroma; night cannot, because at
+         this lightness that is the starved end of the gamut the floor above exists to avoid. -->
+    <color name="status_blue_edge">#FF23616D</color>
+    <color name="status_green_edge">#FF326442</color>
+    <color name="status_orange_edge">#FF826330</color>
+    <color name="status_red_edge">#FF9A3938</color>
+    <color name="status_gray_edge">#FF585962</color>
+
+    <!-- Header bands. _start is still the deeper one, at the foot where it meets the wave. -->
+    <color name="aquarium_sensors_status_normal_gradient_start">#FF042F36</color>
+    <color name="aquarium_sensors_status_normal_gradient_end">#FF024954</color>
+    <color name="aquarium_sensors_status_warning_gradient_start">#FF7E411C</color>
+    <color name="aquarium_sensors_status_warning_gradient_end">#FFA66909</color>
+    <color name="aquarium_sensors_status_critical_gradient_start">#FF3E1313</color>
+    <color name="aquarium_sensors_status_critical_gradient_end">#FF8E3433</color>
+    <color name="aquarium_sensors_status_disconnected_gradient_start">#FF292A2F</color>
+    <color name="aquarium_sensors_status_disconnected_gradient_end">#FF414249</color>
+
+    <!-- The accent inverts: light on the gradient here, where it was dark on it in day. -->
+    <color name="aquarium_sensors_status_normal_accent">#FF50DDF6</color>
+    <color name="aquarium_sensors_status_warning_accent">#FFF1C586</color>
+    <color name="aquarium_sensors_status_critical_accent">#FFFFBBB5</color>
+    <color name="aquarium_sensors_status_disconnected_accent">#FFCACBD6</color>
+
+    <color name="aquarium_sensors_status_normal_wave">#FF131D1F</color>
+    <color name="aquarium_sensors_status_warning_wave">#FF1F1B15</color>
+    <color name="aquarium_sensors_status_critical_wave">#FF231918</color>
+    <color name="aquarium_sensors_status_disconnected_wave">#FF1B1B1C</color>
+
+    <!--
+      Header furniture. The chip and the icon disc go back to a translucent-dark fill: they lift
+      off a deep gradient here the way translucent white lifts them off a pale one in day, and the
+      light heading and icon they carry read better against it.
+    -->
+    <color name="dashboard_header_description">#FFC3CED0</color>
+    <color name="dashboard_header_updated">#FF9DA8AA</color>
+    <color name="dashboard_header_chip_bg">#4D000000</color>
+    <color name="dashboard_header_chip_label">#B3F2F4F8</color>
+    <color name="dashboard_header_chip_title">#FFF2F4F8</color>
+    <color name="dashboard_header_icon_circle">#38000000</color>
+
+    <color name="dashboard_water_badge_freshwater">#2A4147</color>
+    <color name="dashboard_water_badge_saltwater">#403356</color>
+    <color name="dashboard_water_badge_text">#FFFFFFFF</color>
+
+    <!-- The reading and the sensor's own icon invert from navy to a cool near-white. -->
+    <color name="sensor_content_primary">#FFD0E6EB</color>
+    <color name="sensor_name_text">#FF98A2A5</color>
+
+    <!-- Remaining day-only colours that had no night counterpart. -->
+    <color name="danger">#FFEF5350</color>
+    <color name="warning">#FFFFB74D</color>
+    <color name="plan_badge_bg">#FF1E4029</color>
+    <color name="plan_badge_text">#FF81C784</color>
+    <color name="bullet_circle">#FF4A5768</color>
+    <color name="bottom_sheet_handle">#FF515A66</color>
 </resources>

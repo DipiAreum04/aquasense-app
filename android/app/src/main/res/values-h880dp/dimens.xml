@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The dashboard header at the sizes it was drawn against, for screens tall enough to pay for them.
+
+  values/dimens.xml explains why the trimmed set is the default and this one is the exception, and
+  why the sensor cards are in neither. Every name declared there must be declared here.
+
+  The 880dp line sits between the two devices this has been checked on - 832dp for a 1080x2340
+  panel at 450dpi, 923dp for a 1080x2424 one at 420dpi. Note the qualifier is the whole panel
+  height, not what is left after the status and navigation bars, so a device near the line has
+  noticeably less room than the number suggests.
+-->
+<resources>
+    <dimen name="dashboard_status_disc_size">120dp</dimen>
+    <dimen name="dashboard_status_disc_icon_size">76dp</dimen>
+    <dimen name="dashboard_status_heading_text">24sp</dimen>
+    <dimen name="dashboard_header_wave_height">46dp</dimen>
+</resources>

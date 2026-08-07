@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
-        android:startColor="@color/aquarium_sensors_status_stormy_gradient_start"
-        android:endColor="@color/aquarium_sensors_status_stormy_gradient_end"
+        android:startColor="@color/aquarium_sensors_status_disconnected_gradient_start"
+        android:endColor="@color/aquarium_sensors_status_disconnected_gradient_end"
         android:angle="90"
     />
 </shape>

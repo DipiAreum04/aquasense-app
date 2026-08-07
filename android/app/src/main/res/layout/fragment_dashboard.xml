@@ -2,13 +2,34 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
 >
+    <!--
+      Header and grid scroll together as one page, so they live in a single scrolling column
+      between the top of the screen and the footer, which stays put.
+    -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/dashboardScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/dashboardFooter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+    >
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/dashboardHeader"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
@@ -27,7 +48,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusIcon"
             >
                 <!-- Aquarium Selector -->
                 <LinearLayout
@@ -36,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_chip_0x22_alpha"
+                    android:background="@drawable/bg_dashboard_header_chip"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:paddingHorizontal="20dp"
@@ -52,7 +72,7 @@
                         android:text="@string/app_name_uppercase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/alpha_0x60_white"
+                        android:textColor="@color/dashboard_header_chip_label"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.25"
@@ -61,36 +81,74 @@
                         android:id="@+id/aquariumTitleText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/alpha_0xD0_white"
+                        android:textColor="@color/dashboard_header_chip_title"
                         android:textSize="18sp"
                         android:textStyle="bold"
                     />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/aquariumWaterTypeBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/bg_dashboard_water_badge"
+                    android:letterSpacing="0.06"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/dashboard_water_badge_text"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/aquariumSelector"
+                    app:layout_constraintBottom_toBottomOf="@id/aquariumSelector"
+                    tools:backgroundTint="@color/dashboard_water_badge_freshwater"
+                    tools:text="Freshwater"
+                    tools:visibility="visible"
+                />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Aquarium Sensors Status Icon -->
-            <TextView
-                android:id="@+id/aquariumSensorsStatusIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
-                android:textSize="72sp"
+            <!--
+              Aquarium Sensors Status Icon, on the disc that lifts it off the gradient.
+
+              This margin is the top of the block the disc and the three lines under it form: they
+              hang off each other, so the block only moves as one from here. It is spent against
+              the wave's own top margin below, which is what holds the header's height while the
+              block rides higher within it. Moving the block means trading between those two.
+
+              DashboardFragment also sets this margin at runtime, along with the two below it, to
+              land the header on its target height.
+            -->
+            <FrameLayout
+                android:id="@+id/aquariumSensorsStatusIconCircle"
+                android:layout_width="@dimen/dashboard_status_disc_size"
+                android:layout_height="@dimen/dashboard_status_disc_size"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/bg_dashboard_status_circle"
                 app:layout_constraintTop_toBottomOf="@id/aquariumHeader"
-                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusHeading"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-            />
+            >
+                <ImageView
+                    android:id="@+id/aquariumSensorsStatusIcon"
+                    android:layout_width="@dimen/dashboard_status_disc_icon_size"
+                    android:layout_height="@dimen/dashboard_status_disc_icon_size"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/aquarium_sensors_status_icon_description"
+                />
+            </FrameLayout>
 
             <!-- Aquarium Sensor Status Title -->
             <TextView
                 android:id="@+id/aquariumSensorsStatusHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/alpha_0xF0_white"
-                android:textSize="28sp"
+                android:layout_marginTop="34dp"
+                android:textSize="@dimen/dashboard_status_heading_text"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusIcon"
-                app:layout_constraintBottom_toTopOf="@id/aquariumSensorsStatusDescription"
+                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusIconCircle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
             />
@@ -98,15 +156,53 @@
             <!-- Aquarium Sensor Text -->
             <TextView
                 android:id="@+id/aquariumSensorsStatusDescription"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/alpha_0xC0_white"
-                android:textSize="16sp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="20dp"
-                android:paddingHorizontal="50dp"
+                android:textColor="@color/dashboard_header_description"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="6dp"
+                android:paddingHorizontal="40dp"
                 app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusHeading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+            />
+
+            <!-- Last reading stamp; its own line under the description, never appended to it -->
+            <TextView
+                android:id="@+id/aquariumSensorsStatusUpdated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/dashboard_header_updated"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:layout_marginTop="7dp"
+                android:paddingHorizontal="40dp"
+                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+            />
+
+            <!--
+              Hands the header off to the sensor grid; tinted per status by the controller.
+
+              The wave is cropped to its own ink (see the drawable), so the top of this view is the
+              crest itself and the margin below is the whole of the gap under the stamp. The height
+              is the crop's share of the 76dp this used to stand at, which leaves the wave the size
+              it already drew at; raising it makes the wave taller rather than lower.
+
+            -->
+            <ImageView
+                android:id="@+id/dashboardHeaderWave"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dashboard_header_wave_height"
+                android:layout_marginTop="36dp"
+                android:scaleType="fitXY"
+                android:contentDescription="@null"
+                android:src="@drawable/bg_dashboard_header_wave"
+                app:layout_constraintTop_toBottomOf="@id/aquariumSensorsStatusUpdated"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -114,17 +210,24 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!--
+      Pulled up over the foot of the header so the cards ride on the wave rather than sitting
+      below it, and declared after the header so it draws in front. Height is wrap_content and
+      nested scrolling is off: the grid lays all four cards out at full height and lets the
+      NestedScrollView above do the scrolling, instead of scrolling within itself.
+    -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorGrid"
-        app:layout_constraintTop_toBottomOf="@id/dashboardHeader"
-        app:layout_constraintBottom_toTopOf="@id/dashboardFooter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-12dp"
+        android:paddingHorizontal="16dp"
         android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
     />
+
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/dashboardFooter"
