@@ -13,13 +13,17 @@ Buckets::Buckets(
  * Resumes from where the database left off, writing into the slot after the last
  * one it recorded.
  *
- * The bucket clock is only restarted on the very first resume, or when this period
- * is about to mark a gap. A sync is no longer the once-per-boot event it was: any
- * stranding of a bucket's length or more sends every period back through here, and
- * restarting all six clocks each time would mean a period whose bucket outlasts the
- * interval between outages never reaches its boundary at all. On flaky WiFi that
- * silently retires the long periods - last_1d needs only one outage every 14 minutes
- * to stop recording, last_1w one every 1.7 hours.
+ * The bucket clock is restarted only when this period is about to mark a gap. A sync
+ * is no longer the once-per-boot event it was: any stranding of a bucket's length or
+ * more sends every period back through here, and restarting all six clocks each time
+ * would mean a period whose bucket outlasts the interval between outages never
+ * reaches its boundary at all. On flaky WiFi that silently retires the long periods -
+ * last_1d needs only one outage every 14 minutes to stop recording, last_1w one every
+ * 1.7 hours.
+ *
+ * No separate first-resume case is needed to get the clock started: the first resume
+ * after boot always marks a gap, so _lastCommit is always set here before any bucket
+ * can close.
  *
  * The index needs no such guard: a period that did not commit did not move the index
  * either, so recomputing it from the database yields what it already held.
@@ -31,10 +35,9 @@ Buckets::Buckets(
 void Buckets::resume(unsigned long currentTime, long storedIndex, bool markingGap) {
     _bucketIndex = (int) ((storedIndex + 1) % _numberOfBuckets);
 
-    if (markingGap || !_hasResumed) {
+    if (markingGap) {
         _lastCommit = currentTime;
     }
-    _hasResumed = true;
 }
 
 /**
@@ -100,6 +103,13 @@ void Buckets::describeCommit(BucketCommit& out, unsigned long currentTime) const
  * Advances to the next bucket. Only call once the write has actually landed, so a
  * failed commit is retried into the same slot rather than skipping it.
  *
+ * A landed write is also what discharges the once-per-boot gap marker. Clearing that
+ * flag any earlier - when the marker is described, or when sync() decides it is owed -
+ * would drop the marker altogether on a sync whose commit then failed, which is the
+ * one case the retry exists for. The first write any period lands after boot is that
+ * marker: TelemetryManager::tick accumulates and commits nothing until every sensor
+ * has synced.
+ *
  * @param currentTime The current epoch time in seconds.
  */
 void Buckets::onCommitted(unsigned long currentTime) {
@@ -107,4 +117,5 @@ void Buckets::onCommitted(unsigned long currentTime) {
     _lastCommit = currentTime;
     _valueCount = 0;
     _valueTotal = 0;
+    _markedBoot = true;
 }

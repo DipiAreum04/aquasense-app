@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The bar behind the reading distribution's three bands. The bands are plain weighted Views, so
+  this supplies both the rounded ends they are clipped to and the empty state: a period with no
+  readings in it collapses all three and leaves this showing.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/divider" />
+    <corners android:radius="6dp" />
+</shape>

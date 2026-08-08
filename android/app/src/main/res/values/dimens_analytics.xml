@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Analytics sizes. Kept out of dimens.xml, which is the dashboard header's own file and carries a
+  rule that every name in it be mirrored in values-h880dp.
+
+  The plot height is shared by three views that have to agree: the chart, the strip the rotated y
+  axis label sits in, and that label's own pre-rotation width. The label is laid out lying down and
+  then turned a quarter turn, so its width is the strip's height.
+-->
+<resources>
+    <dimen name="analytics_chart_height">280dp</dimen>
+    <dimen name="analytics_axis_label_thickness">20dp</dimen>
+
+    <!--
+      The uptime ring, which has to hold its percentage in the hole it leaves. The corner radius
+      rounds the two ends of the swept arc, and half the thickness is as round as they can be: it
+      is where the two corners of an end meet, and anything beyond it is clamped to it anyway.
+    -->
+    <dimen name="analytics_uptime_ring_size">62dp</dimen>
+    <dimen name="analytics_uptime_ring_thickness">6dp</dimen>
+    <dimen name="analytics_uptime_ring_corner">3dp</dimen>
+
+    <!-- The reading distribution bar. The radius is half the height, so the ends are semicircles. -->
+    <dimen name="analytics_distribution_bar_height">12dp</dimen>
+
+    <!-- The gap the aquarium dropdown leaves between itself and the card it hangs off. -->
+    <dimen name="analytics_dropdown_offset">4dp</dimen>
+
+    <!--
+      The LED beside the sensor's status. The sensor cards draw the same disc at 8dp beside an 11sp
+      label; this one stands next to a word two thirds again as tall and is the only thing on the
+      card carrying the status colour, so it is scaled to match.
+    -->
+    <dimen name="analytics_status_led_size">12dp</dimen>
+</resources>

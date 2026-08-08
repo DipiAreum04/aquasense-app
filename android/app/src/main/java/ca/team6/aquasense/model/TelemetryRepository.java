@@ -25,6 +25,17 @@ public class TelemetryRepository {
         void onTelemetryChanged(@NonNull Map<String, SensorReading> readingsBySensorId);
     }
 
+    /** Running result of {@link #watchPeriod}, called again on every change until unwatched. */
+    public interface PeriodCallback {
+        /**
+         * The period's buckets, oldest first, with the one the period's cursor points at last.
+         * Empty when the board has committed none yet.
+         */
+        void onBuckets(@NonNull List<SensorReading> buckets);
+
+        void onError();
+    }
+
     private static volatile TelemetryRepository instance;
 
     private final FirebaseAuth firebaseAuth;
@@ -47,6 +58,11 @@ public class TelemetryRepository {
     // means syncing and caching hundreds of KB to read four numbers, and being woken every time a
     // bucket closes - none of which this repository ever looks at.
     private final List<FirebaseDatabaseHelper.ListenerHandle> handles = new ArrayList<>();
+
+    // The one period being plotted, which is a subscription of a wholly different size and lifetime
+    // from the four above: hundreds of KB, held only while a screen is drawing a graph from it.
+    @Nullable
+    private FirebaseDatabaseHelper.ListenerHandle periodHandle;
 
     // Sensors whose last_instant has delivered at least one snapshot for the current subscription.
     // The four listeners resolve independently, so the first few publishes carry only the sensors
@@ -162,6 +178,57 @@ public class TelemetryRepository {
         this.publish(Collections.unmodifiableMap(merged));
     }
 
+    /**
+     * Watches one period's buckets for the signed-in user, reporting them again on every change so
+     * a graph drawn from them follows the board.
+     *
+     * <p>Deliberately not folded into the subscriptions above. Those watch four last_instant nodes
+     * precisely so the app never syncs the periods hanging beside them; a period is a hundred
+     * buckets, and only the screen plotting one has any use for it.
+     *
+     * <p>One at a time, like the aquarium above it: a screen plots one aquarium's one sensor over
+     * one window, so asking for another is always asking to stop watching this one. That makes the
+     * detach on every change of selection the same call as the attach, rather than something a
+     * caller has to remember to pair. Callers must still {@link #unwatchPeriod()} on the way out.
+     */
+    public void watchPeriod(@NonNull String aquariumId,
+                            @NonNull String sensorId,
+                            @NonNull String periodKey,
+                            @NonNull PeriodCallback callback) {
+        this.unwatchPeriod();
+
+        String uid = this.currentUid();
+        if (uid == null || aquariumId.isEmpty()) {
+            callback.onError();
+            return;
+        }
+
+        this.periodHandle = this.database.observePeriod(uid, aquariumId, sensorId, periodKey,
+                new FirebaseDatabaseHelper.BucketsListener() {
+                    @Override
+                    public void onBuckets(@NonNull List<SensorReading> buckets) {
+                        callback.onBuckets(buckets);
+                    }
+
+                    @Override
+                    public void onError(@NonNull DatabaseError error) {
+                        ScopedLogger.error("Period subscription cancelled: " + error.getMessage());
+                        // Firebase does not revive a cancelled listener, so the handle is dead;
+                        // dropping it lets the next selection subscribe again.
+                        unwatchPeriod();
+                        callback.onError();
+                    }
+                });
+    }
+
+    /** Releases the period subscription, if there is one. Safe to call when there is not. */
+    public void unwatchPeriod() {
+        if (this.periodHandle != null) {
+            this.periodHandle.remove();
+            this.periodHandle = null;
+        }
+    }
+
     public void unwatch() {
         if (this.watchedUid == null && this.watchedAquariumId == null && this.readings.isEmpty()) {
             return;
@@ -185,6 +252,9 @@ public class TelemetryRepository {
         String uid = user != null ? user.getUid() : null;
         if (!Objects.equals(uid, this.watchedUid)) {
             this.unwatch();
+            // The period is keyed on the user too, and the screen holding it has no way of hearing
+            // about a sign-out before its next read comes back under the wrong account.
+            this.unwatchPeriod();
         }
     }
 

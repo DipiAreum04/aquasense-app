@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One aquarium in the analytics dropdown. The tick marks the one being read, which is the same
+  selection the dashboard is showing; every row keeps the space for it so the names stay in a
+  column whichever of them is ticked.
+
+  No background of its own: the list draws its own selector behind the pressed row, and a
+  background here would cover it.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="12dp">
+
+    <TextView
+        android:id="@+id/analyticsAquariumOptionName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        tools:text="Living Room Reef" />
+
+    <ImageView
+        android:id="@+id/analyticsAquariumOptionCheck"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:contentDescription="@null"
+        android:src="@drawable/check_24px"
+        app:tint="@color/accent" />
+
+</LinearLayout>

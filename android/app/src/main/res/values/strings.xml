@@ -426,6 +426,61 @@
     <string name="template_legend_warning">Warning</string>
     <string name="template_legend_critical">Critical</string>
 
+    <!-- Analytics screen (DASH-03) -->
+    <!-- A window with no readings in it draws its axes and an empty plot rather than saying so,
+         so the only thing the chart ever spells out is that it is still waiting. -->
+    <string name="analytics_chart_loading">Loading readings…</string>
+    <string name="analytics_period_1h">1H</string>
+    <string name="analytics_period_1d">1D</string>
+    <string name="analytics_period_1w">1W</string>
+    <string name="analytics_period_1m">1M</string>
+    <string name="analytics_period_6m">6M</string>
+    <string name="analytics_period_1y">1Y</string>
+    <!-- x axis: what one step along it means, per selected period. -->
+    <string name="analytics_axis_minutes_ago">Minutes ago</string>
+    <string name="analytics_axis_hours_ago">Hours ago</string>
+    <string name="analytics_axis_days_ago">Days ago</string>
+    <string name="analytics_axis_months_ago">Months ago</string>
+    <!--
+      y axis, for the two sensors whose readings carry no unit. pH is a scale rather than a
+      quantity; water level is a float switch, and a bucket averages it, so the plotted value is
+      how much of that bucket the switch spent under water.
+    -->
+    <string name="analytics_axis_ph">pH</string>
+    <string name="analytics_axis_water_level">Level</string>
+
+    <!-- Aquarium selector, at the head of the page. -->
+    <string name="analytics_active_aquarium">Active aquarium</string>
+    <string name="analytics_aquarium_selector_description">Change aquarium</string>
+
+    <!-- System health card: the selected sensor's live state, over the selected period's buckets. -->
+    <string name="analytics_system_health">System health</string>
+    <string name="analytics_uptime">Uptime</string>
+    <string name="analytics_last_seen_pending">No readings yet</string>
+    <string name="analytics_last_seen_now">Last seen just now</string>
+    <plurals name="analytics_last_seen_minutes">
+        <item quantity="one">Last seen %d minute ago</item>
+        <item quantity="other">Last seen %d minutes ago</item>
+    </plurals>
+    <plurals name="analytics_last_seen_hours">
+        <item quantity="one">Last seen %d hour ago</item>
+        <item quantity="other">Last seen %d hours ago</item>
+    </plurals>
+    <plurals name="analytics_last_seen_days">
+        <item quantity="one">Last seen %d day ago</item>
+        <item quantity="other">Last seen %d days ago</item>
+    </plurals>
+    <string name="analytics_stat_min">Min</string>
+    <string name="analytics_stat_avg">Avg</string>
+    <string name="analytics_stat_max">Max</string>
+    <!-- Stands in for a statistic the period has no readings to compute. -->
+    <string name="analytics_stat_empty">—</string>
+    <string name="analytics_percent">%1$d%%</string>
+
+    <!-- Reading distribution card. Its three bands are labelled with @string/normal, @string/warning
+         and @string/critical, which is what the sensor cards call the same three states. -->
+    <string name="analytics_distribution_title">Reading distribution</string>
+
     <!-- BLE-02: App <-> Hardware pairing -->
     <string name="pairing_flow_title">Pair Your Hub</string>
     <string name="pairing_hero_idle_title">Ready to Scan</string>

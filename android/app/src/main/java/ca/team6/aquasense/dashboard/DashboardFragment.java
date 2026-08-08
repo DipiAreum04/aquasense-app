@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import ca.team6.aquasense.AnalyticsActivity;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.SettingsActivity;
 import ca.team6.aquasense.model.AppSettings;
@@ -130,8 +131,9 @@ public class DashboardFragment extends Fragment {
         });
         navbarNotifications.setOnClickListener(v -> {
         });
-        navbarAnalytics.setOnClickListener(v -> {
-        });
+        navbarAnalytics.setOnClickListener(v ->
+            startActivity(new Intent(v.getContext(), AnalyticsActivity.class))
+        );
         navbarSettings.setOnClickListener(v ->
             startActivity(new Intent(v.getContext(), SettingsActivity.class))
         );

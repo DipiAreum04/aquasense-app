@@ -15,6 +15,10 @@
     <color name="toolbar_gradient_end">#FF4C4366</color>
     <color name="status_success">#FF81C784</color>
     <color name="settings_icon_bg">#4D64B5F6</color>
+    <!-- See values/colors.xml: the groove rises above the page here rather than sinking below it,
+         since there is nothing below #0F1419 to sink into. -->
+    <color name="analytics_segment_track">#FF171E27</color>
+    <color name="analytics_segment_selected">#FF2C3747</color>
 
     <color name="settings_icon_cyan">#FF4DD0E1</color>
     <color name="settings_icon_cyan_bg">#4D4DD0E1</color>

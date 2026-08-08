@@ -44,6 +44,16 @@ public final class FirebaseDatabaseHelper {
         void onError(@NonNull DatabaseError error);
     }
 
+    public interface BucketsListener {
+        /**
+         * A period's buckets, oldest first. Empty when the board has committed none. Delivered
+         * again on every change, so a screen holding one of these redraws rather than refetches.
+         */
+        void onBuckets(@NonNull List<SensorReading> buckets);
+
+        void onError(@NonNull DatabaseError error);
+    }
+
     private static volatile FirebaseDatabaseHelper instance;
 
     private final FirebaseDatabase database;
@@ -207,7 +217,7 @@ public final class FirebaseDatabaseHelper {
         return attach(ref, new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listener.onReading(sensorId, parseInstant(snapshot));
+                listener.onReading(sensorId, parseSample(snapshot));
             }
 
             @Override
@@ -215,6 +225,75 @@ public final class FirebaseDatabaseHelper {
                 listener.onError(error);
             }
         });
+    }
+
+    /**
+     * Watches one period node - /{uid}/telemetry/{aquariumId}/{sensorId}/{period} - and reports its
+     * buckets in chronological order, again on every change.
+     *
+     * <p>This is the payload {@link #observeLastInstant} is deliberately shaped to avoid: a period
+     * is a hundred buckets, and watching one means being woken every time the board closes another.
+     * That is the cost of a graph that follows the board rather than showing the moment it was
+     * opened, and it is only paid while a screen is actually plotting the period - hence the handle,
+     * which the caller is expected to release the moment it plots something else.
+     */
+    @NonNull
+    public ListenerHandle observePeriod(@NonNull String uid,
+                                        @NonNull String aquariumId,
+                                        @NonNull String sensorId,
+                                        @NonNull String periodKey,
+                                        @NonNull BucketsListener listener) {
+        DatabaseReference ref = telemetryRef(uid, aquariumId)
+                .child(sensorId)
+                .child(periodKey);
+
+        return attach(ref, new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listener.onBuckets(parsePeriod(snapshot));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                listener.onError(error);
+            }
+        });
+    }
+
+    /**
+     * Unrolls a period's ring buffer into chronological order.
+     *
+     * <p>{@code index} names the slot holding the newest bucket, so the walk runs backwards from
+     * there and reverses at the end. It stops on the first slot the ring has not reached yet, and
+     * on one whose timestamp is newer than the bucket ahead of it: a board that restarted its
+     * cursor leaves later readings sitting in slots the walk is about to call older, and those are
+     * stale rather than history.
+     */
+    @NonNull
+    private static List<SensorReading> parsePeriod(@NonNull DataSnapshot periodSnapshot) {
+        Integer index = periodSnapshot.child(DatabaseSchema.INDEX_KEY).getValue(Integer.class);
+        if (index == null) {
+            // No cursor means nothing has ever been committed here, which is not a malformed node.
+            return Collections.emptyList();
+        }
+
+        DataSnapshot bucketsSnapshot = periodSnapshot.child(DatabaseSchema.BUCKETS_KEY);
+        List<SensorReading> newestFirst = new ArrayList<>();
+        long newerTimestamp = Long.MAX_VALUE;
+
+        for (int step = 0; step < DatabaseSchema.BUCKET_COUNT; step++) {
+            int slot = Math.floorMod(index - step, DatabaseSchema.BUCKET_COUNT);
+            SensorReading bucket =
+                    parseSample(bucketsSnapshot.child(DatabaseSchema.bucketKey(slot)));
+            if (bucket == null || bucket.getTimestampSeconds() > newerTimestamp) {
+                break;
+            }
+            newestFirst.add(bucket);
+            newerTimestamp = bucket.getTimestampSeconds();
+        }
+
+        Collections.reverse(newestFirst);
+        return Collections.unmodifiableList(newestFirst);
     }
 
     // Reads one /{uid}/aquariums/{aquariumId} entry. Name and water type are required by the
@@ -279,17 +358,18 @@ public final class FirebaseDatabaseHelper {
         return Collections.unmodifiableMap(deltas);
     }
 
-    // Reads {timestamp, value} from a last_instant node. Returns null when the node is absent or
-    // malformed; a partially written node is treated as no reading rather than a zero one.
+    // Reads {timestamp, value}, the shape both last_instant and every bucket in a period share.
+    // Returns null when the node is absent or malformed; a partially written node is treated as no
+    // reading rather than a zero one.
     @Nullable
-    private static SensorReading parseInstant(@NonNull DataSnapshot instantSnapshot) {
-        if (!instantSnapshot.exists()) {
+    private static SensorReading parseSample(@NonNull DataSnapshot sampleSnapshot) {
+        if (!sampleSnapshot.exists()) {
             return null;
         }
-        Double value = instantSnapshot.child(DatabaseSchema.VALUE_KEY).getValue(Double.class);
-        Long timestamp = instantSnapshot.child(DatabaseSchema.TIMESTAMP_KEY).getValue(Long.class);
+        Double value = sampleSnapshot.child(DatabaseSchema.VALUE_KEY).getValue(Double.class);
+        Long timestamp = sampleSnapshot.child(DatabaseSchema.TIMESTAMP_KEY).getValue(Long.class);
         if (value == null || timestamp == null) {
-            ScopedLogger.error("Malformed last_instant at " + instantSnapshot.getRef());
+            ScopedLogger.error("Malformed telemetry sample at " + sampleSnapshot.getRef());
             return null;
         }
         return new SensorReading(value, timestamp);

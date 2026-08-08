@@ -47,6 +47,12 @@
             android:label="@string/pairing_flow_title"
             android:theme="@style/Theme.AquaSense" />
         <activity
+            android:name=".AnalyticsActivity"
+            android:exported="false"
+            android:label="@string/analytics"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AquaSense" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="Settings"

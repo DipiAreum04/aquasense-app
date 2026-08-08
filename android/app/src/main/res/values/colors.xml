@@ -47,6 +47,22 @@
     <color name="status_success">#FF2E7D32</color>
     <color name="settings_icon_bg">#401565C0</color>
 
+    <!--
+      The analytics period selector, which is a groove with one button raised out of it.
+
+      Day builds that the way the rest of the light scheme does: the groove is a shade below
+      @color/background so it reads as cut into the page, and the raised button is the card white
+      already used for every surface that sits on top of something. Night has to invert the first
+      half of that - a groove below #0F1419 is black - so there the groove is the shade just above
+      the page and the raised button a further step up again. Either way the pair stays one step
+      apart, which is what the recess is made of.
+
+      The labels are @color/text_muted on the groove and @color/accent on the raised button, at
+      5.7:1 and 6.9:1 in day, 8.4:1 and 5.4:1 in night.
+    -->
+    <color name="analytics_segment_track">#FFE3E8EF</color>
+    <color name="analytics_segment_selected">#FFFFFFFF</color>
+
     <color name="settings_icon_cyan">#FF00ACC1</color>
     <color name="settings_icon_cyan_bg">#4D00ACC1</color>
     <color name="settings_icon_teal">#FF00897B</color>

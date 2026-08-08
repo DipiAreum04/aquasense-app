@@ -30,4 +30,99 @@
         <item name="navigationIconTint">@color/sensor_info_title_color</item>
     </style>
 
+    <!--
+      Analytics sensor tabs. Four fixed tabs share the width, and "Dissolved Solids" is the one
+      that has to fit: at the 14sp all-caps the library defaults to it wraps to two lines on a
+      compact screen. 12sp sentence case fits it on one, and matches the bottom navigation labels
+      the same names appear under on the dashboard.
+    -->
+    <style name="TextAppearance.AquaSense.Tab" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <!--
+          Both spellings, because they are two different attributes. The parent switches capitals on
+          through the appcompat "textAllCaps", which AppCompatTextHelper applies with setAllCaps()
+          after reading the framework's "android:textAllCaps" - so overriding only the framework one
+          leaves the parent's still in force.
+        -->
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!--
+      The two repeating blocks of the analytics page: one of the three period statistics, and one
+      of the three keys under the reading distribution bar. Each is half a dozen views repeated
+      three times over, and the point of a statistics row is that its columns are identical, so
+      they are declared once here rather than copied out six times in the layout.
+
+      Every one of these sets its own layout_width and layout_height, so the layout declares
+      neither. parent="" is deliberate: the dotted names would otherwise be read as inheriting
+      from a Widget.AquaSense style that does not exist.
+    -->
+    <style name="Widget.AquaSense.AnalyticsStatLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Reading and unit ride the same baseline, as they do on the dashboard's sensor cards. -->
+    <style name="Widget.AquaSense.AnalyticsStatValueRow" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:baselineAligned">true</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsStatValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsStatUnit" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsLegendKey" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <!-- The same discs the sensor cards light, at the size their status pill draws them. -->
+    <style name="Widget.AquaSense.AnalyticsLegendDot" parent="">
+        <item name="android:layout_width">8dp</item>
+        <item name="android:layout_height">8dp</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsLegendLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsLegendValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

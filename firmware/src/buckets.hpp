@@ -12,9 +12,14 @@ public:
 
     // Picks up from the index the database last recorded. Makes no request; the
     // index is read once per sensor by Periods::sync. markingGap says whether this
-    // period is about to write a gap marker, which is the only case besides the very
-    // first resume where the bucket clock may be restarted.
+    // period is about to write a gap marker, which is the only case where the bucket
+    // clock is restarted.
     void resume(unsigned long currentTime, long storedIndex, bool markingGap);
+
+    // Whether this period still owes the gap marker every period writes once per
+    // boot, before it begins filling buckets of its own. Unconditional: it does not
+    // consult the clock or what the database already holds.
+    bool owesBootMarker() const { return !_markedBoot; }
 
     // Whether the device was away for at least a whole bucket, and so owes this
     // period a gap marker.
@@ -37,7 +42,7 @@ private:
     unsigned long _bucketSize;
     int _numberOfBuckets;
     unsigned long _lastCommit = 0;
-    bool _hasResumed = false;
+    bool _markedBoot = false;
     String _kind;
     int _valueCount = 0;
     float _valueTotal = 0;
