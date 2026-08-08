@@ -131,6 +131,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:orientation="vertical"
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
@@ -145,6 +146,22 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:backgroundTint="@null" />
+
+        <!-- Only first-installation will show the Skip pairing button -->
+        <TextView
+            android:id="@+id/btnSkipPairing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:text="@string/add_aquarium_first_run_skip"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp"
+            android:visibility="gone" />
     </LinearLayout>
 
 </RelativeLayout>

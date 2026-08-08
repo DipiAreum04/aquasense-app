@@ -1,5 +1,7 @@
 package ca.team6.aquasense.dashboard;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -30,13 +34,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.team6.aquasense.PairingActivity;
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.auth.AuthNavigator;
+import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.ProfileInputValidator;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
+import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.settings.AquariumTemplateCardBinder;
 import ca.team6.aquasense.ui.FragmentToolbar;
 
@@ -45,6 +53,9 @@ import ca.team6.aquasense.ui.FragmentToolbar;
  * selection.
  */
 public class AddAquariumFragment extends Fragment {
+
+    /** Set when the form is the first thing shown after signing up, which adds the skip option. */
+    public static final String ARG_FIRST_RUN = "firstRun";
 
     // Identifies the Custom row in templateChoices. Cannot collide with a template ID, since
     // BuiltInTemplates keys those on the water chemistry family.
@@ -60,8 +71,16 @@ public class AddAquariumFragment extends Fragment {
     private ScrollView scrollView;
     private View stepTemplateHeader;
     private Button btnCreate;
-    private boolean submitting;
     private boolean scrolledToTemplates;
+    private boolean firstRun;
+
+    private final ActivityResultLauncher<Intent> pairingLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK && isAdded()) {
+                            Navigation.findNavController(requireView()).popBackStack();
+                        }
+                    });
 
     // Template ID (or CUSTOM_CHOICE_ID) to its row, in the order the rows are shown. Rebuilt with
     // the view, so it is cleared in onDestroyView rather than holding a dead hierarchy.
@@ -85,13 +104,33 @@ public class AddAquariumFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FragmentToolbar.setup(this, view, R.id.toolbar_add_aquarium);
+        firstRun = getArguments() != null && getArguments().getBoolean(ARG_FIRST_RUN, false);
+
+        // First run is reached straight after sign-up with nothing to navigate back to, so the
+        // toolbar's up arrow is only wired up when the screen is opened from elsewhere.
+        if (!firstRun) {
+            FragmentToolbar.setup(this, view, R.id.toolbar_add_aquarium);
+        }
 
         btnCreate = view.findViewById(R.id.btnCreateAquarium);
+        btnCreate.setText(R.string.add_aquarium_create_and_pair);
         btnCreate.setOnClickListener(this::createAquarium);
+
+        View btnSkip = view.findViewById(R.id.btnSkipPairing);
+        btnSkip.setVisibility(firstRun ? View.VISIBLE : View.GONE);
+        btnSkip.setOnClickListener(v -> skipPairing());
 
         setupNameField(view);
         setupTemplateChoices(view);
+    }
+
+    /**
+     * Leaves setup without creating anything.
+     */
+    private void skipPairing() {
+        AuthRepository authRepository = AuthRepository.getInstance(requireContext());
+        authRepository.setPairingComplete(true);
+        AuthNavigator.goToDashboard(requireActivity());
     }
 
     /**
@@ -146,7 +185,7 @@ public class AddAquariumFragment extends Fragment {
     }
 
     /**
-     * Whether an aquarium by this name already exists under the current user. 
+     * Whether an aquarium by this name already exists under the current user.
      * Reads the live list the repository keeps in sync with the database.
      */
     private boolean isDuplicateName(@NonNull String name) {
@@ -183,7 +222,7 @@ public class AddAquariumFragment extends Fragment {
      * Enables the Create button only once the user has entered a valid name and selected a template.
      */
     private void updateCreateEnabled() {
-        boolean ready = !submitting && selectedChoiceId != null && isNameUsable();
+        boolean ready = selectedChoiceId != null && isNameUsable();
         btnCreate.setEnabled(ready);
         btnCreate.setAlpha(ready ? 1f : DISABLED_BUTTON_ALPHA);
     }
@@ -200,10 +239,6 @@ public class AddAquariumFragment extends Fragment {
     }
 
     private void createAquarium(@NonNull View clicked) {
-        if (submitting) {
-            return;
-        }
-
         String name = typedName();
         if (name.isEmpty()) {
             Toast.makeText(getContext(), R.string.toast_enter_aquarium_name, Toast.LENGTH_SHORT).show();
@@ -238,35 +273,11 @@ public class AddAquariumFragment extends Fragment {
             return;
         }
 
+        // The aquarium is written by PairingRepository once the board reports the UID it will be
+        // keyed by, so this screen hands the details over rather than saving them itself.
         // TODO: Persist the tank volume and notes, which have nowhere in the schema to go yet.
-        setSubmitting(true);
-        repository.addAquarium(name, selectedWaterType(), selectedTemplate(),
-                new AquariumRepository.WriteCallback() {
-                    @Override
-                    public void onSuccess() {
-                        if (!isAdded()) {
-                            return;
-                        }
-                        setSubmitting(false);
-                        Toast.makeText(getContext(),
-                                getString(R.string.toast_created_aquarium, name),
-                                Toast.LENGTH_SHORT).show();
-                        // Pop back to Aquarium Selector / Dashboard, both of which pick the new
-                        // aquarium up from their subscription rather than from this screen.
-                        Navigation.findNavController(clicked).popBackStack();
-                    }
-
-                    @Override
-                    public void onError() {
-                        if (!isAdded()) {
-                            return;
-                        }
-                        // Stay on the form so the user can retry without retyping everything.
-                        setSubmitting(false);
-                        Toast.makeText(getContext(), R.string.toast_create_aquarium_failed,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        pairingLauncher.launch(PairingActivity.intent(requireContext(), name, selectedWaterType(),
+                selectedChoiceId, firstRun ? PairingEntryMode.FIRST_RUN : PairingEntryMode.ADD_AQUARIUM));
     }
 
     // TODO: Build the custom aquarium template UI and logic
@@ -289,13 +300,6 @@ public class AddAquariumFragment extends Fragment {
         return template != null
                 ? template.getWaterType()
                 : BuiltInTemplates.getDefault().getWaterType();
-    }
-
-    // The write is a network round trip, so the button is latched until it resolves rather than
-    // letting an impatient double-tap create the aquarium twice.
-    private void setSubmitting(boolean value) {
-        submitting = value;
-        updateCreateEnabled();
     }
 
     /**

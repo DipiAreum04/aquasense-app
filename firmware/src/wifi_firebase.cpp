@@ -9,13 +9,13 @@ namespace {
     const uint16_t HTTPS_PORT = 443;
 }
 
-/* TODO: The user ID is hardcoded to one test account for the demo, so every board
- * uploads into that same node. Wire this to the real signed-in user (through
- * PairingData / BLE provisioning) in sprint 3.
+/* The owner UID is deliberately not set here. It identifies the human user whose
+ * subtree this board writes into, which is not knowable at construction: it arrives
+ * from the app over BLE during pairing, and from EEPROM on every boot after that.
+ * setOwnerUid() supplies it, and nothing here will write until it has.
  */
 WiFiFirebase::WiFiFirebase(const char* dbUrl, const char* apiKey, const char* email, const char* password)
     : _dbHost(hostFromUrl(dbUrl)),
-      _userId("6pkWpLZO4BYFl2j4OQivkPupXuB3"),
       _http(_tls, _dbHost.c_str(), HTTPS_PORT),
       _auth(apiKey, email, password) {
     /* Reuse the connection instead of handshaking per request. HttpClient reconnects
@@ -72,6 +72,16 @@ void WiFiFirebase::finishResponse() {
  * there is no client to rebuild when it changes - only these two copies.
  */
 bool WiFiFirebase::ensureFreshToken() {
+    /* Refused rather than defaulted. With no owner UID every path below would start
+     * with a bare slash, and those writes are rejected by the security rules - which
+     * would surface as a board that signs in happily and then silently publishes
+     * nothing, the hardest failure here to trace back to its cause.
+     */
+    if (_userId.length() == 0) {
+        Serial.println("No owner UID set - the board has not been paired. Refusing to publish.");
+        return false;
+    }
+
     if (!_auth.ensureFreshToken()) {
         return false;
     }
@@ -81,7 +91,32 @@ bool WiFiFirebase::ensureFreshToken() {
         _deviceId = _auth.localId();
     }
 
+    /* The app claimed the aquarium under the UID it read over BLE, while writes here
+     * are authorised against whatever Firebase signed this board in as. Those are two
+     * separate sources for one value, and if they disagree the rules reject every
+     * write while auth, Wi-Fi and the sensors all look perfectly healthy.
+     *
+     * Checked once, on the first sign-in, rather than on every hourly refresh.
+     */
+    if (!_deviceIdChecked && _expectedDeviceId.length() > 0) {
+        _deviceIdChecked = true;
+        if (_deviceId != _expectedDeviceId) {
+            Serial.println("WARNING: this board's Firebase UID does not match the flashed one.");
+            Serial.println("  flashed (PairingData): " + _expectedDeviceId);
+            Serial.println("  Firebase sign-in:      " + _deviceId);
+            Serial.println("  Telemetry will be rejected until these agree.");
+        }
+    }
+
     return true;
+}
+
+void WiFiFirebase::setOwnerUid(const String& ownerUid) {
+    _userId = ownerUid;
+}
+
+void WiFiFirebase::setExpectedDeviceUid(const String& deviceUid) {
+    _expectedDeviceId = deviceUid;
 }
 
 /**
@@ -259,7 +294,7 @@ String WiFiFirebase::bucketKey(int index) {
  * @return The telemetry path for this device.
  */
 String WiFiFirebase::telemetryDevicePath() const {
-    return String(_userId) + "/telemetry/" + _deviceId;
+    return _userId + "/telemetry/" + _deviceId;
 }
 
 /**

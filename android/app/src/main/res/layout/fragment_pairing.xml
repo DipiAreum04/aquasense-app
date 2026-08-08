@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BLE-02: the whole pairing flow on one screen -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pairingRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ScrollView
+        android:id="@+id/pairingScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
+
+            <LinearLayout
+                android:id="@+id/heroSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+
+                <ca.team6.aquasense.ui.BleStatusOrb
+                    android:id="@+id/pairingOrb"
+                    android:layout_width="210dp"
+                    android:layout_height="210dp" />
+
+                <TextView
+                    android:id="@+id/tvHeroTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/pairing_hero_idle_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvHeroBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="3dp"
+                    android:text="@string/pairing_hero_idle_body"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp" />
+
+                <!-- One button covering every hero action: start, rescan, turn Bluetooth on,
+                     grant permission, open settings. Its label and click target are set in code. -->
+                <Button
+                    android:id="@+id/btnHeroAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_pairing_secondary"
+                    android:minWidth="220dp"
+                    android:paddingStart="28dp"
+                    android:paddingEnd="28dp"
+                    android:text="@string/pairing_hero_start"
+                    android:textAllCaps="false"
+                    android:textColor="@color/accent"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.01"
+                    app:backgroundTint="@null" />
+
+            </LinearLayout>
+
+            <!-- Discovered hubs -->
+            <LinearLayout
+                android:id="@+id/devicesSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:letterSpacing="0.05"
+                    android:text="@string/pairing_section_devices"
+                    android:textAllCaps="true"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBoards"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_discovered_board" />
+
+            </LinearLayout>
+
+            <!-- Wi-Fi credentials, revealed once a hub is selected -->
+            <LinearLayout
+                android:id="@+id/wifiSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.05"
+                        android:text="@string/pairing_section_wifi"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="@string/pairing_wifi_body"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <!-- SSID -->
+                <LinearLayout
+                    android:id="@+id/wifiSsidBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/wifi_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etWifiSsid"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="none"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/pairing_wifi_ssid_hint"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvWifiSsidError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/pairing_wifi_error_ssid"
+                    android:textColor="@color/danger"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <!-- Password -->
+                <LinearLayout
+                    android:id="@+id/wifiPasswordBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_auth_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/wifi_password_24px"
+                        app:tint="@color/text_secondary" />
+
+                    <EditText
+                        android:id="@+id/etWifiPassword"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:autofillHints="none"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/pairing_wifi_password_hint"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:maxLength="63"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_secondary"
+                        android:textSize="15sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnToggleWifiPassword"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/auth_show_password"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/visibility_24px"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvWifiPasswordError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/pairing_wifi_error_password"
+                    android:textColor="@color/danger"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnWifiSubmit"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_auth_primary_button"
+                    android:text="@string/pairing_wifi_submit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.01"
+                    app:backgroundTint="@null" />
+
+            </LinearLayout>
+
+            <!-- Stage and failure reporting -->
+            <LinearLayout
+                android:id="@+id/noticeCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_pairing_notice"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ProgressBar
+                        android:id="@+id/noticeProgress"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:indeterminateTint="@color/pairing_orb_stroke" />
+
+                    <ImageView
+                        android:id="@+id/ivNoticeIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/check_24px"
+                        android:visibility="gone"
+                        app:tint="@color/pairing_success_stroke" />
+
+                    <TextView
+                        android:id="@+id/tvNoticeTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        tools:text="Waiting for your hub to come online…" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNoticeBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnNoticeRetry"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_pairing_secondary"
+                    android:text="@string/pairing_result_retry"
+                    android:textAllCaps="false"
+                    android:textColor="@color/accent"
+                    android:textSize="15sp"
+                    android:letterSpacing="0.01"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:backgroundTint="@null" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

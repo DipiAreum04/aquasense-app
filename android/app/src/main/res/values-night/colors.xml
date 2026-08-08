@@ -71,6 +71,28 @@
     <color name="water_badge_freshwater">#FF43A047</color>
     <color name="water_badge_saltwater">#FF1E88E5</color>
 
+    <!-- BLE-02 pairing -->
+    <color name="pairing_orb_fill">#FF10243A</color>
+    <color name="pairing_orb_stroke">#FF3BA9F4</color>
+    <color name="pairing_orb_icon">#FF3BA9F4</color>
+    <color name="pairing_orb_glow">#4D1E88E5</color>
+    <color name="pairing_ring">#3D1E88E5</color>
+
+    <color name="pairing_row_selected_fill">#FF122436</color>
+    <color name="pairing_row_selected_stroke">#FF3BA9F4</color>
+    <color name="pairing_row_icon_bg">#333BA9F4</color>
+
+    <color name="pairing_success_fill">#FF10243A</color>
+    <color name="pairing_success_stroke">#FF3BA9F4</color>
+    <color name="pairing_success_text">#FF3BA9F4</color>
+
+    <color name="pairing_error_fill">#FF141E2A</color>
+    <color name="pairing_error_stroke">#A4BDD1</color>
+    <color name="pairing_error_text">#FF9AC5EF</color>
+
+    <color name="pairing_signal_on">#FF3BA9F4</color>
+    <color name="pairing_signal_off">#FF2A3441</color>
+
     <!--
       Dashboard and sensor cards. The light scheme fixes an (L*, C*) per role and varies only the
       hue per status; night does the same with its own constants, so a status keeps its identity

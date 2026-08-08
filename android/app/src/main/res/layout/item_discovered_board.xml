@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One discovered hub UI. The signal meter is what actually lets a user tell two hubs apart -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/boardRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_pairing_row"
+    android:baselineAligned="false"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="14dp">
+
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_pairing_icon_tile">
+
+        <ImageView
+            android:id="@+id/ivBoardIcon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/bluetooth_24px"
+            app:tint="@color/pairing_orb_icon" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvBoardName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="AquaSense Hub" />
+
+        <TextView
+            android:id="@+id/tvBoardSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <!-- Bars grow left to right, so the meter reads the same way as every other signal icon. -->
+        <LinearLayout
+            android:id="@+id/boardSignalMeter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:baselineAligned="false"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/boardSignalBar1"
+                android:layout_width="3dp"
+                android:layout_height="4dp"
+                android:background="@drawable/bg_pairing_signal_bar" />
+
+            <View
+                android:id="@+id/boardSignalBar2"
+                android:layout_width="3dp"
+                android:layout_height="7dp"
+                android:layout_marginStart="3dp"
+                android:background="@drawable/bg_pairing_signal_bar" />
+
+            <View
+                android:id="@+id/boardSignalBar3"
+                android:layout_width="3dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="3dp"
+                android:background="@drawable/bg_pairing_signal_bar" />
+
+            <View
+                android:id="@+id/boardSignalBar4"
+                android:layout_width="3dp"
+                android:layout_height="13dp"
+                android:layout_marginStart="3dp"
+                android:background="@drawable/bg_pairing_signal_bar" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:minWidth="76dp">
+
+        <TextView
+            android:id="@+id/tvBoardAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/pairing_board_tap_to_pair"
+            android:textColor="@color/pairing_orb_stroke"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/boardProgress"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/pairing_orb_stroke"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivBoardDone"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/check_24px"
+            android:visibility="gone"
+            app:tint="@color/pairing_success_stroke" />
+
+    </FrameLayout>
+
+</LinearLayout>

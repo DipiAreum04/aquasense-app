@@ -25,10 +25,6 @@ public class MainActivity extends AppCompatActivity {
             AuthNavigator.goToLogin(this);
             return;
         }
-        if (authRepository.needsPairing()) {
-            AuthNavigator.continueAfterAuth(this, authRepository);
-            return;
-        }
 
         // Subscribes to the signed-in user's aquariums. Done before the dashboard is inflated so
         // its first snapshot is already in flight by the time the header asks for it.
@@ -36,16 +32,16 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        getSupportFragmentManager().findFragmentById(R.id.nav_host_dashboard);
+        // If the app is being launched for the first time, start the first-installation setup flow. 
+        if (savedInstanceState == null && authRepository.needsPairing()) {
+            startFirstRunSetup();
+        }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+    /**
+     * First-installation setup entry point
+     */
+    private void startFirstRunSetup() {
+        // TODO: Add a custom landing page when user skips pairing on first installation instead of empty dashboard.
     }
 }

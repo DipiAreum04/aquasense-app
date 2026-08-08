@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Orb disc once the hub is confirmed online. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/pairing_success_fill" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/pairing_success_stroke" />
+</shape>

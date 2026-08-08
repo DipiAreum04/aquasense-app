@@ -25,7 +25,7 @@
     <color name="text_secondary">#FF888888</color>
     <color name="text_muted">#FF555555</color>
     <color name="divider">#FFE0E0E0</color>
-    <color name="accent">#FF1565C0</color>
+    <color name="accent">#158AC0</color>
     <color name="toolbar_ocean">#FFDAF1F5</color>
     <color name="toolbar_gradient_start">#FFC1DFE0</color>
     <color name="toolbar_gradient_end">#FFCFC1DE</color>
@@ -188,4 +188,26 @@
     <color name="water_badge_freshwater">#FF2E7D32</color>
     <color name="water_badge_saltwater">#FF1565C0</color>
     <color name="water_badge_text">#FFFFFFFF</color>
+
+    <!-- BLE-02 pairing -->
+    <color name="pairing_orb_fill">#EEF8FF</color>
+    <color name="pairing_orb_stroke">#1584C0</color>
+    <color name="pairing_orb_icon">#1584C0</color>
+    <color name="pairing_orb_glow">#331584C0</color>
+    <color name="pairing_ring">#331592C0</color>
+
+    <color name="pairing_row_selected_fill">#FFE8F4FE</color>
+    <color name="pairing_row_selected_stroke">#158AC0</color>
+    <color name="pairing_row_icon_bg">#1F1579C0</color>
+
+    <color name="pairing_success_fill">#EEF8FF</color>
+    <color name="pairing_success_stroke">#1584C0</color>
+    <color name="pairing_success_text">#1584C0</color>
+
+    <color name="pairing_error_fill">#E7EDF8</color>
+    <color name="pairing_error_stroke">#FF243756</color>
+    <color name="pairing_error_text">#FF242424</color>
+
+    <color name="pairing_signal_on">#157EC0</color>
+    <color name="pairing_signal_off">#FFCDD5E1</color>
 </resources>

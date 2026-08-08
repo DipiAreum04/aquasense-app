@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The filled disc at the center of the pairing flow. The scan rings animate outwards from behind it. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/pairing_orb_fill" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/pairing_orb_stroke" />
+</shape>
