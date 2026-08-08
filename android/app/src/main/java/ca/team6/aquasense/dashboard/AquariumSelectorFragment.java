@@ -13,11 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import java.util.List;
 
@@ -25,6 +23,7 @@ import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.ui.FragmentToolbar;
 
 /**
  * Dedicated fragment screen for managing and switching between aquariums.
@@ -50,8 +49,7 @@ public class AquariumSelectorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_aquarium_selector);
-        NavigationUI.setupWithNavController(toolbar, Navigation.findNavController(view));
+        FragmentToolbar.setup(this, view, R.id.toolbar_aquarium_selector);
 
         View btnAdd = view.findViewById(R.id.btnAddNewAquarium);
         btnAdd.setOnClickListener(v -> Navigation.findNavController(v)
@@ -100,6 +98,10 @@ public class AquariumSelectorFragment extends Fragment {
             TextView titleView = card.findViewById(R.id.tvAquariumName);
             titleView.setText(aquarium.getName());
 
+            bindAquariumIcon(card.findViewById(R.id.ivAquariumIcon), aquarium);
+
+            bindWaterTypeBadge(card.findViewById(R.id.tvAquariumStatus), aquarium);
+
             TextView activeBadge = card.findViewById(R.id.tvActiveBadge);
             activeBadge.setVisibility(isActive ? View.VISIBLE : View.GONE);
 
@@ -129,10 +131,33 @@ public class AquariumSelectorFragment extends Fragment {
     }
 
     // The database value is shown as-is when it is not one of the known types: the aquarium is
-    // real either way, so an unrecognised water type should not blank out its subtitle.
+    // real either way, so an unrecognised water type should not blank out its badge.
     private String waterTypeLabel(@NonNull Aquarium aquarium) {
         WaterType waterType = WaterType.fromKey(aquarium.getWaterType());
         return waterType == null ? aquarium.getWaterType() : getString(waterType.getLabelResId());
+    }
+
+    /**
+     * Puts the aquarium's water type in the same badge as the templates.
+     */
+    private void bindWaterTypeBadge(@NonNull TextView badge, @NonNull Aquarium aquarium) {
+        badge.setText(waterTypeLabel(aquarium));
+        badge.setBackgroundResource(
+                WaterType.fromKey(aquarium.getWaterType()) == WaterType.SALTWATER
+                        ? R.drawable.bg_water_badge_saltwater
+                        : R.drawable.bg_water_badge_freshwater);
+    }
+
+    /**
+     * Gives the card icon based on the aquarium's water type, so the list is scannable without
+     * reading every aquarium name.
+     */
+    private void bindAquariumIcon(ImageView tile, @NonNull Aquarium aquarium) {
+        boolean saltwater = WaterType.fromKey(aquarium.getWaterType()) == WaterType.SALTWATER;
+
+        tile.setImageResource(
+                saltwater ? R.drawable.aquarium_saltwater : R.drawable.aquarium_freshwater);
+        tile.getBackground().mutate().setTint(ContextCompat.getColor(requireContext(), R.color.aquarium_icon_bg));
     }
 
     private void confirmDeleteAquarium(@NonNull Aquarium aquarium) {

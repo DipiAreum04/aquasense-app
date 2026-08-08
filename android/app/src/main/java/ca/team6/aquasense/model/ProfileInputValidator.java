@@ -21,6 +21,9 @@ public final class ProfileInputValidator {
     private static final Pattern NAME_PATTERN =
             Pattern.compile("^\\p{L}+([ '\\-]\\p{L}+)*$");
 
+    private static final Pattern AQUARIUM_NAME_PATTERN =
+            Pattern.compile("^[\\p{L}\\p{N}]+([ '\\-][\\p{L}\\p{N}]+)*$");
+
     private ProfileInputValidator() {}
 
     // Name validation method for profile/edit profile fragment
@@ -31,6 +34,14 @@ public final class ProfileInputValidator {
         }
         String trimmed = name.trim();
         return trimmed.length() > MAX_LENGTH || !NAME_PATTERN.matcher(trimmed).matches();
+    }
+
+    public static boolean isInvalidAquariumName(@Nullable String name) {
+        if (TextUtils.isEmpty(name)) {
+            return true;
+        }
+        String trimmed = name.trim();
+        return trimmed.length() > MAX_LENGTH || !AQUARIUM_NAME_PATTERN.matcher(trimmed).matches();
     }
 
     // Optional name validation method for contact form

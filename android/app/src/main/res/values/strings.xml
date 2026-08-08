@@ -255,28 +255,32 @@
     <string name="action_add_new_aquarium">+ Add New Aquarium</string>
     <string name="title_add_aquarium">Add Aquarium</string>
     <string name="label_aquarium_name">AQUARIUM NAME</string>
-    <string name="hint_aquarium_name">e.g. Living Room Tank</string>
+    <string name="hint_aquarium_name">e.g. My Goldfish Aquarium</string>
     <string name="label_choose_template">CHOOSE A TEMPLATE</string>
     <!-- The Add Aquarium screen lists the built-in templates themselves; only Custom needs its
          own name and description here, the rest come from BuiltInTemplates. -->
     <string name="template_custom_title">Custom</string>
-    <string name="template_custom_desc">Define all settings manually from scratch.</string>
+    <string name="template_custom_desc">Define all water parameter thresholds manually from scratch.</string>
+    <string name="template_choice_show_details">Tap to see details</string>
+    <string name="template_choice_hide_details">Hide details</string>
+    <string name="toast_choose_template">Choose a template for this aquarium</string>
     <string name="label_advanced_settings">Advanced Settings</string>
+    <string name="label_advanced_settings_optional">Optional: Change the template\'s parameter thresholds</string>
     <string name="action_expand_advanced_settings">Expand advanced settings</string>
-    <string name="label_tank_volume">TANK VOLUME (GALLONS)</string>
-    <string name="hint_tank_volume">e.g. 20</string>
+    <string name="step_number_1">1</string>
+    <string name="step_number_2">2</string>
+    <string name="step_number_3">3</string>
     <string name="label_aquarium_notes">NOTES</string>
     <string name="hint_aquarium_notes">Optional notes about this aquarium</string>
     <string name="action_create_aquarium">Create Aquarium</string>
     <string name="toast_enter_aquarium_name">Please enter an aquarium name</string>
-    <string name="toast_invalid_aquarium_name">Name can only contain letters, spaces, hyphens, or apostrophes.</string>
+    <string name="toast_invalid_aquarium_name">Name can only contain letters, numbers, spaces, hyphens, or apostrophes.</string>
     <string name="toast_duplicate_aquarium_name">You already have an aquarium named \"%1$s\".</string>
     <string name="toast_created_aquarium">Created: %1$s</string>
     <string name="toast_create_aquarium_failed">Couldn\'t create the aquarium. Check your connection and try again.</string>
     <string name="toast_selected_aquarium">Selected: %1$s</string>
     <string name="aquarium_status_line">%1$s • %2$s</string>
     <string name="badge_active">Active</string>
-    <string name="chevron_symbol">›</string>
     <string name="dialog_limit_reached_title">Limit Reached</string>
     <string name="dialog_limit_reached_message">You can register a maximum of %1$d aquariums.</string>
     <string name="action_ok">OK</string>
@@ -297,15 +301,6 @@
     <string name="label_dissolved_solids_threshold">Dissolved Solids (ppm)</string>
     <string name="label_water_level_alert">Alert when water level is low</string>
     <string name="label_temperature_threshold">Temperature (%1$s)</string>
-    <string name="label_sensor_history">SENSOR HISTORY</string>
-    <string name="question_sensor_history">How long would you like to keep your sensor history?</string>
-    <string name="history_retention_none">Don\'t save any history</string>
-    <string name="history_retention_1_hour">1 Hour</string>
-    <string name="history_retention_1_day">1 Day</string>
-    <string name="history_retention_7_days">7 Days</string>
-    <string name="history_retention_1_month">1 Month</string>
-    <string name="history_retention_6_months">6 Months</string>
-    <string name="history_retention_1_year">1 Year</string>
 
     <!-- Shared email (auth, settings, contact) -->
     <string name="email_hint">name@example.com</string>
@@ -374,7 +369,7 @@
 
     <!-- SETTINGS-04 built-in aquarium templates -->
     <string name="template_freshwater">Freshwater: Tropical</string>
-    <string name="template_freshwater_desc">Warm, near-neutral water. This is the most common community aquarium.</string>
+    <string name="template_freshwater_desc">Warm, near-neutral water. The most common community aquarium.</string>
     <string-array name="template_freshwater_species">
         <item>Tetras</item>
         <item>Guppies</item>
@@ -395,7 +390,7 @@
     </string-array>
 
     <string name="template_hardwater">Hardwater: African Cichlid</string>
-    <string name="template_hardwater_desc">Warm, alkaline, mineral-rich water. This is suitable for African cichlids only; American cichlids belong in Tropical Freshwater.</string>
+    <string name="template_hardwater_desc">Warm, alkaline, mineral-rich water. Suitable for African cichlids only; American cichlids belong in Tropical Freshwater.</string>
     <string-array name="template_hardwater_species">
         <item>Lake Malawi Peacocks</item>
         <item>Tanganyika Cichlids</item>
