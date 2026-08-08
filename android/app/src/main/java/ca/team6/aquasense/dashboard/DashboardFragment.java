@@ -63,10 +63,18 @@ public class DashboardFragment extends Fragment {
                 showActiveAquarium();
                 refreshTelemetrySubscription();
                 showSensorCards();
+                maybeDismissLoadingOverlay();
             };
 
     private final TelemetryRepository.TelemetryObserver telemetryObserver =
             this::applyTelemetry;
+
+    // Longest the loading overlay is allowed to cover the dashboard
+    private static final long LOADING_OVERLAY_TIMEOUT_MS = 2_500L;
+    private View loadingOverlay;
+    private boolean overlayDismissed;
+    private final Handler overlayHandler = new Handler(Looper.getMainLooper());
+    private final Runnable overlayTimeout = this::dismissLoadingOverlay;
 
     private static final long STALENESS_CHECK_INTERVAL_MS = 10_000;
     private final Handler stalenessHandler = new Handler(Looper.getMainLooper());
@@ -106,6 +114,8 @@ public class DashboardFragment extends Fragment {
 
         telemetryRepository = TelemetryRepository.getInstance();
         aquariumRepository = AquariumRepository.getInstance(requireContext());
+
+        setupLoadingOverlay(view);
 
         telemetryRepository.addObserver(telemetryObserver);
         aquariumRepository.addObserver(aquariumsObserver);
@@ -222,6 +232,66 @@ public class DashboardFragment extends Fragment {
         return ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).topMargin;
     }
 
+    private void setupLoadingOverlay(@NonNull View view) {
+        loadingOverlay = view.findViewById(R.id.dashboardLoadingOverlay);
+        overlayDismissed = false;
+        if (loadingOverlay == null) {
+            return;
+        }
+
+        if (isDashboardReady()) {
+            overlayDismissed = true;
+            loadingOverlay.setVisibility(View.GONE);
+            return;
+        }
+
+        loadingOverlay.setAlpha(1f);
+        loadingOverlay.setVisibility(View.VISIBLE);
+        overlayHandler.postDelayed(overlayTimeout, LOADING_OVERLAY_TIMEOUT_MS);
+    }
+
+    /**
+     * True once the dashboard has enough to show without the loading overlay: the aquarium list has
+     * loaded and either the user has no aquarium or the first full set of readings has landed.
+     */
+    private boolean isDashboardReady() {
+        if (!aquariumRepository.isLoaded()) {
+            return false;
+        }
+        if (aquariumRepository.getActiveAquarium() == null) {
+            return true;
+        }
+        return telemetryRepository.hasReadAllSensors();
+    }
+
+    private void maybeDismissLoadingOverlay() {
+        if (overlayDismissed || loadingOverlay == null) {
+            return;
+        }
+        if (isDashboardReady()) {
+            dismissLoadingOverlay();
+        }
+    }
+
+    private void dismissLoadingOverlay() {
+        if (overlayDismissed) {
+            return;
+        }
+        overlayDismissed = true;
+        overlayHandler.removeCallbacks(overlayTimeout);
+        if (loadingOverlay == null) {
+            return;
+        }
+        loadingOverlay.animate()
+                .alpha(0f)
+                .setDuration(300L)
+                .withEndAction(() -> {
+                    if (loadingOverlay != null) {
+                        loadingOverlay.setVisibility(View.GONE);
+                    }
+                });
+    }
+
     private void showActiveAquarium() {
         if (dashboardHeaderController == null) {
             return;
@@ -304,6 +374,12 @@ public class DashboardFragment extends Fragment {
         super.onDestroyView();
         aquariumRepository.removeObserver(aquariumsObserver);
         telemetryRepository.removeObserver(telemetryObserver);
+
+        overlayHandler.removeCallbacks(overlayTimeout);
+        if (loadingOverlay != null) {
+            loadingOverlay.animate().cancel();
+        }
+        loadingOverlay = null;
         // Deliberately not calling telemetryRepository.unwatch() here: the RTDB subscription is
         // meant to keep running for the whole signed-in session (it only tears down on sign-out,
         // see TelemetryRepository#onAuthChanged) so a future background-alerts feature can act on
@@ -351,6 +427,7 @@ public class DashboardFragment extends Fragment {
         }
         showSensorsStatus();
         showLastUpdated(readingsBySensorId, nowMillis);
+        maybeDismissLoadingOverlay();
     }
 
     @Override
