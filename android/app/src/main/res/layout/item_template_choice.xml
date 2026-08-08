@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- One selectable template row on the Add Aquarium screen. Populated by AddAquariumFragment from
-     an AquariumTemplate, or left as the Custom option. The richer card with species chips and
-     threshold bars lives in item_aquarium_template.xml, on the Settings templates screen. -->
+     an AquariumTemplate, or left as the Custom option. Tapping the row selects it; the footer at the
+     bottom opens what the template actually means, the same species chips and threshold bars as the
+     Settings templates screen. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,76 +12,123 @@
     android:background="@drawable/bg_settings_card"
     android:clickable="true"
     android:focusable="true"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/ivTemplateChoiceIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/bg_template_icon"
-        android:contentDescription="@null"
-        android:importantForAccessibility="no"
-        android:padding="4dp"
-        tools:src="@drawable/template_freshwater" />
-
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvTemplateChoiceName"
+        <ImageView
+            android:id="@+id/ivTemplateChoiceIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_template_icon"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:padding="4dp"
+            tools:src="@drawable/template_freshwater" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTemplateChoiceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_900"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Saltwater: Marine" />
+
+            <TextView
+                android:id="@+id/tvTemplateChoiceDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/gray_500"
+                android:textSize="12sp"
+                tools:text="Warm, alkaline saltwater with tight tolerances." />
+
+            <LinearLayout
+                android:id="@+id/templateChoiceMeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTemplateChoiceWaterType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.06"
+                    android:paddingStart="8dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="2dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/water_badge_text"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    tools:background="@drawable/bg_water_badge_saltwater"
+                    tools:text="Saltwater" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <RadioButton
+            android:id="@+id/rbTemplateChoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_900"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            tools:text="Saltwater: Marine" />
-
-        <TextView
-            android:id="@+id/tvTemplateChoiceDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/gray_500"
-            android:textSize="12sp"
-            tools:text="Warm, alkaline saltwater with tight tolerances." />
-
-        <!-- Sits below the description, so the row reads name, then what it is for, then the
-             water type it will store. Gone for Custom, which has no water type until the user
-             picks one, and takes its vertical space with it. -->
-        <TextView
-            android:id="@+id/tvTemplateChoiceWaterType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:letterSpacing="0.06"
-            android:paddingStart="8dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="2dp"
-            android:textAllCaps="true"
-            android:textColor="@color/water_badge_text"
-            android:textSize="9sp"
-            android:textStyle="bold"
-            tools:background="@drawable/bg_water_badge_saltwater"
-            tools:text="Saltwater" />
+            android:layout_marginStart="8dp"
+            android:clickable="false"
+            android:focusable="false" />
     </LinearLayout>
 
-    <!-- Not inside a RadioGroup: the group only manages RadioButtons that are its direct
-         children, and these sit two levels down inside their card. AddAquariumFragment keeps
-         exactly one checked instead.
-         Not clickable itself, so a tap anywhere on the row, including the radio circle, is
-         handled once by the row rather than letting the button check itself in isolation. -->
-    <RadioButton
-        android:id="@+id/rbTemplateChoice"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/templateChoiceDetails"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:clickable="false"
-        android:focusable="false" />
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/divider" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/templateChoiceExpander"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="54dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="start|center_vertical"
+        android:minHeight="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvTemplateChoiceHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/template_choice_show_details"
+            android:textColor="@color/accent"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true" />
 
     <ScrollView
+        android:id="@+id/addAquariumScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomBar"
@@ -26,14 +27,34 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/label_aquarium_name"
-                android:textColor="@color/gray_500"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:background="@drawable/bg_step_number"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:text="@string/step_number_1"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:letterSpacing="0.06"
+                    android:text="@string/label_aquarium_name"
+                    android:textColor="@color/gray_500"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/etAquariumName"
@@ -42,19 +63,52 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_settings_card"
                 android:hint="@string/hint_aquarium_name"
+                android:imeOptions="actionDone"
                 android:inputType="textCapWords"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/gray_900"
                 android:textSize="14sp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tvAquariumNameError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/danger"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="Name can only contain letters, numbers, spaces, hyphens, or apostrophes."
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/stepTemplateHeader"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="@string/label_choose_template"
-                android:textColor="@color/gray_500"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:background="@drawable/bg_step_number"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:text="@string/step_number_2"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:letterSpacing="0.06"
+                    android:text="@string/label_choose_template"
+                    android:textColor="@color/gray_500"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <!-- One row per built-in template plus Custom, inflated by AddAquariumFragment
                  from BuiltInTemplates so this list cannot drift from the templates the
@@ -65,520 +119,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- DS-4.4: Advanced Settings, collapsed by default -->
-            <LinearLayout
-                android:id="@+id/advancedSettingsHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_settings_card"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
+            <!-- TODO (DS-4.4): Advanced Settings goes back here, collapsed by default:
+                 aquariumnotes, per-sensor threshold overrides -->
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/label_advanced_settings"
-                    android:textColor="@color/gray_900"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/ivAdvancedSettingsChevron"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@string/action_expand_advanced_settings"
-                    android:src="@drawable/ic_arrow_down_24px" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/advancedSettingsContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/label_tank_volume"
-                    android:textColor="@color/gray_500"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etTankVolume"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:hint="@string/hint_tank_volume"
-                    android:inputType="numberDecimal"
-                    android:paddingHorizontal="16dp"
-                    android:textColor="@color/gray_900"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/label_aquarium_notes"
-                    android:textColor="@color/gray_500"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etAquariumNotes"
-                    android:layout_width="match_parent"
-                    android:layout_height="96dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:gravity="top|start"
-                    android:hint="@string/hint_aquarium_notes"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:padding="16dp"
-                    android:textColor="@color/gray_900"
-                    android:textSize="14sp" />
-
-                <!-- Water Level -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="12dp"
-                        app:drawableStartCompat="@drawable/water_24px"
-                        android:gravity="center_vertical"
-                        android:text="@string/water_level"
-                        android:textColor="@color/gray_900"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/label_water_level_alert"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchWaterLevelAlert"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Temperature -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvTemperatureTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="12dp"
-                        app:drawableStartCompat="@drawable/thermometer_24px"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/gray_900"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        tools:text="Temperature (°F)" />
-
-                    <RadioGroup
-                        android:id="@+id/rgTemperatureUnit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rbAdvancedCelsius"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/celsius"
-                            android:textColor="@color/gray_900"
-                            android:textSize="13sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbAdvancedFahrenheit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/fahrenheit"
-                            android:textColor="@color/gray_900"
-                            android:textSize="13sp" />
-                    </RadioGroup>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_min"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etTemperatureMin"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal|numberSigned"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_max"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etTemperatureMax"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal|numberSigned"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Dissolved Solids. Greyed out by AddAquariumFragment for a template whose water
-                     type the TDS sensor cannot read -->
-                <LinearLayout
-                    android:id="@+id/dissolvedSolidsThresholdCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvDissolvedSolidsTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="12dp"
-                        app:drawableStartCompat="@drawable/total_dissolved_solids_24px"
-                        android:gravity="center_vertical"
-                        android:text="@string/label_dissolved_solids_threshold"
-                        android:textColor="@color/gray_900"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvDissolvedSolidsDisabledNote"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/gray_500"
-                        android:textSize="12sp"
-                        android:visibility="gone"
-                        tools:text="TDS sensor range is below saltwater levels."
-                        tools:visibility="visible" />
-
-                    <LinearLayout
-                        android:id="@+id/dissolvedSolidsThresholdInputs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_min"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etDissolvedSolidsMin"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_max"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etDissolvedSolidsMax"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- pH Level -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="12dp"
-                        app:drawableStartCompat="@drawable/water_ph_24px"
-                        android:gravity="center_vertical"
-                        android:text="@string/ph_level"
-                        android:textColor="@color/gray_900"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_min"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etPhLevelMin"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/label_max"
-                                android:textColor="@color/gray_500"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                            <EditText
-                                android:id="@+id/etPhLevelMax"
-                                android:layout_width="match_parent"
-                                android:layout_height="44dp"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_settings_card"
-                                android:hint="@string/hint_threshold_value"
-                                android:inputType="numberDecimal"
-                                android:paddingHorizontal="12dp"
-                                android:textColor="@color/gray_900"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Sensor History Retention -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/label_sensor_history"
-                    android:textColor="@color/gray_500"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_settings_card"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/question_sensor_history"
-                        android:textColor="@color/gray_900"
-                        android:textSize="14sp" />
-
-                    <RadioGroup
-                        android:id="@+id/rgSensorHistoryRetention"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <RadioButton
-                            android:id="@+id/rbHistoryNone"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_none"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory1Hour"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_1_hour"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory1Day"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_1_day"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory7Days"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:checked="true"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_7_days"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory1Month"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_1_month"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory6Months"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_6_months"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbHistory1Year"
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/history_retention_1_year"
-                            android:textColor="@color/gray_900"
-                            android:textSize="14sp" />
-                    </RadioGroup>
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -590,17 +133,18 @@
         android:layout_alignParentBottom="true"
         android:padding="16dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateAquarium"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:backgroundTint="@color/slate_900"
+            android:background="@drawable/bg_auth_primary_button"
+            android:letterSpacing="0"
             android:text="@string/action_create_aquarium"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp" />
+            app:backgroundTint="@null" />
     </LinearLayout>
 
 </RelativeLayout>

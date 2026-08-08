@@ -36,16 +36,17 @@
         android:layout_alignParentBottom="true"
         android:padding="16dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddNewAquarium"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:backgroundTint="@color/slate_900"
+            android:background="@drawable/bg_auth_primary_button"
+            android:letterSpacing="0"
             android:text="@string/action_add_new_aquarium"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:cornerRadius="12dp" />
+            app:backgroundTint="@null" />
     </LinearLayout>
 </RelativeLayout>

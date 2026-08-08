@@ -37,7 +37,26 @@
         <action
             android:id="@+id/action_hub_to_aquariumTemplates"
             app:destination="@id/aquariumTemplatesFragment" />
+        <action
+            android:id="@+id/action_hub_to_aquariumSelector"
+            app:destination="@id/aquariumSelectorFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/aquariumSelectorFragment"
+        android:name="ca.team6.aquasense.dashboard.AquariumSelectorFragment"
+        tools:layout="@layout/fragment_aquarium_selector"
+        android:label="@string/title_my_aquariums">
+        <action
+            android:id="@+id/action_aquariumSelectorFragment_to_addAquariumFragment"
+            app:destination="@id/addAquariumFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addAquariumFragment"
+        android:name="ca.team6.aquasense.dashboard.AddAquariumFragment"
+        tools:layout="@layout/fragment_add_aquarium"
+        android:label="@string/title_add_aquarium" />
 
     <!-- SETTINGS-04 / ST-4.2 - Aquarium Templates -->
     <fragment

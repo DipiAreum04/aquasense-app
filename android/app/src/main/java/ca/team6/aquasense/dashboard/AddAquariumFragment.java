@@ -1,44 +1,44 @@
 package ca.team6.aquasense.dashboard;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
-import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ProfileInputValidator;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
-import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
+import ca.team6.aquasense.settings.AquariumTemplateCardBinder;
+import ca.team6.aquasense.ui.FragmentToolbar;
 
 /**
  * Dedicated fragment screen for configuring new aquarium profiles with template
@@ -50,35 +50,27 @@ public class AddAquariumFragment extends Fragment {
     // BuiltInTemplates keys those on the water chemistry family.
     private static final String CUSTOM_CHOICE_ID = "custom";
 
-    // Matches the template cards in Settings, so a bound reads the same on both screens.
-    private static final DecimalFormat BOUND_FORMAT = new DecimalFormat("0.##");
+    private static final int EXPANDER_INDENT_DP = 54;
 
-    // How far a sensor card's title is dimmed when the chosen water type cannot be measured with
-    // it. The explanation below the title keeps its own opacity so it stays readable.
-    private static final float DISABLED_TITLE_ALPHA = 0.4f;
+    // Dimming the disabled Create button while the form is incomplete
+    private static final float DISABLED_BUTTON_ALPHA = 0.5f;
 
     private EditText etAquariumName;
-    private LinearLayout advancedSettingsContent;
-    private ImageView ivAdvancedSettingsChevron;
-    private boolean advancedSettingsExpanded = false;
+    private TextView tvAquariumNameError;
+    private ScrollView scrollView;
+    private View stepTemplateHeader;
     private Button btnCreate;
     private boolean submitting;
+    private boolean scrolledToTemplates;
 
     // Template ID (or CUSTOM_CHOICE_ID) to its row, in the order the rows are shown. Rebuilt with
     // the view, so it is cleared in onDestroyView rather than holding a dead hierarchy.
     private final Map<String, View> templateChoices = new LinkedHashMap<>();
     // Held as an ID rather than an AquariumTemplate so that Custom, which has no template, is a
     // value like any other and the selection survives the view being recreated on rotation.
-    private String selectedChoiceId = BuiltInTemplates.getDefault().getId();
-
-    private SwitchCompat switchWaterLevelAlert;
-    private EditText etTemperatureMin, etTemperatureMax;
-    private EditText etDissolvedSolidsMin, etDissolvedSolidsMax;
-    private EditText etPhLevelMin, etPhLevelMax;
-    private TextView tvDissolvedSolidsTitle;
-    private View dissolvedSolidsThresholdInputs;
-    private TextView tvDissolvedSolidsDisabledNote;
-    private RadioGroup rgSensorHistoryRetention;
+    @Nullable
+    private String selectedChoiceId;
+    private final Set<String> expandedChoiceIds = new HashSet<>();
 
     @Nullable
     @Override
@@ -93,18 +85,118 @@ public class AddAquariumFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_add_aquarium);
-        NavigationUI.setupWithNavController(toolbar, Navigation.findNavController(view));
-
-        etAquariumName = view.findViewById(R.id.etAquariumName);
-
-        setupAdvancedSettingsToggle(view);
-        setupSensorThresholdFields(view);
-        setupTemperatureUnitToggle(view);
-        setupTemplateChoices(view);
+        FragmentToolbar.setup(this, view, R.id.toolbar_add_aquarium);
 
         btnCreate = view.findViewById(R.id.btnCreateAquarium);
         btnCreate.setOnClickListener(this::createAquarium);
+
+        setupNameField(view);
+        setupTemplateChoices(view);
+    }
+
+    /**
+     * Step 1. Validates the name as it is typed rather than at submit time
+     */
+    private void setupNameField(View view) {
+        etAquariumName = view.findViewById(R.id.etAquariumName);
+        tvAquariumNameError = view.findViewById(R.id.tvAquariumNameError);
+        scrollView = view.findViewById(R.id.addAquariumScroll);
+        stepTemplateHeader = view.findViewById(R.id.stepTemplateHeader);
+
+        etAquariumName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                showNameProblem();
+                updateCreateEnabled();
+            }
+        });
+
+        etAquariumName.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                scrollToTemplates();
+            }
+            return false;
+        });
+        etAquariumName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                scrollToTemplates();
+            }
+        });
+    }
+
+    @NonNull
+    private String typedName() {
+        return etAquariumName.getText().toString().trim();
+    }
+
+    /** Whether the typed name is valid and not already in use */
+    private boolean isNameUsable() {
+        String name = typedName();
+        return !name.isEmpty()
+                && !ProfileInputValidator.isInvalidAquariumName(name)
+                && !isDuplicateName(name);
+    }
+
+    /**
+     * Whether an aquarium by this name already exists under the current user. 
+     * Reads the live list the repository keeps in sync with the database.
+     */
+    private boolean isDuplicateName(@NonNull String name) {
+        for (Aquarium existing : AquariumRepository.getInstance(requireContext()).getAquariums()) {
+            if (existing.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Writes the reason the typed name cannot be used under the field. */
+    private void showNameProblem() {
+        String name = typedName();
+
+        if (name.isEmpty()) {
+            tvAquariumNameError.setVisibility(View.GONE);
+            return;
+        }
+        if (ProfileInputValidator.isInvalidAquariumName(name)) {
+            tvAquariumNameError.setText(R.string.toast_invalid_aquarium_name);
+            tvAquariumNameError.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (isDuplicateName(name)) {
+            tvAquariumNameError.setText(getString(R.string.toast_duplicate_aquarium_name, name));
+            tvAquariumNameError.setVisibility(View.VISIBLE);
+            return;
+        }
+        tvAquariumNameError.setVisibility(View.GONE);
+    }
+
+    /**
+     * Enables the Create button only once the user has entered a valid name and selected a template.
+     */
+    private void updateCreateEnabled() {
+        boolean ready = !submitting && selectedChoiceId != null && isNameUsable();
+        btnCreate.setEnabled(ready);
+        btnCreate.setAlpha(ready ? 1f : DISABLED_BUTTON_ALPHA);
+    }
+
+    private void scrollToTemplates() {
+        if (scrolledToTemplates || selectedChoiceId != null || !isNameUsable()) {
+            return;
+        }
+        scrolledToTemplates = true;
+
+        ScrollView scroll = scrollView;
+        View header = stepTemplateHeader;
+        scroll.post(() -> scroll.smoothScrollTo(0, header.getTop()));
     }
 
     private void createAquarium(@NonNull View clicked) {
@@ -112,29 +204,29 @@ public class AddAquariumFragment extends Fragment {
             return;
         }
 
-        String name = etAquariumName.getText().toString().trim();
+        String name = typedName();
         if (name.isEmpty()) {
             Toast.makeText(getContext(), R.string.toast_enter_aquarium_name, Toast.LENGTH_SHORT).show();
             return;
         }
-        if (ProfileInputValidator.isInvalidName(name)) {
+        if (ProfileInputValidator.isInvalidAquariumName(name)) {
             Toast.makeText(getContext(), R.string.toast_invalid_aquarium_name, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (selectedChoiceId == null) {
+            Toast.makeText(getContext(), R.string.toast_choose_template, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (isDuplicateName(name)) {
+            showNameProblem();
+            Toast.makeText(getContext(),
+                    getString(R.string.toast_duplicate_aquarium_name, name),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         AquariumRepository repository = AquariumRepository.getInstance(requireContext());
-        // Reads the live list the repository keeps in sync with the database, so a tank added on
-        // another device is still caught by the duplicate and limit checks below.
         List<Aquarium> existingAquariums = repository.getAquariums();
-
-        for (Aquarium existing : existingAquariums) {
-            if (existing.getName().equalsIgnoreCase(name)) {
-                Toast.makeText(getContext(),
-                        getString(R.string.toast_duplicate_aquarium_name, name),
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
 
         if (existingAquariums.size() >= AquariumRepository.MAX_AQUARIUMS_LIMIT) {
             new AlertDialog.Builder(requireContext())
@@ -203,7 +295,7 @@ public class AddAquariumFragment extends Fragment {
     // letting an impatient double-tap create the aquarium twice.
     private void setSubmitting(boolean value) {
         submitting = value;
-        btnCreate.setEnabled(!value);
+        updateCreateEnabled();
     }
 
     /**
@@ -223,8 +315,10 @@ public class AddAquariumFragment extends Fragment {
         }
         container.addView(buildCustomChoice(inflater, container));
 
-        // Re-checks whatever was selected before, which on a first build is the default template.
         showSelectedChoice();
+        for (String choiceId : templateChoices.keySet()) {
+            showDetails(choiceId);
+        }
     }
 
     @Override
@@ -238,8 +332,8 @@ public class AddAquariumFragment extends Fragment {
                                      @NonNull AquariumTemplate template) {
         View row = inflater.inflate(R.layout.item_template_choice, container, false);
 
-        ((ImageView) row.findViewById(R.id.ivTemplateChoiceIcon))
-                .setImageResource(template.getIconResId());
+        AquariumTemplateCardBinder.bindIconTile(
+                row.findViewById(R.id.ivTemplateChoiceIcon), template);
         ((TextView) row.findViewById(R.id.tvTemplateChoiceName)).setText(template.getNameResId());
         ((TextView) row.findViewById(R.id.tvTemplateChoiceDescription))
                 .setText(template.getDescriptionResId());
@@ -253,185 +347,86 @@ public class AddAquariumFragment extends Fragment {
                 ? R.drawable.bg_water_badge_saltwater
                 : R.drawable.bg_water_badge_freshwater);
 
+        ViewGroup details = row.findViewById(R.id.templateChoiceDetails);
+        details.addView(AquariumTemplateCardBinder.createDetails(inflater, details, template));
+
         templateChoices.put(template.getId(), row);
         row.setOnClickListener(v -> selectChoice(template.getId()));
+        row.findViewById(R.id.templateChoiceExpander)
+                .setOnClickListener(v -> toggleDetails(template.getId()));
         return row;
     }
 
     private View buildCustomChoice(LayoutInflater inflater, ViewGroup container) {
         View row = inflater.inflate(R.layout.item_template_choice, container, false);
 
-        ((ImageView) row.findViewById(R.id.ivTemplateChoiceIcon))
-                .setImageResource(R.drawable.template_custom_24);
+        AquariumTemplateCardBinder.bindIconTile(row.findViewById(R.id.ivTemplateChoiceIcon),
+                R.drawable.template_custom_24, R.color.accent);
+        ImageViewCompat.setImageTintList(
+                row.findViewById(R.id.ivTemplateChoiceIcon),
+                ContextCompat.getColorStateList(requireContext(), R.color.accent));
+
         ((TextView) row.findViewById(R.id.tvTemplateChoiceName)).setText(R.string.template_custom_title);
         ((TextView) row.findViewById(R.id.tvTemplateChoiceDescription))
                 .setText(R.string.template_custom_desc);
-        // Custom starts from no template, so there is no water type to advertise yet.
-        row.findViewById(R.id.tvTemplateChoiceWaterType).setVisibility(View.GONE);
+        row.findViewById(R.id.templateChoiceMeta).setVisibility(View.GONE);
+        row.findViewById(R.id.templateChoiceExpander).setVisibility(View.GONE);
 
         templateChoices.put(CUSTOM_CHOICE_ID, row);
         row.setOnClickListener(v -> selectChoice(CUSTOM_CHOICE_ID));
         return row;
     }
 
-    /** Handles a tap on a row. Takes a template ID, or {@link #CUSTOM_CHOICE_ID} for Custom. */
-    private void selectChoice(@NonNull String choiceId) {
-        selectedChoiceId = choiceId;
-        showSelectedChoice();
 
-        // Custom means the user fills the thresholds in themselves, so open the section that
-        // holds them rather than making them hunt for it. Only on a tap: re-checking the rows
-        // after a rotation should not reopen a section the user had collapsed.
-        if (CUSTOM_CHOICE_ID.equals(choiceId) && !advancedSettingsExpanded) {
-            toggleAdvancedSettings();
-        }
+    private void selectChoice(@NonNull String choiceId) {
+        selectedChoiceId = choiceId.equals(selectedChoiceId) ? null : choiceId;
+        showSelectedChoice();
     }
 
+    /**
+     * Opens or closes one row's species and threshold detail.
+     */
+    private void toggleDetails(@NonNull String choiceId) {
+        if (!expandedChoiceIds.remove(choiceId)) {
+            expandedChoiceIds.add(choiceId);
+        }
+        showDetails(choiceId);
+    }
+
+    /** Leaves at most one row checked, the one named by {@link #selectedChoiceId}. */
     private void showSelectedChoice() {
         for (Map.Entry<String, View> choice : templateChoices.entrySet()) {
-            RadioButton radio = choice.getValue().findViewById(R.id.rbTemplateChoice);
-            radio.setChecked(choice.getKey().equals(selectedChoiceId));
+            ((RadioButton) choice.getValue().findViewById(R.id.rbTemplateChoice))
+                    .setChecked(choice.getKey().equals(selectedChoiceId));
         }
-        showTemplateThresholds();
+        updateCreateEnabled();
     }
 
-    /**
-     * DS-4.4: Advanced settings (tank volume, notes) stay collapsed until the
-     * user explicitly taps the header, regardless of which template is chosen.
-     */
-    private void setupAdvancedSettingsToggle(View view) {
-        View advancedSettingsHeader = view.findViewById(R.id.advancedSettingsHeader);
-        advancedSettingsContent = view.findViewById(R.id.advancedSettingsContent);
-        ivAdvancedSettingsChevron = view.findViewById(R.id.ivAdvancedSettingsChevron);
-
-        advancedSettingsHeader.setOnClickListener(v -> toggleAdvancedSettings());
-        // The freshly inflated section is collapsed, so re-apply the state the user left it in.
-        showAdvancedSettings();
-    }
-
-    private void toggleAdvancedSettings() {
-        advancedSettingsExpanded = !advancedSettingsExpanded;
-        showAdvancedSettings();
-    }
-
-    private void showAdvancedSettings() {
-        advancedSettingsContent.setVisibility(advancedSettingsExpanded ? View.VISIBLE : View.GONE);
-        ivAdvancedSettingsChevron.setRotation(advancedSettingsExpanded ? 180f : 0f);
-    }
-
-    private void setupSensorThresholdFields(View view) {
-        switchWaterLevelAlert = view.findViewById(R.id.switchWaterLevelAlert);
-        etTemperatureMin = view.findViewById(R.id.etTemperatureMin);
-        etTemperatureMax = view.findViewById(R.id.etTemperatureMax);
-        etDissolvedSolidsMin = view.findViewById(R.id.etDissolvedSolidsMin);
-        etDissolvedSolidsMax = view.findViewById(R.id.etDissolvedSolidsMax);
-        etPhLevelMin = view.findViewById(R.id.etPhLevelMin);
-        etPhLevelMax = view.findViewById(R.id.etPhLevelMax);
-        tvDissolvedSolidsTitle = view.findViewById(R.id.tvDissolvedSolidsTitle);
-        dissolvedSolidsThresholdInputs = view.findViewById(R.id.dissolvedSolidsThresholdInputs);
-        tvDissolvedSolidsDisabledNote = view.findViewById(R.id.tvDissolvedSolidsDisabledNote);
-        rgSensorHistoryRetention = view.findViewById(R.id.rgSensorHistoryRetention);
-    }
-
-    /**
-     * Fills the threshold fields with the selected template's safe range, so the user sees
-     * the numbers the aquarium will be created with instead of a blank form.
-     */
-    
-    private void showTemplateThresholds() {
-        // Null for Custom, which clears the fields: it is defined by what the user types, and a
-        // template's numbers sitting in the boxes would misrepresent that.
-        AquariumTemplate template = selectedTemplate();
-
-        showBand(etTemperatureMin, etTemperatureMax,
-                template == null ? null : template.getThresholds(DatabaseSchema.TEMPERATURE_KEY),
-                true);
-        showBand(etPhLevelMin, etPhLevelMax,
-                template == null ? null : template.getThresholds(DatabaseSchema.PH_LEVEL_KEY),
-                false);
-        showBand(etDissolvedSolidsMin, etDissolvedSolidsMax,
-                template == null ? null : template.getThresholds(DatabaseSchema.DISSOLVED_SOLIDS_KEY),
-                false);
-
-        showDissolvedSolidsApplicable(template);
-    }
-
-    /**
-     * Writes one band's safe range into a min / max pair, or empties both when the template has no
-     * band for that sensor.
-     *
-     * @param isTemperature converts to whatever unit the toggle above the field is set to, since
-     *     templates hold Celsius but the field is labelled with the user's unit.
-     */
-    private void showBand(EditText min, EditText max, @Nullable ThresholdBand band, boolean isTemperature) {
-        if (band == null) {
-            min.setText("");
-            max.setText("");
+    private void showDetails(@NonNull String choiceId) {
+        View row = templateChoices.get(choiceId);
+        if (row == null || BuiltInTemplates.fromId(choiceId) == null) {
             return;
         }
-        double low = isTemperature
-                ? ReadingFormatter.toDisplayTemperature(requireContext(), band.getSafeLow())
-                : band.getSafeLow();
-        double high = isTemperature
-                ? ReadingFormatter.toDisplayTemperature(requireContext(), band.getSafeHigh())
-                : band.getSafeHigh();
-        min.setText(BOUND_FORMAT.format(low));
-        max.setText(BOUND_FORMAT.format(high));
+
+        boolean expanded = expandedChoiceIds.contains(choiceId);
+
+        row.findViewById(R.id.templateChoiceDetails)
+                .setVisibility(expanded ? View.VISIBLE : View.GONE);
+        ((TextView) row.findViewById(R.id.tvTemplateChoiceHint)).setText(expanded
+                ? R.string.template_choice_hide_details
+                : R.string.template_choice_show_details);
+        showExpanderAlignment(row, expanded);
     }
 
-    /**
-     * Greys out the TDS card for a template whose water the probe cannot read, which today
-     * is Saltwater only, and explains why in the template's own words.
-     */
-    private void showDissolvedSolidsApplicable(@Nullable AquariumTemplate template) {
-        boolean applicable = template == null
-                || template.isSensorApplicable(DatabaseSchema.DISSOLVED_SOLIDS_KEY);
+    private void showExpanderAlignment(@NonNull View row, boolean expanded) {
+        LinearLayout expander = row.findViewById(R.id.templateChoiceExpander);
+        expander.setGravity(expanded ? Gravity.CENTER : Gravity.START | Gravity.CENTER_VERTICAL);
 
-        tvDissolvedSolidsTitle.setAlpha(applicable ? 1f : DISABLED_TITLE_ALPHA);
-        dissolvedSolidsThresholdInputs.setVisibility(applicable ? View.VISIBLE : View.GONE);
-        etDissolvedSolidsMin.setEnabled(applicable);
-        etDissolvedSolidsMax.setEnabled(applicable);
-
-        // Every template that disables a sensor carries a note explaining it
-        int noteResId = template == null ? 0 : template.getDisabledNoteResId();
-        if (applicable || noteResId == 0) {
-            tvDissolvedSolidsDisabledNote.setVisibility(View.GONE);
-            return;
-        }
-        tvDissolvedSolidsDisabledNote.setText(noteResId);
-        tvDissolvedSolidsDisabledNote.setVisibility(View.VISIBLE);
+        ViewGroup.MarginLayoutParams params =
+                (ViewGroup.MarginLayoutParams) expander.getLayoutParams();
+        // Matches the icon tile's width plus its gap, the indent the layout starts this row at.
+        params.setMarginStart(expanded ? 0 : Math.round(
+                EXPANDER_INDENT_DP * getResources().getDisplayMetrics().density));
+        expander.setLayoutParams(params);
     }
-
-    /**
-     * Mirrors DisplayUnitsFragment's Celsius/Fahrenheit RadioGroup, writing to the
-     * same
-     * app-wide KEY_TEMP_UNIT preference so this toggle stays in sync with Settings
-     * > Display
-     * & Units instead of introducing a second, competing unit setting.
-     */
-    private void setupTemperatureUnitToggle(View view) {
-        TextView tvTemperatureTitle = view.findViewById(R.id.tvTemperatureTitle);
-        RadioGroup rgTemperatureUnit = view.findViewById(R.id.rgTemperatureUnit);
-
-        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
-        if (prefs == null)
-            return;
-
-        String tempUnit = prefs.getString(SettingsRepository.KEY_TEMP_UNIT, "F");
-        rgTemperatureUnit.check("C".equals(tempUnit) ? R.id.rbAdvancedCelsius : R.id.rbAdvancedFahrenheit);
-        updateTemperatureTitle(tvTemperatureTitle, tempUnit);
-
-        rgTemperatureUnit.setOnCheckedChangeListener((group, checkedId) -> {
-            String unit = (checkedId == R.id.rbAdvancedCelsius) ? "C" : "F";
-            prefs.updateField(SettingsRepository.KEY_TEMP_UNIT, unit);
-            updateTemperatureTitle(tvTemperatureTitle, unit);
-            showTemplateThresholds();
-        });
-    }
-
-    private void updateTemperatureTitle(TextView tvTemperatureTitle, String tempUnit) {
-        int unitResId = "C".equals(tempUnit) ? R.string.unit_celsius : R.string.unit_fahrenheit;
-        tvTemperatureTitle.setText(getString(R.string.label_temperature_threshold, getString(unitResId)));
-    }
-
 }

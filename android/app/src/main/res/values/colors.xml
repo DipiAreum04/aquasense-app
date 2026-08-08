@@ -133,10 +133,6 @@
     <color name="dashboard_header_chip_title">#FF1E2A35</color>
     <color name="dashboard_header_icon_circle">#73FFFFFF</color>
 
-    <color name="dashboard_water_badge_freshwater">#FF0A809D</color>
-    <color name="dashboard_water_badge_saltwater">#5B4383</color>
-    <color name="dashboard_water_badge_text">#FFFFFFFF</color>
-
     <!--
       Sensor cards. The card stays white and the status shows in its edge and in the pill. The
       sensor's own icon and the reading both stay navy, so the number is read as a number rather
@@ -176,6 +172,7 @@
     <color name="template_accent_coldwater">#FF0097A7</color>
     <color name="template_accent_hardwater">#FFD98324</color>
     <color name="template_accent_saltwater">#FF574C9B</color>
+    <color name="aquarium_icon_bg">#FFFFFFFF</color>
     <color name="template_heading">#FF043D5C</color>
     <color name="template_chip_bg">#FFEDF1F6</color>
     <color name="template_chip_text">#FF3C4858</color>

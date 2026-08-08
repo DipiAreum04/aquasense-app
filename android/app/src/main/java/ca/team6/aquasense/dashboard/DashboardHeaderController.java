@@ -26,6 +26,7 @@ import ca.team6.aquasense.model.WaterType;
 
 public class DashboardHeaderController {
     private static final long STATUS_TRANSITION_MS = 450L;
+    private static final float WATER_BADGE_ICON_DP = 16f;
     private static final ArgbEvaluator ARGB = new ArgbEvaluator();
 
     private final LinearLayout aquariumSelector;
@@ -49,6 +50,7 @@ public class DashboardHeaderController {
         this.aquariumSelector = view.findViewById(R.id.aquariumSelector);
         this.aquariumTitleText = view.findViewById(R.id.aquariumTitleText);
         this.aquariumWaterTypeBadge = view.findViewById(R.id.aquariumWaterTypeBadge);
+        applyWaterTypeBadgeIcon(this.aquariumWaterTypeBadge);
         this.aquariumSensorsStatusIcon = view.findViewById(R.id.aquariumSensorsStatusIcon);
         this.aquariumSensorsStatusHeading = view.findViewById(R.id.aquariumSensorsStatusHeading);
         this.aquariumSensorsStatusDescription = view.findViewById(R.id.aquariumSensorsStatusDescription);
@@ -78,13 +80,17 @@ public class DashboardHeaderController {
         }
 
         this.aquariumWaterTypeBadge.setText(waterType.getLabelResId());
-        this.aquariumWaterTypeBadge.setBackgroundTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(
-                        this.aquariumWaterTypeBadge.getContext(),
-                        waterType == WaterType.SALTWATER
-                                ? R.color.dashboard_water_badge_saltwater
-                                : R.color.dashboard_water_badge_freshwater)));
         this.aquariumWaterTypeBadge.setVisibility(View.VISIBLE);
+    }
+
+    private static void applyWaterTypeBadgeIcon(@NonNull TextView badge) {
+        Drawable icon = ContextCompat.getDrawable(badge.getContext(), R.drawable.water_drops_24px);
+        if (icon == null) {
+            return;
+        }
+        int size = Math.round(badge.getResources().getDisplayMetrics().density * WATER_BADGE_ICON_DP);
+        icon.setBounds(0, 0, size, size);
+        badge.setCompoundDrawablesRelative(icon, null, null, null);
     }
 
     public void setDashboardSensorsStatus(AquariumStatus aquariumStatus) {

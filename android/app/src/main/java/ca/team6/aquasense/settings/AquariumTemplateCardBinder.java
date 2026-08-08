@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
@@ -24,9 +25,7 @@ import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 
 /**
- * Inflates one {@code item_aquarium_template} card for an {@link AquariumTemplate}.
- * Everything is read from the template, so a card can never disagree with the thresholds the
- * dashboard actually enforces.
+ * Inflates the views that explain an {@link AquariumTemplate}
  */
 public final class AquariumTemplateCardBinder {
 
@@ -54,26 +53,79 @@ public final class AquariumTemplateCardBinder {
         int accent = ContextCompat.getColor(context, template.getAccentColorResId());
         int accentFill = ColorUtils.setAlphaComponent(accent, ACCENT_FILL_ALPHA);
 
-        ImageView icon = card.findViewById(R.id.ivTemplateIcon);
-        icon.setImageResource(template.getIconResId());
-        icon.getBackground().mutate().setTint(accentFill);
+        bindIconTile(card.findViewById(R.id.ivTemplateIcon), template);
 
         TextView badge = card.findViewById(R.id.tvTemplateWaterType);
         badge.setText(waterTypeResId(template.getWaterType()));
         badge.setBackgroundResource(waterTypeBadgeResId(template.getWaterType()));
 
-        ImageViewCompat.setImageTintList(
-                card.findViewById(R.id.ivThresholdsIcon), ColorStateList.valueOf(accent));
-
         ((TextView) card.findViewById(R.id.tvTemplateName)).setText(template.getNameResId());
         ((TextView) card.findViewById(R.id.tvTemplateDescription))
                 .setText(template.getDescriptionResId());
 
-        addSpeciesChips(inflater, card.findViewById(R.id.containerSpecies),
+        // The card includes the details block, so its views are found on the card itself.
+        bindDetails(inflater, card, template, accent, accentFill);
+
+        return card;
+    }
+
+    /**
+     * Fills a template's icon tile.
+     */
+    public static void bindIconTile(ImageView tile, AquariumTemplate template) {
+        bindIconTile(tile, template.getIconResId(), template.getAccentColorResId());
+    }
+
+    public static void bindIconTile(
+            ImageView tile,
+            @DrawableRes int iconResId,
+            @ColorRes int accentColorResId
+    ) {
+        int accent = ContextCompat.getColor(tile.getContext(), accentColorResId);
+        tile.setImageResource(iconResId);
+        tile.getBackground().mutate()
+                .setTint(ColorUtils.setAlphaComponent(accent, ACCENT_FILL_ALPHA));
+    }
+
+    /**
+     * Inflates and fills the details block on its own, for a screen that already names the template
+     * and only needs the species and threshold bars.
+     */
+    public static View createDetails(
+            LayoutInflater inflater,
+            ViewGroup parent,
+            AquariumTemplate template
+    ) {
+        View details = inflater.inflate(R.layout.item_template_details, parent, false);
+
+        int accent = ContextCompat.getColor(
+                details.getContext(), template.getAccentColorResId());
+        bindDetails(inflater, details, template, accent,
+                ColorUtils.setAlphaComponent(accent, ACCENT_FILL_ALPHA));
+
+        return details;
+    }
+
+    /**
+     * Fills the species chips, band bars and disabled note.
+     */
+    private static void bindDetails(
+            LayoutInflater inflater,
+            View root,
+            AquariumTemplate template,
+            int accent,
+            int accentFill
+    ) {
+        Context context = root.getContext();
+
+        ImageViewCompat.setImageTintList(
+                root.findViewById(R.id.ivThresholdsIcon), ColorStateList.valueOf(accent));
+
+        addSpeciesChips(inflater, root.findViewById(R.id.containerSpecies),
                 context.getResources().getStringArray(template.getExampleSpeciesResId()),
                 accent, accentFill);
 
-        LinearLayout parameters = card.findViewById(R.id.containerParameters);
+        LinearLayout parameters = root.findViewById(R.id.containerParameters);
         addParameter(inflater, parameters, template, context,
                 DatabaseSchema.TEMPERATURE_KEY, R.string.temperature, R.string.unit_celsius);
         addParameter(inflater, parameters, template, context,
@@ -85,12 +137,10 @@ public final class AquariumTemplateCardBinder {
         // Only saltwater carries a note for TDS, so the view stays gone for the other three.
         int disabledNoteResId = template.getDisabledNoteResId();
         if (disabledNoteResId != 0) {
-            TextView note = card.findViewById(R.id.tvDisabledNote);
+            TextView note = root.findViewById(R.id.tvDisabledNote);
             note.setText(disabledNoteResId);
             note.setVisibility(View.VISIBLE);
         }
-
-        return card;
     }
 
     /**
