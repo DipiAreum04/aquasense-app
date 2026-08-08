@@ -55,11 +55,15 @@ public abstract class AquariumSensor {
     }
 
     /**
-     * Grades a live reading. A sensor with no band configured has nothing to be out of range of,
-     * so it reads as normal; a sensor whose reading carries a meaning of its own, regardless of
-     * any band, says so by overriding this.
+     * Grades a reading. A sensor with no band configured has nothing to be out of range of, so it
+     * reads as normal; a sensor whose reading carries a meaning of its own, regardless of any
+     * band, says so by overriding this.
+     *
+     * <p>Public because it grades a value rather than this sensor's own current one: the analytics
+     * page runs a whole period's buckets through it to say how many of them were in range, and
+     * that has to be the same judgement the dashboard's card is making on the live reading.
      */
-    protected SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
+    public SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
         return thresholdBand != null ? thresholdBand.statusFor(value) : SensorStatus.NORMAL;
     }
 

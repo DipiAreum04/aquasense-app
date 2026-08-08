@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Press feedback for the cards drawn on @drawable/bg_settings_card, whose corners are 10dp. The
+  20dp variant beside it masks the dashboard's header chip; a mask that does not match the card it
+  covers leaves the ripple squaring off the corners.
+-->
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/alpha_0x22_background"
+>
+    <item android:id="@android:id/mask">
+        <shape>
+            <solid android:color="@color/background"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+</ripple>

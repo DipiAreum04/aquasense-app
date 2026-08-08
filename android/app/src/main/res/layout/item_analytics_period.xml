@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One analytics period button. A plain TextView rather than a Material Chip, matching
+  item_species_chip.xml. Inflated once per period by AnalyticsActivity, so the row cannot fall out
+  of step with the periods it offers.
+
+  Zero width against a weight of one is what divides the groove evenly between the six of them, so
+  "1H" occupies exactly as much of it as "6M" and the raised button lands on a fixed grid however
+  the row is measured. There are no margins: the buttons meet, and only the selected one is drawn.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:background="@drawable/bg_analytics_period"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:textColor="@color/analytics_period_label"
+    android:textSize="12sp"
+    android:textStyle="bold"
+    tools:text="1H" />

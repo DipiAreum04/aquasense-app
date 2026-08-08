@@ -38,7 +38,8 @@ public final class ReadingFormatter {
         return isCelsius(context) ? celsius : celsius * 9 / 5 + 32;
     }
 
-    private static boolean isCelsius(Context context) {
+    /** Whether readings are shown in Celsius, so a caller can label an axis in the same unit. */
+    public static boolean isCelsius(Context context) {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(context);
         if (prefs == null) {
             return "C".equals(new AppSettings().tempUnit);

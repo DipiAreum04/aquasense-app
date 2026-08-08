@@ -19,6 +19,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // MPAndroidChart (the analytics graphs) is only published on JitPack. Scoped to the
+        // com.github group so nothing else resolves through it.
+        maven {
+            url = uri("https://jitpack.io")
+            content {
+                includeGroupByRegex("com\\.github\\..*")
+            }
+        }
     }
 }
 

@@ -23,7 +23,8 @@ private:
     void collect(Buckets** out);
 
     // Writes whichever periods report a commit due, all in one request. force
-    // carries one flag per period, for the gap markers sync() owes after an outage.
+    // carries one flag per period, for the gap markers sync() owes on boot and
+    // after an outage.
     bool commit(WiFiFirebase& firebase, unsigned long commitTime, const bool* force);
 
     String _kind;

@@ -23,7 +23,7 @@ public class WaterLevelSensor extends AquariumSensor {
      * surfaced, which is critical whether or not this aquarium configures a water level band.
      */
     @Override
-    protected SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
+    public SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
         if (value <= 0d) {
             return SensorStatus.CRITICAL;
         }

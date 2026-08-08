@@ -14,6 +14,10 @@ Periods::Periods(const String& kind)
  * in one read, rather than each period round-tripping for its own, so the whole
  * sensor costs a single request before any gap-marking commits.
  *
+ * The first sync after boot marks a gap in all six periods unconditionally, so a
+ * freshly started board writes six markers per sensor before it fills anything.
+ * Later syncs mark only the periods the outage actually cost a bucket.
+ *
  * @param firebase The WiFiFirebase instance to use for database operations.
  * @param currentTime The current epoch time in seconds.
  * @return true if the operation was successful, false if the bootstrap read or a
@@ -36,11 +40,24 @@ bool Periods::sync(WiFiFirebase& firebase, unsigned long currentTime) {
 
     bool force[PERIOD_COUNT];
     for (int i = 0; i < PERIOD_COUNT; i++) {
-        // Decided before resume(), which needs to know: a period that is not marking
-        // a gap must keep both its pending samples and its place in the current
-        // bucket. gapElapsed reads only lastOnline and the bucket size, so nothing
-        // here depends on resume() having run.
-        force[i] = periods[i]->gapElapsed(currentTime, lastOnline);
+        /* Every period marks a gap on the first sync after boot, whatever the database
+         * already holds for it and however brief the downtime was. The device cannot
+         * vouch for the window its previous run left open, so the marker closes that
+         * window off and the buckets that follow start from a known point rather than
+         * averaging across the break.
+         *
+         * It is also the only thing that ever creates the long periods' nodes. A
+         * last_1y bucket spans 3.65 days, so a period that waits for one to close on
+         * its own needs an unbroken run of that length before it appears in the
+         * database at all - and gapElapsed cannot bootstrap it either, since a device
+         * that has never been away that long is not owed a gap by that measure.
+         *
+         * Decided before resume(), which needs to know: a period that is not marking
+         * a gap must keep both its pending samples and its place in the current
+         * bucket. Neither test reads anything resume() sets, so nothing here depends
+         * on resume() having run.
+         */
+        force[i] = periods[i]->owesBootMarker() || periods[i]->gapElapsed(currentTime, lastOnline);
 
         periods[i]->resume(currentTime, indices[i], force[i]);
 
@@ -49,6 +66,11 @@ bool Periods::sync(WiFiFirebase& firebase, unsigned long currentTime) {
          * it, so it goes. Only the periods actually marking a gap are cleared: a
          * short outage that last_1y rightly ignores must not cost last_1y the days
          * of samples it has been gathering.
+         *
+         * This is also what makes the boot marker read OFFLINE_VALUE by construction
+         * rather than by luck. Nothing has been accumulated that early in the tick,
+         * but describeCommit reports an average the moment a single sample exists,
+         * and a marker carrying one is not a marker.
          */
         if (force[i]) {
             periods[i]->discardPending();

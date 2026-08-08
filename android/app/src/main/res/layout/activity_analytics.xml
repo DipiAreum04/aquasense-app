@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_analytics"
+        style="@style/Widget.AquaSense.Toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--
+          Everything below the toolbar scrolls as one column: what the page says about a sensor is
+          read top to bottom - which tank, which sensor, over what window, how it is doing, the
+          shape of it, and how the readings fell out - and pinning any one of those rows would cut
+          that sequence in half.
+
+          clipToPadding is off so the cards' shadows spill into the 16dp rather than being sheared
+          at the padding edge.
+        -->
+        <LinearLayout
+            android:id="@+id/analyticsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!--
+              Which aquarium is being read. This is the same selection the dashboard shows, so
+              changing it here changes it there: one active aquarium, named in both places.
+            -->
+            <LinearLayout
+                android:id="@+id/analyticsAquariumSelector"
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_settings_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/rounded_ripple_10dp_radius"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <!--
+                  The aquarium's own icon, as My Aquariums draws it: same tile, same pair of
+                  images, picked by the same water type. Filled in by AnalyticsActivity, since
+                  which of the two it is follows the aquarium named beside it.
+                -->
+                <ImageView
+                    android:id="@+id/analyticsAquariumIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_template_icon"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="5dp"
+                    tools:src="@drawable/aquarium_freshwater" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.08"
+                        android:text="@string/analytics_active_aquarium"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/analyticsAquariumName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        tools:text="Living Room Reef" />
+
+                </LinearLayout>
+
+                <!--
+                  The chevron this app already uses, turned to point at the list it drops. It is
+                  turned the rest of the way over while that list is open, so the rotation here is
+                  only where it rests; see AquariumDropdown.
+                -->
+                <ImageView
+                    android:id="@+id/analyticsAquariumChevron"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/analytics_aquarium_selector_description"
+                    android:rotation="90"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <!--
+              One tab per sensor. Populated by AnalyticsActivity rather than declared here, so the
+              labels come from the sensor models and cannot drift from the ones the dashboard
+              shows. A card in its own right, sharing the shape and elevation of the others.
+            -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/analyticsSensorTabs"
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_card"
+                android:clipToOutline="true"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@color/accent"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="3dp"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/accent"
+                app:tabTextAppearance="@style/TextAppearance.AquaSense.Tab"
+                app:tabTextColor="@color/text_secondary" />
+
+            <!--
+              The period buttons, filled in by AnalyticsActivity from the periods it can fetch.
+              The row is the groove they are cut into and the padding is the lip around the one
+              raised out of it, so the two drawables have to be read together; see
+              @drawable/bg_analytics_period_track.
+            -->
+            <LinearLayout
+                android:id="@+id/analyticsPeriodButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_analytics_period_track"
+                android:orientation="horizontal"
+                android:padding="4dp" />
+
+            <!--
+              What the sensor is doing now, and what the selected period made of it.
+
+              The top row is live: the status is the one the dashboard's card for this sensor
+              carries, read from the same last_instant, and the ring beside it is how much of the
+              time behind the graph the board was actually reporting for. The three below are the
+              period's own readings, so the row above says whether to trust them.
+            -->
+            <LinearLayout
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/analytics_system_health"
+                            android:textAllCaps="true"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <!-- LED and status name, as the sensor cards give them, minus the pill. -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/analyticsStatusLed"
+                                android:layout_width="@dimen/analytics_status_led_size"
+                                android:layout_height="@dimen/analytics_status_led_size"
+                                android:contentDescription="@null"
+                                tools:src="@drawable/blue_circle_24" />
+
+                            <!--
+                              The lamp carries the status and the word only names it, which is why
+                              this is not drawn in the status colour. Those colours are cut to sit
+                              on the soft pill the sensor cards give them; on a plain card
+                              @color/status_orange comes to 2.6:1, and there is no pill here to put
+                              it back on.
+                            -->
+                            <TextView
+                                android:id="@+id/analyticsStatusText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:textColor="@color/text_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                tools:text="Normal" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/analyticsLastSeen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Last seen just now" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/analytics_uptime"
+                            android:textAllCaps="true"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp">
+
+                            <com.google.android.material.progressindicator.CircularProgressIndicator
+                                android:id="@+id/analyticsUptimeRing"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:indeterminate="false"
+                                android:max="100"
+                                app:indicatorColor="@color/accent"
+                                app:indicatorSize="@dimen/analytics_uptime_ring_size"
+                                app:trackColor="@color/divider"
+                                app:trackCornerRadius="@dimen/analytics_uptime_ring_corner"
+                                app:trackThickness="@dimen/analytics_uptime_ring_thickness"
+                                tools:progress="99" />
+
+                            <TextView
+                                android:id="@+id/analyticsUptimeValue"
+                                android:layout_width="@dimen/analytics_uptime_ring_size"
+                                android:layout_height="@dimen/analytics_uptime_ring_size"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="99%" />
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/divider" />
+
+                <!--
+                  Min, average and max of the period's readings. The three columns are equal
+                  regardless of how long their numbers are, so the rules between them stay put as
+                  the readings move; the rules themselves stretch to whichever column is tallest.
+                -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.AquaSense.AnalyticsStatLabel"
+                            android:text="@string/analytics_stat_min" />
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsStatValueRow">
+
+                            <TextView
+                                android:id="@+id/analyticsStatMinValue"
+                                style="@style/Widget.AquaSense.AnalyticsStatValue"
+                                tools:text="24.5" />
+
+                            <TextView
+                                android:id="@+id/analyticsStatMinUnit"
+                                style="@style/Widget.AquaSense.AnalyticsStatUnit"
+                                tools:text="°C" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.AquaSense.AnalyticsStatLabel"
+                            android:text="@string/analytics_stat_avg" />
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsStatValueRow">
+
+                            <!-- The average is the one of the three the page is really about, so
+                                 it takes the accent while its neighbours stay in the text colour. -->
+                            <TextView
+                                android:id="@+id/analyticsStatAvgValue"
+                                style="@style/Widget.AquaSense.AnalyticsStatValue"
+                                android:textColor="@color/accent"
+                                tools:text="25.1" />
+
+                            <TextView
+                                android:id="@+id/analyticsStatAvgUnit"
+                                style="@style/Widget.AquaSense.AnalyticsStatUnit"
+                                tools:text="°C" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Widget.AquaSense.AnalyticsStatLabel"
+                            android:text="@string/analytics_stat_max" />
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsStatValueRow">
+
+                            <TextView
+                                android:id="@+id/analyticsStatMaxValue"
+                                style="@style/Widget.AquaSense.AnalyticsStatValue"
+                                tools:text="26.3" />
+
+                            <TextView
+                                android:id="@+id/analyticsStatMaxUnit"
+                                style="@style/Widget.AquaSense.AnalyticsStatUnit"
+                                tools:text="°C" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- The chart draws no background of its own, so the card's is what shows behind the
+                 plot. The fixed height is tall enough to read a trend off and short enough to
+                 leave the card below it in view. -->
+            <LinearLayout
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!--
+                      The y axis label, stood on end. A View's rotation is applied after layout, so
+                      the label is measured lying down - as wide as the plot is tall - and centred in
+                      a strip of the opposite proportions. Turning it about that shared centre lands
+                      it exactly inside the strip.
+                    -->
+                    <FrameLayout
+                        android:layout_width="@dimen/analytics_axis_label_thickness"
+                        android:layout_height="@dimen/analytics_chart_height">
+
+                        <TextView
+                            android:id="@+id/analyticsYAxisLabel"
+                            android:layout_width="@dimen/analytics_chart_height"
+                            android:layout_height="@dimen/analytics_axis_label_thickness"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:rotation="270"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            tools:text="°C" />
+
+                    </FrameLayout>
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/analyticsChart"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/analytics_chart_height"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/analyticsXAxisLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    tools:text="Minutes ago" />
+
+            </LinearLayout>
+
+            <!--
+              How the period's readings fell across the sensor's threshold band. The graph above
+              says where they went; this says how long they spent out of range, which a single
+              excursion and a whole afternoon of them can look alike on a line.
+
+              The bands are three weighted Views clipped to the bar's rounded ends, so a share of
+              nought collapses to nothing and leaves the track showing rather than a hairline.
+            -->
+            <LinearLayout
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/analytics_distribution_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/analytics_distribution_bar_height"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_analytics_distribution_track"
+                    android:clipToOutline="true"
+                    android:orientation="horizontal"
+                    android:weightSum="100">
+
+                    <View
+                        android:id="@+id/analyticsDistributionNormalBand"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/status_blue"
+                        tools:layout_weight="85" />
+
+                    <View
+                        android:id="@+id/analyticsDistributionWarningBand"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/status_orange"
+                        tools:layout_weight="12" />
+
+                    <View
+                        android:id="@+id/analyticsDistributionCriticalBand"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/status_red"
+                        tools:layout_weight="3" />
+
+                </LinearLayout>
+
+                <!--
+                  One key per band, laid out as the statistics above are: three equal columns,
+                  each centred on itself, with a rule between them. The key and its share are
+                  centred as a pair rather than the share under the dot, so a column reads as one
+                  block whether its label is "Normal" or "Critical".
+                -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsLegendKey">
+
+                            <ImageView
+                                style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                                android:src="@drawable/blue_circle_24" />
+
+                            <TextView
+                                style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                                android:text="@string/normal" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/analyticsDistributionNormalValue"
+                            style="@style/Widget.AquaSense.AnalyticsLegendValue"
+                            tools:text="85%" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsLegendKey">
+
+                            <ImageView
+                                style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                                android:src="@drawable/orange_circle_24" />
+
+                            <TextView
+                                style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                                android:text="@string/warning" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/analyticsDistributionWarningValue"
+                            style="@style/Widget.AquaSense.AnalyticsLegendValue"
+                            tools:text="12%" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            style="@style/Widget.AquaSense.AnalyticsLegendKey">
+
+                            <ImageView
+                                style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                                android:src="@drawable/red_circle_24" />
+
+                            <TextView
+                                style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                                android:text="@string/critical" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/analyticsDistributionCriticalValue"
+                            style="@style/Widget.AquaSense.AnalyticsLegendValue"
+                            tools:text="3%" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
