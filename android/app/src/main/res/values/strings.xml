@@ -361,11 +361,9 @@
     <string name="auth_error_generic">Something went wrong. Please try again.</string>
     <string name="auth_error_profile_save">Account created, but profile saving failed. Check your connection and try signing in again.</string>
 
-    <!-- SETTINGS-03 pairing wizard placeholder (entry after first login) -->
-    <string name="pairing_wizard_title">Hardware setup</string>
-    <string name="pairing_wizard_heading">Set up your aquarium</string>
-    <string name="pairing_wizard_body">Next you\'ll pair your hardware hub and create your first aquarium. Full guided steps arrive with SETTINGS-03.</string>
-    <string name="pairing_wizard_continue">Continue to dashboard</string>
+    <!-- First-installation -->
+    <string name="add_aquarium_first_run_skip">Skip: Pair Hub Later</string>
+    <string name="add_aquarium_create_and_pair">Create &amp; Pair Hub</string>
 
     <!-- SETTINGS-04 built-in aquarium templates -->
     <string name="template_freshwater">Freshwater: Tropical</string>
@@ -426,4 +424,64 @@
     <string name="template_legend_safe">Safe</string>
     <string name="template_legend_warning">Warning</string>
     <string name="template_legend_critical">Critical</string>
+
+    <!-- BLE-02: App <-> Hardware pairing -->
+    <string name="pairing_flow_title">Pair Your Hub</string>
+    <string name="pairing_hero_idle_title">Ready to Scan</string>
+    <string name="pairing_hero_idle_body">Make sure your AquaSense hub is plugged in and nearby.</string>
+    <string name="pairing_hero_start">Start Scanning</string>
+    <string name="pairing_hero_scanning_title">Scanning For Hubs…</string>
+    <string name="pairing_hero_scanning_body">Looking for an AquaSense Hub nearby…</string>
+    <string name="pairing_hero_found_title">Select Your Hub</string>
+    <string name="pairing_hero_found_body">Tap the hub you want to set up. The one at the top is closest to you.</string>
+    <string name="pairing_hero_failed_title">Setup Didn\'t Finish :(</string>
+    <string name="pairing_hero_empty_title">No Hubs Found</string>
+    <string name="pairing_hero_empty_body">Check that your hub is plugged in and its light is blinking, then scan again.</string>
+    <string name="pairing_hero_rescan">Scan Again</string>
+    <string name="pairing_blocked_title">Bluetooth Unavailable</string>
+    <string name="pairing_permission_rationale">AquaSense needs Bluetooth access to pair to your hub. It is used only for setup and does not track your location data.</string>
+    <string name="pairing_permission_settings">Open Settings</string>
+    <string name="pairing_bluetooth_turn_on">Turn On Bluetooth</string>
+    <string name="pairing_grant_permission">Grant Permission</string>
+
+    <!-- Discovered hub list -->
+    <string name="pairing_section_devices">Nearby Hubs</string>
+    <string name="pairing_board_unnamed">AquaSense Hub</string>
+    <string name="pairing_board_subtitle">AQS-01</string>
+    <string name="pairing_board_tap_to_pair">Tap To Pair</string>
+    <string name="pairing_board_selected">Selected</string>
+    <string name="pairing_board_sending">Sending Credentials…</string>
+    <string name="pairing_board_paired">Paired!</string>
+    <string name="pairing_board_signal_description">Signal Strength %1$d of 4</string>
+
+    <!-- Wi-Fi section, revealed once a hub is selected -->
+    <string name="pairing_section_wifi">Connect Hub to Wi-Fi</string>
+    <string name="pairing_wifi_body">Your hub needs Wi-Fi connection to send sensor data to the app. It must be a 2.4 GHz network since the hub cannot connect to 5 GHz networks.</string>
+    <string name="pairing_wifi_ssid_hint">Your Wi-Fi Network Name (SSID)</string>
+    <string name="pairing_wifi_password_hint">Your Wi-Fi Password</string>
+    <string name="pairing_wifi_submit">Connect Hub to Wi-Fi</string>
+    <string name="pairing_wifi_error_ssid">Enter your Wi-Fi Network Name</string>
+    <string name="pairing_wifi_error_password">Enter your Wi-Fi Password</string>
+    <string name="pairing_wifi_error_board">That hub is no longer nearby. Please scan again.</string>
+    <string name="pairing_progress_provisioning">Sending your Wi-Fi details to the hub…</string>
+    <string name="pairing_progress_claiming">Creating your aquarium…</string>
+    <string name="pairing_progress_awaiting">Waiting for the hub to come online…</string>
+    <string name="pairing_progress_awaiting_hint">The hub has switched its Bluetooth off to join your Wi-Fi, so it cannot be reached for a moment. Its light will turn solid once it is connected. This can take up to 30 seconds.</string>
+    <string name="pairing_success_title">Hub Connected to \"%1$s\"!</string>
+    <string name="pairing_success_body">%1$s is set up and already sending readings.</string>
+    <string name="pairing_success_hero_title">Hub Paired Successfully!</string>
+    <string name="pairing_success_hero_body">%1$s is now online and sending readings :)</string>
+    <string name="pairing_result_retry">Try Again</string>
+    <string name="pairing_action_dashboard">Go To Dashboard</string>
+    <string name="pairing_action_skip">Skip</string>
+
+    <string name="pairing_error_unsupported">This phone has no Bluetooth LE, so it cannot set up a hub. Try again from another device.</string>
+    <string name="pairing_error_bluetooth_off">Bluetooth is switched off. Please turn it on and try again.</string>
+    <string name="pairing_error_permission">AquaSense needs Bluetooth permission to find your hub.</string>
+    <string name="pairing_error_not_found">No hub found. Check that your hub is connected to a power outlet and blinking, and that you are standing near it.</string>
+    <string name="pairing_error_connection_lost">Lost the connection to the hub. Move closer to it and try again.</string>
+    <string name="pairing_error_incompatible">This hub\'s firmware does not match the current version of the app. The hub needs to be updated before it can be paired. Please contact support: Settings \u2192 Help &amp; Support.</string>
+    <string name="pairing_error_transfer">Could not transfer your Wi-Fi details to the hub. Move closer to the hub and try again.</string>
+    <string name="pairing_error_claim">Your hub is set up, but the aquarium could not be created. Check your phone\'s connection, make sure the Wi-Fi password is correct, and try again.</string>
+    <string name="pairing_error_offline">Your hub did not connect to the Wi-Fi network. Check your Wi-Fi password and try again.</string>
 </resources>

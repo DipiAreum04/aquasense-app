@@ -17,3 +17,7 @@ const char* PairingData::getDeviceEmail() const {
 const char* PairingData::getDevicePassword() const {
     return devicePassword;
 }
+
+const char* PairingData::getDeviceUid() const {
+    return deviceUid;
+}

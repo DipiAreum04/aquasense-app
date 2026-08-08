@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFiS3.h>
+#include <EEPROM.h>
 
 #include "BLEWifiSetup.hpp"
 #include "temp_sensor.hpp"
@@ -9,16 +10,75 @@
 #include "wifi_firebase.hpp"
 #include "ntp_time.hpp"
 #include "pairing_data.hpp"
+#include "pairing_store.hpp"
 #include "telemetry_manager.hpp"
+
+/* How long to wait for the router before calling an attempt failed. Generous, because
+ * the cost of being wrong is wiping credentials that were fine.
+ */
+static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 15000;
+
+/* Consecutive failed reconnects before the board gives up on its stored credentials
+ * and returns to pairing.
+ *
+ * Not 1. A router rebooting, or a hub carried out of range, must not cost the user
+ * their pairing - but a network that has genuinely gone away for good has to be
+ * escapable without a laptop and a USB cable.
+ */
+static const int MAX_WIFI_FAILURES = 5;
+
+static const unsigned long TICK_INTERVAL_MS = 1000;
+static const unsigned long RECONNECT_INTERVAL_MS = 5000;
+
+/**
+ * Joins a network and waits for it to come up.
+ *
+ * Deliberately does not service BLE while it waits, unlike the BLE-01 version of this
+ * loop. By the time this runs the radio has already been handed to Wi-Fi, and there is
+ * no BLE stack left to poll.
+ */
+static bool connectWifi(const String& ssid, const String& password) {
+    Serial.print("Joining Wi-Fi network: ");
+    Serial.println(ssid);
+
+    WiFi.begin(ssid.c_str(), password.c_str());
+
+    unsigned long start = millis();
+    while (millis() - start < WIFI_CONNECT_TIMEOUT_MS) {
+        if (WiFi.status() == WL_CONNECTED) {
+            Serial.print("Connected. IP: ");
+            Serial.println(WiFi.localIP());
+            return true;
+        }
+        delay(200);
+    }
+
+    Serial.println("Wi-Fi connection failed.");
+    return false;
+}
+
+/**
+ * Wipes the stored pairing and restarts into advertising.
+ *
+ * A reset rather than bringing BLE back up in place: the ESP32-S3 has just been driven
+ * as a Wi-Fi radio, and restarting is a far more reliable way to get a clean BLE stack
+ * than tearing down and re-initialising one live. Nothing is lost by it - the app is
+ * not holding a connection at this point, it is waiting on Firebase - which is exactly
+ * why the same trick must NOT be used on commit, where it is.
+ */
+static void returnToPairing(const char* reason) {
+    Serial.println(reason);
+    Serial.println("Clearing the stored pairing and restarting to advertise.");
+    PairingStore::clear();
+    delay(200);
+    NVIC_SystemReset();
+}
 
 void run() {
     TempSensor tempSensor(4);
     PhSensor   phSensor(A0, 2.535, -1.70, 0.03);
     TdsSensor  tdsSensor(A1);
     WaterLevel waterSensor(7);
-
-    BLEWifiSetup bleWifi;
-    bool provisioningMode = false;
 
     PairingData pairingData;
     WiFiFirebase cloud(
@@ -29,68 +89,100 @@ void run() {
     );
     TelemetryManager telemetry(cloud);
 
+    BLEWifiSetup bleWifi;
     NTPTime ntp;
-
-    unsigned long lastTickMillis = millis();
-    const unsigned long TICK_INTERVAL_MS = 1000;
-
-    /* How long to spend servicing BLE between reconnect attempts. Measured from the
-     * end of an attempt, so it is time the loop actually spends polling rather than
-     * time swallowed by the attempt itself. Raising it trades slower WiFi recovery
-     * for a wider provisioning window, which is the thing that matters while the
-     * network is down.
-     */
-    unsigned long lastReconnectMillis = 0;
-    const unsigned long RECONNECT_INTERVAL_MS = 1000;
 
     Serial.begin(115200);
     delay(500); // cant lower it more than this
+    EEPROM.begin();
 
-    Serial.println("Starting MULTI-SENSOR + Epoch + Firebase telemetry (BLE WiFi provisioning)...");
+    Serial.println("AquaSense hub starting...");
 
-    bleWifi.begin();
+    cloud.setExpectedDeviceUid(String(pairingData.getDeviceUid()));
 
-    if (bleWifi.tryConnectStored()) {
-        Serial.println("WiFi already configured via BLE.");
-        provisioningMode = false;
+    /* The board is in exactly one of two modes and never both, because BLE and Wi-Fi
+     * share one antenna on the R4 and cannot run at the same time.
+     *
+     *   online == false : advertising, waiting for the app to hand over credentials
+     *   online == true  : on Wi-Fi, publishing telemetry
+     */
+    bool online = false;
+    String ssid;
+    String wifiPassword;
+    String ownerUid;
+
+    if (PairingStore::load(ssid, wifiPassword, ownerUid)) {
+        // Already paired: skip BLE entirely, it is never started this boot.
+        Serial.println("Found a stored pairing.");
+        if (connectWifi(ssid, wifiPassword)) {
+            cloud.setOwnerUid(ownerUid);
+            online = true;
+        } else {
+            returnToPairing("Stored Wi-Fi credentials did not work.");
+        }
     } else {
-        Serial.println("Waiting for BLE WiFi credentials (AquaSense_Setup in LightBlue)...");
-        provisioningMode = true;
+        Serial.println("No usable pairing stored.");
+        if (!bleWifi.begin(pairingData.getDeviceUid())) {
+            Serial.println("Cannot advertise, so this board cannot be paired. Restarting.");
+            delay(2000);
+            NVIC_SystemReset();
+        }
     }
 
     tempSensor.begin();
     waterSensor.begin();
     analogReadResolution(14);
 
-    ntp.begin();
+    if (online) {
+        ntp.begin();
+    }
+
+    unsigned long lastTickMillis = millis();
+    unsigned long lastReconnectMillis = 0;
+    int wifiFailures = 0;
 
     while (true) {
-        bleWifi.poll();
+        // ---- Pairing mode -------------------------------------------------------
+        if (!online) {
+            if (!bleWifi.poll()) {
+                delay(50);
+                continue;
+            }
 
-        if (provisioningMode) {
-            delay(200); // cant lower it more than this
+            /* A complete set was committed and BLE has already been torn down, so the
+             * antenna is free. This is the one moment the user is stood there watching
+             * the app's progress screen, so a wrong password is worth reporting fast.
+             */
+            ssid = bleWifi.ssid();
+            wifiPassword = bleWifi.password();
+            ownerUid = bleWifi.ownerUid();
+
+            if (!connectWifi(ssid, wifiPassword)) {
+                returnToPairing("The Wi-Fi credentials just received did not work.");
+            }
+
+            cloud.setOwnerUid(ownerUid);
+            ntp.begin();
+            online = true;
+            lastTickMillis = millis();
+            Serial.println("Paired and online. Publishing telemetry.");
             continue;
         }
 
+        // ---- Online mode --------------------------------------------------------
         if (WiFi.status() != WL_CONNECTED) {
-            // Keep looping on bleWifi.poll() between attempts rather than sleeping
-            // through the gap: someone trying to re-provision the device can only be
-            // heard while this loop is turning.
             if (millis() - lastReconnectMillis < RECONNECT_INTERVAL_MS) {
                 continue;
             }
-
-            Serial.println("WiFi lost. Trying reconnect via stored BLE credentials...");
-
-            bool reconnected = bleWifi.tryConnectStored();
             lastReconnectMillis = millis();
 
-            if (reconnected) {
-                Serial.println("WiFi reconnected.");
-            } else {
-                Serial.println("WiFi reconnect failed. Still waiting for valid credentials.");
-                continue;
+            Serial.println("Wi-Fi lost. Reconnecting...");
+            if (connectWifi(ssid, wifiPassword)) {
+                wifiFailures = 0;
+            } else if (++wifiFailures >= MAX_WIFI_FAILURES) {
+                returnToPairing("Wi-Fi has been unreachable for several attempts.");
             }
+            continue;
         }
 
         unsigned long nowMillis = millis();

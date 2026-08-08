@@ -53,14 +53,6 @@ public class AquariumRepository {
     // nothing in the database and would resolve to no aquarium at all.
     private static final String KEY_ACTIVE_AQUARIUM_ID = "activeAquariumId";
 
-    // An aquarium's database key is its board's Firebase UID, which the app only learns when the
-    // two are paired. Until then every aquarium is created on the mock board's UID, so a new tank
-    // lands on the mock telemetry subtree that actually has readings under it.
-    // TODO: Replace with the device UID handed back by BLE pairing. Two things follow from that:
-    //  creation has to fail, or wait, when no board has been paired yet, and the null-key guard
-    //  that FirebaseDatabaseHelper.newAquariumId() needed belongs back in addAquarium.
-    private static final String MOCK_AQUARIUM_ID = "L3UnzQFEq5WrRaHocFImFrwnuPK2";
-
     private static AquariumRepository instance;
 
     private final SharedPreferenceHelper prefs;
@@ -176,24 +168,34 @@ public class AquariumRepository {
     }
 
     /**
-     * Creates an aquarium and selects it once the write lands. The cache is left alone: the
-     * subscription reports the new aquarium, so the list has exactly one source and cannot drift
-     * from what the database actually holds.
+     * Creates the aquarium for a device that has just been paired, keyed by the device's own FirebaseUID.
      */
-    // TODO: Add the custom aquarium template logic
-    public void addAquarium(@NonNull String name,
-                            @NonNull WaterType waterType,
-                            @Nullable AquariumTemplate template,
-                            @NonNull WriteCallback callback) {
+    public void addPairedAquarium(@NonNull String deviceUid,
+                                  @NonNull String name,
+                                  @NonNull WaterType waterType,
+                                  @Nullable AquariumTemplate template,
+                                  @NonNull WriteCallback callback) {
         String uid = this.currentUid();
         if (uid == null) {
-            ScopedLogger.error("Cannot add an aquarium while signed out.");
+            ScopedLogger.error("Cannot pair an aquarium while signed out.");
+            callback.onError();
+            return;
+        }
+        if (deviceUid.isEmpty()) {
+            ScopedLogger.error("Cannot pair because the device is missing credentials.");
             callback.onError();
             return;
         }
 
-        String aquariumId = MOCK_AQUARIUM_ID;
+        this.write(uid, deviceUid, name, waterType, template, callback);
+    }
 
+    private void write(@NonNull String uid,
+                       @NonNull String aquariumId,
+                       @NonNull String name,
+                       @NonNull WaterType waterType,
+                       @Nullable AquariumTemplate template,
+                       @NonNull WriteCallback callback) {
         this.database.writeAquarium(uid, aquariumId, name, waterType.getKey(),
                 template != null ? template.getAllThresholds() : Collections.emptyMap(),
                 new FirebaseDatabaseHelper.DbCallback() {

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- UI contents of BleStatusOrb -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <View
+        android:id="@+id/orbRing1"
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pairing_ring"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/orbRing2"
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pairing_ring"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/orbRing3"
+        android:layout_width="118dp"
+        android:layout_height="118dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pairing_ring"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@+id/orbGlow"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pairing_orb_glow" />
+
+    <View
+        android:id="@+id/orbDisc"
+        android:layout_width="106dp"
+        android:layout_height="106dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pairing_orb" />
+
+    <ImageView
+        android:id="@+id/orbIcon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:contentDescription="@null"
+        android:src="@drawable/bluetooth_24px"
+        app:tint="@color/pairing_orb_icon"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+</merge>

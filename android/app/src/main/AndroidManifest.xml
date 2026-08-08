@@ -3,6 +3,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Permissions for BLE pairing-->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -28,9 +38,9 @@
             android:exported="false"
             android:theme="@style/Theme.AquaSense" />
         <activity
-            android:name=".settings.PairingWizardActivity"
+            android:name=".PairingActivity"
             android:exported="false"
-            android:label="@string/pairing_wizard_title"
+            android:label="@string/pairing_flow_title"
             android:theme="@style/Theme.AquaSense" />
         <activity
             android:name=".SettingsActivity"
