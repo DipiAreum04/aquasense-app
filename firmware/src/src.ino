@@ -76,7 +76,7 @@ static void returnToPairing(const char* reason) {
 
 void run() {
     TempSensor tempSensor(4);
-    PhSensor   phSensor(A0, 2.535, -1.70, 0.03);
+    PhSensor   phSensor(A0, 1.82, 7.33, 0.001);
     TdsSensor  tdsSensor(A1);
     WaterLevel waterSensor(7);
 
