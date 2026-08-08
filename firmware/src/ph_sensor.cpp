@@ -8,12 +8,12 @@ float PhSensor::readPH(float tempC) {
     float voltage = raw * (5.0 / 16383.0);   
 
     if (isnan(tempC)) {
-        // fallback slope at 25°C
+        // fallback slope at 27.0°C
         float pH = 7 + (voltage - _neutralVoltage) * _acidSlope;
         return pH;
     }
 
-    float compensatedSlope = _acidSlope * (1 + _tempCoefficient * (tempC - 25));
+    float compensatedSlope = _acidSlope * (1 + _tempCoefficient * (tempC - 27.0));
     float pH = 7 + (voltage - _neutralVoltage) * compensatedSlope;
 
     return pH;
