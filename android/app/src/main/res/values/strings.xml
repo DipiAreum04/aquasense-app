@@ -31,6 +31,7 @@
     <string name="sensor_info_ph_level_desc">Measures pH level.</string>
     <string name="no_aquariums">No aquariums found</string>
     <string name="loading_aquariums">Loading your aquariums…</string>
+    <string name="splash_loading">Loading AquaSense</string>
     <string name="sensor_info_example_title">Example Title</string>
     <string name="sensor_info_example_point">This is an example.</string>
     <string name="aquarium_sensors_status_normal_heading">All Good!</string>
