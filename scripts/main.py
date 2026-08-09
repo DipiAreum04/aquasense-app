@@ -59,7 +59,7 @@ if __name__ == "__main__":
             elif sensor_under_test.sweep_test_active:
                 sensor_under_test.stop_tests()
                 sensor_under_test = choice(testable_sensors)
-                sensor_under_test.begin_spike_test()
+                sensor_under_test.begin_spike_test(TEST_PERIOD_SECS)
                 logger.info("Beginning spike test for %s", sensor_under_test.name)
             elif sensor_under_test.spike_test_active:
                 sensor_under_test.stop_tests()
