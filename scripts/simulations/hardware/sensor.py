@@ -6,6 +6,9 @@ import numpy as np
 
 from simulations.hardware.consts import OFFLINE_VALUE
 
+_SMOOTHING_ALPHA = 0.1
+
+
 class Sensor(ABC):
     """Simulates a sensor."""
 
@@ -17,7 +20,8 @@ class Sensor(ABC):
         self._sweep_period_secs = 0
         self._sweep_start_time = 0
         self._disabled = False
-        self._alpha = 0.1
+        self._spiking = False
+        self._spike_at_high = False
         self.retune(low, high)
 
     @property
@@ -38,7 +42,7 @@ class Sensor(ABC):
     @property
     def spike_test_active(self) -> bool:
         """Return whether a spike test is active."""
-        return self._alpha == 1.0
+        return self._spiking
 
     def retune(
         self,
@@ -74,9 +78,10 @@ class Sensor(ABC):
         self._sweep_start_time = time()
 
     def begin_spike_test(self) -> None:
-        """Begin a spike test with maximum alpha."""
+        """Begin a spike test, alternating between the ends of the safe range."""
         self.stop_tests()
-        self._alpha = 1.0
+        self._spiking = True
+        self._spike_at_high = False
 
     def begin_offline_test(self) -> None:
         """Begin an offline test."""
@@ -88,7 +93,7 @@ class Sensor(ABC):
         self._sweep_period_secs = 0
         self._sweep_start_time = 0
         self._disabled = False
-        self._alpha = 0.1
+        self._spiking = False
         if self._last_output is not None:
             self._previous = self._last_output
             self._last_output = None
@@ -98,16 +103,38 @@ class Sensor(ABC):
         if self._disabled:
             return OFFLINE_VALUE
 
+        if self._spiking:
+            return self._spike_measurement()
+
         measurement = self._rng.normal(loc=self._mean, scale=self._std_dev)
         if self._previous is None:
             self._previous = measurement
 
-        self._previous = self._alpha*measurement + (1-self._alpha)*self._previous
+        self._previous = _SMOOTHING_ALPHA*measurement + (1-_SMOOTHING_ALPHA)*self._previous
         if self._sweep_period_secs > 0:
             self._last_output = self._previous + self._sweep_offset(
                 np.sin(2*np.pi * (time()-self._sweep_start_time)/self._sweep_period_secs)
             )
             return self._last_output
+        return self._previous
+
+    def _spike_measurement(self) -> float:
+        """Return the next spike reading: the end of the safe range the last one was not at.
+
+        Alternating between the safe bounds themselves is the largest jump a reading can
+        make while both ends still read normal, since a value sitting on a safe bound is in
+        range. Both halves of that matter. Anything short of the full width can fall under
+        the jump the app needs to call it a spike, saltwater temperature spanning 24..26
+        against a delta of 2 being the tightest of them; anything past the bounds reads as
+        warning, which is the state a spike is meant to be told apart from.
+
+        Deliberately not drawn from the distribution the ordinary readings come from.
+        Widening that draw until consecutive ones reliably clear the delta puts a tail
+        outside the safe bounds, so the test would report out of range every so often
+        instead of spiking inside it.
+        """
+        self._spike_at_high = not self._spike_at_high
+        self._previous = self._high if self._spike_at_high else self._low
         return self._previous
 
     def _sweep_offset(self, phase: float) -> float:

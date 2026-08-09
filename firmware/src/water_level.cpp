@@ -7,5 +7,5 @@ void WaterLevel::begin() {
 }
 
 bool WaterLevel::isDetected() {
-    return digitalRead(_pin) == HIGH;
+    return digitalRead(_pin) == LOW;
 }
