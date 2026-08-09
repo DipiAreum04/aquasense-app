@@ -12,4 +12,3 @@ private:
     float _acidSlope;
     float _tempCoefficient;
 };
-

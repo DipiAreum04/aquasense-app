@@ -14,9 +14,8 @@ float TempSensor::readTemperatureC() {
     float t = _sensors->getTempCByIndex(0);
 
     if (t == DEVICE_DISCONNECTED_C) {
-        return NAN;   // return NaN instead of -127
+        return NAN;
     }
 
     return t;
 }
-

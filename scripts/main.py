@@ -1,10 +1,16 @@
 """__main__"""
 
 import logging
-from time import time
+from time import time, sleep
 from random import choice
 
-from simulations import Periods, Sensor, RealDatabase
+from simulations import (
+    SensorPeriods,
+    Sensor,
+    FirebaseDatabase,
+    ThresholdPoller,
+    commit_tick,
+)
 
 
 if __name__ == "__main__":
@@ -17,21 +23,28 @@ if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
 
-    database = RealDatabase()
+    database = FirebaseDatabase()
 
     sensor_temperature = Sensor("temperature", 16, 26)
     sensor_water_level = Sensor("water_level", 1, 1)
     sensor_dissolved_solids = Sensor("dissolved_solids", 50, 300)
     sensor_ph_level = Sensor("ph_level", 7, 10.5)
+    sensors = (
+        sensor_temperature,
+        sensor_water_level,
+        sensor_dissolved_solids,
+        sensor_ph_level,
+    )
 
-    last_token_refresh = int(time())
-    periods_temperature = Periods(database, "temperature", last_token_refresh)
-    periods_water_level = Periods(database, "water_level", last_token_refresh)
-    periods_dissolved_solids = Periods(database, "dissolved_solids", last_token_refresh)
-    periods_ph_level = Periods(database, "ph_level", last_token_refresh)
+    start_time = int(time())
+    thresholds = ThresholdPoller(database, sensors)
+    periods = {
+        sensor.name: SensorPeriods(database, sensor.name, start_time)
+        for sensor in sensors
+    }
 
     testable_sensors = [sensor_temperature, sensor_dissolved_solids, sensor_ph_level]
-    test_start_time = last_token_refresh
+    test_start_time = start_time
     sensor_under_test = None
     TEST_PERIOD_SECS = 60
 
@@ -58,27 +71,13 @@ if __name__ == "__main__":
                 sensor_under_test = None
                 logger.info("Test epoch ended, returning to normal operation.")
 
-        if current_time-last_token_refresh > 900:
-            database.reauthenticate()
-            last_token_refresh = current_time
+        database.ensure_fresh_token(current_time)
+        thresholds.poll(current_time)
 
-        periods_temperature.account(
-            database,
-            sensor_temperature.measure(),
-            current_time,
-        )
-        periods_water_level.account(
-            database,
-            sensor_water_level.measure(),
-            current_time,
-        )
-        periods_dissolved_solids.account(
-            database,
-            sensor_dissolved_solids.measure(),
-            current_time,
-        )
-        periods_ph_level.account(
-            database,
-            sensor_ph_level.measure(),
-            current_time,
-        )
+        readings = {sensor.name: sensor.measure() for sensor in sensors}
+        for sensor_id, sensor_periods in periods.items():
+            sensor_periods.account(readings[sensor_id])
+
+        commit_tick(database, periods, readings, current_time)
+
+        sleep(1)

@@ -10,16 +10,6 @@ bool BLEWifiSetup::begin(const char* deviceUid) {
         return false;
     }
 
-    /* The advertising packet is capped at 31 bytes and this one is nearly full: 3 for
-     * the flags and 18 for the 128-bit service UUID leave 10, of which 2 go on the
-     * name's own header. Eight characters is the whole budget.
-     *
-     * Overrunning it does not fail loudly - the stack drops whatever no longer fits,
-     * and if that is the service UUID then the app's scan filter stops matching and
-     * the board becomes invisible. Deriving the name from the tail of the UID keeps it
-     * inside the budget and unique per board, so several hubs on a bench are still
-     * distinguishable in the app's picker.
-     */
     String uid = String(deviceUid);
     String suffix = uid.length() >= UID_SUFFIX_LENGTH
             ? uid.substring(uid.length() - UID_SUFFIX_LENGTH)
@@ -37,8 +27,6 @@ bool BLEWifiSetup::begin(const char* deviceUid) {
     _service.addCharacteristic(_statusChar);
     BLE.addService(_service);
 
-    // Both readable the moment the app connects: it reads the UID before writing
-    // anything, and subscribes to status before that.
     _uidChar.writeValue(String(deviceUid));
     _statusChar.writeValue("WAITING");
 
@@ -50,27 +38,11 @@ bool BLEWifiSetup::begin(const char* deviceUid) {
     return true;
 }
 
-/**
- * Buffers each field as it arrives and acts only on commit.
- *
- * BLE writes are independent operations: each one lands separately and any one of
- * them can fail on its own. BLE-01 treated the password write as the trigger, which
- * worked when the password was the last of two fields. With three it breaks badly -
- * if the owner UID write fails but the password succeeds, the board would save an
- * incomplete set, join Wi-Fi with nobody to write under, and have no way to say so
- * because BLE is gone by then. That failure is silent, permanent, and looks exactly
- * like a wrong Wi-Fi password.
- *
- * The commit characteristic is the app saying "all of it is in, act now". Its value
- * is meaningless - the app sends "1" - only the write itself matters.
- */
 bool BLEWifiSetup::poll() {
     if (!_active) {
         return false;
     }
 
-    // Servicing the stack. Returns a null device when nobody is connected, which is
-    // the normal case while advertising.
     BLEDevice central = BLE.central();
     if (!central) {
         return false;
@@ -94,9 +66,6 @@ bool BLEWifiSetup::poll() {
     }
 
     if (!hasCompleteSet()) {
-        // Stay advertising rather than half-provisioning. The app's exchange will time
-        // out and it will offer the user a retry, which is recoverable; a board that
-        // acted on a partial set would not be.
         Serial.println("Commit arrived with an incomplete credential set. Ignoring.");
         return false;
     }
@@ -109,7 +78,6 @@ bool BLEWifiSetup::poll() {
     _statusChar.writeValue("RECEIVED");
     delay(NOTIFY_DRAIN_MS);
 
-    // Down before the caller touches Wi-Fi - the two cannot share the antenna.
     end();
 
     Serial.println("Pairing stored. Switching the radio over to Wi-Fi.");
@@ -127,18 +95,6 @@ void BLEWifiSetup::end() {
     delay(RADIO_SWITCH_MS);
 }
 
-/**
- * Whether all three fields arrived and are usable.
- *
- * The owner UID is length-checked rather than merely tested for emptiness: Firebase
- * UIDs are always 28 characters, so anything else means a truncated or corrupted
- * write. Storing one would build a telemetry path the security rules reject on every
- * write, and nothing in the system would report why.
- *
- * The Wi-Fi password is deliberately not checked. Open networks have none, and this
- * is not the place to decide the user typed the wrong one - only the router can say
- * that, and the recovery for it already exists.
- */
 bool BLEWifiSetup::hasCompleteSet() const {
     if (_ssid.length() == 0) {
         Serial.println("  missing: SSID");

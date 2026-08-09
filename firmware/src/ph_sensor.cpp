@@ -5,10 +5,9 @@ PhSensor::PhSensor(uint8_t pin, float neutralVoltage, float acidSlope, float tem
 
 float PhSensor::readPH(float tempC) {
     int raw = analogRead(_pin);
-    float voltage = raw * (5.0 / 16383.0);   
+    float voltage = raw * (5.0 / 16383.0);
 
     if (isnan(tempC)) {
-        // fallback slope at 27.0°C
         float pH = 7 + (voltage - _neutralVoltage) * _acidSlope;
         return pH;
     }

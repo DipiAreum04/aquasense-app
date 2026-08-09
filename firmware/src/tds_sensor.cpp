@@ -42,7 +42,7 @@ float TdsSensor::readTdsPpm() {
         (255.86 * voltage * voltage) +
         (857.39 * voltage);
 
-    tdsValue *= 0.5;  // DFRobot scaling factor
+    tdsValue *= 0.5;
 
     return tdsValue;
 }

@@ -11,6 +11,7 @@ public:
 
     bool tick(
         unsigned long epoch,
+        bool linkUp,
         float temperature,
         float waterLevel,
         float dissolvedSolids,
@@ -19,20 +20,23 @@ public:
 
 private:
     static const int SENSOR_COUNT = 4;
+    static const int MAX_PENDING_UPDATES = SENSOR_COUNT * Periods::MAX_PENDING_UPDATES;
 
     void collect(Periods** out);
-    void markUnsynced();
+    bool resumeSensors(Periods** sensors, unsigned long currentTime);
+    bool allResumed() const;
+    bool commit(
+        Periods** sensors,
+        const float* readings,
+        unsigned long commitTime,
+        bool online
+    );
 
     WiFiFirebase& _firebase;
 
-    // Epoch of the last reading that actually reached the database, or 0 if none
-    // has since the last outage was noticed. Doubles as the latch that stops that
-    // outage being noticed twice - see tick().
-    unsigned long _lastUploadEpoch = 0;
+    bool _resumed[SENSOR_COUNT] = { false, false, false, false };
 
-    // Per sensor, not one shared flag. A sensor that has already bootstrapped must
-    // never do so a second time - see tick() for what that costs.
-    bool _synced[SENSOR_COUNT] = { false, false, false, false };
+    BucketUpdate _updates[MAX_PENDING_UPDATES];
 
     Periods _periodsTemperature;
     Periods _periodsWaterLevel;

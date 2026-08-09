@@ -9,14 +9,9 @@
 namespace {
     const char* SIGN_IN_HOST = "identitytoolkit.googleapis.com";
     const uint16_t SIGN_IN_PORT = 443;
-    const unsigned long DEFAULT_LIFETIME_MS = 3600000UL;  // Google ID tokens are valid for 1h
-    const unsigned long REFRESH_MARGIN_MS = 300000UL;     // refresh 5 min before expiry
+    const unsigned long DEFAULT_LIFETIME_MS = 3600000UL;
+    const unsigned long REFRESH_MARGIN_MS = 300000UL;
 
-    /* How long to wait before attempting sign-in again after a failure, doubling up
-     * to the ceiling. An attempt can hold the main loop for HTTP_TIMEOUT_MS, so
-     * retrying on every tick would spend most of the loop blocked and leave no room
-     * for bleWifi.poll(); the ceiling bounds how late a recovery can be noticed.
-     */
     const unsigned long RETRY_BACKOFF_MIN_MS = 1000UL;
     const unsigned long RETRY_BACKOFF_MAX_MS = 60000UL;
 }
@@ -24,14 +19,6 @@ namespace {
 FirebaseAuth::FirebaseAuth(const char* apiKey, const char* email, const char* password)
     : _apiKey(apiKey), _email(email), _password(password) {}
 
-/**
- * Returns whether a usable token is in hand, signing in first if there is not one.
- *
- * A failed attempt starts a backoff, and while that is running this reports failure
- * without attempting anything, so a sign-in endpoint that is down costs one blocked
- * attempt per backoff interval rather than one per tick. Callers already treat false
- * as "skip this tick", so nothing upstream has to know the difference.
- */
 bool FirebaseAuth::ensureFreshToken() {
     if (_signedInOnce && (long) (millis() - _refreshAtMillis) < 0) {
         return true;
@@ -57,19 +44,9 @@ bool FirebaseAuth::ensureFreshToken() {
     return false;
 }
 
-/**
- * Signs in with identitytoolkit's signInWithPassword endpoint. Uses ArduinoHttpClient
- * rather than a raw WiFiSSLClient because Google's response is chunk-encoded, and parses
- * the response straight off the stream with an ArduinoJson filter (rather than buffering
- * the ~2KB body into a String first) since the idToken alone is ~1KB and we only have
- * 32KB of SRAM to work with.
- */
 bool FirebaseAuth::signIn() {
     WiFiSSLClient tlsClient;
     HttpClient http(tlsClient, SIGN_IN_HOST, SIGN_IN_PORT);
-    // Both, not just the first: the response wait keeps an unresponsive endpoint from
-    // holding the main loop, and the read timeout is what the streamed parse below
-    // runs on - at Stream's 1s default a slow reply aborts part-way through its body.
     http.setHttpResponseTimeout(HTTP_TIMEOUT_MS);
     http.setTimeout(HTTP_TIMEOUT_MS);
 
