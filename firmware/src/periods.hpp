@@ -7,25 +7,23 @@
 
 class Periods {
 public:
-    Periods(const String& kind);
+    static const int PERIOD_COUNT = 6;
+    static const int MAX_PENDING_UPDATES = PERIOD_COUNT * Buckets::MAX_PENDING_UPDATES;
 
-    bool sync(WiFiFirebase& firebase, unsigned long currentTime);
+    Periods(const String& kind);
 
     const String& kind() const { return _kind; }
 
-    void accumulate(float value);
+    bool resume(WiFiFirebase& firebase, unsigned long currentTime);
 
-    bool commitBuckets(WiFiFirebase& firebase, unsigned long commitTime);
+    void account(float value);
+
+    int pendingUpdates(unsigned long currentTime, BucketUpdate* out, int capacity);
+    void commitPending(unsigned long currentTime);
+    void cachePending(unsigned long currentTime);
 
 private:
-    static const int PERIOD_COUNT = 6;
-
     void collect(Buckets** out);
-
-    // Writes whichever periods report a commit due, all in one request. force
-    // carries one flag per period, for the gap markers sync() owes on boot and
-    // after an outage.
-    bool commit(WiFiFirebase& firebase, unsigned long commitTime, const bool* force);
 
     String _kind;
     Buckets _buckets1h;

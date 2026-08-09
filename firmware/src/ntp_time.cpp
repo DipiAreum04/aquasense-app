@@ -26,13 +26,6 @@ unsigned long NTPTime::getEpoch() {
     return computed;
 }
 
-/**
- * Blocking NTP round trip. On success, updates the millis()-anchored baseline
- * that getEpoch() extrapolates from between syncs. On failure, the previous
- * baseline (if any) is left in place rather than being discarded, and the next
- * attempt is still pushed out by SYNC_INTERVAL_MS so a dropped reply doesn't
- * turn into a retry-every-tick hammering of the pool.
- */
 bool NTPTime::sync() {
     const int packetSize = 48;
     byte buffer[packetSize];

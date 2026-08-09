@@ -3,15 +3,10 @@
 #include <EEPROM.h>
 
 namespace {
-// Not a string literal: this is compared byte for byte and must not carry a
-// terminating NUL into the record.
 const uint8_t MAGIC[] = { 'A', 'Q', 'S', 'N' };
 constexpr size_t MAGIC_LENGTH = sizeof(MAGIC);
 }
 
-/**
- * Reads the stored pairing, rejecting anything that does not pass every check.
- */
 bool PairingStore::load(String& ssid, String& password, String& ownerUid) {
     for (size_t i = 0; i < MAGIC_LENGTH; i++) {
         if (EEPROM.read(MAGIC_ADDR + i) != MAGIC[i]) {
@@ -19,8 +14,6 @@ bool PairingStore::load(String& ssid, String& password, String& ownerUid) {
         }
     }
 
-    // A record written by an older layout would parse into the wrong offsets, which
-    // is worse than not reading it at all.
     if (EEPROM.read(VERSION_ADDR) != VERSION) {
         return false;
     }
@@ -35,15 +28,10 @@ bool PairingStore::load(String& ssid, String& password, String& ownerUid) {
     password = readField(PASSWORD_ADDR, PASSWORD_SIZE);
     ownerUid = readField(OWNER_UID_ADDR, OWNER_UID_SIZE);
 
-    // The CRC proves the bytes survived flash; these prove they were sane going in.
-    // An empty SSID or a mis-sized UID means the record is unusable even though it is
-    // intact, and pairing again is the only way out.
     return ssid.length() > 0 && ownerUid.length() == OWNER_UID_LENGTH;
 }
 
 bool PairingStore::save(const String& ssid, const String& password, const String& ownerUid) {
-    // Checked before any write, so a rejected set leaves whatever was already stored
-    // untouched rather than half-overwriting it.
     if (ssid.length() == 0 || ssid.length() >= SSID_SIZE) {
         Serial.println("Refusing to store a missing or oversized SSID.");
         return false;
@@ -66,8 +54,6 @@ bool PairingStore::save(const String& ssid, const String& password, const String
     writeField(PASSWORD_ADDR, PASSWORD_SIZE, password);
     writeField(OWNER_UID_ADDR, OWNER_UID_SIZE, ownerUid);
 
-    // Last, and computed by reading the fields back, so it can only ever match a
-    // record that is fully on flash.
     uint16_t crc = computeCrc();
     EEPROM.write(CRC_ADDR, (uint8_t)(crc >> 8));
     EEPROM.write(CRC_ADDR + 1, (uint8_t)(crc & 0xFF));
@@ -75,11 +61,6 @@ bool PairingStore::save(const String& ssid, const String& password, const String
     return true;
 }
 
-/**
- * Wipes the whole record rather than just the magic. Clearing four bytes would be
- * enough to make load() reject it, but it would leave the user's Wi-Fi password
- * sitting readable in flash after they thought they had unpaired the hub.
- */
 void PairingStore::clear() {
     for (int addr = 0; addr < RECORD_SIZE; addr++) {
         EEPROM.write(addr, 0);
@@ -97,9 +78,6 @@ uint16_t PairingStore::computeCrc() {
     return crc;
 }
 
-// NUL-pads to the full field width so the CRC covers a deterministic record: leaving
-// the tail of a shortened field at whatever was there before would change the CRC
-// without changing the credentials.
 void PairingStore::writeField(int addr, size_t size, const String& value) {
     for (size_t i = 0; i < size; i++) {
         EEPROM.write(addr + i, i < value.length() ? (uint8_t)value[i] : 0);
@@ -107,8 +85,6 @@ void PairingStore::writeField(int addr, size_t size, const String& value) {
 }
 
 String PairingStore::readField(int addr, size_t size) {
-    // Sized to the widest field. Fixed rather than variable-length so this cannot
-    // overflow if a caller ever passes a larger size.
     char buffer[SSID_SIZE];
     if (size > sizeof(buffer)) {
         size = sizeof(buffer);

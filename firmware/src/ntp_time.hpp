@@ -9,14 +9,8 @@ public:
 
     void begin();
 
-    // Returns the current epoch time in seconds. Only hits the network every
-    // SYNC_INTERVAL_MS; in between, the epoch is extrapolated from millis()
-    // off the last successful sync. Returns 0 if no sync has ever succeeded.
-    // Guaranteed to never decrease between calls, even if a resync finds the
-    // local millis()-extrapolated clock was running fast: bucket accounting
-    // does unsigned currentTime-vs-lastCommit math that would underflow into
-    // a huge value on a backward step, so a correction is held flat instead
-    // of stepping back, until real elapsed time catches back up to it.
+    bool hasSynced() const { return _hasSynced; }
+
     unsigned long getEpoch();
 
 private:
@@ -25,7 +19,7 @@ private:
     WiFiUDP udp;
     const char* server = "pool.ntp.org";
 
-    static const unsigned long SYNC_INTERVAL_MS = 1800000UL;  // 30 min, per pool.ntp.org's usage policy
+    static const unsigned long SYNC_INTERVAL_MS = 1800000UL;
 
     bool _hasSynced = false;
     unsigned long _baseEpoch = 0;

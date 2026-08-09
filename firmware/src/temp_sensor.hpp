@@ -12,4 +12,4 @@ private:
     uint8_t _pin;
     OneWire* _oneWire;
     DallasTemperature* _sensors;
-}; 
+};

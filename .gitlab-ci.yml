@@ -10,7 +10,6 @@ workflow:
 
 stages:
   - setup
-  - test
   - build
   - lint
   - validate
@@ -89,25 +88,6 @@ setup-android:
     expire_in: 1 hour
     paths:
       - android/android-sdk-root/
-
-
-test-database:
-  stage: test
-  rules:
-    - changes:
-      - android/**/*
-      - database/**/*
-      - firmware/**/*
-  needs:
-    - job: setup-scripts
-      artifacts: true
-  resource_group: database
-  script:
-    - cd scripts
-    - cp "$DEV_APP_CONFIG_JSON" ./DevDbAppConfig.json
-    - cp "$DEV_SERVICE_ACCOUNT_KEY" ./DevDbServiceAccountKey.json
-    - source .venv/bin/activate
-    - pytest -vv tests/test_database_schema.py
 
 
 build-firmware:

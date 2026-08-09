@@ -10,4 +10,3 @@ private:
     uint8_t _pin;
     int getMedian(int* arr, int len);
 };
-
