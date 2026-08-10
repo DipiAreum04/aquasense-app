@@ -160,7 +160,7 @@
     <string name="section_help_support">HELP &amp; SUPPORT</string>
     <string name="tank_profiles">My Aquariums</string>
     <string name="tank_profiles_desc">Add, edit &amp; manage your aquariums</string>
-    <string name="water_parameters">Water Parameters</string>
+    <string name="water_parameters">Parameter Thresholds</string>
     <string name="water_parameters_desc">Configure sensor parameter alert thresholds</string>
     <string name="sensor_calibration">Sensor Calibration</string>
     <string name="sensor_calibration_desc">Calibrate sensors &amp; check status</string>
@@ -541,6 +541,46 @@
     <string name="template_legend_warning">Warning</string>
     <string name="template_legend_critical">Critical</string>
 
+    <!-- Water Parameters (SETTINGS-07): the thresholds every alert and status colour is judged against -->
+    <string name="water_parameters_no_aquarium">Thresholds are stored per aquarium, so there is nothing to configure until a hub is paired.</string>
+    <string name="threshold_section_safe_range">Threshold Ranges</string>
+    <string name="threshold_section_sudden_change">Sudden Change</string>
+    <string name="threshold_overall_range">Overall Range</string>
+    <string name="threshold_level_warning_low">Warning Low</string>
+    <string name="threshold_level_safe_low">Safe Low</string>
+    <string name="threshold_level_safe_high">Safe High</string>
+    <string name="threshold_level_warning_high">Warning High</string>
+    <string name="threshold_level_spike">Abnormal Spike</string>
+    <!-- Each badge names what crossing that bound outward costs you, which is where the critical
+         bands are declared: they are never typed in, only implied by the warning bounds. -->
+    <string name="threshold_badge_critical_below">Critical below</string>
+    <string name="threshold_badge_warning_below">Warning below</string>
+    <string name="threshold_badge_warning_above">Warning above</string>
+    <string name="threshold_badge_critical_above">Critical above</string>
+    <string name="threshold_desc_warning_low">The bottom of the warning band. %1$s below this is critical and alerts you straight away.</string>
+    <string name="threshold_desc_safe_low">The bottom of the safe band. %1$s below this raises a warning.</string>
+    <string name="threshold_desc_safe_high">The top of the safe band. %1$s above this raises a warning.</string>
+    <string name="threshold_desc_warning_high">The top of the warning band. %1$s above this is critical and alerts you straight away.</string>
+    <string name="threshold_desc_spike">Alert when %1$s changes by more than this value between two readings, in either direction, even while it is still inside the safe range.</string>
+    <string name="threshold_value_hint">Value</string>
+    <!-- A spike is a distance rather than a place, and counts the same in both directions. -->
+    <string name="threshold_spike_prefix">±</string>
+    <string name="threshold_error_number">Enter a number</string>
+    <string name="threshold_error_above_warning_low">Must be above Warning Low</string>
+    <string name="threshold_error_above_safe_low">Must be above Safe Low</string>
+    <string name="threshold_error_above_safe_high">Must be above Safe High</string>
+    <string name="threshold_error_spike_positive">Must be greater than 0</string>
+    <string name="threshold_blocked_by_tab">Fix the errors on the %1$s tab before saving.</string>
+    <string name="threshold_save">Save Changes</string>
+    <string name="threshold_saved">Thresholds Saved!</string>
+    <string name="threshold_save_failed">Could not save your thresholds. Check your connection and try again.</string>
+    <string name="threshold_discard_title">Discard Changes?</string>
+    <string name="threshold_discard_message">You have thresholds you have not saved. Switching aquarium will lose them.</string>
+    <string name="threshold_discard_confirm">Discard</string>
+    <string name="threshold_tds_note_title">Why is Dissolved Solids not here?</string>
+    <string name="threshold_water_level_note_title">Why is Water Level not here?</string>
+    <string name="threshold_water_level_note">The hub\’s water level sensor is a capacitive detector mounted on the outside of the aquarium tank. It only detects whether water is at the level of its position, alerting "Normal" when it detects water and "Critical" water drops below its level. So, there is no threshold range to set for this sensor. To adjust the water level trigger, physically move the sensor up or down.</string>
+
     <!-- Analytics screen (DASH-03) -->
     <!-- A window with no readings in it draws its axes and an empty plot rather than saying so,
          so the only thing the chart ever spells out is that it is still waiting. -->
@@ -569,8 +609,8 @@
     <string name="analytics_axis_months_ago">Months ago</string>
     <!--
       y axis, for the two sensors whose readings carry no unit. pH is a scale rather than a
-      quantity; water level is a float switch, and a bucket averages it, so the plotted value is
-      how much of that bucket the switch spent under water.
+      quantity; water level is detected or not, and a bucket averages it, so the plotted value is
+      how much of that bucket the water stayed up.
     -->
     <string name="analytics_axis_ph">pH</string>
     <string name="analytics_axis_water_level">Level</string>

@@ -20,7 +20,6 @@ import androidx.navigation.Navigation;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.auth.SignOutDialog;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class SettingsHubFragment extends Fragment {
 
@@ -95,10 +94,10 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_aquariumSelector));
 
-        // TODO: Rows to be added by others - not implemented yet
-        View.OnClickListener comingSoon = v ->
-                SharedPreferenceHelper.showComingSoon(requireContext());
-        view.findViewById(R.id.rowWaterParameters).setOnClickListener(comingSoon);
+        // Water Parameters
+        view.findViewById(R.id.rowWaterParameters)
+                .setOnClickListener(v -> Navigation.findNavController(v)
+                        .navigate(R.id.action_hub_to_waterParameters));
     }
 
     /**

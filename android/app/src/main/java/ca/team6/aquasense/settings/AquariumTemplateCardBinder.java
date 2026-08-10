@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.DatabaseSchema;
+import ca.team6.aquasense.model.ReadingFormatter;
 import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
@@ -30,10 +31,6 @@ import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 public final class AquariumTemplateCardBinder {
 
     private static final DecimalFormat BOUND_FORMAT = new DecimalFormat("0.##");
-
-    // The critical bands run to infinity, so they have no real width. These caps are a fraction of
-    // the bounded span, which keeps them looking consistent.
-    private static final float CRITICAL_CAP_FRACTION = 0.15f;
 
     // Opacity of the pale background behind the icon tile and the badge, as a fraction of the template's
     // accent colour.
@@ -125,14 +122,17 @@ public final class AquariumTemplateCardBinder {
                 context.getResources().getStringArray(template.getExampleSpeciesResId()),
                 accent, accentFill);
 
+        // Read once for the card rather than per row: all three rows are drawn in the same unit,
+        // and only the temperature one has two to choose between.
+        boolean fahrenheit = ReadingFormatter.isFahrenheit(context);
+
         LinearLayout parameters = root.findViewById(R.id.containerParameters);
         addParameter(inflater, parameters, template, context,
-                DatabaseSchema.TEMPERATURE_KEY, R.string.temperature, R.string.unit_celsius);
+                DatabaseSchema.TEMPERATURE_KEY, fahrenheit);
         addParameter(inflater, parameters, template, context,
-                DatabaseSchema.PH_LEVEL_KEY, R.string.ph_level, 0);
+                DatabaseSchema.PH_LEVEL_KEY, fahrenheit);
         addParameter(inflater, parameters, template, context,
-                DatabaseSchema.DISSOLVED_SOLIDS_KEY, R.string.dissolved_solids,
-                R.string.unit_parts_per_million);
+                DatabaseSchema.DISSOLVED_SOLIDS_KEY, fahrenheit);
 
         // Only saltwater carries a note for TDS, so the view stays gone for the other three.
         int disabledNoteResId = template.getDisabledNoteResId();
@@ -179,6 +179,9 @@ public final class AquariumTemplateCardBinder {
 
     /**
      * Appends one sensor's band bar, or nothing when the template has no range for it.
+     *
+     * @param fahrenheit whether the user reads the app in Fahrenheit, which only the temperature
+     *     row acts on.
      */
     private static void addParameter(
             LayoutInflater inflater,
@@ -186,8 +189,7 @@ public final class AquariumTemplateCardBinder {
             AquariumTemplate template,
             Context context,
             String sensorId,
-            @StringRes int nameResId,
-            @StringRes int unitResId
+            boolean fahrenheit
     ) {
         ThresholdBand bands = template.getThresholds(sensorId);
         if (bands == null) {
@@ -196,54 +198,44 @@ public final class AquariumTemplateCardBinder {
 
         View row = inflater.inflate(R.layout.item_template_parameter, parent, false);
 
-        String name = unitResId == 0
-                ? context.getString(nameResId)
-                : context.getString(R.string.template_parameter_with_unit,
-                        context.getString(nameResId), context.getString(unitResId));
+        // Name and unit both come from ReadingFormatter, so a template's rows are labelled exactly
+        // as the dashboard labels the cards these thresholds go on to colour.
+        String unit = context.getString(
+                ReadingFormatter.unitResIdFor(sensorId, fahrenheit)).trim();
+        String sensorName = context.getString(ReadingFormatter.nameResIdFor(sensorId));
+        String name = unit.isEmpty()
+                ? sensorName
+                : context.getString(R.string.template_parameter_with_unit, sensorName, unit);
         ((TextView) row.findViewById(R.id.tvParameterName)).setText(name);
 
-        applySegmentWeights(row, bands);
+        // Deliberately the stored bounds, not the displayed ones. Fahrenheit scales every band by
+        // the same 9/5, so the proportions the bar is drawn from are identical either way, and
+        // converting first would only invite the offset to creep into a width.
+        ThresholdBandBar.apply(row, bands);
 
-        // TODO: temperatures are stored in Celsius; convert here once the shared unit helper lands.
         ((TextView) row.findViewById(R.id.tvBoundLow)).setText(
-                context.getString(R.string.template_bound_below, format(bands.getWarnLow())));
+                context.getString(R.string.template_bound_below,
+                        format(sensorId, bands.getWarnLow(), fahrenheit)));
         ((TextView) row.findViewById(R.id.tvBandSafe)).setText(
                 context.getString(R.string.template_band_range,
-                        format(bands.getSafeLow()), format(bands.getSafeHigh())));
+                        format(sensorId, bands.getSafeLow(), fahrenheit),
+                        format(sensorId, bands.getSafeHigh(), fahrenheit)));
         ((TextView) row.findViewById(R.id.tvBoundHigh)).setText(
-                context.getString(R.string.template_bound_above, format(bands.getWarnHigh())));
+                context.getString(R.string.template_bound_above,
+                        format(sensorId, bands.getWarnHigh(), fahrenheit)));
 
         parent.addView(row);
     }
 
     /**
-     * Sizes the five bar segments in proportion to the real band widths, so a template with little
-     * headroom shows a visibly narrower green stretch.
+     * Renders one bound in the unit the user reads. Templates declare their temperatures in
+     * Celsius, which is also how telemetry is stored, so the conversion belongs here at the
+     * display edge and nowhere earlier.
      */
-    private static void applySegmentWeights(View row, ThresholdBand bands) {
-        float warningLow = (float) (bands.getSafeLow() - bands.getWarnLow());
-        float safe = (float) (bands.getSafeHigh() - bands.getSafeLow());
-        float warningHigh = (float) (bands.getWarnHigh() - bands.getSafeHigh());
-        float bounded = warningLow + safe + warningHigh;
-
-        // Guard against a band set where every bound coincides, which would leave the bar with no weight at all.
-        float cap = bounded > 0 ? bounded * CRITICAL_CAP_FRACTION : 1f;
-
-        setWeight(row, R.id.segmentCriticalLow, cap);
-        setWeight(row, R.id.segmentWarningLow, warningLow);
-        setWeight(row, R.id.segmentSafe, safe);
-        setWeight(row, R.id.segmentWarningHigh, warningHigh);
-        setWeight(row, R.id.segmentCriticalHigh, cap);
-    }
-
-    private static void setWeight(View row, int segmentId, float weight) {
-        View segment = row.findViewById(segmentId);
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) segment.getLayoutParams();
-        params.weight = weight;
-        segment.setLayoutParams(params);
-    }
-
-    private static String format(double bound) {
-        return BOUND_FORMAT.format(bound);
+    private static String format(String sensorId, double bound, boolean fahrenheit) {
+        double displayValue = DatabaseSchema.TEMPERATURE_KEY.equals(sensorId)
+                ? ReadingFormatter.toDisplayTemperature(bound, fahrenheit)
+                : bound;
+        return BOUND_FORMAT.format(displayValue);
     }
 }

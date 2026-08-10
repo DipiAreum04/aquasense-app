@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One configurable bound on the Water Parameters screen: the four band edges and the spike delta all
+  bind to this same card. Everything that varies between them - icon, tint, title, badge wording,
+  the comparator in front of the field - is set by WaterParametersFragment at bind time, so the five
+  cards stay one layout rather than five copies of one.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.AquaSense.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_settings_card"
+    android:orientation="vertical"
+    android:paddingStart="14dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivThresholdLevelIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            tools:src="@drawable/ic_arrow_down_24px" />
+
+        <TextView
+            android:id="@+id/tvThresholdLevelTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Critical Low" />
+
+        <!-- Fill is tinted to the level's soft status colour at bind time; the label takes the
+             status colour itself, exactly as the dashboard's sensor pills do. -->
+        <TextView
+            android:id="@+id/tvThresholdLevelBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_sensor_status_pill"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="2dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            tools:text="Alert"
+            tools:textColor="@color/status_red" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvThresholdLevelDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        tools:text="Temperature below this is an immediate danger to your aquarium." />
+
+    <!-- The box InputFieldError outlines in red, so its padding is restated in code terms: the
+         helper swaps the background and restores exactly these four values. -->
+    <LinearLayout
+        android:id="@+id/boxThresholdLevelValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_auth_input"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
+
+        <!-- Only the spike shows anything here, and what it shows is the "±" that says a jump
+             counts the same in either direction. A bound is a place on the scale and needs no
+             prefix, so this stays gone for the other four. -->
+        <TextView
+            android:id="@+id/tvThresholdLevelPrefix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_muted"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="±"
+            tools:visibility="visible" />
+
+        <EditText
+            android:id="@+id/etThresholdLevelValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="end"
+            android:hint="@string/threshold_value_hint"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal|numberSigned"
+            android:maxLength="10"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:textSize="16sp"
+            tools:ignore="LabelFor"
+            tools:text="15" />
+
+        <TextView
+            android:id="@+id/tvThresholdLevelUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            tools:text="°C" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvThresholdLevelError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/danger"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:text="Must be above Critical Low"
+        tools:visibility="visible" />
+
+</LinearLayout>

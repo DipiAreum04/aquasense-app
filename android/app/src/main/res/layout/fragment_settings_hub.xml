@@ -221,7 +221,7 @@
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Water Parameters (other team) -->
+            <!-- SETTINGS-07 - Water Parameters -->
             <LinearLayout
                 android:id="@+id/rowWaterParameters"
                 android:layout_width="match_parent"
