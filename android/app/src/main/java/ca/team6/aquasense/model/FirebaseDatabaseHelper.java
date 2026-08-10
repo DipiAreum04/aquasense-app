@@ -131,17 +131,23 @@ public final class FirebaseDatabaseHelper {
      * Writes /{uid}/aquariums/{aquariumId}, whose key is the paired board's UID.
      * Merges rather than replaces,so even if the user changes the aquarium name,
      * the thresholds and spike deltas will still be there.
+     *
+     * <p>The identity and the grading go in one update rather than a create followed by a
+     * configure. Both halves are what the add-aquarium form collected, and a claim that half
+     * succeeded would leave a board publishing into a node the rules accept but the dashboard
+     * grades against a fallback template the user never chose.
      */
     public void writeAquarium(@NonNull String uid,
                               @NonNull String aquariumId,
                               @NonNull String name,
                               @NonNull String waterType,
                               @NonNull Map<String, ThresholdBand> thresholds,
+                              @NonNull Map<String, Double> spikeDeltas,
                               @NonNull DbCallback callback) {
         Map<String, Object> aquarium = new HashMap<>();
         aquarium.put(DatabaseSchema.NAME_KEY, name);
         aquarium.put(DatabaseSchema.WATER_TYPE_KEY, waterType);
-        addThresholdPaths(aquarium, thresholds);
+        addSensorPaths(aquarium, thresholds, spikeDeltas);
 
         aquariumsRef(uid)
                 .child(aquariumId)
@@ -162,10 +168,7 @@ public final class FirebaseDatabaseHelper {
                                       @NonNull Map<String, Double> spikeDeltas,
                                       @NonNull DbCallback callback) {
         Map<String, Object> updates = new HashMap<>();
-        addThresholdPaths(updates, thresholds);
-        for (Map.Entry<String, Double> entry : spikeDeltas.entrySet()) {
-            updates.put(DatabaseSchema.SPIKE_DELTAS_KEY + "/" + entry.getKey(), entry.getValue());
-        }
+        addSensorPaths(updates, thresholds, spikeDeltas);
         if (updates.isEmpty()) {
             // Nothing to write is a success, and an empty updateChildren is a no-op anyway.
             callback.onSuccess();
@@ -179,19 +182,23 @@ public final class FirebaseDatabaseHelper {
     }
 
     /**
-     * Adds one entry per band to an update keyed from the aquarium node.
+     * Adds one entry per band and per delta to an update keyed from the aquarium node.
      *
      * <p>The key is the deep path {@code thresholds/{sensor}} rather than {@code thresholds}, which
      * is what keeps editing one sensor from wiping the rest: Firebase merges an update per path
      * segment, so addressing the sensor leaves its siblings untouched, where addressing their
      * shared parent would replace all of them with whatever this one map happens to hold.
      */
-    private static void addThresholdPaths(@NonNull Map<String, Object> updates,
-                                          @NonNull Map<String, ThresholdBand> thresholds) {
+    private static void addSensorPaths(@NonNull Map<String, Object> updates,
+                                       @NonNull Map<String, ThresholdBand> thresholds,
+                                       @NonNull Map<String, Double> spikeDeltas) {
         for (Map.Entry<String, ThresholdBand> entry : thresholds.entrySet()) {
             updates.put(
                     DatabaseSchema.THRESHOLDS_KEY + "/" + entry.getKey(),
                     boundsOf(entry.getValue()));
+        }
+        for (Map.Entry<String, Double> entry : spikeDeltas.entrySet()) {
+            updates.put(DatabaseSchema.SPIKE_DELTAS_KEY + "/" + entry.getKey(), entry.getValue());
         }
     }
 

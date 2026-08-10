@@ -51,15 +51,11 @@
         android:label="@string/setup_step_mount_title"
         tools:layout="@layout/fragment_setup_mount_hub">
 
+        <!-- Everything step 1 collected, in the shape the pairing flow writes it. -->
         <argument
-            android:name="aquariumName"
-            android:defaultValue=""
-            app:argType="string" />
-
-        <argument
-            android:name="waterType"
+            android:name="aquariumConfig"
             android:defaultValue="@null"
-            app:argType="string"
+            app:argType="ca.team6.aquasense.model.NewAquariumConfig"
             app:nullable="true" />
 
         <argument
@@ -83,18 +79,14 @@
         android:label="@string/setup_complete_title"
         tools:layout="@layout/fragment_setup_complete">
 
+        <!-- The same bundle step 2 was given, forwarded on: the summary names the aquarium and
+             its water type out of the configuration that has just been written. -->
         <argument
-            android:name="aquariumName"
-            android:defaultValue=""
-            app:argType="string" />
-
-        <argument
-            android:name="waterType"
+            android:name="aquariumConfig"
             android:defaultValue="@null"
-            app:argType="string"
+            app:argType="ca.team6.aquasense.model.NewAquariumConfig"
             app:nullable="true" />
 
-        <!-- Null for a Custom aquarium, which is not backed by a template. -->
         <argument
             android:name="templateId"
             android:defaultValue="@null"

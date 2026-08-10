@@ -18,8 +18,8 @@ import ca.team6.aquasense.PairingActivity;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
+import ca.team6.aquasense.model.NewAquariumConfig;
+import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.ui.FragmentToolbar;
 import ca.team6.aquasense.ui.WizardProgress;
@@ -65,22 +65,21 @@ public class MountHubFragment extends Fragment {
     }
 
     /**
-     * Hands the details collected on step 1 to the pairing flow, which is what writes the
+     * Hands the configuration collected on step 1 to the pairing flow, which is what writes the
      * aquarium once the board reports the UID it will be keyed by.
      */
     private void goToPairing() {
-        Bundle args = this.requireArgs();
-        WaterType waterType = WaterType.fromKey(args.getString(SetupArgs.WATER_TYPE));
+        NewAquariumConfig config =
+                this.requireArgs().getParcelable(SetupArgs.AQUARIUM_CONFIG);
+        if (config == null) {
+            // Step 1 always sends one, so this only happens if the fragment is shown outside the
+            // wizard. Pairing with nothing to claim the board would strand it.
+            ScopedLogger.error("Reached the mount-hub step with no aquarium configuration.");
+            return;
+        }
 
-        this.pairingLauncher.launch(PairingActivity.intent(
-                requireContext(),
-                args.getString(SetupArgs.AQUARIUM_NAME, ""),
-                // The form always sends one; a null here would mean the argument was lost in
-                // transit, and marine thresholds on a freshwater tank are the safer way to be
-                // wrong than the reverse.
-                waterType == null ? BuiltInTemplates.getDefault().getWaterType() : waterType,
-                args.getString(SetupArgs.TEMPLATE_ID),
-                PairingEntryMode.FIRST_RUN));
+        this.pairingLauncher.launch(
+                PairingActivity.intent(requireContext(), config, PairingEntryMode.FIRST_RUN));
     }
 
     /** Closes the wizard on its summary page, carrying the same details one destination further. */

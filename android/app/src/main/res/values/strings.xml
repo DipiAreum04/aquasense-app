@@ -390,15 +390,23 @@
     <string name="label_aquarium_name">AQUARIUM NAME</string>
     <string name="hint_aquarium_name">e.g. My Goldfish Aquarium</string>
     <string name="label_choose_template">CHOOSE A TEMPLATE</string>
-    <!-- The Add Aquarium screen lists the built-in templates themselves; only Custom needs its
-         own name and description here, the rest come from BuiltInTemplates. -->
-    <string name="template_custom_title">Custom</string>
-    <string name="template_custom_desc">Define all water parameter thresholds manually from scratch.</string>
+    <!-- The Add Aquarium screen lists the built-in templates themselves, so their names and
+         descriptions all come from BuiltInTemplates. -->
     <string name="template_choice_show_details">Tap to see details</string>
     <string name="template_choice_hide_details">Hide details</string>
     <string name="toast_choose_template">Choose a template for this aquarium</string>
     <string name="label_advanced_settings">Advanced Settings</string>
-    <string name="label_advanced_settings_optional">Optional: Change the template\'s parameter thresholds</string>
+
+    <!-- Step 3 of the Add Aquarium form: the template's own numbers, opened up for editing. -->
+    <string name="label_advanced_thresholds">ADVANCED SETTINGS</string>
+    <string name="advanced_optional_badge">Optional</string>
+    <string name="advanced_collapsed_hint">Tap here to adjust the chosen template\'s recommended thresholds.</string>
+    <string name="advanced_expanded_hint">These are %1$s\'s recommended thresholds. Edit any of them for this aquarium.</string>
+    <string name="advanced_pick_template_first">Choose a template above before configuring the advanced settings.</string>
+    <string name="advanced_reset_to_template">Advanced values reset to %1$s defaults.</string>
+    <string name="advanced_needs_attention">Some thresholds need fixing before this aquarium can be created. Make sure warning low &lt; safe low &lt; safe high &lt; warning high.</string>
+    <string name="toast_fix_advanced">Fix the thresholds in Advanced Settings first!</string>
+    <string name="label_advanced_settings_optional">Optional: Change the chosen template\'s parameter thresholds and configure spike values.</string>
     <string name="action_expand_advanced_settings">Expand advanced settings</string>
     <string name="step_number_1">1</string>
     <string name="step_number_2">2</string>
@@ -534,6 +542,12 @@
     <string name="setup_complete_label_environment">Environment</string>
     <string name="setup_complete_label_template">Template</string>
     <string name="setup_complete_action">Go To Dashboard</string>
+    <!-- The two app-wide display choices, offered once at the end of setup, where the user has
+         just seen their first real readings and the question means something concrete. -->
+    <string name="setup_complete_display_title">How would you like to see the dashboard readings?</string>
+    <string name="setup_complete_display_body">These apply across the app. You can change them any time in Settings \u2192 Display &amp; Units</string>
+    <string name="setup_complete_display_temperature">Temperature Unit </string>
+    <string name="setup_complete_display_precision">Reading Format</string>
 
     <!-- SETTINGS-04 built-in aquarium templates -->
     <string name="template_freshwater">Freshwater: Tropical</string>

@@ -73,6 +73,12 @@
     <color name="template_header_text">#FFD3E4EC</color>
     <color name="template_header_text_muted">#FF95B3C1</color>
     <color name="template_header_badge_bg">#26FFFFFF</color>
+
+    <!-- See the light theme for why this pill is aqua rather than grey. The roles swap here:
+         the deep teal becomes the fill and the bright cyan the text. -->
+    <color name="optional_badge_bg">#FF1B3E45</color>
+    <color name="optional_badge_stroke">#FF23616D</color>
+    <color name="optional_badge_text">#FF50DDF6</color>
     <color name="template_band_normal">#247E09</color>
     <color name="template_band_warning">#C59B26</color>
     <color name="template_band_critical">#A92827</color>

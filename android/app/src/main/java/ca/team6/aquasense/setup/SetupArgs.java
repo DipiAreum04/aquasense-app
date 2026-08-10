@@ -10,9 +10,19 @@ package ca.team6.aquasense.setup;
  */
 public final class SetupArgs {
 
-    public static final String AQUARIUM_NAME = "aquariumName";
-    public static final String WATER_TYPE = "waterType";
-    /** Null for a Custom aquarium, which is not backed by a template. */
+    /**
+     * The {@code NewAquariumConfig} to write once pairing succeeds: the name, the water type, and
+     * every threshold and spike delta the form settled on.
+     */
+    public static final String AQUARIUM_CONFIG = "aquariumConfig";
+
+    /**
+     * Which template the values came from, for the summary page to name.
+     *
+     * <p>Carried beside the configuration rather than inside it, because it is not part of what
+     * gets stored: {@code database/rules.json} has no field for a template, so it is a source of
+     * starting numbers at creation time and a label afterwards.
+     */
     public static final String TEMPLATE_ID = "templateId";
 
     private SetupArgs() {

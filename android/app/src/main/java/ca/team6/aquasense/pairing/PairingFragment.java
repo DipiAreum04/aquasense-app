@@ -39,7 +39,8 @@ import ca.team6.aquasense.PairingActivity;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.model.NewAquariumConfig;
+import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.ui.BleStatusOrb;
 import ca.team6.aquasense.ui.InputFieldError;
 
@@ -52,9 +53,7 @@ import ca.team6.aquasense.ui.InputFieldError;
  */
 public class PairingFragment extends Fragment {
 
-    public static final String ARG_AQUARIUM_NAME = "aquariumName";
-    public static final String ARG_WATER_TYPE = "waterType";
-    public static final String ARG_TEMPLATE_ID = "templateId";
+    public static final String ARG_AQUARIUM_CONFIG = "aquariumConfig";
     public static final String ARG_ENTRY_MODE = "entryMode";
 
     private static final long REVEAL_DURATION_MS = 220L;
@@ -90,10 +89,10 @@ public class PairingFragment extends Fragment {
     private TextView noticeBody;
     private Button noticeRetry;
 
-    private String aquariumName = "";
-    private WaterType waterType = WaterType.FRESHWATER;
+    // What the add-aquarium form collected. Forwarded to the repository untouched; this screen
+    // collects Wi-Fi credentials and reads nothing out of it.
     @Nullable
-    private String templateId;
+    private NewAquariumConfig aquariumConfig;
     private PairingEntryMode entryMode = PairingEntryMode.ADD_AQUARIUM;
 
     // The hub the user tapped, or null while they are still choosing.
@@ -251,15 +250,7 @@ public class PairingFragment extends Fragment {
         if (args == null) {
             return;
         }
-        String name = args.getString(ARG_AQUARIUM_NAME);
-        if (name != null) {
-            this.aquariumName = name;
-        }
-        WaterType stored = WaterType.fromKey(args.getString(ARG_WATER_TYPE));
-        if (stored != null) {
-            this.waterType = stored;
-        }
-        this.templateId = args.getString(ARG_TEMPLATE_ID);
+        this.aquariumConfig = args.getParcelable(ARG_AQUARIUM_CONFIG);
         this.entryMode = PairingEntryMode.fromName(args.getString(ARG_ENTRY_MODE));
     }
 
@@ -622,10 +613,15 @@ public class PairingFragment extends Fragment {
             this.render();
             return;
         }
+        if (this.aquariumConfig == null) {
+            // Every route into this screen comes through the add-aquarium form, which cannot reach
+            // it without one. Provisioning anyway would strand a board with nothing to claim it.
+            ScopedLogger.error("Reached the pairing screen with no aquarium configuration.");
+            return;
+        }
 
         this.hideKeyboard();
-        this.pairingRepository.pair(board, ssid, password, this.aquariumName, this.waterType,
-                this.templateId);
+        this.pairingRepository.pair(board, ssid, password, this.aquariumConfig);
     }
 
     private void retry() {
@@ -704,7 +700,12 @@ public class PairingFragment extends Fragment {
     private String pairedAquariumName() {
         Aquarium paired = AquariumRepository.getInstance(requireContext())
                 .getAquarium(this.pairingRepository.getDeviceUid());
-        return paired == null ? this.aquariumName : paired.getName();
+        if (paired != null) {
+            return paired.getName();
+        }
+        // The write has landed but the subscription has not caught up yet, so the name the form
+        // collected is the same name, just not read back from the database.
+        return this.aquariumConfig == null ? "" : this.aquariumConfig.getName();
     }
 
     private void hideKeyboard() {

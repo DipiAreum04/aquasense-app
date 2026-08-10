@@ -118,8 +118,8 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- One row per built-in template plus Custom, inflated by AddAquariumFragment
-                 from BuiltInTemplates so this list cannot drift from the templates the
+            <!-- One row per built-in template, inflated by AddAquariumFragment from
+                 BuiltInTemplates so this list cannot drift from the templates the
                  dashboard actually enforces. -->
             <LinearLayout
                 android:id="@+id/templateChoiceContainer"
@@ -127,8 +127,123 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- TODO (DS-4.4): Advanced Settings goes back here, collapsed by default:
-                 aquariumnotes, per-sensor threshold overrides -->
+            <!--
+              Step 3. The thresholds the template above implies, opened up for editing.
+
+              Optional, and collapsed: the values inside are written whether or not it is ever
+              opened, so opening it and changing nothing creates exactly the aquarium that leaving
+              it shut creates. That is what makes it safe to hide.
+
+              There is no separate "custom" template. Every water type is reachable through a named
+              template, so a row offering to define thresholds from scratch would only be a worse
+              route to this panel - one that starts on numbers it cannot explain.
+            -->
+            <LinearLayout
+                android:id="@+id/stepAdvancedHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:background="@drawable/bg_step_number"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:text="@string/step_number_3"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:letterSpacing="0.06"
+                    android:text="@string/label_advanced_thresholds"
+                    android:textColor="@color/gray_500"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_optional_badge"
+                    android:letterSpacing="0.03"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="3dp"
+                    android:text="@string/advanced_optional_badge"
+                    android:textColor="@color/optional_badge_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/advancedCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- The whole header is the toggle; the chevron is turned a quarter over while
+                     the panel is open. -->
+                <LinearLayout
+                    android:id="@+id/advancedToggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:contentDescription="@string/action_expand_advanced_settings"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/label_advanced_settings"
+                        android:textColor="@color/gray_900"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/advancedChevron"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <!-- Names the template the fields below were filled in from, so a number that
+                     looks arbitrary can be traced to the choice that produced it. -->
+                <TextView
+                    android:id="@+id/tvAdvancedHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/advanced_pick_template_first"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+                <include
+                    android:id="@+id/advancedEditor"
+                    layout="@layout/view_threshold_editor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
