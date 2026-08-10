@@ -7,6 +7,7 @@ import androidx.annotation.StringRes;
 import java.util.Locale;
 
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
 
 /**
  * Formats numeric sensor readings for display using the Display &amp; Units preferences.
@@ -154,7 +155,9 @@ public final class ReadingFormatter {
         // which reads as a state rather than a quantity. Compared against a midpoint because the
         // value arrives from the database as a double.
         if (DatabaseSchema.WATER_LEVEL_KEY.equals(sensorId)) {
-            return context.getString(value >= 0.5 ? R.string.water_level_safe : R.string.water_level_low);
+            return context.getString(value >= WaterLevelSensor.HIGH_THRESHOLD
+                    ? R.string.water_level_safe
+                    : R.string.water_level_low);
         }
 
         boolean precise = isPrecise(context);

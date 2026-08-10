@@ -131,9 +131,8 @@
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicatorHeight="3dp"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/accent"
-                app:tabTextAppearance="@style/TextAppearance.AquaSense.Tab"
-                app:tabTextColor="@color/text_secondary" />
+                app:tabPaddingEnd="6dp"
+                app:tabPaddingStart="6dp" />
 
             <!--
               The period buttons, filled in by AnalyticsActivity from the periods it can fetch.
@@ -180,21 +179,43 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <TextView
+                        <!--
+                          The heading and the ⓘ that explains everything under it. Beside the
+                          heading rather than out at the card's edge, which would put it level with
+                          the uptime ring and read as belonging to that one figure.
+
+                          The row is as tall as the button, so the gap the heading used to leave
+                          below itself is now most of the way covered by the button's own padding;
+                          what remains is the margin on the LED row.
+                        -->
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:letterSpacing="0.08"
-                            android:text="@string/analytics_system_health"
-                            android:textAllCaps="true"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:letterSpacing="0.08"
+                                android:text="@string/analytics_system_health"
+                                android:textAllCaps="true"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <ImageButton
+                                android:id="@+id/analyticsHealthInfoButton"
+                                style="@style/Widget.AquaSense.AnalyticsInfoButton"
+                                android:contentDescription="@string/analytics_info_open" />
+
+                        </LinearLayout>
 
                         <!-- LED and status name, as the sensor cards give them, minus the pill. -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="2dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -313,6 +334,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/analyticsStatMinLabel"
                             style="@style/Widget.AquaSense.AnalyticsStatLabel"
                             android:text="@string/analytics_stat_min" />
 
@@ -346,6 +368,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/analyticsStatAvgLabel"
                             style="@style/Widget.AquaSense.AnalyticsStatLabel"
                             android:text="@string/analytics_stat_avg" />
 
@@ -382,6 +405,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/analyticsStatMaxLabel"
                             style="@style/Widget.AquaSense.AnalyticsStatLabel"
                             android:text="@string/analytics_stat_max" />
 
@@ -410,6 +434,7 @@
                  plot. The fixed height is tall enough to read a trend off and short enough to
                  leave the card below it in view. -->
             <LinearLayout
+                android:id="@+id/analyticsChartCard"
                 style="@style/Widget.AquaSense.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -536,18 +561,34 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="match_parent"
+                <!-- Heading and its ⓘ, sitting together as they do on the health card above. -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/analytics_distribution_title"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/analytics_distribution_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/analyticsDistributionInfoButton"
+                        style="@style/Widget.AquaSense.AnalyticsInfoButton"
+                        android:contentDescription="@string/analytics_info_open" />
+
+                </LinearLayout>
+
+                <!-- Less than the 14dp this used to carry: the heading now shares its row with a
+                     button whose padding is already part of the gap. -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/analytics_distribution_bar_height"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="7dp"
                     android:background="@drawable/bg_analytics_distribution_track"
                     android:clipToOutline="true"
                     android:orientation="horizontal"

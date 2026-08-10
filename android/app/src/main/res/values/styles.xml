@@ -113,7 +113,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">6dp</item>
         <item name="android:textColor">@color/text_secondary</item>
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Widget.AquaSense.AnalyticsLegendValue" parent="">
@@ -141,6 +142,28 @@
              setImageTintList, and the icons carry a ?colorControlNormal tint of their own that
              either one replaces; naming the framework's keeps the style unambiguous. -->
         <item name="android:tint">@color/accent</item>
+    </style>
+
+    <!--
+      The ⓘ beside a summary card's heading. Sized so that the row it shares with the heading is a
+      comfortable touch target while the glyph stays smaller than the words next to it: this is an
+      offer to explain the card, not a control the eye should land on first.
+
+      No negative margins. Pulling it out into the card's own padding would size the target without
+      spending layout height, but a card clips its children to its padding box, so the part that
+      hung over would simply be cut off.
+    -->
+    <style name="Widget.AquaSense.AnalyticsInfoButton" parent="">
+        <item name="android:layout_width">@dimen/analytics_info_button_size</item>
+        <item name="android:layout_height">@dimen/analytics_info_button_size</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">@dimen/analytics_info_icon_padding</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:src">@drawable/info_24px</item>
+        <!-- As on the chart actions: the framework attribute, so the icon's own tint is replaced
+             rather than the two being read against each other. -->
+        <item name="android:tint">@color/text_secondary</item>
     </style>
 
     <!-- One label-and-value line of the dialog's summary block. -->

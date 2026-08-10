@@ -44,6 +44,8 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
     private static final String BANDS_KEY = "bandTexts";
     private static final String ACTIVE_BAND_KEY = "activeBand";
     private static final String SECTIONS_KEY = "sectionsResourceId";
+    private static final String ABOUT_TITLE_KEY = "aboutTitleResourceId";
+    private static final String HAS_READING_KEY = "hasReading";
 
     private static final int SAFE_BAND = 0;
     private static final int WARNING_BAND = 1;
@@ -82,6 +84,42 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
                 SECTIONS_KEY,
                 InfoSheetSection.serialize(sensor.getInfoSheetSections(context))
         );
+        args.putBoolean(HAS_READING_KEY, true);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    /**
+     * Builds the sheet as an explainer: a heading, a lead line and the sections under it, about
+     * something on the screen rather than about a sensor.
+     *
+     * <p>The analytics page opens two of these, one per card, to say what its percentages are
+     * shares of. Everything the sheet ordinarily carries about a sensor is left out - the reading,
+     * the status pill, the threshold bands - because none of it has an answer here: an explanation
+     * of what uptime counts is the same explanation whichever tab is open and whatever the tank is
+     * currently doing.
+     *
+     * @param aboutTitleResId the heading over the lead line. Named rather than derived, since the
+     *                        sheet has no sensor to be "About" the way {@link #from} does.
+     */
+    public static SensorInfoBottomSheet explaining(@DrawableRes int iconResId,
+                                                   @StringRes int titleResId,
+                                                   @StringRes int aboutTitleResId,
+                                                   @StringRes int aboutResId,
+                                                   InfoSheetSection... sections) {
+        SensorInfoBottomSheet fragment = new SensorInfoBottomSheet();
+
+        Bundle args = new Bundle();
+        args.putInt(ICON_KEY, iconResId);
+        args.putInt(TITLE_KEY, titleResId);
+        args.putInt(ABOUT_TITLE_KEY, aboutTitleResId);
+        args.putInt(ABOUT_KEY, aboutResId);
+        // The icon is tinted with this and nothing else reads it here: there is no status to
+        // report, so the sheet's mark is the page's own accent rather than a verdict's colour.
+        args.putInt(STATUS_COLOR_KEY, R.color.accent);
+        args.putBoolean(HAS_READING_KEY, false);
+        args.putByteArray(SECTIONS_KEY, InfoSheetSection.serialize(sections));
         fragment.setArguments(args);
 
         return fragment;
@@ -107,8 +145,10 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         }
 
         Context context = view.getContext();
+        // Whether this sheet is about a sensor or about something on the screen; the second kind
+        // has no reading, status or bands to report. See explaining.
+        boolean hasReading = arguments.getBoolean(HAS_READING_KEY, true);
         int statusColor = ContextCompat.getColor(context, arguments.getInt(STATUS_COLOR_KEY));
-        String name = context.getString(arguments.getInt(NAME_KEY));
 
         ImageView iconView = view.findViewById(R.id.sensorInfoIcon);
         iconView.setImageResource(arguments.getInt(ICON_KEY));
@@ -117,30 +157,45 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         TextView titleView = view.findViewById(R.id.sensorInfoTitle);
         titleView.setText(arguments.getInt(TITLE_KEY));
 
-        // The same pill the card carries, so the sheet and the card it came from agree at a glance.
-        ((ImageView) view.findViewById(R.id.sensorInfoStatusIcon))
-                .setImageResource(arguments.getInt(STATUS_ICON_KEY));
-        TextView statusTextView = view.findViewById(R.id.sensorInfoStatusText);
-        statusTextView.setText(arguments.getInt(STATUS_TEXT_KEY));
-        statusTextView.setTextColor(statusColor);
-        view.findViewById(R.id.sensorInfoStatusPill).setBackgroundTintList(
-                ColorStateList.valueOf(
-                        ContextCompat.getColor(context, arguments.getInt(PILL_COLOR_KEY))));
+        View statusPill = view.findViewById(R.id.sensorInfoStatusPill);
+        View readingBlock = view.findViewById(R.id.sensorInfoReadingBlock);
+        statusPill.setVisibility(hasReading ? View.VISIBLE : View.GONE);
+        readingBlock.setVisibility(hasReading ? View.VISIBLE : View.GONE);
 
-        int valueColor = ContextCompat.getColor(context, arguments.getInt(VALUE_COLOR_KEY));
-        TextView valueView = view.findViewById(R.id.sensorInfoValue);
-        valueView.setText(arguments.getString(VALUE_KEY));
-        valueView.setTextColor(valueColor);
-        TextView unitView = view.findViewById(R.id.sensorInfoUnit);
-        unitView.setText(arguments.getInt(UNIT_KEY));
-        unitView.setTextColor(valueColor);
+        TextView aboutTitleView = view.findViewById(R.id.sensorInfoAboutTitle);
+        if (hasReading) {
+            String name = context.getString(arguments.getInt(NAME_KEY));
 
-        ((TextView) view.findViewById(R.id.sensorInfoReadingLabel))
-                .setText(context.getString(R.string.sensor_info_current, name));
-        ((TextView) view.findViewById(R.id.sensorInfoStatusNote))
-                .setText(arguments.getInt(NOTE_KEY));
-        ((TextView) view.findViewById(R.id.sensorInfoAboutTitle))
-                .setText(context.getString(R.string.sensor_info_about, name));
+            // The same pill the card carries, so the sheet and the card it came from agree at a
+            // glance.
+            ((ImageView) view.findViewById(R.id.sensorInfoStatusIcon))
+                    .setImageResource(arguments.getInt(STATUS_ICON_KEY));
+            TextView statusTextView = view.findViewById(R.id.sensorInfoStatusText);
+            statusTextView.setText(arguments.getInt(STATUS_TEXT_KEY));
+            statusTextView.setTextColor(statusColor);
+            statusPill.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(context, arguments.getInt(PILL_COLOR_KEY))));
+
+            int valueColor = ContextCompat.getColor(context, arguments.getInt(VALUE_COLOR_KEY));
+            TextView valueView = view.findViewById(R.id.sensorInfoValue);
+            valueView.setText(arguments.getString(VALUE_KEY));
+            valueView.setTextColor(valueColor);
+            TextView unitView = view.findViewById(R.id.sensorInfoUnit);
+            unitView.setText(arguments.getInt(UNIT_KEY));
+            unitView.setTextColor(valueColor);
+
+            ((TextView) view.findViewById(R.id.sensorInfoReadingLabel))
+                    .setText(context.getString(R.string.sensor_info_current, name));
+            ((TextView) view.findViewById(R.id.sensorInfoStatusNote))
+                    .setText(arguments.getInt(NOTE_KEY));
+            aboutTitleView.setText(context.getString(R.string.sensor_info_about, name));
+        } else {
+            aboutTitleView.setText(arguments.getInt(ABOUT_TITLE_KEY));
+            // That margin is the gap between this heading and the reading over it, which has just
+            // been taken out. Left alone it would open the sheet on a band of empty space.
+            ((ViewGroup.MarginLayoutParams) aboutTitleView.getLayoutParams()).topMargin = 0;
+        }
+
         ((TextView) view.findViewById(R.id.sensorInfoDescription))
                 .setText(arguments.getInt(ABOUT_KEY));
 

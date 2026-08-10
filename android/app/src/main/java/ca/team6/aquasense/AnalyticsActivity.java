@@ -35,11 +35,14 @@ import ca.team6.aquasense.analytics.AnalyticsClearDialog;
 import ca.team6.aquasense.analytics.AnalyticsPeriod;
 import ca.team6.aquasense.analytics.AnalyticsSummaryController;
 import ca.team6.aquasense.analytics.AquariumDropdown;
+import ca.team6.aquasense.analytics.AxisRange;
 import ca.team6.aquasense.analytics.DownloadsWriter;
 import ca.team6.aquasense.analytics.PeriodStatistics;
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
+import ca.team6.aquasense.dashboard.SensorInfoBottomSheet;
 import ca.team6.aquasense.model.AppSettings;
+import ca.team6.aquasense.model.InfoSheetSection;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.DatabaseSchema;
@@ -76,16 +79,11 @@ import ca.team6.aquasense.notifications.SensorThresholds;
  */
 public class AnalyticsActivity extends AppCompatActivity {
 
-    // One tab each, in the order the dashboard lays its cards out.
-    private static final List<AquariumSensor> SENSORS = Collections.unmodifiableList(Arrays.asList(
-            new WaterLevelSensor(),
-            new TemperatureSensor(),
-            new DissolvedSolidsSensor(),
-            new PhLevelSensor()));
-
     // A sensor goes quiet without saying so, so nothing arrives to redraw the health line when it
     // stops being true. The dashboard re-reads its own on the same interval.
     private static final long STALENESS_CHECK_INTERVAL_MS = 10_000;
+    private static final String STATE_SENSOR_ID = "analytics_sensor_id";
+    private static final String STATE_PERIOD_NAME = "analytics_period_name";
 
     /** How a disabled chart action is drawn, since an ImageButton does not dim its own icon. */
     private static final float DISABLED_ACTION_ALPHA = 0.4f;
@@ -98,6 +96,15 @@ public class AnalyticsActivity extends AppCompatActivity {
     private static final String DOWNLOAD_TIMESTAMP_PATTERN = "yyyy-MM-dd-HH-mm-ss";
     private static final String UNSAFE_FILE_NAME_CHARS = "[^A-Za-z0-9._-]";
 
+    /** The whole of what a percentage can be, which is what a share has to be read against. */
+    private static final AxisRange PERCENT_AXIS = new AxisRange(0f, 100f);
+
+    private final List<AquariumSensor> sensors = Collections.unmodifiableList(Arrays.asList(
+            new WaterLevelSensor(),
+            new TemperatureSensor(),
+            new DissolvedSolidsSensor(),
+            new PhLevelSensor()));
+
     private AnalyticsChartController chartController;
     private AnalyticsSummaryController summaryController;
     private AquariumRepository aquariumRepository;
@@ -106,10 +113,11 @@ public class AnalyticsActivity extends AppCompatActivity {
     private ImageView aquariumIcon;
     private TextView yAxisLabel;
     private TextView xAxisLabel;
+    private View chartCard;
     private ImageButton downloadButton;
     private ImageButton clearButton;
 
-    private AquariumSensor selectedSensor = SENSORS.get(0);
+    private AquariumSensor selectedSensor = this.sensors.get(0);
     private AnalyticsPeriod selectedPeriod = AnalyticsPeriod.LAST_1H;
 
     // Held down for as long as a save is in flight, so a second tap cannot start a second one and
@@ -133,6 +141,18 @@ public class AnalyticsActivity extends AppCompatActivity {
     // coming back to a page that skipped the re-read would leave Celsius plotted under a °F axis.
     @Nullable
     private String requestKey;
+
+    // The selection the buckets below were last drawn for, which is not always the one being asked
+    // for. Leaving the page drops the request key so that coming back re-subscribes, and without
+    // this that re-subscription would look exactly like a tab being switched: the graph blanked to
+    // its loading state and repainted a moment later with the same line it already had. Whereas a
+    // selection that genuinely moved has to be blanked, since the buckets in hand are another
+    // sensor's. The two are told apart by whether the key being asked for is the one on screen.
+    //
+    // Only set once a fetch has actually drawn something, so a selection that failed to read is
+    // fetched again rather than repainted from whatever preceded it.
+    @Nullable
+    private String lastDrawnKey;
 
     // The buckets the page is reporting on, raw as the database stores them. Held so that a change
     // to the aquarium's thresholds can regrade them, which moves the distribution without moving a
@@ -183,16 +203,24 @@ public class AnalyticsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        this.restoreSelection(savedInstanceState);
+
         LineChart chart = findViewById(R.id.analyticsChart);
         this.chartController = new AnalyticsChartController(chart);
         this.summaryController =
                 new AnalyticsSummaryController(findViewById(R.id.analyticsContent));
-        // The period half of the summary is drawn from a read that may never be asked for - there
-        // may be no aquarium to ask about - so it is put into its empty state up front rather than
-        // left showing the blanks the layout inflates with.
-        this.summaryController.showPeriodLoading();
+        this.chartController.showMessage(R.string.analytics_chart_loading);
+        this.summaryController.clearPeriod();
         this.yAxisLabel = findViewById(R.id.analyticsYAxisLabel);
         this.xAxisLabel = findViewById(R.id.analyticsXAxisLabel);
+        this.showAxisLabels(false);
+
+        this.chartCard = findViewById(R.id.analyticsChartCard);
+        this.chartCard.setOnClickListener(v -> {
+            this.setChartRetryEnabled(false);
+            this.plotSelection();
+        });
+        this.setChartRetryEnabled(false);
         this.aquariumNameText = findViewById(R.id.analyticsAquariumName);
         this.aquariumIcon = findViewById(R.id.analyticsAquariumIcon);
         // Mutated so the tile's tint is this view's own: the drawable is shared with the template
@@ -204,6 +232,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         this.setUpSensorTabs();
         this.setUpPeriodButtons();
         this.setUpChartActions();
+        this.setUpInfoSheets();
 
         this.telemetryRepository = TelemetryRepository.getInstance();
         this.aquariumRepository = AquariumRepository.getInstance(this);
@@ -212,6 +241,40 @@ public class AnalyticsActivity extends AppCompatActivity {
         // cold instead gets an empty list now and the real one when the snapshot lands.
         this.telemetryRepository.addObserver(this.telemetryObserver);
         this.aquariumRepository.addObserver(this.aquariumsObserver);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_SENSOR_ID, this.selectedSensor.getId());
+        outState.putString(STATE_PERIOD_NAME, this.selectedPeriod.name());
+    }
+
+    /**
+     * Puts the selection back after a rotation, a theme change, or anything else that rebuilds the
+     * page. Called before the tabs and the period buttons are built, since both draw their raised
+     * state from it.
+     */
+    private void restoreSelection(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+
+        String sensorId = savedInstanceState.getString(STATE_SENSOR_ID);
+        for (AquariumSensor sensor : this.sensors) {
+            if (sensor.getId().equals(sensorId)) {
+                this.selectedSensor = sensor;
+                break;
+            }
+        }
+
+        String periodName = savedInstanceState.getString(STATE_PERIOD_NAME);
+        for (AnalyticsPeriod period : AnalyticsPeriod.ALL) {
+            if (period.name().equals(periodName)) {
+                this.selectedPeriod = period;
+                break;
+            }
+        }
     }
 
     @Override
@@ -296,23 +359,23 @@ public class AnalyticsActivity extends AppCompatActivity {
         this.plotSelection();
     }
 
-    /**
-     * Builds the tabs from {@link #SENSORS}, so their labels are the sensors' own names.
-     *
-     * <p>The listener goes on after the tabs are in place. TabLayout selects the first tab as it is
-     * added, and a listener registered before that would be called back to plot while the
-     * repositories it needs are still null.
-     */
     private void setUpSensorTabs() {
         TabLayout tabs = findViewById(R.id.analyticsSensorTabs);
-        for (AquariumSensor sensor : SENSORS) {
-            tabs.addTab(tabs.newTab().setText(sensor.getNameResId()));
+        for (AquariumSensor sensor : this.sensors) {
+            tabs.addTab(tabs.newTab()
+                    .setCustomView(R.layout.item_analytics_sensor_tab)
+                    .setText(sensor.getNameResId()));
+        }
+
+        TabLayout.Tab restored = tabs.getTabAt(this.sensors.indexOf(this.selectedSensor));
+        if (restored != null) {
+            restored.select();
         }
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(@NonNull TabLayout.Tab tab) {
-                selectedSensor = SENSORS.get(tab.getPosition());
+                selectedSensor = sensors.get(tab.getPosition());
                 showSensorHealth();
                 plotSelection();
             }
@@ -348,6 +411,64 @@ public class AnalyticsActivity extends AppCompatActivity {
             });
             container.addView(button);
         }
+    }
+
+    /**
+     * Wires the ⓘ on each of the two summary cards.
+     *
+     * <p>One per card rather than one for the page, because the two cards count different things
+     * and that is the part worth explaining: the ring is a share of time with outages counted in,
+     * the distribution is a share of readings with outages left out. A single sheet would be
+     * explaining one card's denominator from the other card's corner.
+     *
+     * <p>Neither sheet is about a sensor, so neither follows the tabs: what uptime measures is the
+     * same answer whichever one is selected. They are built on the press rather than held, since a
+     * sheet that is never opened should cost nothing.
+     */
+    private void setUpInfoSheets() {
+        findViewById(R.id.analyticsHealthInfoButton).setOnClickListener(v ->
+                SensorInfoBottomSheet.explaining(
+                        R.drawable.info_24px,
+                        R.string.analytics_info_health_title,
+                        R.string.analytics_info_lead_title,
+                        R.string.analytics_info_health_lead,
+                        this.infoSection(R.string.analytics_info_health_period_title,
+                                R.string.analytics_info_health_period_1),
+                        this.infoSection(R.string.analytics_info_health_uptime_title,
+                                R.string.analytics_info_health_uptime_1),
+                        this.infoSection(R.string.analytics_info_health_stats_title,
+                                R.string.analytics_info_health_stats_1,
+                                R.string.analytics_info_health_stats_2,
+                                R.string.analytics_info_health_stats_3))
+                        .show(getSupportFragmentManager(), null));
+
+        findViewById(R.id.analyticsDistributionInfoButton).setOnClickListener(v ->
+                SensorInfoBottomSheet.explaining(
+                        R.drawable.info_24px,
+                        R.string.analytics_info_distribution_title,
+                        R.string.analytics_info_lead_title,
+                        R.string.analytics_info_distribution_lead,
+                        this.infoSection(R.string.analytics_info_distribution_counts_title,
+                                R.string.analytics_info_distribution_counts_1),
+                        this.infoSection(R.string.analytics_info_distribution_grading_title,
+                                R.string.analytics_info_distribution_grading_1))
+                        .show(getSupportFragmentManager(), null));
+    }
+
+    /**
+     * One block of an info sheet, from a heading and its bullets.
+     *
+     * <p>The section takes resolved text rather than resource IDs, since the sensor sheets quote
+     * live thresholds into theirs. These have nothing to quote, so they are only being read out of
+     * the resources a step early.
+     */
+    @NonNull
+    private InfoSheetSection infoSection(@StringRes int titleResId, @StringRes int... itemResIds) {
+        String[] items = new String[itemResIds.length];
+        for (int i = 0; i < itemResIds.length; i++) {
+            items[i] = getString(itemResIds[i]);
+        }
+        return new InfoSheetSection(getString(titleResId), items);
     }
 
     /** Moves the raised state onto the chosen button, since the drawable keys off it. */
@@ -450,7 +571,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         Map<String, SensorReading> readings = this.telemetryRepository.getReadings();
         long nowMillis = this.telemetryRepository.nowMillis();
 
-        for (AquariumSensor sensor : SENSORS) {
+        for (AquariumSensor sensor : this.sensors) {
             sensor.applyReading(this, readings.get(sensor.getId()),
                     this.thresholdFor(active, sensor),
                     SensorThresholds.resolveSpikeDelta(active, sensor.getId()),
@@ -488,6 +609,9 @@ public class AnalyticsActivity extends AppCompatActivity {
     private void plotSelection() {
         String aquariumId = this.activeAquariumId();
         if (aquariumId == null) {
+            this.stopReading(this.aquariumRepository.isLoaded()
+                    ? R.string.analytics_chart_no_aquarium
+                    : R.string.analytics_chart_loading);
             return;
         }
 
@@ -499,20 +623,32 @@ public class AnalyticsActivity extends AppCompatActivity {
             return;
         }
         this.requestKey = key;
-        this.loadedBuckets = null;
-        // Nothing is known about the node being asked for until it answers, and the actions stay
-        // off until then rather than carrying the last selection's verdict over onto this one.
-        this.selectionHasBuckets = false;
-        this.showChartActionsEnabled();
+        this.setChartRetryEnabled(false);
 
         // Named now rather than on arrival, so they are ready the moment there are axes to name.
-        // Hidden until then: the loading state clears the chart outright, and a pair of unit
-        // labels around an empty card is furniture for axes that are not being drawn.
         this.yAxisLabel.setText(this.yAxisLabelResId(sensor));
         this.xAxisLabel.setText(period.getXAxisLabelResId());
-        this.showAxisLabels(false);
-        this.chartController.showLoading();
-        this.summaryController.showPeriodLoading();
+
+        if (key.equals(this.lastDrawnKey) && this.loadedBuckets != null) {
+            // Coming back to the selection already on screen. The subscription below still has to
+            // be made - leaving the page released it - but what is held is what it is about to ask
+            // for, so it stays up and the snapshot overwrites it when it lands, rather than the
+            // page emptying itself to fetch a copy of what it is already showing. Nothing is reset
+            // either: the actions are acting on the same node they were before, and its verdict
+            // has not been contradicted.
+            this.drawLoadedBuckets(sensor, period);
+        } else {
+            this.loadedBuckets = null;
+            // Nothing is known about the node being asked for until it answers, and the actions
+            // stay off until then rather than carrying the last selection's verdict onto this one.
+            this.selectionHasBuckets = false;
+            this.showChartActionsEnabled();
+            // Hidden until it lands: the loading state clears the chart outright, and a pair of
+            // unit labels around an empty card is furniture for axes that are not being drawn.
+            this.showAxisLabels(false);
+            this.chartController.showMessage(R.string.analytics_chart_loading);
+            this.summaryController.clearPeriod();
+        }
 
         this.telemetryRepository.watchPeriod(aquariumId, sensor.getId(), period.getDatabaseKey(),
                 new TelemetryRepository.PeriodCallback() {
@@ -532,10 +668,10 @@ public class AnalyticsActivity extends AppCompatActivity {
                         // Cut to the window once, here, so the graph and the card below it are
                         // reporting on exactly the same readings.
                         loadedBuckets = period.within(buckets);
-                        showAxisLabels(true);
-                        chartController.setBuckets(sensor.getNameResId(), period,
-                                inDisplayUnits(sensor, loadedBuckets));
-                        showPeriodSummary();
+                        drawLoadedBuckets(sensor, period);
+                        // On screen now, so coming back to this selection can repaint it rather
+                        // than blanking the page to ask for it again.
+                        lastDrawnKey = key;
                     }
 
                     @Override
@@ -543,17 +679,66 @@ public class AnalyticsActivity extends AppCompatActivity {
                         if (isDestroyed() || !key.equals(requestKey)) {
                             return;
                         }
-                        // Forgetting the request lets the next tab selection or snapshot subscribe
-                        // again, rather than leaving the page pinned to one that failed.
                         requestKey = null;
+                        // Whatever was up for this selection is coming down below, so there is
+                        // nothing left to repaint it from should it be asked for again.
+                        lastDrawnKey = null;
+                        loadedBuckets = null;
                         // A node that could not be read is not one to act on either.
                         selectionHasBuckets = false;
                         showChartActionsEnabled();
-                        showAxisLabels(true);
-                        chartController.showEmpty(period);
-                        summaryController.showPeriodLoading();
+                        showAxisLabels(false);
+                        chartController.showMessage(R.string.analytics_chart_error);
+                        summaryController.clearPeriod();
+                        setChartRetryEnabled(true);
                     }
                 });
+    }
+
+    /**
+     * Draws the buckets in hand as the graph and the card under it, for the selection they were
+     * fetched for.
+     *
+     * <p>Called both when a snapshot lands and when the page comes back to the selection it was
+     * already showing, so the two paths cannot drift into drawing the same buckets differently.
+     *
+     * <p>A window the board has put nothing in draws no axes, only the line of text saying so, and
+     * the unit labels belong to the axes rather than to the card - so they follow whatever the
+     * chart decided it could draw.
+     */
+    private void drawLoadedBuckets(@NonNull AquariumSensor sensor,
+                                   @NonNull AnalyticsPeriod period) {
+        if (this.loadedBuckets == null) {
+            return;
+        }
+        this.showAxisLabels(this.chartController.setBuckets(sensor.getNameResId(), period,
+                this.inDisplayUnits(sensor, this.loadedBuckets), this.yAxisRangeFor(sensor)));
+        this.showPeriodSummary();
+    }
+
+    /**
+     * Takes the page out of reading anything and says why, for the cases where there is no
+     * selection to read: no aquarium yet, or none left.
+     */
+    private void stopReading(@StringRes int messageResId) {
+        this.telemetryRepository.unwatchPeriod();
+        this.requestKey = null;
+        this.lastDrawnKey = null;
+        this.loadedBuckets = null;
+        // There is no node behind the page any more, so neither action has anything to act on.
+        this.selectionHasBuckets = false;
+        this.showChartActionsEnabled();
+        this.setChartRetryEnabled(false);
+        this.showAxisLabels(false);
+        this.chartController.showMessage(messageResId);
+        this.summaryController.clearPeriod();
+    }
+
+    private void setChartRetryEnabled(boolean enabled) {
+        this.chartCard.setClickable(enabled);
+        this.chartCard.setForeground(enabled
+                ? ContextCompat.getDrawable(this, R.drawable.rounded_ripple_10dp_radius)
+                : null);
     }
 
     /**
@@ -718,9 +903,9 @@ public class AnalyticsActivity extends AppCompatActivity {
      * Names the unit the y axis is in.
      *
      * <p>Two sensors have no unit of their own to offer. pH is a scale rather than a quantity, and
-     * water level is a float switch whose buckets are averages, so what is plotted is the share of
-     * each bucket the switch spent submerged. Temperature is asked of the preferences instead of the
-     * sensor, since the sensor's own unit is fixed at Celsius while the reading may be converted.
+     * water level is a detector whose buckets are averages, so what is plotted is the share of
+     * each bucket's readings that had water at the sensor - scaled to a percentage by
+     * {@link #inDisplayUnits}, which is what the axis is named for.
      */
     @StringRes
     private int yAxisLabelResId(@NonNull AquariumSensor sensor) {
@@ -740,13 +925,27 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     /**
+     * The scale this sensor's graph is read against, or null to let its readings scale the axis.
+     *
+     * <p>Only water level has one. What is plotted for it is the share of each bucket that had
+     * water at the sensor, and a share is read against the whole it is a share of: scaled to the
+     * readings instead, a tank that dipped to 97% for one bucket draws the same cliff as a tank
+     * that emptied. Every other sensor is a quantity rather than a share and is better off scaled
+     * to what it actually did - see {@link AxisRange}.
+     */
+    @Nullable
+    private AxisRange yAxisRangeFor(@NonNull AquariumSensor sensor) {
+        return DatabaseSchema.WATER_LEVEL_KEY.equals(sensor.getId()) ? PERCENT_AXIS : null;
+    }
+
+    /**
      * Puts the temperature sensor's unit in step with Display &amp; Units, so the statistics row
      * labels a converted reading with the unit it was converted into. The dashboard's cards do the
      * same on their own copy of the sensor; the conversion itself is ReadingFormatter's, and runs
      * per reading rather than per resume.
      */
     private void applyTemperatureUnitPreference() {
-        for (AquariumSensor sensor : SENSORS) {
+        for (AquariumSensor sensor : this.sensors) {
             if (DatabaseSchema.TEMPERATURE_KEY.equals(sensor.getId())) {
                 sensor.setUnitResId(ReadingFormatter.isCelsius(this)
                         ? R.string.unit_celsius
@@ -766,32 +965,34 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     /**
-     * Converts readings into the unit the app is set to read them in, which for now means
-     * temperature: the board stores Celsius, and Display &amp; Units may ask for Fahrenheit. The
-     * dashboard cards already do this, and a graph disagreeing with the card above it would be
-     * worse than either choice on its own.
+     * Converts readings into the unit the graph names them in.
      *
      * <p>Only the chart is handed these. The statistics are read off the raw buckets and converted
      * a value at a time, because they are also graded against a threshold band, and a band is
      * written in the unit the database stores rather than the one the app displays.
      *
      * <p>Gap markers pass through untouched. The sentinel is a flag rather than a measurement, and
-     * putting it through a unit conversion would stop it reading as one.
+     * putting it through a conversion would stop it reading as one.
      */
     @NonNull
     private List<SensorReading> inDisplayUnits(@NonNull AquariumSensor sensor,
                                                @NonNull List<SensorReading> buckets) {
-        if (!DatabaseSchema.TEMPERATURE_KEY.equals(sensor.getId())) {
+        boolean temperature = DatabaseSchema.TEMPERATURE_KEY.equals(sensor.getId());
+        boolean waterLevel = DatabaseSchema.WATER_LEVEL_KEY.equals(sensor.getId());
+        if (!temperature && !waterLevel) {
             return buckets;
         }
 
         List<SensorReading> converted = new ArrayList<>(buckets.size());
         for (SensorReading bucket : buckets) {
-            converted.add(bucket.isOffline()
-                    ? bucket
-                    : new SensorReading(
-                            ReadingFormatter.toDisplayTemperature(this, bucket.getValue()),
-                            bucket.getTimestampSeconds()));
+            if (bucket.isOffline()) {
+                converted.add(bucket);
+                continue;
+            }
+            double value = temperature
+                    ? ReadingFormatter.toDisplayTemperature(this, bucket.getValue())
+                    : bucket.getValue() * 100d;
+            converted.add(new SensorReading(value, bucket.getTimestampSeconds()));
         }
         return converted;
     }

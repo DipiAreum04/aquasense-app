@@ -671,9 +671,10 @@
     <string name="threshold_water_level_note">The hub\’s water level sensor is a capacitive detector mounted on the outside of the aquarium tank. It only detects whether water is at the level of its position, alerting "Normal" when it detects water and "Critical" water drops below its level. So, there is no threshold range to set for this sensor. To adjust the water level trigger, physically move the sensor up or down.</string>
 
     <!-- Analytics screen (DASH-03) -->
-    <!-- A window with no readings in it draws its axes and an empty plot rather than saying so,
-         so the only thing the chart ever spells out is that it is still waiting. -->
     <string name="analytics_chart_loading">Loading readings…</string>
+    <string name="analytics_chart_error">Couldn\'t load readings. Please tap to retry</string>
+    <string name="analytics_chart_no_aquarium">Add an aquarium to see its readings</string>
+    <string name="analytics_chart_no_data">Not enough data yet :(</string>
     <string name="analytics_period_1h">1H</string>
     <string name="analytics_period_1d">1D</string>
     <string name="analytics_period_1w">1W</string>
@@ -702,14 +703,14 @@
       how much of that bucket the water stayed up.
     -->
     <string name="analytics_axis_ph">pH</string>
-    <string name="analytics_axis_water_level">Level</string>
+    <string name="analytics_axis_water_level">% of time safe</string>
 
     <!-- Aquarium selector, at the head of the page. -->
-    <string name="analytics_active_aquarium">Active aquarium</string>
-    <string name="analytics_aquarium_selector_description">Change aquarium</string>
+    <string name="analytics_active_aquarium">Active Aquarium</string>
+    <string name="analytics_aquarium_selector_description">Change Aquarium</string>
 
     <!-- System health card: the selected sensor's live state, over the selected period's buckets. -->
-    <string name="analytics_system_health">System health</string>
+    <string name="analytics_system_health">System Health</string>
     <string name="analytics_uptime">Uptime</string>
     <string name="analytics_last_seen_pending">No readings yet</string>
     <string name="analytics_last_seen_now">Last seen just now</string>
@@ -725,16 +726,57 @@
         <item quantity="one">Last seen %d day ago</item>
         <item quantity="other">Last seen %d days ago</item>
     </plurals>
-    <string name="analytics_stat_min">Min</string>
-    <string name="analytics_stat_avg">Avg</string>
-    <string name="analytics_stat_max">Max</string>
+    <string name="analytics_stat_min">Minimum</string>
+    <string name="analytics_stat_avg">Average</string>
+    <string name="analytics_stat_max">Maximum</string>
+    <!-- The same three columns for the water level detector, which has no reading to take a minimum
+         of: what it contributes to a bucket is the share of that bucket it sensed water for, so the
+         three figures are the lowest and highest such share and the share over the whole period. -->
+    <string name="analytics_stat_water_level_min">Lowest</string>
+    <string name="analytics_stat_water_level_avg">Time safe</string>
+    <string name="analytics_stat_water_level_max">Highest</string>
     <!-- Stands in for a statistic the period has no readings to compute. -->
     <string name="analytics_stat_empty">—</string>
     <string name="analytics_percent">%1$d%%</string>
 
     <!-- Reading distribution card. Its three bands are labelled with @string/normal, @string/warning
          and @string/critical, which is what the sensor cards call the same three states. -->
-    <string name="analytics_distribution_title">Reading distribution</string>
+    <string name="analytics_distribution_title">Reading Distribution</string>
+
+    <!--
+      The two info sheets on this page, opened from the ⓘ on each of the two cards.
+
+      Split rather than combined because the two cards count different things and that is the
+      confusing part: uptime is a share of time, the distribution is a share of readings.
+
+      These describe the page rather than a sensor, so unlike the sensor sheets they carry no
+      reading, no status and no threshold bands - see SensorInfoBottomSheet.explaining.
+    -->
+    <string name="analytics_info_open">About these numbers</string>
+    <string name="analytics_info_lead_title">What this card shows</string>
+
+    <string name="analytics_info_health_title">About these numbers</string>
+    <string name="analytics_info_health_lead">The top row is live. Everything under it covers the period you picked above the graph.</string>
+
+    <string name="analytics_info_health_period_title">Time period</string>
+    <string name="analytics_info_health_period_1">The buttons above the graph set the window: last hour, day, week, etc. The graph and every number here follow it.</string>
+
+    <string name="analytics_info_health_uptime_title">Uptime</string>
+    <string name="analytics_info_health_uptime_1">How much of that time your board was online and sending readings.</string>
+
+    <string name="analytics_info_health_stats_title">The three statistics</string>
+    <string name="analytics_info_health_stats_1">Taken from real readings only. Time your board was offline is skipped, not counted as zero.</string>
+    <string name="analytics_info_health_stats_2">Temperature shows °C or °F, whichever you picked in Settings.</string>
+    <string name="analytics_info_health_stats_3">Water Level can\'t measure depth, so it shows how much of the time the water was high enough.</string>
+
+    <string name="analytics_info_distribution_title">About this breakdown</string>
+    <string name="analytics_info_distribution_lead">How your readings are split between safe, warning and critical.</string>
+
+    <string name="analytics_info_distribution_counts_title">What it counts</string>
+    <string name="analytics_info_distribution_counts_1">This counts readings. Uptime counts time. That\'s why a tank can be 60% up and still 100% normal here.</string>
+
+    <string name="analytics_info_distribution_grading_title">How readings are graded</string>
+    <string name="analytics_info_distribution_grading_1">The ranges come from this aquarium\'s thresholds. Change them and this updates right away.</string>
 
     <!--
       The two actions on the graph card, and everything they can say back. Both act on the one

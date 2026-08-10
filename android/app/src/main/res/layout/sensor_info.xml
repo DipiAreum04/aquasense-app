@@ -117,48 +117,60 @@
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
         >
-            <!-- Reading and unit ride the same baseline, centred as one block, as on the card. -->
+            <!--
+              The sensor's own reading, hidden as a block for a sheet that is not about one - see
+              SensorInfoBottomSheet.explaining, which also drops the heading's top margin when it
+              does, since that margin exists to separate the heading from this.
+            -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/sensorInfoReadingBlock"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:baselineAligned="true"
-                android:orientation="horizontal"
+                android:orientation="vertical"
             >
-                <TextView
-                    android:id="@+id/sensorInfoValue"
+                <!-- Reading and unit ride the same baseline, centred as one block, as on the card. -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="38sp"
-                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:baselineAligned="true"
+                    android:orientation="horizontal"
+                >
+                    <TextView
+                        android:id="@+id/sensorInfoValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="38sp"
+                        android:textStyle="bold"
+                    />
+                    <TextView
+                        android:id="@+id/sensorInfoUnit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:textSize="15sp"
+                    />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/sensorInfoReadingLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/sensor_info_gray_color"
+                    android:textSize="12sp"
                 />
                 <TextView
-                    android:id="@+id/sensorInfoUnit"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/sensorInfoStatusNote"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:textSize="15sp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    android:lineSpacingExtra="2dp"
+                    android:textColor="@color/sensor_info_gray_color"
+                    android:textSize="13sp"
                 />
             </LinearLayout>
-            <TextView
-                android:id="@+id/sensorInfoReadingLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center_horizontal"
-                android:textColor="@color/sensor_info_gray_color"
-                android:textSize="12sp"
-            />
-            <TextView
-                android:id="@+id/sensorInfoStatusNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
-                android:lineSpacingExtra="2dp"
-                android:textColor="@color/sensor_info_gray_color"
-                android:textSize="13sp"
-            />
 
             <TextView
                 android:id="@+id/sensorInfoAboutTitle"
