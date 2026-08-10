@@ -22,13 +22,28 @@
       is a different claim from a sensor being in its band.
     -->
     <color name="status_blue">#FF03A0B5</color>
-    <color name="text_secondary">#FF888888</color>
+    <color name="text_secondary">#FF6B6A6A</color>
     <color name="text_muted">#FF555555</color>
     <color name="divider">#FFE0E0E0</color>
     <color name="accent">#158AC0</color>
     <color name="toolbar_ocean">#FFDAF1F5</color>
     <color name="toolbar_gradient_start">#FFC1DFE0</color>
     <color name="toolbar_gradient_end">#FFCFC1DE</color>
+
+    <!--
+      App-wide page background (@drawable/bg_app_gradient), drawn top to bottom.
+
+      One hue the whole way down rather than three: the bottom is the app's aqua, the middle is
+      that same colour lightened, and the top is white. Holding h 174 and dropping the chroma as
+      the lightness climbs is what makes it read as one wash deepening towards the foot of the
+      page instead of as three bands meeting.
+
+      The middle sits at L* 94, halfway between the other two, so neither half of the ramp turns
+      over faster than the other and no seam shows where the stops meet.
+    -->
+    <color name="app_gradient_top">#FFFFFFFF</color>
+    <color name="app_gradient_center">#FFE6F4F3</color>
+    <color name="app_gradient_bottom">#FFCDE9E6</color>
     <color name="launcher_ocean_start">#FF2B8BC8</color>
     <color name="launcher_ocean_end">#FF0A3A6B</color>
     <color name="launcher_rim_light_start">#66FFFFFF</color>
@@ -46,6 +61,9 @@
     <color name="active_badge_bg">#FFE3F2FD</color>
     <color name="status_success">#FF2E7D32</color>
     <color name="settings_icon_bg">#401565C0</color>
+
+    <color name="profile_initial_icon">#4C3075</color>
+    <color name="profile_initial_icon_bg">#C5A3EB</color>
 
     <!--
       The analytics period selector, which is a groove with one button raised out of it.

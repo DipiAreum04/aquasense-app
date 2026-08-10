@@ -18,9 +18,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_support"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +32,10 @@
             <LinearLayout
                 android:id="@+id/rowEmailSupport"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -53,15 +54,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/email_support"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/support_email"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -85,7 +84,10 @@
             <LinearLayout
                 android:id="@+id/rowContactForm"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -104,15 +106,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_form"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_form_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -135,9 +135,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_about"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,7 +146,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -159,16 +160,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/app_version"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <TextView
                     android:id="@+id/tvAppVersion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_version_value"
-                    android:textColor="@color/accent"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue" />
 
             </LinearLayout>
 
@@ -180,7 +179,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -191,15 +193,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/firmware"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/firmware_value"
-                    android:textColor="@color/accent"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue" />
 
             </LinearLayout>
 
@@ -211,7 +211,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -222,16 +225,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/device_id"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <TextView
                     android:id="@+id/tvDeviceId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/device_id_not_connected"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
 
             </LinearLayout>
 

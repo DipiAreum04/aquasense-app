@@ -3,19 +3,16 @@ package ca.team6.aquasense.settings;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
+
+import java.util.Locale;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthRepository;
@@ -23,6 +20,10 @@ import ca.team6.aquasense.auth.SignOutDialog;
 
 public class SettingsHubFragment extends Fragment {
 
+    /** Shown when neither the name nor the email can supply a usable initial. */
+    private static final String INITIAL_PLACEHOLDER = "?";
+
+    private TextView tvHubProfileInitial;
     private TextView tvHubProfileName;
     private TextView tvHubProfileEmail;
     private AuthRepository authRepository;
@@ -39,15 +40,13 @@ public class SettingsHubFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         authRepository = AuthRepository.getInstance(requireContext());
+        tvHubProfileInitial = view.findViewById(R.id.tvHubProfileInitial);
         tvHubProfileName = view.findViewById(R.id.tvHubProfileName);
         tvHubProfileEmail = view.findViewById(R.id.tvHubProfileEmail);
 
-        addSignOutMenu();
-
-        // Profile card → Accounts & Backup
-        view.findViewById(R.id.rowProfile)
-                .setOnClickListener(v -> Navigation.findNavController(v)
-                        .navigate(R.id.action_hub_to_accounts));
+        // Sign out button on the profile card. But the card itself is not clickable.
+        view.findViewById(R.id.btnHubSignOut)
+                .setOnClickListener(v -> SignOutDialog.show(requireActivity(), authRepository));
 
         // Sensor Calibration
         view.findViewById(R.id.rowSensorCalibration)
@@ -69,10 +68,10 @@ public class SettingsHubFragment extends Fragment {
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_accounts));
 
-        // Data & Privacy
-        view.findViewById(R.id.rowDataPrivacy)
+        // Privacy Policy
+        view.findViewById(R.id.rowPrivacyPolicy)
                 .setOnClickListener(v -> Navigation.findNavController(v)
-                        .navigate(R.id.action_hub_to_dataPrivacy));
+                        .navigate(R.id.action_hub_to_privacyPolicy));
 
         // Contact & Support
         view.findViewById(R.id.rowContactSupport)
@@ -100,29 +99,6 @@ public class SettingsHubFragment extends Fragment {
                         .navigate(R.id.action_hub_to_waterParameters));
     }
 
-    /**
-     * The top toolbar of SettingsActivity is shared by every destination in SettingsHubFragment,
-     * so the sign-out action is registered here rather than on SettingsActivity;
-     * tying it to the view lifecycle keeps it off the sub-screens we navigate into.
-     */
-    private void addSignOutMenu() {
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu_settings_hub, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.action_sign_out) {
-                    SignOutDialog.show(requireActivity(), authRepository);
-                    return true;
-                }
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -130,18 +106,41 @@ public class SettingsHubFragment extends Fragment {
     }
 
     private void bindProfile() {
-        if (authRepository == null || tvHubProfileName == null || tvHubProfileEmail == null) {
+        if (authRepository == null || tvHubProfileInitial == null
+                || tvHubProfileName == null || tvHubProfileEmail == null) {
             return;
         }
         authRepository.syncProfileCacheFromFirebase();
 
         String name = authRepository.getProfileDisplayName();
         String email = authRepository.getProfileEmail();
+        tvHubProfileInitial.setText(initialFor(name, email));
         tvHubProfileName.setText(TextUtils.isEmpty(name)
                 ? getString(R.string.profile_name_empty)
                 : name);
         tvHubProfileEmail.setText(TextUtils.isEmpty(email)
                 ? getString(R.string.profile_email_empty)
                 : email);
+    }
+
+    /**
+     * First character of the display name for the avatar, falling back to the email and then to
+     * {@link #INITIAL_PLACEHOLDER}.
+     */
+    private static String initialFor(@Nullable String name, @Nullable String email) {
+        String source = !TextUtils.isEmpty(name) ? name : email;
+        if (source == null) {
+            return INITIAL_PLACEHOLDER;
+        }
+        source = source.trim();
+        if (source.isEmpty()) {
+            return INITIAL_PLACEHOLDER;
+        }
+
+        int codePoint = source.codePointAt(0);
+        if (!Character.isLetterOrDigit(codePoint)) {
+            return INITIAL_PLACEHOLDER;
+        }
+        return new String(Character.toChars(codePoint)).toUpperCase(Locale.ROOT);
     }
 }

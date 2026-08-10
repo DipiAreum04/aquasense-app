@@ -13,6 +13,28 @@
     <color name="danger_on_toolbar">#FFEF5350</color>
     <color name="toolbar_gradient_start">#FF1a3940</color>
     <color name="toolbar_gradient_end">#FF4C4366</color>
+
+    <!--
+      See values/colors.xml. Same shape as day, read downwards: the page starts at its darkest and
+      opens into the app's ocean blue at the foot, as day starts white and opens into the aqua.
+
+      L* 6.1 -> 10.3 -> 21.0, a 15-point span where the previous ramp had 6.6 and was not readable
+      as a gradient at all. sRGB gives no other way to widen it: at these lightnesses the blues top
+      out near C* 17, so the deep end is already at 97% of the chroma its hue can hold and every
+      further bit of presence has to come out of lightness. The hue rotates the other way from
+      day's, out of the near-neutral blue the page is tinted with and into the aqua as it lightens
+      (h 261 -> 243 -> 224), so the colour arrives with the light rather than crossing it.
+
+      The centre sits below the midpoint rather than on it, so the dark holds most of the way down
+      and the blue is a glow at the foot instead of a wash over the whole page. That also puts the
+      crossover with @color/card_background (L* 14) into the bottom third: a card is lighter than
+      the page over most of a screen and darker than it only near the foot, where its 6dp elevation
+      is what separates it. Hence the black shadow colour above, rather than day's tinted one.
+    -->
+    <color name="app_gradient_bottom">#FF023843</color>
+    <color name="app_gradient_center">#FF021F2B</color>
+    <!-- The page colour itself, so the ramp resolves into it exactly. -->
+    <color name="app_gradient_top">@color/background</color>
     <color name="status_success">#FF81C784</color>
     <color name="settings_icon_bg">#4D64B5F6</color>
     <!-- See values/colors.xml: the groove rises above the page here rather than sinking below it,
@@ -24,6 +46,8 @@
     <!-- The accent again, as in day; the accent itself is what differs between the two schemes. -->
     <color name="analytics_action_ripple">#3364B5F6</color>
 
+    <color name="profile_initial_icon">#CCB0F0</color>
+    <color name="profile_initial_icon_bg">#4D2F64</color>
     <color name="settings_icon_cyan">#FF4DD0E1</color>
     <color name="settings_icon_cyan_bg">#4D4DD0E1</color>
     <color name="settings_icon_teal">#FF4DB6AC</color>

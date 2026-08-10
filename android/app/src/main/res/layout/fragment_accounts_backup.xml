@@ -25,9 +25,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_name_empty"
-                android:textColor="@color/text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"                
+                android:textAppearance="@style/TextAppearance.AquaSense.ProfileName" />
 
             <TextView
                 android:id="@+id/tvProfileEmail"
@@ -35,8 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/profile_email_empty"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.ProfileEmail" />
 
             <TextView
                 android:id="@+id/btnEditProfile"
@@ -46,167 +44,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/edit_profile"
-                android:textColor="@color/accent"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <!-- Cloud Backup section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/section_cloud_backup"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/bg_settings_card"
-            style="@style/Widget.AquaSense.Card"
-            android:orientation="vertical">
-
-            <!-- Auto-backup toggle -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_backup"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_backup_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchAutoBackup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Last backup (info row) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/last_backup"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tvLastBackup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/never"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <!-- Storage used (info row) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/storage_used"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/storage_used_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvStorageUsed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/storage_used_placeholder"
-                    android:textColor="@color/accent"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <TextView
-                android:id="@+id/btnImportBackup"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/import_backup"
-                android:textColor="@color/text_primary"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.RowValue" />
 
         </LinearLayout>
 
@@ -217,9 +55,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_account_actions"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -231,7 +67,10 @@
             <TextView
                 android:id="@+id/btnSignOut"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -239,8 +78,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/sign_out"
-                android:textColor="@color/text_primary"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
             <View
                 android:layout_width="match_parent"
@@ -251,7 +89,10 @@
             <TextView
                 android:id="@+id/btnDeleteAccount"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -259,8 +100,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/delete_account"
-                android:textColor="@color/danger"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Danger" />
 
         </LinearLayout>
 

@@ -18,9 +18,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/contact_purpose"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +46,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/contact_purpose_feedback"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <RadioButton
                     android:id="@+id/rbContactSupport"
@@ -58,8 +55,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/contact_purpose_support"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
             </RadioGroup>
 
@@ -71,9 +67,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/contact_issue_with"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,8 +94,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/contact_issue_hardware"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <RadioButton
                     android:id="@+id/rbIssueApp"
@@ -110,8 +103,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/contact_issue_app"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <RadioButton
                     android:id="@+id/rbIssueNa"
@@ -121,8 +113,7 @@
                     android:gravity="center_vertical"
                     android:minHeight="48dp"
                     android:text="@string/contact_issue_na"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
             </RadioGroup>
 
@@ -134,9 +125,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/contact_form"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -158,9 +147,8 @@
                 android:inputType="textPersonName"
                 android:maxLength="100"
                 android:minHeight="48dp"
-                android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.FieldInput" />
 
             <View
                 android:layout_width="match_parent"
@@ -179,9 +167,8 @@
                 android:inputType="textEmailAddress"
                 android:maxLength="100"
                 android:minHeight="48dp"
-                android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.FieldInput" />
 
             <View
                 android:layout_width="match_parent"
@@ -194,8 +181,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/contact_message"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
             <EditText
                 android:id="@+id/etContactMessage"
@@ -207,16 +193,16 @@
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine|textCapSentences"
                 android:minLines="6"
-                android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary"
-                android:textSize="15sp" />
+                android:textAppearance="@style/TextAppearance.AquaSense.FieldInput" />
 
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSendContact"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:minHeight="52dp"
             android:background="@drawable/bg_auth_primary_button"
             android:text="@string/contact_send"
             android:textAllCaps="false"

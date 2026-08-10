@@ -20,8 +20,8 @@
             android:id="@+id/action_hub_to_accounts"
             app:destination="@id/accountsBackupFragment" />
         <action
-            android:id="@+id/action_hub_to_dataPrivacy"
-            app:destination="@id/dataPrivacyFragment" />
+            android:id="@+id/action_hub_to_privacyPolicy"
+            app:destination="@id/privacyPolicyFragment" />
         <action
             android:id="@+id/action_hub_to_displayUnits"
             app:destination="@id/displayUnitsFragment" />
@@ -106,18 +106,7 @@
         tools:layout="@layout/fragment_edit_profile"
         android:label="@string/edit_profile" />
 
-    <!-- ST-1.4 - merged Privacy + Encryption + Firebase -->
-    <fragment
-        android:id="@+id/dataPrivacyFragment"
-        android:name="ca.team6.aquasense.settings.DataPrivacyFragment"
-        tools:layout="@layout/fragment_data_privacy"
-        android:label="@string/privacy_data">
-        <action
-            android:id="@+id/action_dataPrivacy_to_privacyPolicy"
-            app:destination="@id/privacyPolicyFragment" />
-    </fragment>
-
-    <!-- PRIVSEC - Privacy Policy (from Data & Privacy) -->
+    <!-- PRIVSEC - Privacy Policy (from Help & Support) -->
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="ca.team6.aquasense.settings.PrivacyPolicyFragment"

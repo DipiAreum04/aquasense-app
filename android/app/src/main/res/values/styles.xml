@@ -31,6 +31,73 @@
     </style>
 
     <!--
+      Type scale for the settings screens.
+
+      Every settings screen is built from the same parts: an all-caps section header, a card, and
+      rows inside it made of a title, an optional description, and an optional right-aligned value.
+      These styles are the single source of truth for the size and colour of each of those parts, so
+      changing them here changes them on every settings screen at once.
+    -->
+
+    <style name="TextAppearance.AquaSense.SectionHeader" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!-- Primary label of a settings row -->
+    <style name="TextAppearance.AquaSense.RowTitle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Row title for a destructive action, e.g. Delete Account. -->
+    <style name="TextAppearance.AquaSense.RowTitle.Danger">
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <!-- Row title rendered in the accent colour, e.g. a sensor name on the calibration screen. -->
+    <style name="TextAppearance.AquaSense.RowTitle.Accent">
+        <item name="android:textColor">@color/accent</item>
+    </style>
+
+    <!-- Descriptions under a row title, and descriptions under a section header. -->
+    <style name="TextAppearance.AquaSense.RowDesc" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!-- Right-aligned value or inline action on a row, e.g. a quiet-hours time or "Edit Profile". -->
+    <style name="TextAppearance.AquaSense.RowValue" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/accent</item>
+    </style>
+
+    <!-- Value that is absent or not yet set, e.g. "Never" or "Not connected". -->
+    <style name="TextAppearance.AquaSense.RowValue.Muted">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!-- Editable field on a settings form, and the read-only values shown beside them -->
+    <style name="TextAppearance.AquaSense.FieldInput" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Name and email in the profile block at the top of the hub and Accounts screens -->
+    <style name="TextAppearance.AquaSense.ProfileName" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.AquaSense.ProfileEmail" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!--
       Analytics sensor tabs. Four fixed tabs share the width, and "Dissolved Solids" is the one
       that has to fit: at the 14sp all-caps the library defaults to it wraps to two lines on a
       compact screen. 12sp sentence case fits it on one, and matches the bottom navigation labels

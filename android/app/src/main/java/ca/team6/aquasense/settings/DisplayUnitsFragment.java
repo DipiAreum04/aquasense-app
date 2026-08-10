@@ -68,7 +68,6 @@ public class DisplayUnitsFragment extends Fragment {
         RadioGroup rgTemp       = view.findViewById(R.id.rgTempUnit);
         RadioGroup rgPrecision  = view.findViewById(R.id.rgPrecision);
         RadioGroup rgThemeMode  = view.findViewById(R.id.rgThemeMode);
-        SwitchCompat switch24h  = view.findViewById(R.id.switch24HourClock);
         containerDashboardCards = view.findViewById(R.id.containerDashboardCards);
         tvDashboardCardsDisabledNote = view.findViewById(R.id.tvDashboardCardsDisabledNote);
 
@@ -76,7 +75,6 @@ public class DisplayUnitsFragment extends Fragment {
             rgTemp.check("C".equals(s.tempUnit) ? R.id.rbCelsius : R.id.rbFahrenheit);
             rgPrecision.check(precisionToId(s.readingPrecision));
             rgThemeMode.check(themeModeToId(s.themeMode));
-            switch24h.setChecked(s.use24HourClock);
         });
 
         // Dashboard temperature unit reads this preference.
@@ -94,10 +92,6 @@ public class DisplayUnitsFragment extends Fragment {
 
         rgThemeMode.setOnCheckedChangeListener((group, checkedId) ->
                 prefs.setThemeMode(idToThemeMode(checkedId)));
-
-        // TODO: Apply 24-hour clock formatting where times are shown.
-        switch24h.setOnCheckedChangeListener((b, checked) ->
-                prefs.updateField(SettingsRepository.KEY_24H_CLOCK, checked));
 
         setUpDashboardCardRows();
         aquariumRepository.addObserver(aquariumsObserver);

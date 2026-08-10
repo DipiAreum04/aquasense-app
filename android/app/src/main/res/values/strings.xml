@@ -174,9 +174,7 @@
     <string name="notifications">Notifications</string>
     <string name="notifications_desc">Push, email, &amp; SMS alert configuration</string>
     <string name="accounts_backup">Accounts &amp; Backup</string>
-    <string name="accounts_backup_desc">Profile, cloud backup &amp; import</string>
-    <string name="privacy_data">Data &amp; Privacy</string>
-    <string name="privacy_data_desc">Privacy policy &amp; data controls</string>
+    <string name="accounts_backup_desc">Profile &amp; account actions</string>
     <string name="troubleshooting_guide">Troubleshooting Guide</string>
     <string name="troubleshooting_guide_desc">Common issue fixes &amp; setup tips</string>
     <string name="contact_support">Contact &amp; Support</string>
@@ -193,16 +191,7 @@
     <string name="edit_profile_email_locked">Your email is tied to your login and can\'t be changed here.</string>
     <string name="edit_profile_saving">Saving…</string>
     <string name="edit_profile_save_failed">Couldn\'t save your profile. Check your connection and try again.</string>
-    <string name="section_cloud_backup">CLOUD BACKUP</string>
-    <string name="auto_backup">Auto-backup</string>
-    <string name="auto_backup_desc">Every 6 hours</string>
-    <string name="last_backup">Last backup</string>
-    <string name="storage_used">Storage used</string>
-    <string name="storage_used_desc">Shows local app data only (temporary)</string>
-    <string name="storage_used_placeholder">—</string>
-    <string name="storage_used_format">%1$s used</string>
     <string name="section_account_actions">ACCOUNT ACTIONS</string>
-    <string name="import_backup">Import Backup</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_title">Sign Out?</string>
     <string name="sign_out_message">You will need to sign in again to manage your aquariums on this device.</string>
@@ -232,9 +221,6 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_desc">Follow Device matches your device\'s light or dark setting.</string>
 
-    <string name="section_interface">INTERFACE</string>
-    <string name="twenty_four_hour_clock">24-hour Clock</string>
-
     <string name="section_precision">READING PRECISION</string>
     <string name="precision_standard">Standard</string>
     <string name="precision_standard_desc">Example: 24.5 °C · pH 7.2 · 342 ppm</string>
@@ -252,9 +238,6 @@
     <string name="section_alert_channels">ALERT CHANNELS</string>
     <string name="push_notifications">Push notifications</string>
     <string name="push_notifications_desc">In-app and device alerts</string>
-    <string name="email_alerts">Email alerts</string>
-    <string name="sms_text">SMS / Text</string>
-    <string name="sms_text_desc">Text message alerts</string>
     <string name="critical_alerts_only">Critical alerts only</string>
     <string name="section_filters">FILTERS</string>
     <string name="critical_alerts_desc">Suppress non-urgent warnings</string>
@@ -315,15 +298,9 @@
     <string name="notification_permission_settings_title">Allow notifications</string>
     <string name="notification_permission_settings_desc">Required. Android is blocking AquaSense alerts.</string>
 
-    <!-- Data & Privacy -->
-    <string name="section_privacy">PRIVACY</string>
-    <string name="usage_analytics">Usage analytics</string>
-    <string name="usage_analytics_desc">Anonymous usage data</string>
-    <string name="location_data">Location data</string>
-    <string name="location_data_desc">Regional water quality benchmarks</string>
-    <string name="section_data_rights">DATA RIGHTS</string>
-    <string name="download_my_data">Download My Data</string>
+    <!-- Privacy Policy -->
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_desc">How AquaSense handles your data</string>
     <string name="privacy_policy_link_failed">No app available to open this link.</string>
 
     <!-- Contact & Support -->

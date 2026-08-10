@@ -19,25 +19,23 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_settings_card"
-            android:clickable="true"
             style="@style/Widget.AquaSense.Card"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <ImageView
+            <TextView
+                android:id="@+id/tvHubProfileInitial"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="14dp"
-                android:background="@drawable/bg_settings_icon"
-                android:backgroundTint="@color/settings_icon_blue_bg"
-                android:contentDescription="@null"
+                android:background="@drawable/bg_profile_avatar"
+                android:backgroundTint="@color/profile_initial_icon_bg"
+                android:gravity="center"
                 android:importantForAccessibility="no"
-                android:padding="8dp"
-                android:src="@drawable/manage_accounts_24px"
-                app:tint="@color/settings_icon_blue" />
+                android:textColor="@color/profile_initial_icon"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -50,27 +48,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_name_empty"
-                    android:textColor="@color/text_primary"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"                    
+                    android:textAppearance="@style/TextAppearance.AquaSense.ProfileName" />
 
                 <TextView
                     android:id="@+id/tvHubProfileEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_email_empty"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.ProfileEmail" />
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="@null"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_chevron_right"
-                app:tint="@color/icon_gray" />
+            <ImageButton
+                android:id="@+id/btnHubSignOut"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/sign_out"
+                android:src="@drawable/logout_24px"
+                app:tint="@color/danger_on_toolbar" />
 
         </LinearLayout>
 
@@ -81,9 +78,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_aquarium"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,7 +92,10 @@
             <LinearLayout
                 android:id="@+id/rowTankProfiles"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -128,15 +126,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tank_profiles"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tank_profiles_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -161,7 +157,10 @@
             <LinearLayout
                 android:id="@+id/rowAquariumTemplates"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -192,15 +191,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/aquarium_templates"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/aquarium_templates_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -225,7 +222,10 @@
             <LinearLayout
                 android:id="@+id/rowWaterParameters"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -256,15 +256,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_parameters"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/water_parameters_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -289,7 +287,10 @@
             <LinearLayout
                 android:id="@+id/rowSensorCalibration"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -320,15 +321,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_calibration"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_calibration_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -351,9 +350,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_app_account"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -367,7 +364,10 @@
             <LinearLayout
                 android:id="@+id/rowDisplayUnits"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -398,15 +398,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_units"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/display_units_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -430,7 +428,10 @@
             <LinearLayout
                 android:id="@+id/rowNotifications"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -461,15 +462,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/notifications"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/notifications_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -494,7 +493,10 @@
             <LinearLayout
                 android:id="@+id/rowAccountsBackup"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -525,79 +527,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/accounts_backup"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/accounts_backup_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@null"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="@color/icon_gray" />
-
-            </LinearLayout>
-
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="62dp"
-                android:background="@color/divider" />
-
-            <!-- Data & Privacy section -->
-            <LinearLayout
-                android:id="@+id/rowDataPrivacy"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="14dp"
-                    android:background="@drawable/bg_settings_icon"
-                    android:backgroundTint="@color/settings_icon_cyan_bg"
-                    android:contentDescription="@null"
-                    android:importantForAccessibility="no"
-                    android:padding="6dp"
-                    android:src="@drawable/sync_24px"
-                    app:tint="@color/settings_icon_cyan" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/privacy_data"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/privacy_data_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -620,9 +556,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_help_support"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -636,7 +570,10 @@
             <LinearLayout
                 android:id="@+id/rowTroubleshootingGuide"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -667,15 +604,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/troubleshooting_guide"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/troubleshooting_guide_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -700,7 +635,10 @@
             <LinearLayout
                 android:id="@+id/rowContactSupport"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -731,15 +669,78 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_support"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/contact_support_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/icon_gray" />
+
+            </LinearLayout>
+
+            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="62dp"
+                android:background="@color/divider" />
+
+            <!-- Privacy Policy -->
+            <LinearLayout
+                android:id="@+id/rowPrivacyPolicy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_settings_icon"
+                    android:backgroundTint="@color/settings_icon_cyan_bg"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="6dp"
+                    android:src="@drawable/lock_24px"
+                    app:tint="@color/settings_icon_cyan" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/privacy_policy"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/privacy_policy_desc"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 

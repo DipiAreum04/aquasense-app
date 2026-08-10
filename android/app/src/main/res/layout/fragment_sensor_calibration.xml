@@ -16,8 +16,8 @@
             android:layout_marginBottom="16dp"
             android:layout_marginStart="4dp"
             android:text="@string/calibration_intro"
-            android:textColor="@color/text_muted"
-            android:textSize="13sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+            android:textColor="@color/text_muted" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,16 +51,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_info_water_level_title"
-                        android:textColor="@color/accent"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Accent" />
 
                     <TextView
                         android:id="@+id/tvLiquidDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/never_calibrated"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -70,9 +68,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/never"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"                    
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
 
                 <Button
                     android:id="@+id/btnCalibrateLiquid"
@@ -116,16 +113,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_info_temperature_title"
-                        android:textColor="@color/accent"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Accent" />
 
                     <TextView
                         android:id="@+id/tvTempDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/never_calibrated"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -135,9 +130,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/never"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"                   
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
 
                 <Button
                     android:id="@+id/btnCalibrateTemp"
@@ -181,16 +175,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_info_dissolved_solids_title"
-                        android:textColor="@color/accent"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Accent" />
 
                     <TextView
                         android:id="@+id/tvTdsDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/never_calibrated"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -200,9 +192,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/never"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"                    
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
 
                 <Button
                     android:id="@+id/btnCalibrateTds"
@@ -246,16 +237,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_info_ph_level_title"
-                        android:textColor="@color/accent"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Accent" />
 
                     <TextView
                         android:id="@+id/tvPhDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/never_calibrated"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -265,9 +254,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="@string/never"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"                    
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
 
                 <Button
                     android:id="@+id/btnCalibratePh"
