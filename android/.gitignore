@@ -1,5 +1,8 @@
 *.iml
+.gradle-workspace/
+.local-user-home/
 .gradle
+.gradle-workspace
 /local.properties
 .idea/
 .DS_Store

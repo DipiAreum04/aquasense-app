@@ -2,9 +2,11 @@ package ca.team6.aquasense;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -15,8 +17,11 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    public static final String EXTRA_START_DESTINATION = "start_destination";
+
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private int shortcutDestinationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +55,39 @@ public class SettingsActivity extends AppCompatActivity {
                     .build();
             NavigationUI.setupActionBarWithNavController(
                     this, navController, appBarConfiguration);
+
+            shortcutDestinationId = getIntent().getIntExtra(EXTRA_START_DESTINATION, 0);
+            if (shortcutDestinationId != 0) {
+                navController.navigate(shortcutDestinationId);
+            }
+
+            // Skip the Settings Hub entirely when we jumped straight to a destination
+            // (e.g. dashboard shortcut icons) -- exit to the caller instead of surfacing
+            // the Hub screen the user never asked to see.
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    if (isAtShortcutDestination()) {
+                        finish();
+                    } else if (!navController.popBackStack()) {
+                        finish();
+                    }
+                }
+            });
         }
+    }
+
+    private boolean isAtShortcutDestination() {
+        NavDestination current = navController.getCurrentDestination();
+        return shortcutDestinationId != 0 && current != null && current.getId() == shortcutDestinationId;
     }
 
     @Override
     public boolean onSupportNavigateUp() {
+        if (navController != null && isAtShortcutDestination()) {
+            finish();
+            return true;
+        }
         if (navController != null && appBarConfiguration != null) {
             return NavigationUI.navigateUp(navController, appBarConfiguration)
                     || super.onSupportNavigateUp();

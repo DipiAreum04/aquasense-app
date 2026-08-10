@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The panel the settings dialogs are drawn on. AlertDialog's own window background is taken away
+  and replaced with this, because the platform's dialog is square-cornered grey furniture and this
+  one has to read as a card lifted off the settings page.
+
+  Same 24dp as the analytics dialog: a dialog is a card lifted off the page rather than one lying
+  on it, and the softer corner is what says so. @color/card_background carries the light and dark
+  values, so the panel follows the page into either scheme without a second drawable.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/card_background" />
+    <corners android:radius="24dp" />
+</shape>

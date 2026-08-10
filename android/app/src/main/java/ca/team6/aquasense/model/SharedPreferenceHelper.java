@@ -111,6 +111,11 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().remove(key).apply();
     }
 
+    /** Removes a value before returning, for one-time local data migrations. */
+    public void removeSync(String key) {
+        sharedPreferences.edit().remove(key).commit();
+    }
+
     public void updateField(String key, Object value) {
         if (value instanceof Boolean) {
             setBoolean(key, (Boolean) value);

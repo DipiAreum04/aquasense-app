@@ -260,7 +260,15 @@
     <string name="default_quiet_start">22:00</string>
     <string name="default_quiet_end">07:00</string>
     <string name="maintenance_mode">Maintenance Mode</string>
-    <string name="maintenance_mode_desc">Suppresses all notifications when this mode is on</string>
+    <string name="maintenance_mode_desc">Pauses all alerts for the selected aquarium and resumes automatically</string>
+    <string name="maintenance_duration_label">Snooze duration</string>
+    <string name="maintenance_duration_picker_title">How long should alerts stay paused?</string>
+    <string name="maintenance_duration_15m">15 minutes</string>
+    <string name="maintenance_duration_30m">30 minutes</string>
+    <string name="maintenance_duration_1h">1 hour</string>
+    <string name="maintenance_duration_2h">2 hours</string>
+    <string name="maintenance_remaining">%1$s remaining</string>
+    <string name="maintenance_remaining_less_than_minute">Less than 1 min remaining</string>
     <string name="section_notification_types">NOTIFICATION TYPES</string>
     <string name="param_out_of_range">Parameter safe range exceeded</string>
     <string name="param_out_of_range_desc">Alert when a reading crosses its safe range</string>
@@ -272,6 +280,8 @@
     <string name="sensor_disconnected_desc">Alert when a sensor stops sending readings</string>
     <string name="hub_disconnected">Hub disconnected</string>
     <string name="hub_disconnected_desc">Alert when the board stops reporting readings</string>
+    <string name="daily_summary_digest">Daily summary digest</string>
+    <string name="firmware_update_available">Firmware update available</string>
     <string name="notification_channel_threshold_name">Threshold alerts</string>
     <string name="notification_channel_threshold_desc">Alerts when aquarium parameters leave their safe range</string>
     <string name="notification_channel_monitoring_name">Background monitoring</string>
@@ -541,6 +551,27 @@
     <string name="template_legend_warning">Warning</string>
     <string name="template_legend_critical">Critical</string>
 
+    <!-- NF-3.2 notification history -->
+    <string name="label_filter_aquarium">Aquarium</string>
+    <string name="label_filter_sensor">Sensor</string>
+    <string name="title_notification_history">Notification History</string>
+    <string name="filter_all_aquariums">All Aquariums</string>
+    <string name="filter_all_sensors">All Sensors</string>
+    <string name="no_notification_history">No notifications match your filters</string>
+    <string name="trigger_threshold">Threshold Exceeded</string>
+    <string name="trigger_offline">Sensor Offline</string>
+    <string name="trigger_time_triggered">Scheduled Check-In</string>
+    <string name="notification_history_subtitle">%1$s • %2$s</string>
+    <!-- Names the board rather than a sensor, for hub-level alerts in the history list. -->
+    <string name="notification_history_hub">Hub</string>
+    <string name="notification_history_page">Page %1$d of %2$d</string>
+    <string name="notification_history_previous_page">Previous page</string>
+    <string name="notification_history_next_page">Next page</string>
+    <string name="notification_history_clear_all">Clear all</string>
+    <string name="notification_history_clear_all_title">Clear notification history?</string>
+    <string name="notification_history_clear_all_message">This deletes every notification in your history, including notifications on other pages and hidden by the current filters.</string>
+    <string name="notification_history_clear_all_cancel">Cancel</string>
+    <string name="notification_history_clear_all_confirm">Clear all</string>
     <!-- Water Parameters (SETTINGS-07): the thresholds every alert and status colour is judged against -->
     <string name="water_parameters_no_aquarium">Thresholds are stored per aquarium, so there is nothing to configure until a hub is paired.</string>
     <string name="threshold_section_safe_range">Threshold Ranges</string>

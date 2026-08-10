@@ -82,6 +82,13 @@
         tools:layout="@layout/fragment_notifications"
         android:label="Notifications" />
 
+    <!-- NF-3.2 -->
+    <fragment
+        android:id="@+id/notificationHistoryFragment"
+        android:name="ca.team6.aquasense.settings.NotificationHistoryFragment"
+        tools:layout="@layout/fragment_notification_history"
+        android:label="@string/title_notification_history" />
+
     <!-- ST-1.3 -->
     <fragment
         android:id="@+id/accountsBackupFragment"

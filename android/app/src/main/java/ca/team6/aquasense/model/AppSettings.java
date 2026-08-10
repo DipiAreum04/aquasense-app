@@ -17,7 +17,6 @@ public class AppSettings {
     public boolean quietHours = false;
     public String quietHoursStart = "22:00";
     public String quietHoursEnd = "07:00";
-    public boolean feedingModeSilence = false;
     public boolean notifyParamOutOfRange = true;
     public boolean notifyAbnormalJumps = true;
     public boolean notifySensorDisconnected = true;
