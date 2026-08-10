@@ -63,6 +63,22 @@
     <color name="analytics_segment_track">#FFE3E8EF</color>
     <color name="analytics_segment_selected">#FFFFFFFF</color>
 
+    <!--
+      The same groove for the bar the two chart actions sit in, but laid over the plot rather than
+      on the card, so it is let down to seven tenths and the line it covers reads through it. The
+      icons on top keep their own full strength, so what is traded away is the bar's opacity rather
+      than their legibility.
+    -->
+    <color name="analytics_action_bar_track">#B3E3E8EF</color>
+
+    <!--
+      Press feedback for the two chart actions and for the dialog's cancel button. The cards ripple
+      with @color/alpha_0x22_background, which is the page colour and so shows on white; these sit
+      on @color/analytics_segment_track, which is already that colour a shade darker, so the ripple
+      is cut from @color/accent instead at the alpha the page colour carries.
+    -->
+    <color name="analytics_action_ripple">#33158AC0</color>
+
     <color name="settings_icon_cyan">#FF00ACC1</color>
     <color name="settings_icon_cyan_bg">#4D00ACC1</color>
     <color name="settings_icon_teal">#FF00897B</color>

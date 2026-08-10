@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The bar the two chart actions sit in, at the top right of the graph card.
+
+  It is the same groove @drawable/bg_analytics_period_track cuts for the period buttons, so the two
+  rows on this page that hold buttons are made of the same material, but let down to seven tenths
+  because this one lies over the plot rather than on the card: see @color/analytics_action_bar_track.
+  The radius is half the bar's height - 40dp of button plus 4dp of padding at each end - which is
+  what rounds the ends into semicircles rather than corners. See @dimen/analytics_action_button_size.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/analytics_action_bar_track" />
+    <corners android:radius="24dp" />
+</shape>

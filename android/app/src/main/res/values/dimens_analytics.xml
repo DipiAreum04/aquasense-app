@@ -32,4 +32,25 @@
       card carrying the status colour, so it is scaled to match.
     -->
     <dimen name="analytics_status_led_size">12dp</dimen>
+
+    <!--
+      The two chart actions and the bar they sit in. Three numbers that have to agree with two
+      radii declared elsewhere: @drawable/bg_analytics_action_button masks its ripple to half the
+      button, which is what makes it a disc, and @drawable/bg_analytics_action_bar rounds to half
+      the bar's height - one button plus the padding at each end - which is what makes its ends
+      semicircles. Changing the button size means changing both of those with it.
+
+      40dp is the icon button this app already draws; see the password field's reveal toggle. With
+      4dp of bar around it that puts the row at the 48dp a touch target is meant to be.
+    -->
+    <dimen name="analytics_action_button_size">40dp</dimen>
+    <dimen name="analytics_action_icon_padding">9dp</dimen>
+    <dimen name="analytics_action_bar_padding">4dp</dimen>
+
+    <!--
+      How far the bar sits in from the plot's top right corner. Enough to read as floating over the
+      chart rather than pinned to its edge, and small enough to leave the corner it covers to the
+      part of the line that is rarely drawn there.
+    -->
+    <dimen name="analytics_action_bar_inset">6dp</dimen>
 </resources>

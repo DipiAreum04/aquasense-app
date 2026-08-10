@@ -36,16 +36,22 @@ import ca.team6.aquasense.model.SensorReading;
 public enum AnalyticsPeriod {
 
     LAST_1H(DatabaseSchema.LAST_1H_KEY, R.string.analytics_period_1h,
+            R.string.analytics_period_1h_long,
             Seconds.PER_MINUTE, 60, R.string.analytics_axis_minutes_ago),
     LAST_1D(DatabaseSchema.LAST_1D_KEY, R.string.analytics_period_1d,
+            R.string.analytics_period_1d_long,
             Seconds.PER_HOUR, 24, R.string.analytics_axis_hours_ago),
     LAST_1W(DatabaseSchema.LAST_1W_KEY, R.string.analytics_period_1w,
+            R.string.analytics_period_1w_long,
             Seconds.PER_DAY, 7, R.string.analytics_axis_days_ago),
     LAST_1M(DatabaseSchema.LAST_1M_KEY, R.string.analytics_period_1m,
+            R.string.analytics_period_1m_long,
             Seconds.PER_DAY, 30, R.string.analytics_axis_days_ago),
     LAST_6M(DatabaseSchema.LAST_6M_KEY, R.string.analytics_period_6m,
+            R.string.analytics_period_6m_long,
             Seconds.PER_MONTH, 6, R.string.analytics_axis_months_ago),
     LAST_1Y(DatabaseSchema.LAST_1Y_KEY, R.string.analytics_period_1y,
+            R.string.analytics_period_1y_long,
             Seconds.PER_MONTH, 12, R.string.analytics_axis_months_ago);
 
     /**
@@ -69,6 +75,8 @@ public enum AnalyticsPeriod {
     private final String databaseKey;
     @StringRes
     private final int labelResId;
+    @StringRes
+    private final int longLabelResId;
     private final float secondsPerXUnit;
     private final int spanInXUnits;
     @StringRes
@@ -76,11 +84,13 @@ public enum AnalyticsPeriod {
 
     AnalyticsPeriod(@NonNull String databaseKey,
                     @StringRes int labelResId,
+                    @StringRes int longLabelResId,
                     float secondsPerXUnit,
                     int spanInXUnits,
                     @StringRes int xAxisLabelResId) {
         this.databaseKey = databaseKey;
         this.labelResId = labelResId;
+        this.longLabelResId = longLabelResId;
         this.secondsPerXUnit = secondsPerXUnit;
         this.spanInXUnits = spanInXUnits;
         this.xAxisLabelResId = xAxisLabelResId;
@@ -95,6 +105,15 @@ public enum AnalyticsPeriod {
     @StringRes
     public int getLabelResId() {
         return this.labelResId;
+    }
+
+    /**
+     * The window spelled out, e.g. "Last 24 hours". For prose, where the button's "1D" would have
+     * to be decoded and there is room not to make the reader do it.
+     */
+    @StringRes
+    public int getLongLabelResId() {
+        return this.longLabelResId;
     }
 
     /** How many seconds one step along this window's x axis covers. */

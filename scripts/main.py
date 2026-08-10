@@ -9,6 +9,7 @@ from simulations import (
     Sensor,
     FirebaseDatabase,
     ThresholdPoller,
+    claim_single_instance,
     commit_tick,
 )
 
@@ -22,6 +23,8 @@ if __name__ == "__main__":
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     logger = logging.getLogger(__name__)
+
+    claim_single_instance()
 
     database = FirebaseDatabase()
 

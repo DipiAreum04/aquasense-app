@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -34,6 +35,9 @@ public class AnalyticsSummaryController {
     /** The bands of the distribution bar, left to right, worst last. */
     private static final SensorStatus[] DISTRIBUTION_BANDS = {
             SensorStatus.NORMAL, SensorStatus.WARNING, SensorStatus.CRITICAL};
+
+    /** Where the mean sits in the minimum-mean-maximum row; see the arrays built in the constructor. */
+    private static final int AVERAGE_INDEX = 1;
 
     private final ImageView statusLed;
     private final TextView statusText;
@@ -91,6 +95,26 @@ public class AnalyticsSummaryController {
         this.statusText.setText(sensor.getStatusTextResId());
         this.lastSeenText.setText(
                 lastSeen(this.statusText.getContext(), reading, nowMillis));
+        this.showAccentedFiguresConnected(
+                sensor.getSensorStatus() != SensorStatus.DISCONNECTED);
+    }
+
+    /**
+     * Draws the two figures that carry the accent - the uptime ring and the average - in the
+     * disconnected grey instead, while the sensor is unreachable.
+     *
+     * <p>These are the card's live-looking parts: the accent is what the page uses to say "this is
+     * the number to read", and a sensor that is not reporting has no such number. The other two
+     * figures either side of the average are in the ordinary text colour already and have nothing
+     * to say about reachability, so they are left alone. The colour is the resource the lamp above
+     * them is tinted with, which carries its own day and night values.
+     */
+    private void showAccentedFiguresConnected(boolean connected) {
+        int color = ContextCompat.getColor(this.uptimeValue.getContext(),
+                connected ? R.color.accent : R.color.status_gray);
+
+        this.uptimeRing.setIndicatorColor(color);
+        this.statValues[AVERAGE_INDEX].setTextColor(color);
     }
 
     /**

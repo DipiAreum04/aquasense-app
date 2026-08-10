@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The button that does the deleting. The only filled red on the page, and deliberately so: it is
+  the one control here that cannot be undone.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/alpha_0x60_white">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/danger" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+
+</ripple>
