@@ -28,7 +28,6 @@ public class SettingsRepository {
     public static final String KEY_QUIET_HOURS            = "quietHours";
     public static final String KEY_QUIET_START            = "quietHoursStart";
     public static final String KEY_QUIET_END              = "quietHoursEnd";
-    public static final String KEY_FEEDING_SILENCE        = "feedingModeSilence";
     public static final String KEY_NOTIFY_PARAM           = "notifyParamOutOfRange";
     public static final String KEY_NOTIFY_ABNORMAL_JUMPS  = "notifyAbnormalJumps";
     public static final String KEY_NOTIFY_SENSOR          = "notifySensorDisconnected";
@@ -46,6 +45,7 @@ public class SettingsRepository {
 
     // True after the SETTINGS-03 pairing wizard has been completed on this device on first install
     public static final String KEY_PAIRING_COMPLETE       = "pairingComplete";
+    public static final String KEY_ACTIVE_AQUARIUM        = "activeAquariumId";
 
     // True after a successful register/login on this device; until then auth starts at register page.
     public static final String KEY_HAS_AUTHENTICATED      = "hasAuthenticated";
@@ -90,7 +90,6 @@ public class SettingsRepository {
         s.quietHours            = prefs.getBoolean(KEY_QUIET_HOURS, d.quietHours);
         s.quietHoursStart       = prefs.getString(KEY_QUIET_START, d.quietHoursStart);
         s.quietHoursEnd         = prefs.getString(KEY_QUIET_END, d.quietHoursEnd);
-        s.feedingModeSilence    = prefs.getBoolean(KEY_FEEDING_SILENCE, d.feedingModeSilence);
         s.notifyParamOutOfRange = prefs.getBoolean(KEY_NOTIFY_PARAM, d.notifyParamOutOfRange);
         s.notifyAbnormalJumps   = prefs.getBoolean(KEY_NOTIFY_ABNORMAL_JUMPS, d.notifyAbnormalJumps);
         s.notifySensorDisconnected = prefs.getBoolean(KEY_NOTIFY_SENSOR, d.notifySensorDisconnected);

@@ -48,6 +48,7 @@ public final class FirebaseThresholdMonitor {
     private final Context appContext;
     private final SettingsRepository settingsRepository;
     private final ThresholdAlertDedupeStore dedupeStore;
+    private final MaintenanceModeStore maintenanceModeStore;
     private final Map<String, AquariumWatch> watches = new HashMap<>();
 
     @Nullable
@@ -74,6 +75,7 @@ public final class FirebaseThresholdMonitor {
         this.appContext = context.getApplicationContext();
         this.settingsRepository = new SettingsRepository(appContext);
         this.dedupeStore = new ThresholdAlertDedupeStore(appContext);
+        this.maintenanceModeStore = new MaintenanceModeStore(appContext);
     }
 
     public void start() {
@@ -138,7 +140,12 @@ public final class FirebaseThresholdMonitor {
             AquariumWatch watch = watches.get(aquarium.getId());
             if (watch == null) {
                 watch = new AquariumWatch(
-                        appContext, settingsRepository, dedupeStore, uid, aquarium);
+                        appContext,
+                        settingsRepository,
+                        dedupeStore,
+                        maintenanceModeStore,
+                        uid,
+                        aquarium);
                 watches.put(aquarium.getId(), watch);
                 watch.start();
             } else {
@@ -168,6 +175,7 @@ public final class FirebaseThresholdMonitor {
         private final Context appContext;
         private final SettingsRepository settingsRepository;
         private final ThresholdAlertDedupeStore dedupeStore;
+        private final MaintenanceModeStore maintenanceModeStore;
         private final String uid;
         private final Handler hubCheckHandler = new Handler(Looper.getMainLooper());
         private final List<SensorWatch> sensorWatches = new ArrayList<>();
@@ -188,12 +196,14 @@ public final class FirebaseThresholdMonitor {
                 Context appContext,
                 SettingsRepository settingsRepository,
                 ThresholdAlertDedupeStore dedupeStore,
+                MaintenanceModeStore maintenanceModeStore,
                 String uid,
                 Aquarium aquarium
         ) {
             this.appContext = appContext;
             this.settingsRepository = settingsRepository;
             this.dedupeStore = dedupeStore;
+            this.maintenanceModeStore = maintenanceModeStore;
             this.uid = uid;
             this.aquarium = aquarium;
         }
@@ -201,7 +211,12 @@ public final class FirebaseThresholdMonitor {
         void start() {
             for (String sensorId : MONITORED_SENSORS) {
                 SensorWatch watch = new SensorWatch(
-                        appContext, settingsRepository, dedupeStore, this, sensorId);
+                        appContext,
+                        settingsRepository,
+                        dedupeStore,
+                        maintenanceModeStore,
+                        this,
+                        sensorId);
                 sensorWatches.add(watch);
                 watch.start(uid, aquarium.getId());
             }
@@ -248,6 +263,9 @@ public final class FirebaseThresholdMonitor {
                 return;
             }
             Aquarium current = aquarium;
+            if (maintenanceModeStore.isActive(current.getId())) {
+                return;
+            }
             ThresholdViolation violation = ThresholdViolation.hubDisconnected(current.getId());
             if (!shouldDeliverAlert(settings, violation, SensorThresholds.HUB_DEDUPE_KEY)) {
                 return;
@@ -270,6 +288,7 @@ public final class FirebaseThresholdMonitor {
         private final Context appContext;
         private final SettingsRepository settingsRepository;
         private final ThresholdAlertDedupeStore dedupeStore;
+        private final MaintenanceModeStore maintenanceModeStore;
         private final AquariumWatch parent;
         private final String sensorId;
 
@@ -284,12 +303,14 @@ public final class FirebaseThresholdMonitor {
                 Context appContext,
                 SettingsRepository settingsRepository,
                 ThresholdAlertDedupeStore dedupeStore,
+                MaintenanceModeStore maintenanceModeStore,
                 AquariumWatch parent,
                 String sensorId
         ) {
             this.appContext = appContext;
             this.settingsRepository = settingsRepository;
             this.dedupeStore = dedupeStore;
+            this.maintenanceModeStore = maintenanceModeStore;
             this.parent = parent;
             this.sensorId = sensorId;
 
@@ -353,6 +374,15 @@ public final class FirebaseThresholdMonitor {
                 return;
             }
 
+            if (maintenanceModeStore.isActive(aquariumId)) {
+                // Recorded like the alerts-disabled case below, so the first reading after the
+                // snooze ends is compared against a real previous sample rather than a spike.
+                // Clearing active violation keys is no longer needed: alerts are re-gated by the
+                // per-condition cooldowns rather than a set of live violations.
+                rememberSample(aquariumId, reading);
+                return;
+            }
+
             if (!paramAlertsEnabled(settings) && !spikeAlertsEnabled(settings)) {
                 // Still recorded, so re-enabling alerts compares against the real previous sample
                 // instead of reading the first value after the gap as a spike.
@@ -387,7 +417,9 @@ public final class FirebaseThresholdMonitor {
                     reading.timestamp,
                     lastProcessedValue == null ? reading.value : lastProcessedValue);
 
-            if (!sensorOfflineAlertsEnabled(settings)) {
+            // The sample above is still recorded; only the alert is suppressed, which is how the
+            // feeding-silence flag this replaced behaved for every alert type.
+            if (!sensorOfflineAlertsEnabled(settings) || maintenanceModeStore.isActive(aquariumId)) {
                 return;
             }
 
@@ -486,7 +518,7 @@ public final class FirebaseThresholdMonitor {
     }
 
     private static boolean alertDeliveryEnabled(AppSettings settings, AlertType type) {
-        if (!settings.pushNotifications || settings.feedingModeSilence) {
+        if (!settings.pushNotifications) {
             return false;
         }
         switch (type) {

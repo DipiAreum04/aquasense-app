@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 
 import ca.team6.aquasense.MainActivity;
 import ca.team6.aquasense.R;
+import ca.team6.aquasense.model.NotificationLogMapper;
+import ca.team6.aquasense.model.NotificationLogRepository;
 import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
@@ -106,6 +108,7 @@ public final class AquasenseNotificationHelper {
             return;
         }
         NotificationManagerCompat.from(context).notify(violation.notificationId(), builder.build());
+        new NotificationLogRepository(context).addEntry(NotificationLogMapper.fromViolation(violation));
     }
 
     /**

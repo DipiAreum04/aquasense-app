@@ -130,8 +130,14 @@ public class DashboardFragment extends Fragment {
         // TODO: ONCLICK HANDLERS MUST BE DEFINED PROPERLY.
         navbarDashboard.setOnClickListener(v -> {
         });
-        navbarNotifications.setOnClickListener(v -> {
-        });
+        // Straight to the history rather than the notification settings: the tab is for reading
+        // what has already happened. SettingsActivity treats a start destination as a shortcut and
+        // exits to the dashboard on back, so the Settings hub never appears in between.
+        navbarNotifications.setOnClickListener(v ->
+            startActivity(new Intent(v.getContext(), SettingsActivity.class)
+                    .putExtra(SettingsActivity.EXTRA_START_DESTINATION,
+                            R.id.notificationHistoryFragment))
+        );
         navbarAnalytics.setOnClickListener(v ->
             startActivity(new Intent(v.getContext(), AnalyticsActivity.class))
         );

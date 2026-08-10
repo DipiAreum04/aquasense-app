@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  How long maintenance mode should hold. AlertDialog's own title and list are not used and its
+  window background is taken away, because the platform's picker is square-cornered grey furniture
+  and this one has to read as a card off the settings page. See NotificationsFragment, which is
+  what puts this in a window.
+
+  There is no cancel button: the four durations are the only choices, and backing out is the back
+  button or a tap outside, which the fragment already treats as leaving the switch as it was.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_settings_dialog"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/maintenance_duration_picker_title"
+        android:textColor="@color/text_primary"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/maintenanceDuration15m"
+        style="@style/Widget.AquaSense.SettingsDialogOption"
+        android:text="@string/maintenance_duration_15m" />
+
+    <TextView
+        android:id="@+id/maintenanceDuration30m"
+        style="@style/Widget.AquaSense.SettingsDialogOption"
+        android:text="@string/maintenance_duration_30m" />
+
+    <TextView
+        android:id="@+id/maintenanceDuration1h"
+        style="@style/Widget.AquaSense.SettingsDialogOption"
+        android:text="@string/maintenance_duration_1h" />
+
+    <TextView
+        android:id="@+id/maintenanceDuration2h"
+        style="@style/Widget.AquaSense.SettingsDialogOption"
+        android:text="@string/maintenance_duration_2h" />
+
+</LinearLayout>
