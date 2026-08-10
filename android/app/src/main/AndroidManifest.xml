@@ -3,7 +3,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Permissions for BLE pairing-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!--
+      specialUse, not dataSync: from Android 15 a dataSync foreground service may only run about
+      six hours per day before the system stops it, and an aquarium has to be watched continuously.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Re-arms monitoring after a reboot, which otherwise silently ends alerting. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Permissions for BLE pairing -->
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation" />
@@ -58,6 +68,24 @@
             android:label="Settings"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AquaSense" />
+        <service
+            android:name=".notifications.ThresholdMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Continuous aquarium sensor threshold monitoring, so the user is
+                    alerted to unsafe water conditions while the app is not open." />
+        </service>
+        <receiver
+            android:name=".notifications.MonitorBootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

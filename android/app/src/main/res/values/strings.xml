@@ -182,6 +182,31 @@
     <string name="sensor_disconnected_desc">Alert when a sensor stops sending readings</string>
     <string name="hub_disconnected">Hub disconnected</string>
     <string name="hub_disconnected_desc">Alert when the board stops reporting readings</string>
+    <string name="notification_channel_threshold_name">Threshold alerts</string>
+    <string name="notification_channel_threshold_desc">Alerts when aquarium parameters leave their safe range</string>
+    <string name="notification_channel_monitoring_name">Background monitoring</string>
+    <string name="notification_channel_monitoring_desc">Shows while AquaSense watches your aquarium for threshold alerts</string>
+    <string name="notification_monitoring_title">Monitoring aquarium</string>
+
+    <!-- Threshold alert copy. %1$s is the aquarium name, %2$s the sensor name. -->
+    <string name="alert_title_warning_range">%1$s: %2$s in warning range</string>
+    <string name="alert_title_critical_range">%1$s: %2$s in critical range</string>
+    <string name="alert_title_spike">%1$s: %2$s spike</string>
+    <string name="alert_title_water_level">%1$s: Water level alert</string>
+    <string name="alert_title_sensor_offline">%1$s: %2$s offline</string>
+    <string name="alert_title_hub_disconnected">%1$s: Hub disconnected</string>
+    <!-- Readings already carry their unit, so the placeholders are strings rather than numbers. -->
+    <string name="alert_body_warning_range">%1$s is %2$s (warning range). Safe range is %3$s to %4$s.</string>
+    <string name="alert_body_critical_range">%1$s is %2$s (critical range). Safe range is %3$s to %4$s.</string>
+    <string name="alert_body_warning_range_no_band">%1$s is %2$s, in the warning range.</string>
+    <string name="alert_body_critical_range_no_band">%1$s is %2$s, in the critical range.</string>
+    <string name="alert_body_spike">%1$s changed from %2$s to %3$s, more than the %4$s spike limit.</string>
+    <string name="alert_body_water_level">No water detected. Check the tank level right away.</string>
+    <string name="alert_body_sensor_offline">%1$s is not responding. Check the sensor connection.</string>
+    <string name="alert_body_hub_disconnected">The monitoring hub stopped reporting. Check power and Wi-Fi.</string>
+
+    <string name="notification_permission_settings_title">Allow notifications</string>
+    <string name="notification_permission_settings_desc">Required. Android is blocking AquaSense alerts.</string>
 
     <!-- Data & Privacy -->
     <string name="section_privacy">PRIVACY</string>

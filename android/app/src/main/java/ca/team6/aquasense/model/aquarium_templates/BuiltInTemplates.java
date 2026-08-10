@@ -129,6 +129,11 @@ public final class BuiltInTemplates {
         return FRESHWATER;
     }
 
+    /**
+     * The template to fall back on for an aquarium that stores a water type but no thresholds of
+     * its own. The schema only records {@code water_type}, not which template it came from, so an
+     * aquarium created before templates existed can only be resolved this far.
+     */
     public static AquariumTemplate forWaterType(@Nullable WaterType waterType) {
         return waterType == WaterType.SALTWATER ? SALTWATER : FRESHWATER;
     }

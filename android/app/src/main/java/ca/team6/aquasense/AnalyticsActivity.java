@@ -48,6 +48,7 @@ import ca.team6.aquasense.model.aquarium_sensors.DissolvedSolidsSensor;
 import ca.team6.aquasense.model.aquarium_sensors.PhLevelSensor;
 import ca.team6.aquasense.model.aquarium_sensors.TemperatureSensor;
 import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
+import ca.team6.aquasense.notifications.SensorThresholds;
 
 /**
  * DASH-03 - Analytics.
@@ -373,7 +374,9 @@ public class AnalyticsActivity extends AppCompatActivity {
 
         for (AquariumSensor sensor : SENSORS) {
             sensor.applyReading(this, readings.get(sensor.getId()),
-                    this.thresholdFor(active, sensor), nowMillis);
+                    this.thresholdFor(active, sensor),
+                    SensorThresholds.resolveSpikeDelta(active, sensor.getId()),
+                    nowMillis);
         }
         this.summaryController.showSensorHealth(this.selectedSensor,
                 readings.get(this.selectedSensor.getId()), nowMillis);

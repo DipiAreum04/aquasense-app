@@ -8,8 +8,6 @@ from simulations.hardware.consts import OFFLINE_VALUE
 
 _SMOOTHING_ALPHA = 0.1
 
-_SPIKE_STAGE_COUNT = 8
-
 
 class Sensor(ABC):
     """Simulates a sensor."""
@@ -22,8 +20,8 @@ class Sensor(ABC):
         self._sweep_period_secs = 0
         self._sweep_start_time = 0
         self._disabled = False
-        self._spike_period_secs = 0
-        self._spike_start_time = 0
+        self._spiking = False
+        self._spike_stage = 0
         self.retune(low, high)
 
     @property
@@ -44,7 +42,7 @@ class Sensor(ABC):
     @property
     def spike_test_active(self) -> bool:
         """Return whether a spike test is active."""
-        return self._spike_period_secs > 0
+        return self._spiking
 
     def retune(
         self,
@@ -79,11 +77,11 @@ class Sensor(ABC):
         self._sweep_period_secs = period_secs
         self._sweep_start_time = time()
 
-    def begin_spike_test(self, period_secs: int) -> None:
-        """Begin a spike test with the given period."""
+    def begin_spike_test(self) -> None:
+        """Begin a spike test, stepping through its cycle one reading at a time."""
         self.stop_tests()
-        self._spike_period_secs = period_secs
-        self._spike_start_time = time()
+        self._spiking = True
+        self._spike_stage = 0
 
     def begin_offline_test(self) -> None:
         """Begin an offline test."""
@@ -95,8 +93,7 @@ class Sensor(ABC):
         self._sweep_period_secs = 0
         self._sweep_start_time = 0
         self._disabled = False
-        self._spike_period_secs = 0
-        self._spike_start_time = 0
+        self._spiking = False
         if self._last_output is not None:
             self._previous = self._last_output
             self._last_output = None
@@ -106,7 +103,7 @@ class Sensor(ABC):
         if self._disabled:
             return OFFLINE_VALUE
 
-        if self._spike_period_secs > 0:
+        if self._spiking:
             return self._spike_measurement()
 
         measurement = self._rng.normal(loc=self._mean, scale=self._std_dev)
@@ -122,56 +119,55 @@ class Sensor(ABC):
         return self._previous
 
     def _spike_measurement(self) -> float:
-        """Return where the spike test's staircase stands at this point in its cycle.
+        """Return the spike test's reading for this tick and step the cycle on.
 
-        The cycle is divided into equal stages, each jumped to and then held for the rest of
-        its stage, so every step reads as a jump followed by a plateau rather than a single
-        reading that could be mistaken for noise.
+        One level per reading rather than one held over a stretch of time, because a spike
+        is a jump from one reading to the next: a level repeated across several ticks would
+        be a single jump followed by readings that settle next to it and clear it again.
 
-        Deliberately not drawn from the distribution the ordinary readings come from. A
-        draw wide enough to jump between bands has a tail outside whichever one it is
-        meant to be sitting in, so the plateaus would not hold a single status.
+        Deliberately not drawn from the distribution the ordinary readings come from.
+        Widening that draw until consecutive ones reliably clear the delta puts a tail
+        outside the safe bounds, so the levels would not hold the status each is chosen for.
         """
-        stage_secs = self._spike_period_secs / _SPIKE_STAGE_COUNT
-        elapsed = time() - self._spike_start_time
-        stage = min(max(int(elapsed/stage_secs), 0), _SPIKE_STAGE_COUNT-1)
-        self._previous = self._spike_levels()[stage]
+        levels = self._spike_levels()
+        self._previous = levels[self._spike_stage % len(levels)]
+        self._spike_stage += 1
         return self._previous
 
     def _spike_levels(self) -> tuple[float, ...]:
-        """Return the level each stage of the spike test holds, in order.
+        """Return the level each reading of the spike test takes, in cycle order.
 
-        The first half climbs: the top of normal, the top of warning, past the warning bound
-        into critical, then back to normal. The second half repeats that downwards. Each
-        level is held for a stage, so the app sees the status settle at every step instead
-        of catching it mid-move.
+        The cycle steps out into the high warning zone, back into normal, holds normal, then
+        does the same downwards through the low warning zone: six readings, then round
+        again.
 
-        Every step is stretched as far as the band allows, since a step the app does not
-        read as a jump is a step it never sees. Critical clears the warning bound by the
-        whole width of normal rather than by a standard deviation, which is a sixth of it.
-        The two returns to normal go to the end of the range furthest from the level that
-        follows, so the return and the step after it are both as long as they can be, rather
-        than to the middle, which halves both.
+        It is built around what the app makes of each step. A step out into a warning zone
+        moves the reading out of range, so the card reads warning on the strength of the
+        reading itself; the app no longer counts a jump that lands out of range as a spike.
+        The step back is the spike: it lands in normal having moved further than any spike
+        delta, so the card holds warning for that one reading. Repeating that same level
+        then moves nothing, which returns the card to normal and shows the spike clearing.
 
-        Three of the steps are the band's own to give and cannot be stretched: normal to
-        warning at each end, whose length is the width of the warning zone, and the crossing
-        from the top of normal to the bottom, whose length is the width of normal. A band
-        narrower there than the app's spike delta cannot produce a jump on those steps, only
-        a change of status.
+        Each return goes to the end of normal furthest from the zone it came from, so the
+        jump is the whole width of normal plus half a warning zone, which is as much as the
+        band has to give. The reading after it sits at that same level exactly, so no jump
+        can be read into it, and leaves the cycle at the end of normal nearest the zone it
+        heads out to next.
+
+        The warning levels sit in the middle of their zone rather than on a bound. A reading
+        reaches the app through a single-precision field, and one sitting on a bound can
+        round to the far side of it and read as critical, or as normal, instead.
 
         Read fresh on every tick rather than fixed when the test starts, so a band the
-        thresholds poller changes mid-test moves the staircase with it.
+        thresholds poller changes mid-test moves the cycle with it.
         """
-        overshoot = self._high-self._low
         return (
-            self._high,
-            self._warn_high,
-            self._warn_high + overshoot,
-            self._high,
+            (self._high+self._warn_high) / 2,
             self._low,
-            self._warn_low,
-            self._warn_low - overshoot,
             self._low,
+            (self._low+self._warn_low) / 2,
+            self._high,
+            self._high,
         )
 
     def _sweep_offset(self, phase: float) -> float:

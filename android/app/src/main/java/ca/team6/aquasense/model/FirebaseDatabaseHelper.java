@@ -172,22 +172,16 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Watches /{uid}/aquariums, which maps each aquarium ID to its display name. The dashboard
-    // needs this before it can watch telemetry, since the ID is part of every telemetry path.
+    // Watches /{uid}/aquariums. Each child key is an aquarium ID and its value is the aquarium
+    // record (name, water type and optional bands). The dashboard needs this before it can watch
+    // telemetry, since the ID is part of every telemetry path.
     @NonNull
     public ListenerHandle observeAquariums(@NonNull String uid,
                                            @NonNull AquariumsListener listener) {
         return attach(aquariumsRef(uid), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Aquarium> aquariums = new ArrayList<>();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    Aquarium aquarium = parseAquarium(child);
-                    if (aquarium != null) {
-                        aquariums.add(aquarium);
-                    }
-                }
-                listener.onAquariums(Collections.unmodifiableList(aquariums));
+                listener.onAquariums(parseAquariums(snapshot));
             }
 
             @Override
@@ -195,6 +189,22 @@ public final class FirebaseDatabaseHelper {
                 listener.onError(error);
             }
         });
+    }
+
+    /**
+     * Parses a whole {@code /{uid}/aquariums} snapshot. Exposed so background workers that already
+     * hold the snapshot can reuse the same parsing rules instead of re-deriving the tree shape.
+     */
+    @NonNull
+    public static List<Aquarium> parseAquariums(@NonNull DataSnapshot aquariumsSnapshot) {
+        List<Aquarium> aquariums = new ArrayList<>();
+        for (DataSnapshot child : aquariumsSnapshot.getChildren()) {
+            Aquarium aquarium = parseAquarium(child);
+            if (aquarium != null) {
+                aquariums.add(aquarium);
+            }
+        }
+        return Collections.unmodifiableList(aquariums);
     }
 
     /**
