@@ -428,10 +428,10 @@
     <string name="action_ok">OK</string>
     <string name="action_delete">Delete</string>
     <string name="delete_aquarium_title">Delete aquarium?</string>
-    <string name="delete_aquarium_message">Are you sure you want to delete "%1$s"? This action cannot be undone.</string>
+    <string name="delete_aquarium_message">Deleting "%1$s" erases its readings and unpairs its hub, so the hub returns to pairing mode and can be set up again. This action cannot be undone.</string>
     <string name="delete_aquarium_confirm">Delete</string>
     <string name="delete_aquarium_cancel">Cancel</string>
-    <string name="delete_aquarium_done">Deleted: %1$s</string>
+    <string name="delete_aquarium_done">Deleted %1$s. Its hub is returning to pairing mode.</string>
     <string name="delete_aquarium_failed">Couldn\'t delete the aquarium. Check your connection and try again.</string>
     <string name="dialog_min_aquarium_title">Can\'t Delete</string>
     <string name="dialog_min_aquarium_message">You must have at least one aquarium. Add another before deleting this one.</string>
@@ -823,5 +823,5 @@
     <string name="pairing_error_incompatible">This hub\'s firmware does not match the current version of the app. The hub needs to be updated before it can be paired. Please contact support: Settings \u2192 Help &amp; Support.</string>
     <string name="pairing_error_transfer">Could not transfer your Wi-Fi details to the hub. Move closer to the hub and try again.</string>
     <string name="pairing_error_claim">Your hub is set up, but the aquarium could not be created. Check your phone\'s connection, make sure the Wi-Fi password is correct, and try again.</string>
-    <string name="pairing_error_offline">Your hub did not connect to the Wi-Fi network. Check your Wi-Fi password and try again.</string>
+    <string name="pairing_error_offline">Your hub did not connect to the Wi-Fi network. Make sure that the Wi-Fi network name and password are both correct, and try again.</string>
 </resources>

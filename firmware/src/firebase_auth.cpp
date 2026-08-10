@@ -44,6 +44,10 @@ bool FirebaseAuth::ensureFreshToken() {
     return false;
 }
 
+void FirebaseAuth::invalidateToken() {
+    _signedInOnce = false;
+}
+
 bool FirebaseAuth::signIn() {
     WiFiSSLClient tlsClient;
     HttpClient http(tlsClient, SIGN_IN_HOST, SIGN_IN_PORT);

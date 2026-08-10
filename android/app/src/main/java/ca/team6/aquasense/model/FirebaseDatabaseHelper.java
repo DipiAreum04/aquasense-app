@@ -217,6 +217,12 @@ public final class FirebaseDatabaseHelper {
     // Removes an aquarium along with the telemetry recorded under it. Both paths go in one
     // update so the aquarium can never vanish from the picker while its telemetry subtree
     // survives with no owner to ever delete it.
+    
+    // This is also how a hub is unpaired. The telemetry rules admit a board only while its
+    // aquarium node exists, so dropping that node revokes the board, and the firmware reads a
+    // run of refusals as its cue to erase its stored pairing and advertise over BLE again. A hub
+    // whose aquarium is deleted must be left re-pairable: its own UID is the aquarium key, so
+    // nothing else can hand it back.
     public void deleteAquarium(@NonNull String uid,
                                @NonNull String aquariumId,
                                @NonNull DbCallback callback) {

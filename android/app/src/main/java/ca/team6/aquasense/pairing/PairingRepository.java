@@ -67,8 +67,15 @@ public final class PairingRepository {
     @Nullable
     private FirebaseDatabaseHelper.ListenerHandle telemetryHandle;
 
+    /** Stands in for "the node was empty", and sorts below every real timestamp. */
+    private static final long NO_SAMPLE = Long.MIN_VALUE;
+
+    // The sample sitting at the watched node when the wait began. See isNewWrite.
+    private long baselineTimestampSeconds = NO_SAMPLE;
+    private boolean baselineCaptured;
+
     private final Runnable onlineTimeout = () -> {
-        ScopedLogger.error("Board never published telemetry; the Wi-Fi password is the usual cause.");
+        ScopedLogger.error("Board published no new telemetry; wrong Wi-Fi credentials are the usual cause.");
         this.stopWatchingTelemetry();
         this.finish(PairingFailure.BOARD_NEVER_CAME_ONLINE);
     };
@@ -271,9 +278,11 @@ public final class PairingRepository {
         }
 
         this.publishState(PairingState.AWAITING_BOARD);
+        this.baselineCaptured = false;
+        this.baselineTimestampSeconds = NO_SAMPLE;
 
         /* One sensor is enough. The board publishes all four together on the same tick,
-         * so the first temperature reading proves the whole chain: Wi-Fi, the Firebase
+         * so one fresh temperature reading proves the whole chain: Wi-Fi, the Firebase
          * sign-in, the security rules and a real write.
          *
          * Watching the aquarium's whole telemetry node instead would also carry six
@@ -285,9 +294,7 @@ public final class PairingRepository {
                     @Override
                     public void onReading(@NonNull String sensorId,
                                           @Nullable SensorReading reading) {
-                        // Fires immediately with null, because the node does not exist yet.
-                        // Only a real reading counts.
-                        if (reading == null) {
+                        if (!isNewWrite(reading)) {
                             return;
                         }
                         main.removeCallbacks(onlineTimeout);
@@ -307,6 +314,20 @@ public final class PairingRepository {
                 });
 
         this.main.postDelayed(this.onlineTimeout, PairingContract.ONLINE_TIMEOUT_MS);
+    }
+
+    /**
+     * Whether this sample was published after the credentials were handed over, rather than left
+     * behind by an earlier run.
+     */
+    private boolean isNewWrite(@Nullable SensorReading reading) {
+        if (!this.baselineCaptured) {
+            this.baselineCaptured = true;
+            this.baselineTimestampSeconds =
+                    reading == null ? NO_SAMPLE : reading.getTimestampSeconds();
+            return false;
+        }
+        return reading != null && reading.getTimestampSeconds() > this.baselineTimestampSeconds;
     }
 
     private void stopWatchingTelemetry() {

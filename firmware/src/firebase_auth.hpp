@@ -8,6 +8,7 @@ public:
     FirebaseAuth(const char* apiKey, const char* email, const char* password);
 
     bool ensureFreshToken();
+    void invalidateToken();
 
     const char* idToken() const { return _idToken.c_str(); }
     const char* localId() const { return _localId.c_str(); }
