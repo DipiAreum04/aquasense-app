@@ -47,9 +47,42 @@ public class AnalyticsChartController {
 
     private final LineChart chart;
 
+    // Whether the sensor being plotted is currently unreachable, which draws the line in the grey
+    // the health card's lamp uses instead of the accent. Held rather than passed to each plot,
+    // because the two move independently: the line is redrawn when a selection is fetched, and the
+    // status when a reading lands or the staleness tick decides one is overdue.
+    private boolean disconnected;
+
     public AnalyticsChartController(@NonNull LineChart chart) {
         this.chart = chart;
         styleChart(chart.getContext(), chart);
+    }
+
+    /**
+     * Says whether the sensor on show is currently disconnected, restyling what is already plotted.
+     *
+     * <p>The readings behind the line are history and stay exactly as they were; what changes is
+     * that they are no longer being added to. Drawing them in the accent while the card above says
+     * the sensor is unreachable reads as a live line, so the colour follows the status - the same
+     * grey, from the same resource, that the lamp and the word "Disconnected" are drawn in, which
+     * carries its own day and night values.
+     */
+    public void setDisconnected(boolean disconnected) {
+        if (this.disconnected == disconnected) {
+            return;
+        }
+        this.disconnected = disconnected;
+
+        LineData data = this.chart.getData();
+        if (data == null) {
+            return;
+        }
+        for (ILineDataSet run : data.getDataSets()) {
+            if (run instanceof LineDataSet) {
+                styleSeries(this.chart.getContext(), (LineDataSet) run, disconnected);
+            }
+        }
+        this.chart.invalidate();
     }
 
     /**
@@ -77,7 +110,7 @@ public class AnalyticsChartController {
         List<ILineDataSet> runs = new ArrayList<>();
         for (List<Entry> points : BucketSeries.split(buckets, period.getSecondsPerXUnit())) {
             LineDataSet run = new LineDataSet(points, label);
-            styleSeries(context, run);
+            styleSeries(context, run, this.disconnected);
             runs.add(run);
         }
 
@@ -154,22 +187,25 @@ public class AnalyticsChartController {
         xAxis.setAxisMaximum(0f);
     }
 
-    private static void styleSeries(Context context, LineDataSet series) {
-        int accent = ContextCompat.getColor(context, R.color.accent);
+    private static void styleSeries(Context context, LineDataSet series, boolean disconnected) {
+        // Line, dots and fill all take the one colour, so the whole series states the sensor's
+        // reachability rather than only the stroke around it.
+        int seriesColor = ContextCompat.getColor(context,
+                disconnected ? R.color.status_gray : R.color.accent);
 
-        series.setColor(accent);
+        series.setColor(seriesColor);
         series.setLineWidth(LINE_WIDTH_DP);
         series.setMode(LineDataSet.Mode.LINEAR);
         // Each bucket is marked, so a run cut down to a single point by gaps on both sides still
         // shows up, and so the echoed value that opens a run after an outage is visible as its own
         // reading rather than as the start of a line.
         series.setDrawCircles(true);
-        series.setCircleColor(accent);
+        series.setCircleColor(seriesColor);
         series.setCircleRadius(POINT_RADIUS_DP);
         series.setDrawCircleHole(false);
         series.setDrawValues(false);
         series.setDrawFilled(true);
-        series.setFillColor(accent);
+        series.setFillColor(seriesColor);
         series.setFillAlpha(FILL_ALPHA);
     }
 

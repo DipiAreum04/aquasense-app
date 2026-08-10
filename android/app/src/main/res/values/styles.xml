@@ -125,4 +125,63 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!--
+      The two chart actions at the top right of the graph, and the block of the clear-readings
+      dialog that quotes what they would act on. Declared here for the same reason as the
+      statistics above: a row repeated three times, and a button repeated twice, whose whole point
+      is that the repetitions are identical.
+    -->
+    <style name="Widget.AquaSense.AnalyticsChartAction" parent="">
+        <item name="android:layout_width">@dimen/analytics_action_button_size</item>
+        <item name="android:layout_height">@dimen/analytics_action_button_size</item>
+        <item name="android:background">@drawable/bg_analytics_action_button</item>
+        <item name="android:padding">@dimen/analytics_action_icon_padding</item>
+        <item name="android:scaleType">fitCenter</item>
+        <!-- The framework attribute rather than appcompat's app:tint. Both end at
+             setImageTintList, and the icons carry a ?colorControlNormal tint of their own that
+             either one replaces; naming the framework's keeps the style unambiguous. -->
+        <item name="android:tint">@color/accent</item>
+    </style>
+
+    <!-- One label-and-value line of the dialog's summary block. -->
+    <style name="Widget.AquaSense.AnalyticsDialogRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:baselineAligned">true</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <!--
+      Fixed width rather than wrap_content, so the three values start at the same x and the block
+      reads as a column. 78dp is what the longest of the three labels needs at this size.
+    -->
+    <style name="Widget.AquaSense.AnalyticsDialogRowLabel" parent="">
+        <item name="android:layout_width">78dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Takes the rest of the row and truncates, since an aquarium's name is the user's to choose
+         and can be as long as they like. -->
+    <style name="Widget.AquaSense.AnalyticsDialogRowValue" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.AquaSense.AnalyticsDialogButton" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

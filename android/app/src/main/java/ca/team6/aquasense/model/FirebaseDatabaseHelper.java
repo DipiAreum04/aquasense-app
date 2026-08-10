@@ -9,6 +9,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +56,23 @@ public final class FirebaseDatabaseHelper {
 
         void onError(@NonNull DatabaseError error);
     }
+
+    /** One-shot read of a period node as the JSON the database stores it as; see {@link #readPeriodJson}. */
+    public interface PeriodJsonListener {
+        void onJson(@NonNull String json);
+
+        /**
+         * The node does not exist. In Realtime Database that is the same state as an empty one - a
+         * node with no children is not stored - so this covers both a board that has committed
+         * nothing here and a window that has already been cleared.
+         */
+        void onEmpty();
+
+        void onError(@Nullable Exception exception);
+    }
+
+    /** Indent of the JSON {@link #readPeriodJson} writes, which is meant to be read by a person. */
+    private static final int JSON_INDENT_SPACES = 2;
 
     private static volatile FirebaseDatabaseHelper instance;
 
@@ -253,11 +273,7 @@ public final class FirebaseDatabaseHelper {
                                         @NonNull String sensorId,
                                         @NonNull String periodKey,
                                         @NonNull BucketsListener listener) {
-        DatabaseReference ref = telemetryRef(uid, aquariumId)
-                .child(sensorId)
-                .child(periodKey);
-
-        return attach(ref, new ValueEventListener() {
+        return attach(periodRef(uid, aquariumId, sensorId, periodKey), new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listener.onBuckets(parsePeriod(snapshot));
@@ -268,6 +284,105 @@ public final class FirebaseDatabaseHelper {
                 listener.onError(error);
             }
         });
+    }
+
+    /**
+     * Reads one period node once and hands it back as JSON text, for saving a copy of it.
+     *
+     * <p>Unparsed, deliberately. {@link #observePeriod} unrolls the ring buffer into the readings a
+     * graph is drawn from, which is a reading of the node rather than the node; a copy taken off
+     * the database should be what the database holds - the cursor, the slots, and whichever of them
+     * the board has not come back round to yet - so that it can be compared against the tree it
+     * came out of.
+     *
+     * <p>A single-value read rather than {@code get()}, so a screen already watching this node is
+     * served from the copy that subscription keeps in sync instead of fetching the hundred buckets
+     * a second time.
+     */
+    public void readPeriodJson(@NonNull String uid,
+                               @NonNull String aquariumId,
+                               @NonNull String sensorId,
+                               @NonNull String periodKey,
+                               @NonNull PeriodJsonListener listener) {
+        periodRef(uid, aquariumId, sensorId, periodKey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            listener.onEmpty();
+                            return;
+                        }
+                        try {
+                            listener.onJson(toJsonText(snapshot));
+                        } catch (JSONException exception) {
+                            ScopedLogger.error("Could not render " + snapshot.getRef()
+                                    + " as JSON: " + exception.getMessage());
+                            listener.onError(exception);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        ScopedLogger.error("Period read cancelled: " + error.getMessage());
+                        listener.onError(error.toException());
+                    }
+                });
+    }
+
+    /**
+     * Removes one period node whole: its cursor and all hundred of its buckets.
+     *
+     * <p>Nothing else goes with it. A period is one of six windows a sensor is recorded over and
+     * they are written independently, so clearing the hour leaves the day, and the sensor's
+     * {@code last_instant} - which is not under this node - keeps reporting either way.
+     */
+    public void deletePeriod(@NonNull String uid,
+                             @NonNull String aquariumId,
+                             @NonNull String sensorId,
+                             @NonNull String periodKey,
+                             @NonNull DbCallback callback) {
+        periodRef(uid, aquariumId, sensorId, periodKey)
+                .removeValue()
+                .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
+    }
+
+    /**
+     * Renders a snapshot as indented JSON text.
+     *
+     * <p>Indented because these are written to a file a person opens: a period is a hundred buckets
+     * of two fields each, and on one line that is unreadable.
+     */
+    @NonNull
+    private static String toJsonText(@NonNull DataSnapshot snapshot) throws JSONException {
+        Object json = toJson(snapshot);
+        return json instanceof JSONObject
+                ? ((JSONObject) json).toString(JSON_INDENT_SPACES)
+                : String.valueOf(json);
+    }
+
+    /**
+     * Rebuilds a snapshot as JSON, keys and all.
+     *
+     * <p>Walked child by child rather than handed {@code snapshot.getValue()} to a serialiser: that
+     * returns whatever Java types the values happened to arrive as, and turns any node whose keys
+     * are 0, 1, 2… into a List with nulls in the holes. Walking the snapshot writes the tree the
+     * database actually stores.
+     */
+    @NonNull
+    private static Object toJson(@NonNull DataSnapshot snapshot) throws JSONException {
+        if (!snapshot.hasChildren()) {
+            Object value = snapshot.getValue();
+            return value == null ? JSONObject.NULL : value;
+        }
+
+        JSONObject object = new JSONObject();
+        for (DataSnapshot child : snapshot.getChildren()) {
+            String key = child.getKey();
+            if (key != null) {
+                object.put(key, toJson(child));
+            }
+        }
+        return object;
     }
 
     /**
@@ -432,6 +547,18 @@ public final class FirebaseDatabaseHelper {
     @NonNull
     private DatabaseReference telemetryRef(@NonNull String uid, @NonNull String aquariumId) {
         return userRef(uid).child(DatabaseSchema.TELEMETRY_KEY).child(aquariumId);
+    }
+
+    /**
+     * One window of one sensor's history. The three ways it is reached - watched, read once,
+     * removed - all come through here, so a period is one path written in one place.
+     */
+    @NonNull
+    private DatabaseReference periodRef(@NonNull String uid,
+                                        @NonNull String aquariumId,
+                                        @NonNull String sensorId,
+                                        @NonNull String periodKey) {
+        return telemetryRef(uid, aquariumId).child(sensorId).child(periodKey);
     }
 
     private static void report(boolean successful,

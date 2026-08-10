@@ -221,6 +221,44 @@ public class TelemetryRepository {
                 });
     }
 
+    /**
+     * Reads one period node once, as the JSON the database stores it as, for saving a copy of it.
+     *
+     * <p>Unrelated to {@link #watchPeriod}: it takes its own selection and leaves whatever is being
+     * watched alone, so a screen can copy the window it is plotting without giving up the
+     * subscription drawing it.
+     */
+    public void readPeriodJson(@NonNull String aquariumId,
+                               @NonNull String sensorId,
+                               @NonNull String periodKey,
+                               @NonNull FirebaseDatabaseHelper.PeriodJsonListener listener) {
+        String uid = this.currentUid();
+        if (uid == null || aquariumId.isEmpty()) {
+            listener.onError(null);
+            return;
+        }
+        this.database.readPeriodJson(uid, aquariumId, sensorId, periodKey, listener);
+    }
+
+    /**
+     * Deletes one period node for the signed-in user.
+     *
+     * <p>Any subscription on that node is left in place and is how the deletion is reported: the
+     * removal comes back as a snapshot with nothing in it, so a screen plotting the window it just
+     * cleared empties itself on the same path every other change to it arrives by.
+     */
+    public void deletePeriod(@NonNull String aquariumId,
+                             @NonNull String sensorId,
+                             @NonNull String periodKey,
+                             @NonNull FirebaseDatabaseHelper.DbCallback callback) {
+        String uid = this.currentUid();
+        if (uid == null || aquariumId.isEmpty()) {
+            callback.onError(null);
+            return;
+        }
+        this.database.deletePeriod(uid, aquariumId, sensorId, periodKey, callback);
+    }
+
     /** Releases the period subscription, if there is one. Safe to call when there is not. */
     public void unwatchPeriod() {
         if (this.periodHandle != null) {

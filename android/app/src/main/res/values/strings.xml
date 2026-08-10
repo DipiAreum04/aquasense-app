@@ -551,6 +551,17 @@
     <string name="analytics_period_1m">1M</string>
     <string name="analytics_period_6m">6M</string>
     <string name="analytics_period_1y">1Y</string>
+    <!--
+      The same six windows spelled out, for the places a button's width is not the constraint and
+      an abbreviation would have to be decoded: so far, the clear-readings dialog, which is naming
+      what it is about to delete.
+    -->
+    <string name="analytics_period_1h_long">Last hour</string>
+    <string name="analytics_period_1d_long">Last 24 hours</string>
+    <string name="analytics_period_1w_long">Last 7 days</string>
+    <string name="analytics_period_1m_long">Last 30 days</string>
+    <string name="analytics_period_6m_long">Last 6 months</string>
+    <string name="analytics_period_1y_long">Last 12 months</string>
     <!-- x axis: what one step along it means, per selected period. -->
     <string name="analytics_axis_minutes_ago">Minutes ago</string>
     <string name="analytics_axis_hours_ago">Hours ago</string>
@@ -595,6 +606,34 @@
     <!-- Reading distribution card. Its three bands are labelled with @string/normal, @string/warning
          and @string/critical, which is what the sensor cards call the same three states. -->
     <string name="analytics_distribution_title">Reading distribution</string>
+
+    <!--
+      The two actions on the graph card, and everything they can say back. Both act on the one
+      period node the graph is drawn from, so both are described in terms of the selection at the
+      top of the page rather than in terms of the database.
+    -->
+    <string name="analytics_download_description">Download these readings</string>
+    <string name="analytics_clear_description">Clear these readings</string>
+    <string name="analytics_download_saved">Saved to your Downloads folder</string>
+    <!-- The window holds nothing, so there is no file to write. Said rather than writing an empty
+         one, which would look like a success and be worth nothing. -->
+    <string name="analytics_download_empty">No data to download</string>
+    <string name="analytics_download_failed">Couldn\'t save the file. Try again.</string>
+
+    <!--
+      The clear-readings dialog. It names all three of the selections it is about to act on,
+      because a window of readings is only identified by all three, and says plainly that they are
+      not coming back.
+    -->
+    <string name="analytics_clear_title">Clear these readings?</string>
+    <string name="analytics_clear_message">This erases the stored readings for this window from the database. They cannot be recovered.</string>
+    <string name="analytics_clear_field_aquarium">Aquarium</string>
+    <string name="analytics_clear_field_sensor">Sensor</string>
+    <string name="analytics_clear_field_period">Period</string>
+    <string name="analytics_clear_cancel">Cancel</string>
+    <string name="analytics_clear_confirm">Delete forever</string>
+    <string name="analytics_clear_done">Readings cleared</string>
+    <string name="analytics_clear_failed">Couldn\'t clear the readings. Check your connection and try again.</string>
 
     <!-- BLE-02: App <-> Hardware pairing -->
     <string name="pairing_flow_title">Pair Your Hub</string>

@@ -418,41 +418,94 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <LinearLayout
+                <!--
+                  What can be done to the readings behind the line: take a copy of them, or clear
+                  them. Both act on exactly the node the graph is drawn from - this aquarium's,
+                  this sensor's, this window's - which is why they live on this card rather than in
+                  the toolbar, where they would have to say which of the three selections at the
+                  top of the page they meant.
+
+                  Laid over the plot's top corner rather than given a row of its own, so the card
+                  is only as tall as the graph it wraps. The chart puts nothing in that corner -
+                  its legend and description are both off, and the y labels run down the other
+                  side - and the pill carries its own background, the same groove the period
+                  buttons sit in rounded to a pill (see @drawable/bg_analytics_action_bar), so it
+                  stays legible over the stretches where the line does pass beneath it.
+                -->
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
-                    <!--
-                      The y axis label, stood on end. A View's rotation is applied after layout, so
-                      the label is measured lying down - as wide as the plot is tall - and centred in
-                      a strip of the opposite proportions. Turning it about that shared centre lands
-                      it exactly inside the strip.
-                    -->
-                    <FrameLayout
-                        android:layout_width="@dimen/analytics_axis_label_thickness"
-                        android:layout_height="@dimen/analytics_chart_height">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/analyticsYAxisLabel"
-                            android:layout_width="@dimen/analytics_chart_height"
-                            android:layout_height="@dimen/analytics_axis_label_thickness"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:rotation="270"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp"
-                            tools:text="°C" />
+                        <!--
+                          The y axis label, stood on end. A View's rotation is applied after layout,
+                          so the label is measured lying down - as wide as the plot is tall - and
+                          centred in a strip of the opposite proportions. Turning it about that
+                          shared centre lands it exactly inside the strip.
+                        -->
+                        <FrameLayout
+                            android:layout_width="@dimen/analytics_axis_label_thickness"
+                            android:layout_height="@dimen/analytics_chart_height">
 
-                    </FrameLayout>
+                            <TextView
+                                android:id="@+id/analyticsYAxisLabel"
+                                android:layout_width="@dimen/analytics_chart_height"
+                                android:layout_height="@dimen/analytics_axis_label_thickness"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:rotation="270"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp"
+                                tools:text="°C" />
 
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/analyticsChart"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/analytics_chart_height"
-                        android:layout_weight="1" />
+                        </FrameLayout>
 
-                </LinearLayout>
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/analyticsChart"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/analytics_chart_height"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <!-- Declared after the chart so it draws, and is touched, on top of it. -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="@dimen/analytics_action_bar_inset"
+                        android:layout_marginEnd="@dimen/analytics_action_bar_inset"
+                        android:background="@drawable/bg_analytics_action_bar"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/analytics_action_bar_padding">
+
+                        <ImageButton
+                            android:id="@+id/analyticsDownloadButton"
+                            style="@style/Widget.AquaSense.AnalyticsChartAction"
+                            android:contentDescription="@string/analytics_download_description"
+                            android:src="@drawable/file_save_24px" />
+
+                        <!--
+                          Last, and so furthest from the thumb's resting place, and the one thing in
+                          the bar not drawn in the accent: of the two it is the one there is no
+                          undoing, and a bin that looks like the button beside it is a bin pressed
+                          by mistake. The colour is the one the sensor cards raise for a critical
+                          reading.
+                        -->
+                        <ImageButton
+                            android:id="@+id/analyticsClearButton"
+                            style="@style/Widget.AquaSense.AnalyticsChartAction"
+                            android:contentDescription="@string/analytics_clear_description"
+                            android:src="@drawable/delete_forever_24px"
+                            app:tint="@color/status_red" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/analyticsXAxisLabel"

@@ -19,6 +19,10 @@
          since there is nothing below #0F1419 to sink into. -->
     <color name="analytics_segment_track">#FF171E27</color>
     <color name="analytics_segment_selected">#FF2C3747</color>
+    <!-- See values/colors.xml: the same groove at seven tenths, for the bar laid over the plot. -->
+    <color name="analytics_action_bar_track">#B3171E27</color>
+    <!-- The accent again, as in day; the accent itself is what differs between the two schemes. -->
+    <color name="analytics_action_ripple">#3364B5F6</color>
 
     <color name="settings_icon_cyan">#FF4DD0E1</color>
     <color name="settings_icon_cyan_bg">#4D4DD0E1</color>

@@ -5,9 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,16 +21,21 @@ import androidx.core.content.ContextCompat;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.tabs.TabLayout;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import ca.team6.aquasense.analytics.AnalyticsChartController;
+import ca.team6.aquasense.analytics.AnalyticsClearDialog;
 import ca.team6.aquasense.analytics.AnalyticsPeriod;
 import ca.team6.aquasense.analytics.AnalyticsSummaryController;
 import ca.team6.aquasense.analytics.AquariumDropdown;
+import ca.team6.aquasense.analytics.DownloadsWriter;
 import ca.team6.aquasense.analytics.PeriodStatistics;
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
@@ -36,6 +43,7 @@ import ca.team6.aquasense.model.AppSettings;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.DatabaseSchema;
+import ca.team6.aquasense.model.FirebaseDatabaseHelper;
 import ca.team6.aquasense.model.ReadingFormatter;
 import ca.team6.aquasense.model.SensorReading;
 import ca.team6.aquasense.model.SettingsRepository;
@@ -46,6 +54,7 @@ import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.aquarium_sensors.DissolvedSolidsSensor;
 import ca.team6.aquasense.model.aquarium_sensors.PhLevelSensor;
+import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 import ca.team6.aquasense.model.aquarium_sensors.TemperatureSensor;
 import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
 import ca.team6.aquasense.notifications.SensorThresholds;
@@ -78,6 +87,17 @@ public class AnalyticsActivity extends AppCompatActivity {
     // stops being true. The dashboard re-reads its own on the same interval.
     private static final long STALENESS_CHECK_INTERVAL_MS = 10_000;
 
+    /** How a disabled chart action is drawn, since an ImageButton does not dim its own icon. */
+    private static final float DISABLED_ACTION_ALPHA = 0.4f;
+
+    // The saved copy of a period. Every field is fixed width and runs largest unit to smallest, so
+    // the moment sorts as text in the order it happened; the separators are hyphens throughout
+    // because the two characters that would ordinarily divide a date from a clock, a space and a
+    // colon, are the ones a file name should not carry. See downloadFileName.
+    private static final String DOWNLOAD_MIME_TYPE = "application/json";
+    private static final String DOWNLOAD_TIMESTAMP_PATTERN = "yyyy-MM-dd-HH-mm-ss";
+    private static final String UNSAFE_FILE_NAME_CHARS = "[^A-Za-z0-9._-]";
+
     private AnalyticsChartController chartController;
     private AnalyticsSummaryController summaryController;
     private AquariumRepository aquariumRepository;
@@ -86,9 +106,21 @@ public class AnalyticsActivity extends AppCompatActivity {
     private ImageView aquariumIcon;
     private TextView yAxisLabel;
     private TextView xAxisLabel;
+    private ImageButton downloadButton;
+    private ImageButton clearButton;
 
     private AquariumSensor selectedSensor = SENSORS.get(0);
     private AnalyticsPeriod selectedPeriod = AnalyticsPeriod.LAST_1H;
+
+    // Held down for as long as a save is in flight, so a second tap cannot start a second one and
+    // leave two copies of the same window in Downloads a moment apart.
+    private boolean downloading;
+
+    // Whether the node the two actions act on holds anything. Read from the subscription's own
+    // report rather than from the buckets drawn on screen: those have been cut to the window, and a
+    // node whose readings all fall outside it is still a node with something to save and something
+    // to clear. False while a selection is being fetched, there being nothing known to act on yet.
+    private boolean selectionHasBuckets;
 
     // Identifies what the page is showing or fetching, as aquarium + sensor + period + the unit
     // readings are displayed in. Two jobs: the aquariums observer fires on changes that leave the
@@ -171,6 +203,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         this.setUpAquariumSelector();
         this.setUpSensorTabs();
         this.setUpPeriodButtons();
+        this.setUpChartActions();
 
         this.telemetryRepository = TelemetryRepository.getInstance();
         this.aquariumRepository = AquariumRepository.getInstance(this);
@@ -324,8 +357,53 @@ public class AnalyticsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Wires the two actions on the graph card. Both read the selection at the moment they are
+     * pressed rather than being rebound as it moves, so what they act on is always the window on
+     * screen.
+     */
+    private void setUpChartActions() {
+        this.downloadButton = findViewById(R.id.analyticsDownloadButton);
+        this.clearButton = findViewById(R.id.analyticsClearButton);
+
+        this.downloadButton.setOnClickListener(v -> this.downloadSelection());
+        this.clearButton.setOnClickListener(v -> this.confirmClearSelection());
+        // Off until an aquarium is named, which the first showActiveAquarium does. Set here rather
+        // than by calling showChartActionsEnabled, which reads the repositories: this runs while
+        // they are still being built, and there is nothing they could say yet anyway.
+        this.setActionEnabled(this.downloadButton, false);
+        this.setActionEnabled(this.clearButton, false);
+    }
+
+    /**
+     * Turns the two actions on only while there is an aquarium for them to act on and a node with
+     * something in it, and the save off again while one is running.
+     *
+     * <p>An aquarium may be absent for a moment on a cold open and permanently for a user with no
+     * tanks, and neither is worth a press that has to answer "nothing selected". An empty node is
+     * the same story told by the other end: there is nothing to copy into Downloads and nothing to
+     * clear, so both actions would report having done nothing. Greying them out says that before
+     * the press rather than after it, and is also how the page reports a window it has just cleared
+     * - the subscription delivers the removal as an empty snapshot, which lands here.
+     *
+     * <p>The alpha is applied by hand because ImageButton, unlike a text button, draws its icon at
+     * full strength whether or not it is enabled.
+     */
+    private void showChartActionsEnabled() {
+        boolean actionable = this.activeAquariumId() != null && this.selectionHasBuckets;
+        this.setActionEnabled(this.downloadButton, actionable && !this.downloading);
+        this.setActionEnabled(this.clearButton, actionable);
+    }
+
+    private void setActionEnabled(@NonNull ImageButton action, boolean enabled) {
+        action.setEnabled(enabled);
+        action.setAlpha(enabled ? 1f : DISABLED_ACTION_ALPHA);
+    }
+
     /** Names the aquarium every other row on the page is about, and draws its icon. */
     private void showActiveAquarium() {
+        this.showChartActionsEnabled();
+
         if (!this.aquariumRepository.isLoaded()) {
             this.aquariumNameText.setText(R.string.loading_aquariums);
             this.showAquariumIcon(null);
@@ -380,6 +458,10 @@ public class AnalyticsActivity extends AppCompatActivity {
         }
         this.summaryController.showSensorHealth(this.selectedSensor,
                 readings.get(this.selectedSensor.getId()), nowMillis);
+        // The graph is drawn from history and the lamp from the live reading, but they are about
+        // the same sensor, so the line follows the verdict the card above it has just reached.
+        this.chartController.setDisconnected(
+                this.selectedSensor.getSensorStatus() == SensorStatus.DISCONNECTED);
     }
 
     /** Re-reports the loaded period, which is what a change to the aquarium's band moves. */
@@ -418,6 +500,10 @@ public class AnalyticsActivity extends AppCompatActivity {
         }
         this.requestKey = key;
         this.loadedBuckets = null;
+        // Nothing is known about the node being asked for until it answers, and the actions stay
+        // off until then rather than carrying the last selection's verdict over onto this one.
+        this.selectionHasBuckets = false;
+        this.showChartActionsEnabled();
 
         // Named now rather than on arrival, so they are ready the moment there are axes to name.
         // Hidden until then: the loading state clears the chart outright, and a pair of unit
@@ -438,6 +524,11 @@ public class AnalyticsActivity extends AppCompatActivity {
                         if (isDestroyed() || !key.equals(requestKey)) {
                             return;
                         }
+                        // Judged on the node's own buckets, before the window is applied: the two
+                        // actions take the whole node, so what falls outside the window is still
+                        // theirs to save and to clear.
+                        selectionHasBuckets = !buckets.isEmpty();
+                        showChartActionsEnabled();
                         // Cut to the window once, here, so the graph and the card below it are
                         // reporting on exactly the same readings.
                         loadedBuckets = period.within(buckets);
@@ -455,11 +546,145 @@ public class AnalyticsActivity extends AppCompatActivity {
                         // Forgetting the request lets the next tab selection or snapshot subscribe
                         // again, rather than leaving the page pinned to one that failed.
                         requestKey = null;
+                        // A node that could not be read is not one to act on either.
+                        selectionHasBuckets = false;
+                        showChartActionsEnabled();
                         showAxisLabels(true);
                         chartController.showEmpty(period);
                         summaryController.showPeriodLoading();
                     }
                 });
+    }
+
+    /**
+     * Saves the selected window's node into Downloads as JSON.
+     *
+     * <p>Read fresh rather than written from the buckets already on screen. Those have been cut to
+     * the window, converted into the unit the app displays and reduced to the readings a line is
+     * drawn from; a copy of the database should be the node, cursor and unreached slots included,
+     * so that it can be checked against the tree it came out of.
+     *
+     * <p>An absent node is not an error. It means the board has committed nothing to this window,
+     * or it has already been cleared, and a file with nothing in it would look like a success worth
+     * having. The user is told instead, and no file is written.
+     */
+    private void downloadSelection() {
+        String aquariumId = this.activeAquariumId();
+        if (aquariumId == null || this.downloading) {
+            return;
+        }
+
+        AquariumSensor sensor = this.selectedSensor;
+        AnalyticsPeriod period = this.selectedPeriod;
+        this.downloading = true;
+        this.showChartActionsEnabled();
+
+        this.telemetryRepository.readPeriodJson(aquariumId, sensor.getId(), period.getDatabaseKey(),
+                new FirebaseDatabaseHelper.PeriodJsonListener() {
+                    @Override
+                    public void onJson(@NonNull String json) {
+                        if (isDestroyed()) {
+                            return;
+                        }
+                        // The selection may have moved while the read was out, so the name is built
+                        // from what was asked for rather than from what is on screen now.
+                        DownloadsWriter.saveText(AnalyticsActivity.this,
+                                downloadFileName(aquariumId, sensor, period),
+                                DOWNLOAD_MIME_TYPE, json, new DownloadsWriter.SaveCallback() {
+                                    @Override
+                                    public void onSaved() {
+                                        finishDownload(R.string.analytics_download_saved);
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        finishDownload(R.string.analytics_download_failed);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onEmpty() {
+                        finishDownload(R.string.analytics_download_empty);
+                    }
+
+                    @Override
+                    public void onError(@Nullable Exception exception) {
+                        finishDownload(R.string.analytics_download_failed);
+                    }
+                });
+    }
+
+    /** Releases the save button and reports how it went. */
+    private void finishDownload(@StringRes int messageResId) {
+        this.downloading = false;
+        if (isDestroyed()) {
+            return;
+        }
+        this.showChartActionsEnabled();
+        this.toast(messageResId);
+    }
+
+    /**
+     * Names the saved file after exactly what is in it: which tank, which sensor, which window, and
+     * when the copy was taken.
+     *
+     * <p>The contents are the node as the database stores it and carry none of that - a period node
+     * is a cursor and a hundred buckets, and knows nothing of the three selections that reach it -
+     * so the name is the only place the copy is identified. The moment is in there because a window
+     * is a moving one: two saves of the same hour a day apart hold different readings, and without
+     * it they would be told apart only by MediaStore having numbered the second.
+     */
+    @NonNull
+    private String downloadFileName(@NonNull String aquariumId,
+                                    @NonNull AquariumSensor sensor,
+                                    @NonNull AnalyticsPeriod period) {
+        String takenAt = DateTimeFormatter.ofPattern(DOWNLOAD_TIMESTAMP_PATTERN, Locale.ROOT)
+                .format(LocalDateTime.now());
+        // The aquarium ID is a paired board's UID rather than anything the user typed, but it is
+        // going into a file name, so it is held to characters a file name can carry regardless.
+        String safeAquariumId = aquariumId.replaceAll(UNSAFE_FILE_NAME_CHARS, "_");
+        return String.format(Locale.ROOT, "aquasense_%s_%s_%s_%s.json",
+                safeAquariumId, sensor.getId(), period.getDatabaseKey(), takenAt);
+    }
+
+    /**
+     * Asks before clearing the selected window, and clears it if the answer is yes.
+     *
+     * <p>The page is not redrawn afterwards and does not need to be. The period subscription is
+     * still on the node that was just emptied, so the removal arrives as a snapshot with nothing in
+     * it and the graph and the cards below empty themselves the same way they follow every other
+     * change to it.
+     */
+    private void confirmClearSelection() {
+        Aquarium active = this.aquariumRepository.getActiveAquarium();
+        if (active == null) {
+            return;
+        }
+
+        AquariumSensor sensor = this.selectedSensor;
+        AnalyticsPeriod period = this.selectedPeriod;
+        AnalyticsClearDialog.show(this, active.getName(), sensor.getNameResId(), period,
+                () -> this.telemetryRepository.deletePeriod(active.getId(), sensor.getId(),
+                        period.getDatabaseKey(), new FirebaseDatabaseHelper.DbCallback() {
+                            @Override
+                            public void onSuccess() {
+                                toast(R.string.analytics_clear_done);
+                            }
+
+                            @Override
+                            public void onError(@Nullable Exception exception) {
+                                toast(R.string.analytics_clear_failed);
+                            }
+                        }));
+    }
+
+    /** Says something short, unless the screen it would be said on has gone. */
+    private void toast(@StringRes int messageResId) {
+        if (isDestroyed()) {
+            return;
+        }
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
 
     /**
