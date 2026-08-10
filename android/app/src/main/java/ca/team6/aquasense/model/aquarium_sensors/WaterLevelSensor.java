@@ -10,6 +10,12 @@ import ca.team6.aquasense.model.InfoSheetSection;
 import ca.team6.aquasense.model.ThresholdBand;
 
 public class WaterLevelSensor extends AquariumSensor {
+
+    /**
+     * The value at or above which the level counts as high.
+     */
+    public static final double HIGH_THRESHOLD = 0.5d;
+
     public WaterLevelSensor() {
         super();
     }
@@ -27,7 +33,7 @@ public class WaterLevelSensor extends AquariumSensor {
      */
     @Override
     public SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
-        if (value <= 0d) {
+        if (value < HIGH_THRESHOLD) {
             return SensorStatus.CRITICAL;
         }
         return super.statusFor(value, thresholdBand);

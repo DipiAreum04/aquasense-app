@@ -48,6 +48,15 @@
     <dimen name="analytics_action_bar_padding">4dp</dimen>
 
     <!--
+      The ⓘ beside a summary card's heading. Smaller than the chart's actions above: those float
+      over the plot with nothing to be measured against, whereas this one shares a row with a
+      heading and would crowd it at 40dp. The padding leaves a 16dp glyph, a little under the
+      heading's own height, which is the reading order the card wants.
+    -->
+    <dimen name="analytics_info_button_size">32dp</dimen>
+    <dimen name="analytics_info_icon_padding">8dp</dimen>
+
+    <!--
       How far the bar sits in from the plot's top right corner. Enough to read as floating over the
       chart rather than pinned to its edge, and small enough to leave the corner it covers to the
       part of the line that is rarely drawn there.

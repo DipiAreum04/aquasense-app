@@ -39,12 +39,28 @@ public class AnalyticsSummaryController {
     /** Where the mean sits in the minimum-mean-maximum row; see the arrays built in the constructor. */
     private static final int AVERAGE_INDEX = 1;
 
+    /** What the three columns are called for a sensor whose readings are a quantity. */
+    private static final int[] STAT_LABELS = {
+            R.string.analytics_stat_min,
+            R.string.analytics_stat_avg,
+            R.string.analytics_stat_max};
+
+    /**
+     * What they are called for the water level detector, whose figures are shares rather than
+     * readings; see {@link #formatReading} for what is being shared.
+     */
+    private static final int[] WATER_LEVEL_STAT_LABELS = {
+            R.string.analytics_stat_water_level_min,
+            R.string.analytics_stat_water_level_avg,
+            R.string.analytics_stat_water_level_max};
+
     private final ImageView statusLed;
     private final TextView statusText;
     private final TextView lastSeenText;
     private final CircularProgressIndicator uptimeRing;
     private final TextView uptimeValue;
 
+    private final TextView[] statLabels;
     private final TextView[] statValues;
     private final TextView[] statUnits;
 
@@ -59,6 +75,10 @@ public class AnalyticsSummaryController {
         this.uptimeValue = root.findViewById(R.id.analyticsUptimeValue);
 
         // Minimum, mean, maximum - the order the row draws them in, which the arrays below index by.
+        this.statLabels = new TextView[]{
+                root.findViewById(R.id.analyticsStatMinLabel),
+                root.findViewById(R.id.analyticsStatAvgLabel),
+                root.findViewById(R.id.analyticsStatMaxLabel)};
         this.statValues = new TextView[]{
                 root.findViewById(R.id.analyticsStatMinValue),
                 root.findViewById(R.id.analyticsStatAvgValue),
@@ -97,6 +117,27 @@ public class AnalyticsSummaryController {
                 lastSeen(this.statusText.getContext(), reading, nowMillis));
         this.showAccentedFiguresConnected(
                 sensor.getSensorStatus() != SensorStatus.DISCONNECTED);
+        this.showStatLabels(sensor);
+    }
+
+    /**
+     * Names the three columns for the sensor on show.
+     *
+     * <p>Done here rather than alongside the figures because the figures are cleared to dashes
+     * between selections, and a column with nothing in it still has to say what it is going to
+     * hold. Every sensor but one reports a quantity, and the minimum, mean and maximum of a
+     * quantity are what those words ordinarily mean. The water level detector reports whether there
+     * is water at its height, and a bucket of those averages to the share of the bucket that had
+     * it: "Minimum 100%" invites the reading "the level never went below 100%", which is not what
+     * the figure is measuring and not something this sensor can measure at all.
+     */
+    private void showStatLabels(@NonNull AquariumSensor sensor) {
+        int[] labels = DatabaseSchema.WATER_LEVEL_KEY.equals(sensor.getId())
+                ? WATER_LEVEL_STAT_LABELS
+                : STAT_LABELS;
+        for (int i = 0; i < this.statLabels.length; i++) {
+            this.statLabels[i].setText(labels[i]);
+        }
     }
 
     /**
@@ -118,14 +159,14 @@ public class AnalyticsSummaryController {
     }
 
     /**
-     * Blanks the period's half of the summary while a read is in flight.
+     * Blanks the period's half of the summary.
      *
      * <p>Called for the same reason the chart is emptied: leaving the previous sensor's spread and
      * distribution up under the new tab's name would be reporting one sensor's readings as
      * another's, and they cannot be left to arrive on their own because a fetch that fails would
      * never take them down.
      */
-    public void showPeriodLoading() {
+    public void clearPeriod() {
         this.showPeriod(null, null);
     }
 
@@ -186,8 +227,8 @@ public class AnalyticsSummaryController {
      * <p>Everything but water level goes through the formatter the sensor cards use, which converts
      * the temperature if Display &amp; Units asks for Fahrenheit and picks the decimals the sensor
      * has any business claiming. Water level cannot: its formatter answers LOW or SAFE, which is
-     * the right answer for a switch read once and the wrong one for the average of a bucket. What
-     * is being averaged is the share of the bucket the float spent under water, so that is what is
+     * the right answer for a detector read once and the wrong one for the average of a bucket. What
+     * is being averaged is the share of the bucket that had water at the sensor, so that is what is
      * shown - the same quantity the graph's y axis plots for it.
      */
     @NonNull

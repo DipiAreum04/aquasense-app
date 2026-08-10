@@ -3,6 +3,7 @@ package ca.team6.aquasense.analytics;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -41,9 +42,6 @@ public class AnalyticsChartController {
     private static final float POINT_RADIUS_DP = 2.5f;
     /** Headroom above and below the readings, as a percentage of the range they cover. */
     private static final float SPACE_PERCENT = 10f;
-    /** The y range an empty plot is pinned to; see {@link #showEmpty}. */
-    private static final float EMPTY_AXIS_MINIMUM = 0f;
-    private static final float EMPTY_AXIS_MAXIMUM = 1f;
 
     private final LineChart chart;
 
@@ -100,10 +98,17 @@ public class AnalyticsChartController {
      *                         over a year.
      * @param buckets          already cut to the window by {@link AnalyticsPeriod#within}, so what
      *                         is plotted cannot reach past the axis drawn for it.
+     * @param yAxisRange       the scale the sensor is read against, or null to let the readings
+     *                         scale the axis themselves - which is the right answer for all but a
+     *                         reading that is already a share of something. See {@link AxisRange}.
+     * @return whether anything was plotted. False means the window holds nothing to draw a line
+     *         from, and a line of text has been put where the plot would be, so the caller hides
+     *         the unit labels it draws around axes that are no longer there.
      */
-    public void setBuckets(@StringRes int seriesLabelResId,
-                           @NonNull AnalyticsPeriod period,
-                           @NonNull List<SensorReading> buckets) {
+    public boolean setBuckets(@StringRes int seriesLabelResId,
+                              @NonNull AnalyticsPeriod period,
+                              @NonNull List<SensorReading> buckets,
+                              @Nullable AxisRange yAxisRange) {
         Context context = this.chart.getContext();
         String label = context.getString(seriesLabelResId);
 
@@ -115,61 +120,44 @@ public class AnalyticsChartController {
         }
 
         if (runs.isEmpty()) {
-            this.showEmpty(period);
-            return;
+            this.showMessage(R.string.analytics_chart_no_data);
+            return false;
         }
 
         this.showPeriodOnXAxis(period);
-        // Undoes the pinning showEmpty leaves behind, so the readings scale the axis again.
+        // Either pins the axis to the sensor's own scale, or undoes the pinning left behind by
+        // showEmpty and by whichever sensor was on the tabs before, so the readings scale it again.
         YAxis leftAxis = this.chart.getAxisLeft();
-        leftAxis.resetAxisMinimum();
-        leftAxis.resetAxisMaximum();
+        if (yAxisRange == null) {
+            leftAxis.resetAxisMinimum();
+            leftAxis.resetAxisMaximum();
+        } else {
+            leftAxis.setAxisMinimum(yAxisRange.getMinimum());
+            leftAxis.setAxisMaximum(yAxisRange.getMaximum());
+        }
         leftAxis.setDrawLabels(true);
 
         this.chart.setData(new LineData(runs));
         // Drops any pan or zoom left over from the buckets that were on screen before.
         this.chart.fitScreen();
         this.chart.invalidate();
+        return true;
     }
 
     /**
-     * Draws the period's axes with nothing on them.
+     * Empties the chart and puts a line of text where the plot would be.
      *
-     * <p>An empty window is not an error and does not need to be announced: the axis says which
-     * window is being looked at and the empty plot says the board has put nothing in it, which is
-     * the whole of the message a line of text would carry.
+     * <p>This state clears the data outright, so the axes go with it and the caller hides the unit
+     * labels around them to match. It covers every case where there is no line to draw: waiting on
+     * a read, a read that came back cancelled, having no aquarium to read from, and a window the
+     * board has genuinely put nothing in yet.
      *
-     * <p>Two things make that drawable. The chart is handed an empty {@link LineData} rather than
-     * being cleared, because a chart with null data draws its no-data text and nothing else - no
-     * axes, no grid. And the y axis is pinned to a fixed range with its labels turned off, because
-     * there are no readings to scale it to: left to work it out from empty data it computes an
-     * infinite range, and a scale invented out of nothing is worse than no scale at all.
+     * <p>That last one is a fact about the tank rather than about the app, and it used to be drawn
+     * as the period's bare axes over an empty plot. The axes turned out to say it too quietly -
+     * they are what a chart looks like either way - so it is now said in words like the rest.
      */
-    public void showEmpty(@NonNull AnalyticsPeriod period) {
-        this.showPeriodOnXAxis(period);
-
-        YAxis leftAxis = this.chart.getAxisLeft();
-        leftAxis.setAxisMinimum(EMPTY_AXIS_MINIMUM);
-        leftAxis.setAxisMaximum(EMPTY_AXIS_MAXIMUM);
-        leftAxis.setDrawLabels(false);
-
-        this.chart.setData(new LineData());
-        this.chart.fitScreen();
-        this.chart.invalidate();
-    }
-
-    /**
-     * Empties the chart while a read is in flight.
-     *
-     * <p>Switching tabs has to take the previous sensor's line down - leaving it up under the new
-     * tab's name would be showing one sensor's readings labelled as another's - and an empty plot
-     * would say the new sensor has no readings, which is not what waiting for them looks like. So
-     * this is the one state that clears the data outright: the axes go with it, and the caller
-     * hides the unit labels around them to match.
-     */
-    public void showLoading() {
-        this.chart.setNoDataText(
-                this.chart.getContext().getString(R.string.analytics_chart_loading));
+    public void showMessage(@StringRes int messageResId) {
+        this.chart.setNoDataText(this.chart.getContext().getString(messageResId));
         this.chart.clear();
     }
 
