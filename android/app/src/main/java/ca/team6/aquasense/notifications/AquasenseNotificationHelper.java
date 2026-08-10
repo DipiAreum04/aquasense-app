@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import ca.team6.aquasense.MainActivity;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
 public final class AquasenseNotificationHelper {
 
@@ -93,6 +95,7 @@ public final class AquasenseNotificationHelper {
                 .setPriority(violation.isCritical()
                         ? NotificationCompat.PRIORITY_HIGH
                         : NotificationCompat.PRIORITY_DEFAULT)
+                .setColor(ContextCompat.getColor(context, accentColorResIdFor(violation)))
                 .setContentIntent(openAppIntent(
                         context, violation.aquariumId, violation.notificationId()))
                 .setAutoCancel(true);
@@ -103,6 +106,27 @@ public final class AquasenseNotificationHelper {
             return;
         }
         NotificationManagerCompat.from(context).notify(violation.notificationId(), builder.build());
+    }
+
+    /**
+     * The colour the shade tints an alert's icon and app name with (ST-7.3), taken from the same
+     * {@link SensorStatus} the dashboard colours the sensor's card with. A notification and the
+     * card it sends you to therefore agree on sight, before either has been read.
+     *
+     * <p>A violation that is not about a reading has no severity to show. Both of those - a sensor
+     * that stopped reporting and a hub that went quiet - are the disconnected grey the dashboard
+     * greys the same card to, rather than a red that would claim the water is in trouble when what
+     * is actually in trouble is the hardware.
+     */
+    @ColorRes
+    private static int accentColorResIdFor(@NonNull ThresholdViolation violation) {
+        switch (violation.kind) {
+            case SENSOR_OFFLINE:
+            case HUB_DISCONNECTED:
+                return SensorStatus.DISCONNECTED.colorResourceId;
+            default:
+                return violation.severity.colorResourceId;
+        }
     }
 
     /**

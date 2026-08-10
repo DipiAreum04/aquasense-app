@@ -132,8 +132,6 @@ public final class FirebaseDatabaseHelper {
      * Merges rather than replaces,so even if the user changes the aquarium name,
      * the thresholds and spike deltas will still be there.
      */
-    // TODO: editing one sensor's band must not wipe the whole thresholds node. 
-    // Update the deeper "thresholds/{sensor}" path, which Firebase merges per path segment.
     public void writeAquarium(@NonNull String uid,
                               @NonNull String aquariumId,
                               @NonNull String name,
@@ -143,9 +141,7 @@ public final class FirebaseDatabaseHelper {
         Map<String, Object> aquarium = new HashMap<>();
         aquarium.put(DatabaseSchema.NAME_KEY, name);
         aquarium.put(DatabaseSchema.WATER_TYPE_KEY, waterType);
-        if (!thresholds.isEmpty()) {
-            aquarium.put(DatabaseSchema.THRESHOLDS_KEY, thresholdsToMap(thresholds));
-        }
+        addThresholdPaths(aquarium, thresholds);
 
         aquariumsRef(uid)
                 .child(aquariumId)
@@ -153,21 +149,62 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Turns bands into the four-key nodes the schema stores them as. All four go in together,
+    /**
+     * Replaces the bands and spike deltas of the sensors named, and only those sensors.
+     *
+     * <p>Both maps are keyed by sensor ID and either may be empty; a sensor absent from a map keeps
+     * whatever it already has. The two go in one update so a sensor cannot end up graded against a
+     * new band while still spiking against its old delta.
+     */
+    public void writeSensorThresholds(@NonNull String uid,
+                                      @NonNull String aquariumId,
+                                      @NonNull Map<String, ThresholdBand> thresholds,
+                                      @NonNull Map<String, Double> spikeDeltas,
+                                      @NonNull DbCallback callback) {
+        Map<String, Object> updates = new HashMap<>();
+        addThresholdPaths(updates, thresholds);
+        for (Map.Entry<String, Double> entry : spikeDeltas.entrySet()) {
+            updates.put(DatabaseSchema.SPIKE_DELTAS_KEY + "/" + entry.getKey(), entry.getValue());
+        }
+        if (updates.isEmpty()) {
+            // Nothing to write is a success, and an empty updateChildren is a no-op anyway.
+            callback.onSuccess();
+            return;
+        }
+
+        aquariumsRef(uid)
+                .child(aquariumId)
+                .updateChildren(updates)
+                .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
+    }
+
+    /**
+     * Adds one entry per band to an update keyed from the aquarium node.
+     *
+     * <p>The key is the deep path {@code thresholds/{sensor}} rather than {@code thresholds}, which
+     * is what keeps editing one sensor from wiping the rest: Firebase merges an update per path
+     * segment, so addressing the sensor leaves its siblings untouched, where addressing their
+     * shared parent would replace all of them with whatever this one map happens to hold.
+     */
+    private static void addThresholdPaths(@NonNull Map<String, Object> updates,
+                                          @NonNull Map<String, ThresholdBand> thresholds) {
+        for (Map.Entry<String, ThresholdBand> entry : thresholds.entrySet()) {
+            updates.put(
+                    DatabaseSchema.THRESHOLDS_KEY + "/" + entry.getKey(),
+                    boundsOf(entry.getValue()));
+        }
+    }
+
+    // Turns one band into the four-key node the schema stores it as. All four go in together,
     // since parseThresholds drops any band that is missing one of them.
     @NonNull
-    private static Map<String, Object> thresholdsToMap(@NonNull Map<String, ThresholdBand> thresholds) {
-        Map<String, Object> bySensor = new HashMap<>();
-        for (Map.Entry<String, ThresholdBand> entry : thresholds.entrySet()) {
-            ThresholdBand band = entry.getValue();
-            Map<String, Object> bounds = new HashMap<>();
-            bounds.put(DatabaseSchema.WARN_LOW_KEY, band.getWarnLow());
-            bounds.put(DatabaseSchema.SAFE_LOW_KEY, band.getSafeLow());
-            bounds.put(DatabaseSchema.SAFE_HIGH_KEY, band.getSafeHigh());
-            bounds.put(DatabaseSchema.WARN_HIGH_KEY, band.getWarnHigh());
-            bySensor.put(entry.getKey(), bounds);
-        }
-        return bySensor;
+    private static Map<String, Object> boundsOf(@NonNull ThresholdBand band) {
+        Map<String, Object> bounds = new HashMap<>();
+        bounds.put(DatabaseSchema.WARN_LOW_KEY, band.getWarnLow());
+        bounds.put(DatabaseSchema.SAFE_LOW_KEY, band.getSafeLow());
+        bounds.put(DatabaseSchema.SAFE_HIGH_KEY, band.getSafeHigh());
+        bounds.put(DatabaseSchema.WARN_HIGH_KEY, band.getWarnHigh());
+        return bounds;
     }
 
     // Removes an aquarium along with the telemetry recorded under it. Both paths go in one

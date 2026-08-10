@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -209,6 +210,43 @@ public class AquariumRepository {
                     @Override
                     public void onError(@Nullable Exception exception) {
                         ScopedLogger.error("Failed to create aquarium: " + exception);
+                        callback.onError();
+                    }
+                });
+    }
+
+    /**
+     * Saves the bands and spike deltas the user configured for one aquarium (SETTINGS-07).
+     *
+     * <p>Only the sensors named in the maps are written, so a screen that edits one sensor leaves
+     * the others as they are. Nothing is updated locally: the write lands in the same node the live
+     * subscription is watching, so the cache — and with it the dashboard's grading and the
+     * background monitor's alerting — refreshes itself moments later.
+     *
+     * <p>Every band must be strictly ordered and every delta positive, which the caller is expected
+     * to have validated; the database rules enforce the same and reject the write otherwise.
+     */
+    public void saveSensorThresholds(@NonNull Aquarium aquarium,
+                                     @NonNull Map<String, ThresholdBand> thresholds,
+                                     @NonNull Map<String, Double> spikeDeltas,
+                                     @NonNull WriteCallback callback) {
+        String uid = this.currentUid();
+        if (uid == null) {
+            ScopedLogger.error("Cannot save thresholds while signed out.");
+            callback.onError();
+            return;
+        }
+
+        this.database.writeSensorThresholds(uid, aquarium.getId(), thresholds, spikeDeltas,
+                new FirebaseDatabaseHelper.DbCallback() {
+                    @Override
+                    public void onSuccess() {
+                        callback.onSuccess();
+                    }
+
+                    @Override
+                    public void onError(@Nullable Exception exception) {
+                        ScopedLogger.error("Failed to save thresholds: " + exception);
                         callback.onError();
                     }
                 });

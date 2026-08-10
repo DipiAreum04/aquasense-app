@@ -40,7 +40,17 @@
         <action
             android:id="@+id/action_hub_to_aquariumSelector"
             app:destination="@id/aquariumSelectorFragment" />
+        <action
+            android:id="@+id/action_hub_to_waterParameters"
+            app:destination="@id/waterParametersFragment" />
     </fragment>
+
+    <!-- SETTINGS-07 / ST-7.1-7.3 - user-configurable sensor thresholds -->
+    <fragment
+        android:id="@+id/waterParametersFragment"
+        android:name="ca.team6.aquasense.settings.WaterParametersFragment"
+        tools:layout="@layout/fragment_water_parameters"
+        android:label="@string/water_parameters" />
 
     <fragment
         android:id="@+id/aquariumSelectorFragment"

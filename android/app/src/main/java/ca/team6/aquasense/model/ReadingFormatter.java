@@ -20,7 +20,7 @@ public final class ReadingFormatter {
     private ReadingFormatter() {}
 
     // Decimal places per sensor ID, indexed [standard, precise].
-    // Water level is absent because it is a float switch shown as LOW / SAFE rather than a number,
+    // Water level is absent because it is a detector shown as LOW / SAFE rather than a number,
     // so format() answers it before reaching here.
     private static int decimalsFor(String sensorId, boolean precise) {
         switch (sensorId) {
@@ -87,6 +87,20 @@ public final class ReadingFormatter {
         return fahrenheit ? celsiusDelta * 9.0 / 5.0 : celsiusDelta;
     }
 
+    /**
+     * Inverse of {@link #toDisplayTemperature(double, boolean)}, for a temperature the user typed
+     * rather than one the board reported. Telemetry and thresholds are both stored in Celsius, so
+     * a number entered in Fahrenheit has to come back through here before it is written.
+     */
+    public static double fromDisplayTemperature(double displayValue, boolean fahrenheit) {
+        return fahrenheit ? (displayValue - 32.0) * 5.0 / 9.0 : displayValue;
+    }
+
+    /** Inverse of {@link #toDisplayTemperatureDelta}, and likewise without the 32 degree offset. */
+    public static double fromDisplayTemperatureDelta(double displayDelta, boolean fahrenheit) {
+        return fahrenheit ? displayDelta * 5.0 / 9.0 : displayDelta;
+    }
+
     @StringRes
     public static int temperatureUnitResId(boolean fahrenheit) {
         return fahrenheit ? R.string.unit_fahrenheit : R.string.unit_celsius;
@@ -136,7 +150,7 @@ public final class ReadingFormatter {
      * @param value    the raw reading as stored in Realtime Database
      */
     public static String format(Context context, String sensorId, double value) {
-        // The float switch reports 1 when it still senses water and 0 once the level drops below it,
+        // The detector reports 1 when it still senses water and 0 once the level drops below it,
         // which reads as a state rather than a quantity. Compared against a midpoint because the
         // value arrives from the database as a double.
         if (DatabaseSchema.WATER_LEVEL_KEY.equals(sensorId)) {

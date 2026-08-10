@@ -69,6 +69,26 @@ public final class ThresholdBand {
         return warnLow <= safeLow && safeLow <= safeHigh && safeHigh <= warnHigh;
     }
 
+    /**
+     * True when each bound sits strictly above the one before it, so every band spans a real range
+     * rather than collapsing to nothing.
+     *
+     * <p>This is the stricter half of {@link #isMonotonic}, and the two are deliberately kept
+     * apart. Reading stays tolerant: a record already in the database with, say, equal warnLow and
+     * safeLow is graded rather than discarded, since dropping it would leave the sensor with no
+     * band at all. Writing has to be strict, because {@code database/rules.json} requires
+     * {@code warn_low < safe_low < safe_high < warn_high} and rejects anything else outright — so
+     * a form that only checked {@link #isMonotonic} would build a band the server refuses.
+     */
+    public static boolean isStrictlyOrdered(
+            double warnLow,
+            double safeLow,
+            double safeHigh,
+            double warnHigh
+    ) {
+        return warnLow < safeLow && safeLow < safeHigh && safeHigh < warnHigh;
+    }
+
     /** Classifies a reading into a sensor status */
     public SensorStatus statusFor(double value) {
         if (value < this.warnLow || value > this.warnHigh) {
