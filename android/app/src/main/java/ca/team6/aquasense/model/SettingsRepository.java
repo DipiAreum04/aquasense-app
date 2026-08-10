@@ -50,6 +50,11 @@ public class SettingsRepository {
     // True after a successful register/login on this device; until then auth starts at register page.
     public static final String KEY_HAS_AUTHENTICATED      = "hasAuthenticated";
 
+    // Device-local prompt state, not a user preference: the system permission sheet is offered
+    // once on launch and never re-launched from there, so declining it does not turn into nagging
+    // on every resume. Settings > Notifications is where it can be asked for again.
+    public static final String KEY_NOTIF_PERMISSION_ASKED = "notificationPermissionAsked";
+
     public static final String KEY_USAGE_ANALYTICS        = "usageAnalytics";
     public static final String KEY_LOCATION_DATA          = "locationData";
 

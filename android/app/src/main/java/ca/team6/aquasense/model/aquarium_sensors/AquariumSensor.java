@@ -19,6 +19,8 @@ public abstract class AquariumSensor {
     private String value;
     protected SensorStatus status;
 
+    private final SpikeTracker spikeTracker = new SpikeTracker();
+
     protected AquariumSensor() {
         this.setUnitResId(R.string.unit_dimensionless);
         this.value = "-";
@@ -37,21 +39,51 @@ public abstract class AquariumSensor {
         this.unitResId = unitResId;
     }
 
-    /** @return whether the displayed value or status actually changed, so callers can skip rebinding when it didn't. */
-    public boolean applyReading(Context context, @Nullable SensorReading reading, @Nullable ThresholdBand thresholdBand, long nowMillis) {
+    /**
+     * @param spikeDelta how far this reading must have moved from the previous one to count as a
+     *     spike, from {@code SensorThresholds.resolveSpikeDelta}. {@link Double#NaN} for a sensor
+     *     that cannot spike, which disables the check.
+     * @return whether the displayed value or status actually changed, so callers can skip rebinding when it didn't.
+     */
+    public boolean applyReading(Context context, @Nullable SensorReading reading, @Nullable ThresholdBand thresholdBand, double spikeDelta, long nowMillis) {
         String previousValue = this.value;
         SensorStatus previousStatus = this.status;
+
+        if (reading == null) {
+            // No sample at all, which is how a switch to another aquarium arrives.
+            this.spikeTracker.reset();
+        }
 
         long nowSeconds = nowMillis / 1000L;
         if (reading == null || reading.isOffline() || Math.abs(reading.ageSeconds(nowSeconds)) > STALE_THRESHOLD_SECONDS) {
             this.value = "-";
             this.status = SensorStatus.DISCONNECTED;
+            this.spikeTracker.pause();
         } else {
             this.value = ReadingFormatter.format(context, this.getId(), reading.getValue());
-            this.status = this.statusFor(reading.getValue(), thresholdBand);
+            boolean spiking = this.spikeTracker.grade(
+                    reading.getValue(), reading.getTimestampSeconds(), spikeDelta);
+            this.status = gradedStatus(
+                    spiking, this.statusFor(reading.getValue(), thresholdBand));
         }
 
         return !Objects.equals(previousValue, this.value) || previousStatus != this.status;
+    }
+
+    /**
+     * Settles one reading's status between what its band says and whether it jumped to get there.
+     *
+     * <p>A jump only says something the band does not while the reading is otherwise in range: a
+     * spike is the one warning a normal value can earn. Once the reading is out of range the band
+     * is the direct account of it and stands alone, so a jump that lands in warning or critical is
+     * that band and nothing more.
+     *
+     * <p>Nothing here carries over between readings, so the sample after a spike is whatever its
+     * own band says, and a card that spiked while normal drops back to normal on the next reading
+     * that does not jump.
+     */
+    static SensorStatus gradedStatus(boolean spiking, SensorStatus banded) {
+        return spiking && banded == SensorStatus.NORMAL ? SensorStatus.WARNING : banded;
     }
 
     /**

@@ -2,6 +2,8 @@ package ca.team6.aquasense.model;
 
 import android.content.Context;
 
+import androidx.annotation.StringRes;
+
 import java.util.Locale;
 
 import ca.team6.aquasense.R;
@@ -58,6 +60,73 @@ public final class ReadingFormatter {
                         SettingsRepository.PRECISION_STANDARD));
     }
 
+    /** True when the user picked Fahrenheit in Display &amp; Units. */
+    public static boolean isFahrenheit(Context context) {
+        SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(context);
+        if (prefs == null) {
+            return false;
+        }
+        return !"C".equals(
+                prefs.getString(SettingsRepository.KEY_TEMP_UNIT, new AppSettings().tempUnit));
+    }
+
+    /**
+     * Converts a stored temperature into the unit the user chose. Telemetry is always Celsius in
+     * the database, so the conversion belongs at the display edge and nowhere else.
+     */
+    public static double toDisplayTemperature(double celsius, boolean fahrenheit) {
+        return fahrenheit ? celsius * 9.0 / 5.0 + 32.0 : celsius;
+    }
+
+    /**
+     * Converts a temperature <em>difference</em> (a spike size, a band width) into the user's unit.
+     * A difference scales but does not shift, so this deliberately omits the +32 offset that
+     * {@link #toDisplayTemperature} applies.
+     */
+    public static double toDisplayTemperatureDelta(double celsiusDelta, boolean fahrenheit) {
+        return fahrenheit ? celsiusDelta * 9.0 / 5.0 : celsiusDelta;
+    }
+
+    @StringRes
+    public static int temperatureUnitResId(boolean fahrenheit) {
+        return fahrenheit ? R.string.unit_fahrenheit : R.string.unit_celsius;
+    }
+
+    /** Unit label for a sensor, honouring the temperature unit preference. */
+    @StringRes
+    public static int unitResIdFor(String sensorId, boolean fahrenheit) {
+        switch (sensorId) {
+            case DatabaseSchema.TEMPERATURE_KEY:
+                return temperatureUnitResId(fahrenheit);
+            case DatabaseSchema.DISSOLVED_SOLIDS_KEY:
+                return R.string.unit_parts_per_million;
+            case DatabaseSchema.PH_LEVEL_KEY:
+            case DatabaseSchema.WATER_LEVEL_KEY:
+                return R.string.unit_dimensionless;
+            default:
+                ScopedLogger.error("Unknown sensor ID " + sensorId + ", using no unit.");
+                return R.string.unit_dimensionless;
+        }
+    }
+
+    /** Display name for a sensor, matching the dashboard card titles. */
+    @StringRes
+    public static int nameResIdFor(String sensorId) {
+        switch (sensorId) {
+            case DatabaseSchema.TEMPERATURE_KEY:
+                return R.string.temperature;
+            case DatabaseSchema.PH_LEVEL_KEY:
+                return R.string.ph_level;
+            case DatabaseSchema.DISSOLVED_SOLIDS_KEY:
+                return R.string.dissolved_solids;
+            case DatabaseSchema.WATER_LEVEL_KEY:
+                return R.string.water_level;
+            default:
+                ScopedLogger.error("Unknown sensor ID " + sensorId + ", using app name.");
+                return R.string.app_name;
+        }
+    }
+
     /**
      * Formats a raw sensor reading for the dashboard card and chart labels.
      *
@@ -66,9 +135,6 @@ public final class ReadingFormatter {
      * @param sensorId one of the {@code AquariumSensor.getId()} values
      * @param value    the raw reading as stored in Realtime Database
      */
-    // The precision is chosen at runtime, so the format string cannot be a literal. The IDE
-    // cannot evaluate it statically and reports it as malformed; "%." + 2 + "f" is just "%.2f".
-    @SuppressWarnings("MalformedFormatString")
     public static String format(Context context, String sensorId, double value) {
         // The float switch reports 1 when it still senses water and 0 once the level drops below it,
         // which reads as a state rather than a quantity. Compared against a midpoint because the
@@ -77,10 +143,22 @@ public final class ReadingFormatter {
             return context.getString(value >= 0.5 ? R.string.water_level_safe : R.string.water_level_low);
         }
 
-        int decimals = decimalsFor(sensorId, isPrecise(context));
+        boolean precise = isPrecise(context);
         double displayValue = DatabaseSchema.TEMPERATURE_KEY.equals(sensorId)
                 ? toDisplayTemperature(context, value)
                 : value;
-        return String.format(Locale.getDefault(), "%." + decimals + "f", displayValue);
+        return formatValue(sensorId, displayValue, precise);
+    }
+
+    /**
+     * Formats a reading when the caller already knows the precision setting, so a screen rendering
+     * many values does not re-read preferences per value.
+     */
+    // The precision is chosen at runtime, so the format string cannot be a literal. The IDE
+    // cannot evaluate it statically and reports it as malformed; "%." + 2 + "f" is just "%.2f".
+    @SuppressWarnings("MalformedFormatString")
+    public static String formatValue(String sensorId, double value, boolean precise) {
+        int decimals = decimalsFor(sensorId, precise);
+        return String.format(Locale.getDefault(), "%." + decimals + "f", value);
     }
 }

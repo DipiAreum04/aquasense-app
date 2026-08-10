@@ -86,6 +86,11 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().putBoolean(key, value).apply();
     }
 
+    /** Persists before returning so a second lifecycle callback cannot re-read a stale value. */
+    public void setBooleanSync(String key, boolean value) {
+        sharedPreferences.edit().putBoolean(key, value).commit();
+    }
+
     public String getString(String key, String defaultValue) {
         return sharedPreferences.getString(key, defaultValue);
     }

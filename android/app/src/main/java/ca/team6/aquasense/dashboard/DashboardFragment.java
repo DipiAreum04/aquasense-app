@@ -43,6 +43,7 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.notifications.SensorThresholds;
 
 public class DashboardFragment extends Fragment {
     private DashboardHeaderController dashboardHeaderController;
@@ -422,7 +423,12 @@ public class DashboardFragment extends Fragment {
             SensorReading reading = readingsBySensorId.get(sensor.getId());
             ThresholdBand thresholdBand =
                     activeAquarium != null ? activeAquarium.thresholdFor(sensor.getId()) : null;
-            boolean changed = sensor.applyReading(requireContext(), reading, thresholdBand, nowMillis);
+            // Per aquarium and sensor, from the database when it has one stored. The repository
+            // keeps a live listener on /{uid}/aquariums, so an edited delta lands here on its own.
+            double spikeDelta =
+                    SensorThresholds.resolveSpikeDelta(activeAquarium, sensor.getId());
+            boolean changed = sensor.applyReading(
+                    requireContext(), reading, thresholdBand, spikeDelta, nowMillis);
             if (changed && sensorAdapter != null) {
                 sensorAdapter.notifySensorChanged(sensor);
             }

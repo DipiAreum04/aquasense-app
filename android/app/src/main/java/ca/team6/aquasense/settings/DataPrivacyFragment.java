@@ -54,6 +54,7 @@ public class DataPrivacyFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_LOCATION_DATA, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
+
         view.findViewById(R.id.rowDownloadData).setOnClickListener(v ->
                 SharedPreferenceHelper.showComingSoon(requireContext()));
 

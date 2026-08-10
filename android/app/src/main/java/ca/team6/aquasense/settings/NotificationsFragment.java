@@ -1,5 +1,6 @@
 package ca.team6.aquasense.settings;
 
+import android.Manifest;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
@@ -17,6 +20,8 @@ import java.util.Locale;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.notifications.BackgroundMonitoringPrompt;
+import ca.team6.aquasense.notifications.MonitoringController;
 
 public class NotificationsFragment extends Fragment {
 
@@ -28,7 +33,17 @@ public class NotificationsFragment extends Fragment {
     // Quiet-hours time row references (shown/hidden with toggle)
     private View dividerQuietStart, dividerQuietEnd;
     private View rowQuietStart, rowQuietEnd;
+    private View dividerNotificationPermission, rowNotificationPermission;
     private TextView tvQuietStart, tvQuietEnd;
+
+    private final ActivityResultLauncher<String> requestNotificationPermission =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                // MainActivity only asks once per install, so a grant from here is what arms the
+                // monitor for users who reached this row after refusing on first launch.
+                prefs.setBooleanSync(SettingsRepository.KEY_NOTIF_PERMISSION_ASKED, true);
+                MonitoringController.sync(requireContext());
+                updateNotificationPermissionRowVisibility();
+            });
 
     @Nullable
     @Override
@@ -59,6 +74,8 @@ public class NotificationsFragment extends Fragment {
         dividerQuietEnd   = view.findViewById(R.id.dividerQuietEnd);
         rowQuietStart     = view.findViewById(R.id.rowQuietStart);
         rowQuietEnd       = view.findViewById(R.id.rowQuietEnd);
+        dividerNotificationPermission = view.findViewById(R.id.dividerNotificationPermission);
+        rowNotificationPermission = view.findViewById(R.id.rowNotificationPermission);
         tvQuietStart      = view.findViewById(R.id.tvQuietStart);
         tvQuietEnd        = view.findViewById(R.id.tvQuietEnd);
 
@@ -88,10 +105,11 @@ public class NotificationsFragment extends Fragment {
             setQuietRowsVisible(s.quietHours);
         });
 
-        // TODO: Wire push notifications (FCM or local notifications).
         switchPush.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_PUSH_NOTIF, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
+            // Starts or stops the background monitor immediately, so the persistent "Monitoring
+            // aquarium" notice disappears the moment alerts are switched off.
+            MonitoringController.sync(requireContext());
         });
         // TODO: Wire email alerts (SMTP / SendGrid / backend API; Firebase not required).
         switchEmail.setOnCheckedChangeListener((b, checked) -> {
@@ -103,65 +121,49 @@ public class NotificationsFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_SMS_ALERTS, checked);
             SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        // TODO: Enforce critical-only filtering when sending alerts.
         switchCritical.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_CRITICAL_ONLY, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        // TODO: Mute non-critical alerts during quiet hours; critical alerts always deliver.
         switchQuiet.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_QUIET_HOURS, checked);
             setQuietRowsVisible(checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        // TODO: Suppress all notifications while Maintenance Mode is on.
         switchMaintenance.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_FEEDING_SILENCE, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
-        // TODO: Notify when a water parameter is out of range.
+        // NF-1.1: handled by FirebaseThresholdMonitor when push + param alerts are enabled.
         switchParam.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_PARAM, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
+            MonitoringController.sync(requireContext());
         });
-        // TODO: ARMAAN: Wire this to the notification logic.
-        
-        // Detect abnormal value jumps that stay inside the safe range.
-        // Runs alongside the threshold check, not instead of it.
         switchJumps.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_ABNORMAL_JUMPS, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
+            MonitoringController.sync(requireContext());
         });
 
-        // Before sending a notification, check the flag for the sensor it concerns
-        // If false, drop the alert regardless of the notification-type toggles. 
+        // Before sending a notification, check the flag for the sensor it concerns.
+        // If false, drop the alert regardless of the notification-type toggles.
         // Critical alerts are the one exception and must still deliver.
         switchSensorTemp.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_TEMP, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
         switchSensorLevel.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_LEVEL, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
         switchSensorTds.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_TDS, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
         switchSensorPh.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_PH, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
 
-        // TODO: Notify when a sensor gets disconnected.
         switchSensor.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
+            MonitoringController.sync(requireContext());
         });
-        // TODO: Notify when the hub stops reporting.
         switchHubOffline.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_HUB_DISCONNECTED, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
+            MonitoringController.sync(requireContext());
         });
 
         rowQuietStart.setOnClickListener(v2 ->
@@ -170,6 +172,44 @@ public class NotificationsFragment extends Fragment {
         rowQuietEnd.setOnClickListener(v2 ->
                 showTimePicker(tvQuietEnd.getText().toString(),
                         SettingsRepository.KEY_QUIET_END, tvQuietEnd));
+
+        rowNotificationPermission.setOnClickListener(v -> requestNotificationAccess());
+        updateNotificationPermissionRowVisibility();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // The row tracks system state that the user can change while this screen is backgrounded.
+        updateNotificationPermissionRowVisibility();
+    }
+
+    /**
+     * Sends the user wherever the permission can still be granted. The system sheet handles the
+     * first refusal, but the platform stops showing it after the second and answers silently, so
+     * from that point the app's notification settings are the only way through.
+     */
+    private void requestNotificationAccess() {
+        boolean askedBefore =
+                prefs.getBoolean(SettingsRepository.KEY_NOTIF_PERMISSION_ASKED, false);
+        if (!askedBefore
+                || shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS);
+            return;
+        }
+        BackgroundMonitoringPrompt.openAppNotificationSettings(requireActivity());
+    }
+
+    private void updateNotificationPermissionRowVisibility() {
+        if (rowNotificationPermission == null || dividerNotificationPermission == null) {
+            return;
+        }
+        int visibility =
+                BackgroundMonitoringPrompt.isNotificationPermissionMissing(requireContext())
+                        ? View.VISIBLE
+                        : View.GONE;
+        rowNotificationPermission.setVisibility(visibility);
+        dividerNotificationPermission.setVisibility(visibility);
     }
 
     private void setQuietRowsVisible(boolean visible) {

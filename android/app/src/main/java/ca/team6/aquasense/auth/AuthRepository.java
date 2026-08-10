@@ -40,6 +40,7 @@ import ca.team6.aquasense.model.AppSettings;
 import ca.team6.aquasense.model.FirebaseDatabaseHelper;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.notifications.ThresholdMonitorService;
 
 /**
  * Wrapper functions for Firebase Auth and the user profile node in Realtime Database.
@@ -351,6 +352,7 @@ public class AuthRepository {
     }
 
     public void signOut() {
+        ThresholdMonitorService.stop(appContext);
         firebaseAuth.signOut();
         if (prefs != null) {
             // Keep KEY_HAS_AUTHENTICATED so the next launch opens login instead of register
