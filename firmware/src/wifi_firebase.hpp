@@ -31,6 +31,8 @@ public:
     void setExpectedDeviceUid(const String& deviceUid);
 
     bool ensureFreshToken();
+    
+    bool permissionRevoked() const;
 
     bool getSensorBootstrap(
         const String& sensorId,
@@ -67,6 +69,8 @@ private:
     FirebaseAuth _auth;
     String _appliedIdToken;
 
+    int _deniedStreak = 0;
+
     static String bucketKey(int index);
     static String hostFromUrl(const char* url);
     static bool endsPeriodGroup(const BucketUpdate* buckets, int index, int count);
@@ -82,6 +86,7 @@ private:
     String telemetrySensorPath(const String& sensorId) const;
 
     void finishResponse();
+    void noteResponse(int statusOrError);
     bool getJsonFiltered(const String& path, const JsonDocument& filter, JsonDocument& out);
     bool setJsonMulti(const String& rootPath, const String& json);
     int patchJson(const String& rootPath, const String& json);

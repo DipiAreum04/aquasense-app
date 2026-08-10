@@ -4,9 +4,12 @@
 #include "consts.hpp"
 
 #define HTTP_CODE_OK 200
+#define HTTP_CODE_UNAUTHORIZED 401
+#define HTTP_CODE_FORBIDDEN 403
 
 namespace {
     const uint16_t HTTPS_PORT = 443;
+    const int DENIED_STREAK_LIMIT = 30;
 }
 
 WiFiFirebase::WiFiFirebase(const char* dbUrl, const char* apiKey, const char* email, const char* password)
@@ -38,6 +41,32 @@ void WiFiFirebase::finishResponse() {
     if (!_http.endOfBodyReached()) {
         _http.stop();
     }
+}
+
+void WiFiFirebase::noteResponse(int statusOrError) {
+    if (statusOrError == HTTP_CODE_OK) {
+        _deniedStreak = 0;
+        return;
+    }
+
+    if (statusOrError != HTTP_CODE_UNAUTHORIZED && statusOrError != HTTP_CODE_FORBIDDEN) {
+        return;
+    }
+
+    _deniedStreak++;
+
+    if (_deniedStreak == 1) {
+        _auth.invalidateToken();
+    }
+
+    Serial.println(
+        "HTTP "+String(statusOrError)+": Firebase refused this board, "+
+        String(_deniedStreak)+" of "+String(DENIED_STREAK_LIMIT)+" in a row."
+    );
+}
+
+bool WiFiFirebase::permissionRevoked() const {
+    return _deniedStreak >= DENIED_STREAK_LIMIT;
 }
 
 bool WiFiFirebase::ensureFreshToken() {
@@ -94,6 +123,8 @@ bool WiFiFirebase::getJsonFiltered(const String& path, const JsonDocument& filte
         }
     }
 
+    noteResponse(result);
+
     if (ok) {
         finishResponse();
     } else {
@@ -120,6 +151,8 @@ int WiFiFirebase::patchJson(const String& rootPath, const String& json) {
         _http.endRequest();
         result = _http.responseStatusCode();
     }
+
+    noteResponse(result);
 
     if (result == HTTP_CODE_OK) {
         _http.skipResponseHeaders();

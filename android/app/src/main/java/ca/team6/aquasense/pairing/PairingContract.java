@@ -86,13 +86,13 @@ public final class PairingContract {
     public static final long GATT_TIMEOUT_MS = 20_000L;
 
     /**
-     * How long to wait for the board's first telemetry write after it leaves BLE (30 seconds)
+     * How long to wait for a new telemetry write.
      *
-     * <p> This timeout covers a Wi-Fi join, a Firebase sign-in and an NTP fetch. The board 
-     * publishes every second once it is up, so anything past this is a genuine failure. 
-     * Nearly always a wrong Wi-Fi password.
+     * <p> This timeout covers a Wi-Fi join, a Firebase sign-in and an NTP fetch. The board
+     * publishes every second once it is up, so anything past this is a genuine failure.
+     * Nearly always a wrong Wi-Fi network name or password.
      */
-    public static final long ONLINE_TIMEOUT_MS = 30_000L;
+    public static final long ONLINE_TIMEOUT_MS = 40_000L;
 
     // Helper method to generate the full UUID from the first block
     private static UUID uuid(String firstBlock) {

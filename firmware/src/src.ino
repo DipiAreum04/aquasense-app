@@ -11,6 +11,7 @@
 #include "ntp_time.hpp"
 #include "pairing_data.hpp"
 #include "pairing_store.hpp"
+#include "boot_counter.hpp"
 #include "telemetry_manager.hpp"
 
 static const unsigned long WIFI_CONNECT_TIMEOUT_MS = 15000;
@@ -36,6 +37,16 @@ static bool connectWifi(const String& ssid, const String& password, unsigned lon
 
     Serial.println("Wi-Fi connection failed.");
     return false;
+}
+
+static void signalFactoryReset() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    for (int i = 0; i < 6; i++) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(120);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(120);
+    }
 }
 
 static void returnToPairing(const char* reason) {
@@ -69,6 +80,15 @@ void run() {
     EEPROM.begin();
 
     Serial.println("AquaSense hub starting...");
+
+    BootCounter::begin();
+    if (BootCounter::factoryResetRequested()) {
+        Serial.println("Power cycled "+String((int) BootCounter::TRIGGER_COUNT)+
+                       " times in a row. Forgetting the stored pairing.");
+        PairingStore::clear();
+        BootCounter::clear();
+        signalFactoryReset();
+    }
 
     cloud.setExpectedDeviceUid(String(pairingData.getDeviceUid()));
 
@@ -107,6 +127,8 @@ void run() {
     int wifiFailures = 0;
 
     while (true) {
+        BootCounter::settle();
+
         if (!online) {
             if (!bleWifi.poll()) {
                 delay(50);
@@ -162,6 +184,10 @@ void run() {
         float waterLevelValue = waterSensor.isDetected() ? 1.0f : 0.0f;
 
         telemetry.tick(epoch, linkUp, tempC, waterLevelValue, tdsPpm, phValue);
+
+        if (cloud.permissionRevoked()) {
+            returnToPairing("This hub has been unpaired: the database no longer accepts it.");
+        }
     }
 }
 

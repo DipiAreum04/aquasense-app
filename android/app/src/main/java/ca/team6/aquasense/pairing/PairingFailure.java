@@ -39,11 +39,11 @@ public enum PairingFailure {
     CLAIM_FAILED(R.string.pairing_error_claim, true),
 
     /**
-     * The board took the credentials and then never published telemetry.
+     * The board took the credentials and then published no <em>new</em> telemetry.
      *
-     * <p>The most likely cause is a wrong Wi-Fi password: the board cannot tell the app
-     * so, because BLE is already torn down by the time it finds out. It clears the bad credentials
-     * and returns to advertising on its own, so the fix is retrying the pairing process.
+     * <p>The most likely cause is a wrong Wi-Fi network name or password: the board cannot tell the
+     * app so, because BLE is already torn down by the time it finds out. It clears the bad
+     * credentials and returns to advertising on its own, so the fix is retrying the pairing process.
      */
     BOARD_NEVER_CAME_ONLINE(R.string.pairing_error_offline, true);
 

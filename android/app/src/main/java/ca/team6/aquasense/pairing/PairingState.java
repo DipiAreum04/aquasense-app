@@ -23,10 +23,11 @@ public enum PairingState {
     // This state is entered when the user is writing the aquarium ID (device UID) to the database.
     CLAIMING,
 
-    // This state is entered when the user is waiting for the board's first telemetry write to verify the Wi-fi connection.
+    // This state is entered when the user is waiting for a telemetry write newer than whatever the
+    // board left behind on an earlier run, which is what verifies the Wi-Fi connection.
     AWAITING_BOARD,
 
-    // This state is entered when the board has published telemetry and the Wi-Fi connection has been verified.
+    // This state is entered when the board has published new telemetry and the Wi-Fi connection has been verified.
     SUCCESS,
 
     // This state is entered when the pairing attempt has failed for some reason.

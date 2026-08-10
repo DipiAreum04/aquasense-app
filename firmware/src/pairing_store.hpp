@@ -8,8 +8,8 @@ public:
     static constexpr size_t SSID_SIZE = 64;
     static constexpr size_t PASSWORD_SIZE = 64;
     static constexpr size_t OWNER_UID_SIZE = 32;
-
     static constexpr size_t OWNER_UID_LENGTH = 28;
+    static constexpr int RECORD_SIZE = 167;
 
     static bool load(String& ssid, String& password, String& ownerUid);
 
@@ -24,7 +24,6 @@ private:
     static constexpr int PASSWORD_ADDR = 69;
     static constexpr int OWNER_UID_ADDR = 133;
     static constexpr int CRC_ADDR = 165;
-    static constexpr int RECORD_SIZE = 167;
 
     static constexpr uint8_t VERSION = 1;
 
