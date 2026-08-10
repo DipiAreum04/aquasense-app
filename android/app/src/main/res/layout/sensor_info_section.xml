@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Heading over a block of bullets in the sensor info sheet. Sized to match the "About" heading
+     above it, so the sheet reads as one page rather than a stack of banners. -->
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    app:drawableStartCompat="@drawable/lightbulb_2_24px"
-    android:drawablePadding="12dp"
-    android:gravity="center_vertical"
+    android:layout_marginTop="22dp"
     android:textColor="@color/sensor_info_title_color"
-    android:textSize="22sp"
+    android:textSize="15sp"
     android:textStyle="bold"
-    android:tint="@color/sensor_info_bulb_tint"
 />

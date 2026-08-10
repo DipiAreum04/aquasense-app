@@ -20,20 +20,13 @@
     <string name="unit_celsius">°C</string>
     <string name="unit_fahrenheit">°F</string>
     <string name="unit_parts_per_million">ppm</string>
-    <string name="sensor_info">SENSOR INFO</string>
     <string name="sensor_info_water_level_title">Water Level Sensor</string>
-    <string name="sensor_info_water_level_desc">Measures Water level.</string>
     <string name="sensor_info_temperature_title">Temperature Sensor</string>
-    <string name="sensor_info_temperature_desc">Measures temperature.</string>
     <string name="sensor_info_dissolved_solids_title">Dissolved Solids Sensor</string>
-    <string name="sensor_info_dissolved_solids_desc">Measures dissolved solids.</string>
     <string name="sensor_info_ph_level_title">pH Level Sensor</string>
-    <string name="sensor_info_ph_level_desc">Measures pH level.</string>
     <string name="no_aquariums">No aquariums found</string>
     <string name="loading_aquariums">Loading your aquariums…</string>
     <string name="splash_loading">Loading AquaSense</string>
-    <string name="sensor_info_example_title">Example Title</string>
-    <string name="sensor_info_example_point">This is an example.</string>
     <string name="aquarium_sensors_status_normal_heading">All Good!</string>
     <string name="aquarium_sensors_status_normal_description">Your aquarium is in an optimal state.</string>
     <string name="aquarium_sensors_status_warning_heading">Something\'s Wrong…</string>
@@ -57,6 +50,103 @@
         <item quantity="one">Updated %d day ago</item>
         <item quantity="other">Updated %d days ago</item>
     </plurals>
+
+    <!-- ===================================================================================
+         Sensor info sheet, opened from the (i) on a dashboard card.
+         ==================================================================================== -->
+
+    <string name="sensor_info_range">%1$s - %2$s</string>
+    <string name="sensor_info_current">Current %1$s</string>
+    <string name="sensor_info_about">About %1$s</string>
+    <string name="sensor_info_dismiss">Dismiss</string>
+    <string name="sensor_info_close">Close</string>
+    <string name="sensor_info_ranges_title">Ranges</string>
+    <string name="sensor_info_band_safe">Safe</string>
+    <string name="sensor_info_band_warning">Warning</string>
+    <string name="sensor_info_band_critical">Critical</string>
+    <string name="sensor_info_band_pair">%1$s\n%2$s</string>
+    <string name="sensor_info_band_below">&lt; %1$s</string>
+    <string name="sensor_info_band_above">&gt; %1$s</string>
+    <string name="sensor_info_band_none">None</string>
+    <string name="sensor_info_note_normal">Current reading is inside this aquarium\'s safe range :) </string>
+    <string name="sensor_info_note_unset">No thresholds are set for this sensor yet, so every reading reads as normal.</string>
+    <string name="sensor_info_note_warning">Current reading is outside the safe range, but not yet critical.</string>
+    <string name="sensor_info_note_critical">Current reading is past this aquarium\'s critical threshold!!!</string>
+    <string name="sensor_info_note_disconnected">No reading has arrived in the last 30 seconds.</string>
+
+    <!-- Heading over the sheet's one advice section, picked by status. -->
+    <string name="sensor_info_section_keep">Keeping It Steady</string>
+    <string name="sensor_info_section_todo">What To Do</string>
+    <string name="sensor_info_section_act">Immediate Action</string>
+    <string name="sensor_info_section_reconnect">Getting It Back Online</string>
+
+    <!-- Temperature. -->
+    <string name="sensor_info_temperature_about">Temperature is important because it affects how fast your fish\'s metabolism runs. Steady temperature readings matter more than an exact value.</string>
+    <string name="sensor_info_temperature_normal_1">Keep the aquarium out of direct sunlight and away from vents and windows.</string>
+    <string name="sensor_info_temperature_normal_2">Do not change the heater\'s heat output while readings are steady.</string>
+    <string name="sensor_info_temperature_normal_3">Make sure the water temperature of the new water matches the aquarium\'s temperature before a water change.</string>
+    <string name="sensor_info_temperature_warning_1">Compare the aquarium heater\'s heat output against the reading and adjust it a little at a time.</string>
+    <string name="sensor_info_temperature_warning_2">Make sure your aquarium filter or pump is running. If not, the top and the bottom of the aquarium can end up at different temperatures.</string>
+    <string name="sensor_info_temperature_warning_3">Check if sunlight is hitting the aquarium or if a heat vent is blowing nearby.</string>
+    <string name="sensor_info_temperature_critical_1">Too warm? Unplug the heater and point the filter outlet to the surface to cool it down.</string>
+    <string name="sensor_info_temperature_critical_2">Too cold? Check that the heater is turned on and working, then turn its heat output up slowly.</string>
+    <string name="sensor_info_temperature_critical_3">Either way, change the temperature slowly. A fast temperature swing is worse for fish health than the wrong temperature.</string>
+    <string name="sensor_info_temperature_disconnected_1">Check that the hub is plugged in and the sensor cable is pushed all the way into its port.</string>
+    <string name="sensor_info_temperature_disconnected_2">Make sure the sensor is under water and its cable is not squeezed behind the aquarium.</string>
+    <string name="sensor_info_temperature_disconnected_3">If the hub has power but the sensor still sends nothing, pair it again from the app\'s pairing screen.</string>
+    <string name="sensor_info_temperature_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
+
+
+    <!-- pH level. -->
+    <string name="sensor_info_ph_level_about">pH tells you how acidic or basic your water is. It moves up and down a little every day on its own, so a steady reading matters more than an exact value.</string>
+    <string name="sensor_info_ph_level_normal_1">Do not try to fix the current pH with pH chemicals. Aquatic creatures handle a steady pH much better than a perfect pH reading.</string>
+    <string name="sensor_info_ph_level_normal_2">Keep changing part of the aquarium water regularly. That is what keeps pH from drifting.</string>
+    <string name="sensor_info_ph_level_normal_3">Calibrate the pH sensor every few months. An old sensor can slowly start reading incorrectly.</string>
+    <string name="sensor_info_ph_level_warning_1">Check the reading with a pH test kit before you change anything.</string>
+    <string name="sensor_info_ph_level_warning_2">Change about a quarter of the water and look again in a few hours.</string>
+    <string name="sensor_info_ph_level_warning_3">Take out leftover fish food and dead leaves, and make sure the aquarium filter is not clogged.</string>
+    <string name="sensor_info_ph_level_critical_1">Check the reading with a pH test kit before you add anything to the water and make sure the filter is working properly.</string>
+    <string name="sensor_info_ph_level_critical_2">Change about a quarter of the water at a time. One big pH change is harder on the fish than the bad reading.</string>
+    <string name="sensor_info_ph_level_critical_3">A high pH reading may point to high ammonia levels. In case of a high pH reading, test the ammonia level.</string>
+    <string name="sensor_info_ph_level_disconnected_1">Make sure that the sensor is submeregd in water and its plug is pushed into the hub.</string>
+    <string name="sensor_info_ph_level_disconnected_2">Look at the glass tip of the sensor for cracks or for a dried out end.</string>
+    <string name="sensor_info_ph_level_disconnected_3">Once it works again, calibrate it from Settings \u2192 Sensor Calibration. Buy pH buffer solutions for accurate calibration.</string>
+    <string name="sensor_info_ph_level_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
+
+    <!-- Dissolved solids. -->
+    <string name="sensor_info_dissolved_solids_about">Dissolved solids tells you about everything dissolved in your water, like minerals, salts and fish waste. It slowly goes up between water changes and drops right after one.</string>
+    <string name="sensor_info_dissolved_solids_normal_1">Look at the reading right after a water change. That number is what normal looks like for your aquarium!</string>
+    <string name="sensor_info_dissolved_solids_normal_2">Watch how the number moves over a few days. One reading on its own does not say much.</string>
+    <string name="sensor_info_dissolved_solids_normal_3">Fill up evaporated water in the aquarium tank with filtered water. Tap water leaves more minerals behind every time.</string>
+    <string name="sensor_info_dissolved_solids_warning_1">If the TDS reading is high, change about a quarter of the water and look again tomorrow.</string>
+    <string name="sensor_info_dissolved_solids_warning_2">If the TDS reading is low, add minerals slowly over a few days.</string>
+    <string name="sensor_info_dissolved_solids_warning_3">Feed your aquatic creatures less, feed only what your fish finishes in about two minutes, and clean the gravel.</string>
+    <string name="sensor_info_dissolved_solids_critical_1">Change about a quarter of the aquarium water now, and again each day until the TDS reading becomes normal.</string>
+    <string name="sensor_info_dissolved_solids_critical_2">Match the new water to the aquarium\'s temperature and treat it for chlorine first.</string>
+    <string name="sensor_info_dissolved_solids_critical_3">Make sure the aquarium filter is not clogged, and clean out any rotting food or plants.</string>
+    <string name="sensor_info_dissolved_solids_disconnected_1">Check that the sensor is under water and its plug is pushed into the hub.</string>
+    <string name="sensor_info_dissolved_solids_disconnected_2">Dry the sensor\'s metal pins and plug it back in. Rust on them is the usual reason.</string>
+    <string name="sensor_info_dissolved_solids_disconnected_3">Once it works again, calibrate it from Settings → Sensor Calibration.</string>
+    <string name="sensor_info_dissolved_solids_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
+
+    <!-- Water level -->
+    <string name="sensor_info_water_level_about">Water Level is a simple water detector. It only alerts you if the water drops below the spot where it sits, not how deep the water is. Attach the water level sensor at the appropriate height of your aquarium\'s water level!</string>
+    <string name="sensor_info_note_water_level_safe">Your aquarium\'s water level is currently fine :)</string>
+    <string name="sensor_info_note_water_level_low">The water has dropped below the sensor. Your aquarium needs a water refill!!!</string>
+    <string name="sensor_info_note_water_level_warning">There is still water at the sensor\'s height, but your thresholds mark this as a warning.</string>
+    <string name="sensor_info_water_level_normal_1">Make sure that the sensor is attached flat against the outside of the glass on your desired water level height. It reads through the glass, so it has to sit tight against it.</string>
+    <string name="sensor_info_water_level_normal_2">Keep the lid on. A covered aquarium loses much less water!</string>
+    <string name="sensor_info_water_level_normal_3">Fill up evaporated water with tap water treated for chlorine, at the same temperature as the aquarium.</string>
+    <string name="sensor_info_water_level_warning_1">Look at the aquarium and fill it up if the water has dropped close to the sensor.</string>
+    <string name="sensor_info_water_level_warning_2">Wipe the outside of the glass around the sensor. Water drips running down the aquarium surface can confuse the reading.</string>
+    <string name="sensor_info_water_level_warning_3">Make sure the sensor is attached flat against the outside of the glass, with nothing between the two.</string>
+    <string name="sensor_info_water_level_critical_1">Make sure the sensor is attached flat against the outside of the aquarium glass, with nothing between the two.</string>
+    <string name="sensor_info_water_level_critical_2">Refill the aquarium immediately with tap water treated for chlorine, at the same temperature as the aquarium.</string>
+    <string name="sensor_info_water_level_critical_3">Once the water is refilled, check that the filter is under water and running again.</string>
+    <string name="sensor_info_water_level_disconnected_1">Check that the hub is plugged in and the sensor cable is pushed all the way into its port.</string>
+    <string name="sensor_info_water_level_disconnected_2">Make sure the sensor is attached flat to the outside of the glass, with nothing between the two.</string>
+    <string name="sensor_info_water_level_disconnected_3">If the hub has power but still sends no reading, pair it again from the pairing screen.</string>
+    <string name="sensor_info_water_level_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
 
     <!-- Settings -->
     <string name="profile_name_placeholder">Jane Doe</string>

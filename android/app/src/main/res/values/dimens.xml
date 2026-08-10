@@ -14,4 +14,5 @@
     <dimen name="dashboard_status_disc_icon_size">76dp</dimen>
     <dimen name="dashboard_status_heading_text">25sp</dimen>
     <dimen name="dashboard_header_wave_height">40dp</dimen>
+    <dimen name="sensor_info_row_corner_radius">12dp</dimen>
 </resources>
