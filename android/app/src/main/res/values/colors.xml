@@ -242,4 +242,27 @@
 
     <color name="pairing_signal_on">#157EC0</color>
     <color name="pairing_signal_off">#FFCDD5E1</color>
+
+    <!--
+      Palette of the aquarium illustration on the first-installation wizard's welcome page
+      (@drawable/illustration_aquarium). Its own set rather than the app's UI colours: the
+      drawing is one picture whose parts have to stay in balance with each other, and in dark
+      mode the whole scene is dimmed together rather than each part following a UI role.
+    -->
+    <color name="illustration_glass">#FF7FD3F2</color>
+    <color name="illustration_water_surface">#FFE2F4FC</color>
+    <color name="illustration_water">#FFC8E9F8</color>
+    <color name="illustration_wave">#FF7FCFEE</color>
+    <color name="illustration_gravel">#FFCFDCDD</color>
+    <color name="illustration_mound">#FFA5E4C0</color>
+    <color name="illustration_plant">#FF63D394</color>
+    <color name="illustration_hardware">#FF9AA6B0</color>
+    <color name="illustration_fish_warm">#FFF5851F</color>
+    <color name="illustration_fish_cool">#FF8E8FE8</color>
+    <color name="illustration_fish_eye">#FF2B3A4A</color>
+    <!-- Hub enclosure, probe bodies and leads, on the mounting diagram. -->
+    <color name="illustration_hub">#FF3A4A5C</color>
+    <color name="illustration_cable">#FF5A6A7C</color>
+    <!-- The opening in the enclosure's top face, a step darker than the body it is cut into. -->
+    <color name="illustration_hub_slot">#FF212C38</color>
 </resources>

@@ -28,6 +28,7 @@ import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +47,9 @@ import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.settings.AquariumTemplateCardBinder;
+import ca.team6.aquasense.setup.SetupArgs;
 import ca.team6.aquasense.ui.FragmentToolbar;
+import ca.team6.aquasense.ui.WizardProgress;
 
 /**
  * Dedicated fragment screen for configuring new aquarium profiles with template
@@ -63,6 +66,9 @@ public class AddAquariumFragment extends Fragment {
 
     private static final int EXPANDER_INDENT_DP = 54;
 
+    private static final String STATE_SELECTED_CHOICE = "selectedChoiceId";
+    private static final String STATE_EXPANDED_CHOICES = "expandedChoiceIds";
+
     // Dimming the disabled Create button while the form is incomplete
     private static final float DISABLED_BUTTON_ALPHA = 0.5f;
 
@@ -74,6 +80,8 @@ public class AddAquariumFragment extends Fragment {
     private boolean scrolledToTemplates;
     private boolean firstRun;
 
+    // Only the route in from the aquarium list pairs from this screen. The wizard has a
+    // mount-the-hardware step in between, so there it is MountHubFragment that launches pairing.
     private final ActivityResultLauncher<Intent> pairingLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -105,15 +113,24 @@ public class AddAquariumFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         firstRun = getArguments() != null && getArguments().getBoolean(ARG_FIRST_RUN, false);
+        // Read before the rows are built, since it is what they are drawn from. Restores the form
+        // after a rotation, and after backing up to it from the wizard's next step.
+        restoreSelection(savedInstanceState);
 
-        // First run is reached straight after sign-up with nothing to navigate back to, so the
-        // toolbar's up arrow is only wired up when the screen is opened from elsewhere.
-        if (!firstRun) {
-            FragmentToolbar.setup(this, view, R.id.toolbar_add_aquarium);
+        FragmentToolbar.setup(this, view, R.id.toolbar_add_aquarium);
+        // On a first installation this is step 1 of the setup wizard, which is the only route that
+        // has a step count to report. The strip stays hidden when the screen is opened from the
+        // aquarium list.
+        if (firstRun) {
+            WizardProgress.show(view, 1);
         }
 
         btnCreate = view.findViewById(R.id.btnCreateAquarium);
-        btnCreate.setText(R.string.add_aquarium_create_and_pair);
+        // In the wizard this only carries the form on to the mounting instructions; pairing, and
+        // with it the aquarium's creation, is two steps away.
+        btnCreate.setText(firstRun
+                ? R.string.add_aquarium_first_run_next
+                : R.string.add_aquarium_create_and_pair);
         btnCreate.setOnClickListener(this::createAquarium);
 
         View btnSkip = view.findViewById(R.id.btnSkipPairing);
@@ -122,6 +139,43 @@ public class AddAquariumFragment extends Fragment {
 
         setupNameField(view);
         setupTemplateChoices(view);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // The typed name is restored by the EditText itself; which template is picked, and which
+        // rows are opened, are only held here.
+        outState.putString(STATE_SELECTED_CHOICE, selectedChoiceId);
+        outState.putStringArrayList(STATE_EXPANDED_CHOICES, new ArrayList<>(expandedChoiceIds));
+    }
+
+    private void restoreSelection(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        selectedChoiceId = savedInstanceState.getString(STATE_SELECTED_CHOICE);
+
+        List<String> expanded = savedInstanceState.getStringArrayList(STATE_EXPANDED_CHOICES);
+        if (expanded != null) {
+            expandedChoiceIds.clear();
+            expandedChoiceIds.addAll(expanded);
+        }
+    }
+
+    /**
+     * Carries the form on to the wizard's mounting instructions, which pairs from there. Nothing
+     * is saved yet: the aquarium is keyed by the hub's own UID, so it cannot be written until a
+     * hub reports one.
+     */
+    private void goToMountHub() {
+        Bundle args = new Bundle();
+        args.putString(SetupArgs.AQUARIUM_NAME, typedName());
+        args.putString(SetupArgs.WATER_TYPE, selectedWaterType().getKey());
+        args.putString(SetupArgs.TEMPLATE_ID, selectedChoiceId);
+
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_addAquariumFragment_to_mountHubFragment, args);
     }
 
     /**
@@ -276,8 +330,14 @@ public class AddAquariumFragment extends Fragment {
         // The aquarium is written by PairingRepository once the board reports the UID it will be
         // keyed by, so this screen hands the details over rather than saving them itself.
         // TODO: Persist the tank volume and notes, which have nowhere in the schema to go yet.
+        if (firstRun) {
+            // The wizard fits the hardware to the aquarium before pairing it, so the details go
+            // to that step and it starts the pairing flow when the user is ready.
+            goToMountHub();
+            return;
+        }
         pairingLauncher.launch(PairingActivity.intent(requireContext(), name, selectedWaterType(),
-                selectedChoiceId, firstRun ? PairingEntryMode.FIRST_RUN : PairingEntryMode.ADD_AQUARIUM));
+                selectedChoiceId, PairingEntryMode.ADD_AQUARIUM));
     }
 
     // TODO: Build the custom aquarium template UI and logic

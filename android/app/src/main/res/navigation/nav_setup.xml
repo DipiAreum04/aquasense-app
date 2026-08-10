@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SETTINGS-03 first-installation wizard: welcome, then the three setup steps, then the summary.
+
+    Step 3 is the BLE pairing flow, which lives in its own activity (PairingActivity) because it
+    is also reached from the dashboard. The mount-the-hub screen launches it and navigates on to
+    the completion page once it reports back, so the graph has no destination for it.
+
+    The aquarium's details are collected on step 1 and are not written anywhere until pairing
+    succeeds, so each destination forwards them on as arguments (see SetupArgs).
+-->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_setup"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="ca.team6.aquasense.setup.WelcomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_setup_welcome">
+
+        <action
+            android:id="@+id/action_welcomeFragment_to_addAquariumFragment"
+            app:destination="@id/addAquariumFragment" />
+    </fragment>
+
+    <!-- Step 1. The same screen the dashboard's "Add New Aquarium" opens, in its first-run mode:
+         it carries the Skip action and hands the form straight to pairing. -->
+    <fragment
+        android:id="@+id/addAquariumFragment"
+        android:name="ca.team6.aquasense.dashboard.AddAquariumFragment"
+        android:label="@string/setup_step_tank_title"
+        tools:layout="@layout/fragment_add_aquarium">
+
+        <argument
+            android:name="firstRun"
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+        <action
+            android:id="@+id/action_addAquariumFragment_to_mountHubFragment"
+            app:destination="@id/mountHubFragment" />
+    </fragment>
+
+    <!-- Step 2. Instructions only, and the screen that launches pairing (step 3). -->
+    <fragment
+        android:id="@+id/mountHubFragment"
+        android:name="ca.team6.aquasense.setup.MountHubFragment"
+        android:label="@string/setup_step_mount_title"
+        tools:layout="@layout/fragment_setup_mount_hub">
+
+        <argument
+            android:name="aquariumName"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="waterType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="templateId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <!-- Setup is over by the time this runs, so the steps behind it are dropped: back from
+             the summary belongs to the dashboard, not to a form that has already been submitted. -->
+        <action
+            android:id="@+id/action_mountHubFragment_to_setupCompleteFragment"
+            app:destination="@id/setupCompleteFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/setupCompleteFragment"
+        android:name="ca.team6.aquasense.setup.SetupCompleteFragment"
+        android:label="@string/setup_complete_title"
+        tools:layout="@layout/fragment_setup_complete">
+
+        <argument
+            android:name="aquariumName"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="waterType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <!-- Null for a Custom aquarium, which is not backed by a template. -->
+        <argument
+            android:name="templateId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>

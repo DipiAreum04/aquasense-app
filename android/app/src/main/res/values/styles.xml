@@ -185,6 +185,56 @@
     </style>
 
     <!--
+      One instruction on the wizard's mount-the-hub step: a numbered disc beside a title and a
+      paragraph. Four of them, identical but for their text, so the shape is declared once here
+      rather than copied out four times over in the layout.
+    -->
+    <style name="Widget.AquaSense.MountStep" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:background">@drawable/bg_settings_card</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="Widget.AquaSense.MountStepNumber" parent="">
+        <item name="android:layout_width">26dp</item>
+        <item name="android:layout_height">26dp</item>
+        <item name="android:background">@drawable/bg_step_number</item>
+        <item name="android:gravity">center</item>
+        <!-- The number is the row's position, which the reading order already carries. -->
+        <item name="android:importantForAccessibility">no</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.AquaSense.MountStepText" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Widget.AquaSense.MountStepTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.AquaSense.MountStepBody" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!--
       One choice in a settings dialog. Sized and coloured like a row of the settings page itself
       rather than like a list item, so a dialog opened from a row reads as that row unfolding.
     -->

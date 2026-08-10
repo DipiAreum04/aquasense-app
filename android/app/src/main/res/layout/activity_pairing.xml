@@ -11,6 +11,13 @@
         android:id="@+id/toolbar_pairing_flow"
         style="@style/Widget.AquaSense.Toolbar" />
 
+    <!-- Shown by WizardProgress only on a first installation, where pairing is step 2 of 2. -->
+    <include
+        android:id="@+id/wizardProgress"
+        layout="@layout/view_wizard_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/pairingContainer"
         android:layout_width="match_parent"

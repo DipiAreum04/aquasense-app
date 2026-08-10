@@ -52,6 +52,11 @@
             android:exported="false"
             android:theme="@style/Theme.AquaSense" />
         <activity
+            android:name=".SetupWizardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AquaSense"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".PairingActivity"
             android:exported="false"
             android:label="@string/pairing_flow_title"

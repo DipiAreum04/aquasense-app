@@ -25,6 +25,11 @@
     <string name="sensor_info_dissolved_solids_title">Dissolved Solids Sensor</string>
     <string name="sensor_info_ph_level_title">pH Level Sensor</string>
     <string name="no_aquariums">No aquariums found</string>
+    <!-- Dashboard with nothing paired yet. Deliberately not phrased as a hub having dropped out:
+         nothing has gone wrong, the account simply has no aquarium in it. -->
+    <string name="dashboard_empty_title">No Aquarium Yet</string>
+    <string name="dashboard_empty_body">Create and pair an aquarium to see its live readings on your dashboard!</string>
+    <string name="dashboard_empty_action">Create An Aquarium</string>
     <string name="loading_aquariums">Loading your aquariums…</string>
     <string name="splash_loading">Loading AquaSense</string>
     <string name="aquarium_sensors_status_normal_heading">All Good!</string>
@@ -398,6 +403,7 @@
     <string name="step_number_1">1</string>
     <string name="step_number_2">2</string>
     <string name="step_number_3">3</string>
+    <string name="step_number_4">4</string>
     <string name="label_aquarium_notes">NOTES</string>
     <string name="hint_aquarium_notes">Optional notes about this aquarium</string>
     <string name="action_create_aquarium">Create Aquarium</string>
@@ -492,6 +498,42 @@
     <!-- First-installation -->
     <string name="add_aquarium_first_run_skip">Skip: Pair Hub Later</string>
     <string name="add_aquarium_create_and_pair">Create &amp; Pair Hub</string>
+
+    <!-- SETTINGS-03 first-installation setup wizard -->
+    <string name="setup_step_label">STEP %1$d OF %2$d</string>
+    <string name="setup_welcome_title">Welcome Aboard!</string>
+    <string name="setup_welcome_body">Set up your smart aquarium monitor in three simple steps :)</string>
+    <string name="setup_welcome_step_tank_title">Set up your aquarium</string>
+    <string name="setup_welcome_step_tank_body">Name your aquarium and choose the template its safe ranges come from or create a custom one.</string>
+    <string name="setup_welcome_step_mount_title">Mount your hub</string>
+    <string name="setup_welcome_step_mount_body">Mount the hub and attach the four AquaSense sensors to your aquarium.</string>
+    <string name="setup_welcome_step_hub_title">Pair your hub</string>
+    <string name="setup_welcome_step_hub_body">Find your hub over Bluetooth and hand it your Wi-Fi credentials so it can start sending you aquarium readings!</string>
+    <string name="setup_welcome_start">Get Started</string>
+    <string name="setup_welcome_skip">Skip Setup For Now</string>
+    <string name="setup_step_tank_title">Set Up Your Aquarium</string>
+    <string name="add_aquarium_first_run_next">Next: Mount Your Hub</string>
+
+    <!-- Step 2: fitting the hardware to the aquarium. Instructions only; nothing on this screen
+         talks to the hub, which is why it can be read before the hub is even unboxed. -->
+    <string name="setup_step_mount_title">Mount Your Hub</string>
+    <string name="setup_mount_illustration_description">The structure of a set-up aquarium: the hub hangs on the aquarium rim edge by its hooks. The waterline marks the level it watches. Three probes are submerged in the water, and the water level sensor is stuck to the outside of the glass.</string>
+    <string name="setup_mount_intro">Attach the hardware hub to your aquarium before pairing. The hub needs to be set up and powered up before progressing to the next step.</string>
+    <string name="setup_mount_step_place_title">Place the hub</string>
+    <string name="setup_mount_step_place_body">Hang the hub on the rim of your aquarium within reach of a power outlet. Keep the enclosure itself out of the water.</string>
+    <string name="setup_mount_step_probes_title">Put the three sensor probes in the water</string>
+    <string name="setup_mount_step_probes_body">Submerge the temperature, pH and dissolved solids probes below the water surface, away from the filter outlet and gravel.</string>
+    <string name="setup_mount_step_level_title">Attach the water level probe</string>
+    <string name="setup_mount_step_level_body">Attach the water level sensor to the <b>outside</b> of the aquarium wall, at the lowest level you will allow the water to drop down to. The water level sensor senses through the glass, so it never goes in the water, and it reports Low the moment the water surface drops past it.</string>
+    <string name="setup_mount_step_power_title">Power it up</string>
+    <string name="setup_mount_step_power_body">Plug the hub in and wait for its light to start blinking. A blinking light means it is ready to be paired to the app on the next step.</string>
+    <string name="setup_mount_next">Next: Pair Your Hub</string>
+    <string name="setup_complete_title">You\'re All Set!</string>
+    <string name="setup_complete_body">\"%1$s\" is ready to monitor. Head to your dashboard to watch its live readings.</string>
+    <string name="setup_complete_label_aquarium">Aquarium</string>
+    <string name="setup_complete_label_environment">Environment</string>
+    <string name="setup_complete_label_template">Template</string>
+    <string name="setup_complete_action">Go To Dashboard</string>
 
     <!-- SETTINGS-04 built-in aquarium templates -->
     <string name="template_freshwater">Freshwater: Tropical</string>
@@ -756,6 +798,7 @@
     <string name="pairing_success_hero_body">%1$s is now online and sending readings :)</string>
     <string name="pairing_result_retry">Try Again</string>
     <string name="pairing_action_dashboard">Go To Dashboard</string>
+    <string name="pairing_action_continue">Continue</string>
     <string name="pairing_action_skip">Skip</string>
 
     <string name="pairing_error_unsupported">This phone has no Bluetooth LE, so it cannot set up a hub. Try again from another device.</string>

@@ -377,6 +377,21 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!--
+      Stands in for the scrolling column above when the account owns no aquarium. Constrained to
+      the same span, so the footer's navigation stays reachable and the loading overlay declared
+      after it still covers both.
+    -->
+    <include
+        android:id="@+id/dashboardEmptyState"
+        layout="@layout/view_dashboard_empty"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/dashboardFooter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/dashboardLoadingOverlay"
         layout="@layout/view_brand_splash"
