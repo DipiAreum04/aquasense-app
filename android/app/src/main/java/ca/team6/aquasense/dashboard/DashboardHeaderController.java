@@ -32,6 +32,7 @@ public class DashboardHeaderController {
     private final LinearLayout aquariumSelector;
     private final TextView aquariumTitleText;
     private final TextView aquariumWaterTypeBadge;
+    private final TextView maintenanceModeBadge;
     private final ImageView aquariumSensorsStatusIcon;
     private final TextView aquariumSensorsStatusHeading;
     private final TextView aquariumSensorsStatusDescription;
@@ -50,6 +51,7 @@ public class DashboardHeaderController {
         this.aquariumSelector = view.findViewById(R.id.aquariumSelector);
         this.aquariumTitleText = view.findViewById(R.id.aquariumTitleText);
         this.aquariumWaterTypeBadge = view.findViewById(R.id.aquariumWaterTypeBadge);
+        this.maintenanceModeBadge = view.findViewById(R.id.maintenanceModeBadge);
         applyWaterTypeBadgeIcon(this.aquariumWaterTypeBadge);
         this.aquariumSensorsStatusIcon = view.findViewById(R.id.aquariumSensorsStatusIcon);
         this.aquariumSensorsStatusHeading = view.findViewById(R.id.aquariumSensorsStatusHeading);
@@ -81,6 +83,16 @@ public class DashboardHeaderController {
 
         this.aquariumWaterTypeBadge.setText(waterType.getLabelResId());
         this.aquariumWaterTypeBadge.setVisibility(View.VISIBLE);
+    }
+
+    /** Shows the active maintenance-mode countdown, or hides it when the aquarium is not snoozed. */
+    public void setMaintenanceModeBadge(@Nullable CharSequence remainingLabel) {
+        if (remainingLabel == null) {
+            this.maintenanceModeBadge.setVisibility(View.GONE);
+            return;
+        }
+        this.maintenanceModeBadge.setText(remainingLabel);
+        this.maintenanceModeBadge.setVisibility(View.VISIBLE);
     }
 
     private static void applyWaterTypeBadgeIcon(@NonNull TextView badge) {

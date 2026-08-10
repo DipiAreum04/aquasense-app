@@ -269,6 +269,8 @@
     <string name="maintenance_duration_2h">2 hours</string>
     <string name="maintenance_remaining">%1$s remaining</string>
     <string name="maintenance_remaining_less_than_minute">Less than 1 min remaining</string>
+    <string name="dashboard_maintenance_remaining">Maintenance • %1$s</string>
+    <string name="dashboard_maintenance_less_than_minute">Maintenance • &lt;1 min</string>
     <string name="section_notification_types">NOTIFICATION TYPES</string>
     <string name="param_out_of_range">Parameter safe range exceeded</string>
     <string name="param_out_of_range_desc">Alert when a reading crosses its safe range</string>
