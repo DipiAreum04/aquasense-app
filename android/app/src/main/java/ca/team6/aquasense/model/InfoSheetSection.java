@@ -15,13 +15,20 @@ import java.io.Serializable;
 
 import ca.team6.aquasense.R;
 
+/**
+ * One titled block of the sensor info sheet: a heading and the bullets underneath it.
+ *
+ * <p>The text arrives already resolved rather than as string resource IDs, because a bullet
+ * quotes the aquarium's configured thresholds and the sensor's latest reading, and neither is
+ * known until the sheet is opened.
+ */
 public class InfoSheetSection implements Serializable {
-    private final int titleResourceId;
-    private final int[] itemResourceIds;
+    private final String title;
+    private final String[] items;
 
-    public InfoSheetSection(int titleResourceId, int[] itemResourceIds) {
-        this.titleResourceId = titleResourceId;
-        this.itemResourceIds = itemResourceIds;
+    public InfoSheetSection(String title, String... items) {
+        this.title = title;
+        this.items = items;
     }
 
     public void applyTo(BottomSheetDialogFragment fragment, LinearLayout view) {
@@ -31,10 +38,10 @@ public class InfoSheetSection implements Serializable {
                 false
         );
 
-        section.setText(this.titleResourceId);
+        section.setText(this.title);
         view.addView(section);
 
-        for (int itemResourceId : this.itemResourceIds) {
+        for (String item : this.items) {
             View bullet = fragment.getLayoutInflater().inflate(
                     R.layout.sensor_info_bullet,
                     view,
@@ -42,7 +49,7 @@ public class InfoSheetSection implements Serializable {
             );
 
             TextView bulletText = bullet.findViewById(R.id.text);
-            bulletText.setText(itemResourceId);
+            bulletText.setText(item);
 
             view.addView(bullet);
         }

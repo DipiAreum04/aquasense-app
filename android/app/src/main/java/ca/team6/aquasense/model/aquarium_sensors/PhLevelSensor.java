@@ -1,5 +1,7 @@
 package ca.team6.aquasense.model.aquarium_sensors;
 
+import android.content.Context;
+
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.InfoSheetSection;
@@ -30,99 +32,48 @@ public class PhLevelSensor extends AquariumSensor {
     }
 
     @Override
-    public int getInfoSheetDescResId() {
-        return R.string.sensor_info_ph_level_desc;
+    public int getInfoSheetAboutResId() {
+        return R.string.sensor_info_ph_level_about;
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForDisconnected() {
+    public InfoSheetSection[] getInfoSheetSectionsForDisconnected(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_reconnect,
+                        context.getString(R.string.sensor_info_ph_level_disconnected_1),
+                        context.getString(R.string.sensor_info_ph_level_disconnected_2),
+                        context.getString(R.string.sensor_info_ph_level_disconnected_3),
+                        context.getString(R.string.sensor_info_ph_level_disconnected_4))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForCritical() {
+    public InfoSheetSection[] getInfoSheetSectionsForCritical(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_act,
+                        context.getString(R.string.sensor_info_ph_level_critical_1),
+                        context.getString(R.string.sensor_info_ph_level_critical_2),
+                        context.getString(R.string.sensor_info_ph_level_critical_3))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForWarning() {
+    public InfoSheetSection[] getInfoSheetSectionsForWarning(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_todo,
+                        context.getString(R.string.sensor_info_ph_level_warning_1),
+                        context.getString(R.string.sensor_info_ph_level_warning_2),
+                        context.getString(R.string.sensor_info_ph_level_warning_3))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForNormal() {
+    public InfoSheetSection[] getInfoSheetSectionsForNormal(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_keep,
+                        context.getString(R.string.sensor_info_ph_level_normal_1),
+                        context.getString(R.string.sensor_info_ph_level_normal_2),
+                        context.getString(R.string.sensor_info_ph_level_normal_3))
         };
     }
 }

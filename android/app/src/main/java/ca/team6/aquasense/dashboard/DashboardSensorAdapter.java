@@ -75,7 +75,7 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
         holder.sensorUnit.setTextColor(valueColor);
 
         holder.sensorTooltipIcon.setOnClickListener(v -> {
-            SensorInfoBottomSheet sheet = SensorInfoBottomSheet.from(sensor);
+            SensorInfoBottomSheet sheet = SensorInfoBottomSheet.from(context, sensor);
             sheet.show(fragmentManager, "sensor_info");
         });
     }

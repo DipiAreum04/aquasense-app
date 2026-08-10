@@ -1,5 +1,7 @@
 package ca.team6.aquasense.model.aquarium_sensors;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import ca.team6.aquasense.R;
@@ -18,9 +20,10 @@ public class WaterLevelSensor extends AquariumSensor {
     }
 
     /**
-     * The float switch reports 1 while it is submerged and 0 once it is not, so a zero is not a
-     * low reading to be measured against a band: it is the tank at the point where the switch has
-     * surfaced, which is critical whether or not this aquarium configures a water level band.
+     * The sensor sits on the outside of the glass and reads through it, reporting 1 while it senses
+     * water at its own height and 0 once it does not. A zero is therefore not a low reading to be
+     * measured against a band: it is the water line already past the point the sensor is stuck at,
+     * which is critical whether or not this aquarium configures a water level band.
      */
     @Override
     public SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
@@ -46,99 +49,81 @@ public class WaterLevelSensor extends AquariumSensor {
     }
 
     @Override
-    public int getInfoSheetDescResId() {
-        return R.string.sensor_info_water_level_desc;
+    public int getInfoSheetAboutResId() {
+        return R.string.sensor_info_water_level_about;
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
+    /**
+     * This sensor has two states rather than a range, so the shared note, which places a reading
+     * against the aquarium's band, has nothing to say about it. This one says whether there is
+     * water at the sensor's height instead.
+     */
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForDisconnected() {
+    public int getInfoSheetStatusNoteResId() {
+        switch (this.status) {
+            case DISCONNECTED:
+                return R.string.sensor_info_note_disconnected;
+            case CRITICAL:
+                return R.string.sensor_info_note_water_level_low;
+            case WARNING:
+                return R.string.sensor_info_note_water_level_warning;
+            default:
+                return R.string.sensor_info_note_water_level_safe;
+        }
+    }
+
+    /**
+     * The card grades this sensor by whether it senses water rather than against a band, so listing
+     * bands would name numbers the reading is never measured against.
+     */
+    @Nullable
+    @Override
+    public String[] getInfoSheetBandTexts(Context context) {
+        return null;
+    }
+
+    @Override
+    public InfoSheetSection[] getInfoSheetSectionsForDisconnected(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_reconnect,
+                        context.getString(R.string.sensor_info_water_level_disconnected_1),
+                        context.getString(R.string.sensor_info_water_level_disconnected_2),
+                        context.getString(R.string.sensor_info_water_level_disconnected_3),
+                        context.getString(R.string.sensor_info_water_level_disconnected_4))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForCritical() {
+    public InfoSheetSection[] getInfoSheetSectionsForCritical(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_act,
+                        context.getString(R.string.sensor_info_water_level_critical_1),
+                        context.getString(R.string.sensor_info_water_level_critical_2),
+                        context.getString(R.string.sensor_info_water_level_critical_3))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
+    /**
+     * Only reachable when this aquarium has a band configured for a sensor that reports 0 or 1, so
+     * the copy points at the thresholds rather than at the tank.
+     */
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForWarning() {
+    public InfoSheetSection[] getInfoSheetSectionsForWarning(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_todo,
+                        context.getString(R.string.sensor_info_water_level_warning_1),
+                        context.getString(R.string.sensor_info_water_level_warning_2),
+                        context.getString(R.string.sensor_info_water_level_warning_3))
         };
     }
 
-    // TODO: PLACEHOLDERS NEED TO BE REPLACED.
     @Override
-    public InfoSheetSection[] getInfoSheetSectionsForNormal() {
+    public InfoSheetSection[] getInfoSheetSectionsForNormal(Context context) {
         return new InfoSheetSection[] {
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                ),
-                new InfoSheetSection(
-                        R.string.sensor_info_example_title,
-                        new int[] {
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point,
-                                R.string.sensor_info_example_point
-                        }
-                )
+                section(context, R.string.sensor_info_section_keep,
+                        context.getString(R.string.sensor_info_water_level_normal_1),
+                        context.getString(R.string.sensor_info_water_level_normal_2),
+                        context.getString(R.string.sensor_info_water_level_normal_3))
         };
     }
 }

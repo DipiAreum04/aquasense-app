@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sensor info sheet. The header and the dismiss button are pinned; only the body between them
+  scrolls, so the sensor being described and the way out of the sheet are always on screen.
+
+  The root wraps its content, so a short sheet stays short. Once the content outgrows the sheet's
+  maximum height the scroll view is the only child that gives, since it is the only one carrying
+  a weight.
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,79 +18,228 @@
         android:layout_width="36dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bottom_sheet_handle"
     />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/sensor_info_banner_purple"
-        android:orientation="vertical"
-        android:padding="24dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
     >
+        <ImageView
+            android:id="@+id/sensorInfoIcon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:contentDescription="@null"
+        />
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@color/sensor_info_banner_purple"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
         >
-            <ImageView
-                android:id="@+id/sensorInfoIcon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/circle_background"
-                android:padding="12dp"
-                app:tint="@color/sensor_info_gray_color"
-                android:contentDescription="@null"
-            />
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/sensorInfoTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
+                android:textColor="@color/sensor_info_title_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+            />
+            <!-- Same pill as the card it was opened from, so the two agree at a glance. -->
+            <LinearLayout
+                android:id="@+id/sensorInfoStatusPill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_sensor_status_pill"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="9dp"
+                android:paddingVertical="4dp"
             >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sensor_info"
-                    android:textAllCaps="true"
-                    android:textColor="@color/sensor_info_gray_color"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
+                <ImageView
+                    android:id="@+id/sensorInfoStatusIcon"
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:contentDescription="@null"
                 />
                 <TextView
-                    android:id="@+id/sensorInfoTitle"
+                    android:id="@+id/sensorInfoStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textSize="24sp"
+                    android:layout_marginStart="6dp"
+                    android:letterSpacing="0.06"
+                    android:textAllCaps="true"
+                    android:textSize="10sp"
                     android:textStyle="bold"
-                    android:textColor="@color/sensor_info_title_color"
                 />
             </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:id="@+id/sensorInfoDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:lineSpacingExtra="4dp"
-            android:textColor="@color/sensor_info_gray_color"
-            android:textSize="18sp"
+        <ImageView
+            android:id="@+id/sensorInfoClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/sensor_info_close"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/close_24px"
+            app:tint="@color/sensor_info_gray_color"
         />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sensorInfoBody"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+    />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/card_background"
-        android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingBottom="24dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
     >
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+        >
+            <!-- Reading and unit ride the same baseline, centred as one block, as on the card. -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:baselineAligned="true"
+                android:orientation="horizontal"
+            >
+                <TextView
+                    android:id="@+id/sensorInfoValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="38sp"
+                    android:textStyle="bold"
+                />
+                <TextView
+                    android:id="@+id/sensorInfoUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:textSize="15sp"
+                />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/sensorInfoReadingLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/sensor_info_gray_color"
+                android:textSize="12sp"
+            />
+            <TextView
+                android:id="@+id/sensorInfoStatusNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/sensor_info_gray_color"
+                android:textSize="13sp"
+            />
 
+            <TextView
+                android:id="@+id/sensorInfoAboutTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:textColor="@color/sensor_info_title_color"
+                android:textSize="15sp"
+                android:textStyle="bold"
+            />
+            <TextView
+                android:id="@+id/sensorInfoDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:lineSpacingExtra="3dp"
+                android:textColor="@color/sensor_info_gray_color"
+                android:textSize="14sp"
+            />
+
+            <!--
+              All three bands, whatever the reading is doing, so the thresholds can be read off
+              rather than inferred from the status. Hidden as a block for a sensor with no band to
+              quote, such as the water level sensor.
+            -->
+            <LinearLayout
+                android:id="@+id/sensorInfoRanges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+            >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:text="@string/sensor_info_ranges_title"
+                    android:textColor="@color/sensor_info_title_color"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                />
+                <include
+                    android:id="@+id/sensorInfoRangeSafe"
+                    layout="@layout/sensor_info_range_row"
+                />
+                <include
+                    android:id="@+id/sensorInfoRangeWarning"
+                    layout="@layout/sensor_info_range_row"
+                />
+                <include
+                    android:id="@+id/sensorInfoRangeCritical"
+                    layout="@layout/sensor_info_range_row"
+                />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sensorInfoBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+            />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+    />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sensorInfoDismiss"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_auth_primary_button"
+        android:letterSpacing="0"
+        android:text="@string/sensor_info_dismiss"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:backgroundTint="@null"
+    />
 </LinearLayout>
