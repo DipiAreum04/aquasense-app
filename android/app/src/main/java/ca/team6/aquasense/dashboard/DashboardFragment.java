@@ -43,6 +43,7 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.notifications.MaintenanceModeStore;
 import ca.team6.aquasense.notifications.SensorThresholds;
 
 public class DashboardFragment extends Fragment {
@@ -53,6 +54,7 @@ public class DashboardFragment extends Fragment {
 
     private AquariumRepository aquariumRepository;
     private TelemetryRepository telemetryRepository;
+    private MaintenanceModeStore maintenanceModeStore;
 
    
     private List<View> headerSlackViews;
@@ -84,6 +86,7 @@ public class DashboardFragment extends Fragment {
         @Override
         public void run() {
             applyTelemetry(telemetryRepository.getReadings());
+            refreshMaintenanceModeBadge();
             stalenessHandler.postDelayed(this, STALENESS_CHECK_INTERVAL_MS);
         }
     };
@@ -116,6 +119,7 @@ public class DashboardFragment extends Fragment {
 
         telemetryRepository = TelemetryRepository.getInstance();
         aquariumRepository = AquariumRepository.getInstance(requireContext());
+        maintenanceModeStore = new MaintenanceModeStore(requireContext());
 
         setupLoadingOverlay(view);
 
@@ -309,6 +313,7 @@ public class DashboardFragment extends Fragment {
         if (!aquariumRepository.isLoaded()) {
             this.dashboardHeaderController.setDashboardHeaderTitle(getString(R.string.loading_aquariums));
             this.dashboardHeaderController.setDashboardWaterType(null);
+            this.dashboardHeaderController.setMaintenanceModeBadge(null);
             return;
         }
 
@@ -316,12 +321,32 @@ public class DashboardFragment extends Fragment {
         if (activeAquarium == null) {
             this.dashboardHeaderController.setDashboardHeaderTitle(getString(R.string.no_aquariums));
             this.dashboardHeaderController.setDashboardWaterType(null);
+            this.dashboardHeaderController.setMaintenanceModeBadge(null);
             return;
         }
 
         this.dashboardHeaderController.setDashboardHeaderTitle(activeAquarium.getName());
         this.dashboardHeaderController.setDashboardWaterType(
                 WaterType.fromKey(activeAquarium.getWaterType()));
+        refreshMaintenanceModeBadge();
+    }
+
+    private void refreshMaintenanceModeBadge() {
+        if (dashboardHeaderController == null || maintenanceModeStore == null) return;
+
+        Aquarium activeAquarium = aquariumRepository != null
+                ? aquariumRepository.getActiveAquarium() : null;
+        if (activeAquarium == null || !maintenanceModeStore.isActive(activeAquarium.getId())) {
+            dashboardHeaderController.setMaintenanceModeBadge(null);
+            return;
+        }
+
+        long remainingMs = maintenanceModeStore.getRemainingMs(activeAquarium.getId());
+        CharSequence label = remainingMs < 60_000L
+                ? getString(R.string.dashboard_maintenance_less_than_minute)
+                : getString(R.string.dashboard_maintenance_remaining,
+                        MaintenanceModeStore.formatRemainingDuration(remainingMs));
+        dashboardHeaderController.setMaintenanceModeBadge(label);
     }
 
     private void showSensorsStatus() {

@@ -78,6 +78,17 @@ public final class MaintenanceModeStore {
         return Math.max(0L, expiresAt - System.currentTimeMillis());
     }
 
+    /** Formats a countdown with minute precision, rounding up so it never reads zero early. */
+    @NonNull
+    public static String formatRemainingDuration(long remainingMs) {
+        long totalMinutes = (remainingMs + 59_999L) / 60_000L;
+        long hours = totalMinutes / 60L;
+        long minutes = totalMinutes % 60L;
+        if (hours == 0L) return totalMinutes + " min";
+        if (minutes == 0L) return hours == 1L ? "1 hr" : hours + " hr";
+        return hours + " hr " + minutes + " min";
+    }
+
     private static String keyFor(@NonNull String aquariumId) {
         return KEY_PREFIX + aquariumId;
     }

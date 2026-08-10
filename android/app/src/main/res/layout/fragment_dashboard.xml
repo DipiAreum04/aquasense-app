@@ -87,28 +87,50 @@
                     />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/aquariumWaterTypeBadge"
+                <LinearLayout
+                    android:id="@+id/dashboardHeaderBadges"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:background="@drawable/bg_dashboard_water_badge"
-                    android:drawablePadding="6dp"
-                    android:drawableTint="@color/dashboard_header_chip_title"
-                    android:letterSpacing="0.06"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
-                    android:textAllCaps="true"
-                    android:textColor="@color/dashboard_header_chip_title"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:visibility="gone"
+                    android:gravity="end"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/aquariumSelector"
                     app:layout_constraintBottom_toBottomOf="@id/aquariumSelector"
-                    tools:text="Freshwater"
-                    tools:visibility="visible"
-                />
+                >
+                    <TextView
+                        android:id="@+id/aquariumWaterTypeBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_dashboard_water_badge"
+                        android:drawablePadding="6dp"
+                        android:drawableTint="@color/dashboard_header_chip_title"
+                        android:letterSpacing="0.06"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/dashboard_header_chip_title"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="Freshwater"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/maintenanceModeBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_dashboard_water_badge"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/warning"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="Maintenance • 15 min"
+                        tools:visibility="visible" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!--
