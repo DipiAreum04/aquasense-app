@@ -6,13 +6,10 @@ public class AppSettings {
     // Display & Units
     public String tempUnit = "F";           // "C" or "F"
     public String themeMode = SettingsRepository.THEME_SYSTEM;
-    public boolean use24HourClock = true;
     public String readingPrecision = SettingsRepository.PRECISION_STANDARD;
 
     // Notifications
     public boolean pushNotifications = true;
-    public boolean emailAlerts = false;
-    public boolean smsAlerts = true;
     public boolean criticalAlertsOnly = false;
     public boolean quietHours = false;
     public String quietHoursStart = "22:00";
@@ -28,14 +25,9 @@ public class AppSettings {
     public boolean sensorAlertsDissolvedSolids = true;
     public boolean sensorAlertsPhLevel = true;
 
-    // Accounts & Backup
+    // Accounts
     public String profileName = "";
     public String profileEmail = "";
-    public boolean autoBackup = true;
-
-    // Data & Sync: Privacy
-    public boolean usageAnalytics = false;
-    public boolean locationData = false;
 
     // Sensor Calibration: last calibrated timestamps (ms)
     public long lastCalibratedLiquid = 0L;

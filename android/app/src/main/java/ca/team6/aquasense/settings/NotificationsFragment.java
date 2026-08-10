@@ -95,8 +95,6 @@ public class NotificationsFragment extends Fragment {
         maintenanceModeStore = new MaintenanceModeStore(requireContext());
 
         SwitchCompat switchPush      = view.findViewById(R.id.switchPushNotifications);
-        SwitchCompat switchEmail     = view.findViewById(R.id.switchEmailAlerts);
-        SwitchCompat switchSms       = view.findViewById(R.id.switchSmsAlerts);
         SwitchCompat switchCritical  = view.findViewById(R.id.switchCriticalOnly);
         SwitchCompat switchQuiet     = view.findViewById(R.id.switchQuietHours);
         switchMaintenance = view.findViewById(R.id.switchFeedingSilence);
@@ -126,8 +124,6 @@ public class NotificationsFragment extends Fragment {
         // Bind before listeners so the initial values do not toast.
         repo.loadSettings(s -> {
             switchPush.setChecked(s.pushNotifications);
-            switchEmail.setChecked(s.emailAlerts);
-            switchSms.setChecked(s.smsAlerts);
             switchCritical.setChecked(s.criticalAlertsOnly);
             switchQuiet.setChecked(s.quietHours);
             switchParam.setChecked(s.notifyParamOutOfRange);
@@ -148,16 +144,6 @@ public class NotificationsFragment extends Fragment {
             // Starts or stops the background monitor immediately, so the persistent "Monitoring
             // aquarium" notice disappears the moment alerts are switched off.
             MonitoringController.sync(requireContext());
-        });
-        // TODO: Wire email alerts (SMTP / SendGrid / backend API; Firebase not required).
-        switchEmail.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_EMAIL_ALERTS, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
-        });
-        // TODO: Wire SMS alerts (e.g. Twilio or similar).
-        switchSms.setOnCheckedChangeListener((b, checked) -> {
-            prefs.updateField(SettingsRepository.KEY_SMS_ALERTS, checked);
-            SharedPreferenceHelper.showComingSoon(requireContext());
         });
         switchCritical.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_CRITICAL_ONLY, checked);

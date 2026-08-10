@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  App-wide page background, set as android:windowBackground on Theme.AquaSense.
+  Colors are DayNight-aware, so this one drawable covers both themes.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:dither="true"
+    android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/app_gradient_top"
+        android:centerColor="@color/app_gradient_center"
+        android:endColor="@color/app_gradient_bottom"
+        android:type="linear" />
+</shape>

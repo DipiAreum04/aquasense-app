@@ -7,7 +7,6 @@ public class SettingsRepository {
     // Keys
     public static final String KEY_TEMP_UNIT              = "tempUnit";
     public static final String KEY_THEME_MODE             = "themeMode";
-    public static final String KEY_24H_CLOCK              = "use24HourClock";
     public static final String KEY_READING_PRECISION      = "readingPrecision";
     public static final String KEY_SENSOR_ORDER           = "sensorCardOrder";
     public static final String KEY_SENSOR_HIDDEN          = "sensorCardHidden";
@@ -22,8 +21,6 @@ public class SettingsRepository {
     public static final String PRECISION_PRECISE  = "precise";
 
     public static final String KEY_PUSH_NOTIF             = "pushNotifications";
-    public static final String KEY_EMAIL_ALERTS           = "emailAlerts";
-    public static final String KEY_SMS_ALERTS             = "smsAlerts";
     public static final String KEY_CRITICAL_ONLY          = "criticalAlertsOnly";
     public static final String KEY_QUIET_HOURS            = "quietHours";
     public static final String KEY_QUIET_START            = "quietHoursStart";
@@ -41,7 +38,6 @@ public class SettingsRepository {
 
     public static final String KEY_PROFILE_NAME           = "profileName";
     public static final String KEY_PROFILE_EMAIL          = "profileEmail";
-    public static final String KEY_AUTO_BACKUP            = "autoBackup";
 
     // True after the SETTINGS-03 pairing wizard has been completed on this device on first install
     public static final String KEY_PAIRING_COMPLETE       = "pairingComplete";
@@ -54,9 +50,6 @@ public class SettingsRepository {
     // once on launch and never re-launched from there, so declining it does not turn into nagging
     // on every resume. Settings > Notifications is where it can be asked for again.
     public static final String KEY_NOTIF_PERMISSION_ASKED = "notificationPermissionAsked";
-
-    public static final String KEY_USAGE_ANALYTICS        = "usageAnalytics";
-    public static final String KEY_LOCATION_DATA          = "locationData";
 
     public static final String KEY_CALIB_LIQUID          = "lastCalibratedLiquid";
     public static final String KEY_CALIB_TEMP            = "lastCalibratedTemp";
@@ -79,13 +72,10 @@ public class SettingsRepository {
         AppSettings s = new AppSettings();
 
         s.tempUnit              = prefs.getString(KEY_TEMP_UNIT, d.tempUnit);
-        s.use24HourClock        = prefs.getBoolean(KEY_24H_CLOCK, d.use24HourClock);
         s.themeMode             = prefs.getString(KEY_THEME_MODE, d.themeMode);
         s.readingPrecision      = prefs.getString(KEY_READING_PRECISION, d.readingPrecision);
 
         s.pushNotifications     = prefs.getBoolean(KEY_PUSH_NOTIF, d.pushNotifications);
-        s.emailAlerts           = prefs.getBoolean(KEY_EMAIL_ALERTS, d.emailAlerts);
-        s.smsAlerts             = prefs.getBoolean(KEY_SMS_ALERTS, d.smsAlerts);
         s.criticalAlertsOnly    = prefs.getBoolean(KEY_CRITICAL_ONLY, d.criticalAlertsOnly);
         s.quietHours            = prefs.getBoolean(KEY_QUIET_HOURS, d.quietHours);
         s.quietHoursStart       = prefs.getString(KEY_QUIET_START, d.quietHoursStart);
@@ -97,15 +87,11 @@ public class SettingsRepository {
 
         s.profileName           = prefs.getString(KEY_PROFILE_NAME, d.profileName);
         s.profileEmail          = prefs.getString(KEY_PROFILE_EMAIL, d.profileEmail);
-        s.autoBackup            = prefs.getBoolean(KEY_AUTO_BACKUP, d.autoBackup);
 
         s.sensorAlertsTemperature     = prefs.getBoolean(KEY_SENSOR_ALERTS_TEMP, d.sensorAlertsTemperature);
         s.sensorAlertsWaterLevel      = prefs.getBoolean(KEY_SENSOR_ALERTS_LEVEL, d.sensorAlertsWaterLevel);
         s.sensorAlertsDissolvedSolids = prefs.getBoolean(KEY_SENSOR_ALERTS_TDS, d.sensorAlertsDissolvedSolids);
         s.sensorAlertsPhLevel         = prefs.getBoolean(KEY_SENSOR_ALERTS_PH, d.sensorAlertsPhLevel);
-
-        s.usageAnalytics        = prefs.getBoolean(KEY_USAGE_ANALYTICS, d.usageAnalytics);
-        s.locationData          = prefs.getBoolean(KEY_LOCATION_DATA, d.locationData);
 
         s.lastCalibratedLiquid     = prefs.getLong(KEY_CALIB_LIQUID, d.lastCalibratedLiquid);
         s.lastCalibratedTemp       = prefs.getLong(KEY_CALIB_TEMP, d.lastCalibratedTemp);

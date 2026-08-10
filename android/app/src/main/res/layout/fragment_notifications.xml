@@ -18,9 +18,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_alert_channels"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +30,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -48,15 +49,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/push_notifications"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/push_notifications_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -112,78 +111,6 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/email_alerts"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchEmailAlerts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/sms_text"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/sms_text_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchSmsAlerts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
         <!-- FILTERS -->
@@ -193,9 +120,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_filters"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -208,7 +133,10 @@
             <!-- Critical alerts only -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -224,15 +152,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/critical_alerts_only"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/critical_alerts_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -252,7 +178,10 @@
             <!-- Quiet hours toggle -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -268,15 +197,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/quiet_hours"
-                        android:textColor="@color/text_primary"
-                        android:textSize="16sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/quiet_hours_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -299,7 +226,10 @@
             <LinearLayout
                 android:id="@+id/rowQuietStart"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -314,16 +244,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/start_time"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <TextView
                     android:id="@+id/tvQuietStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_quiet_start"
-                    android:textColor="@color/accent"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue" />
 
             </LinearLayout>
 
@@ -339,7 +267,10 @@
             <LinearLayout
                 android:id="@+id/rowQuietEnd"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -354,16 +285,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/end_time"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <TextView
                     android:id="@+id/tvQuietEnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_quiet_end"
-                    android:textColor="@color/accent"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue" />
 
             </LinearLayout>
 
@@ -398,15 +327,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/maintenance_mode"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/maintenance_mode_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -463,9 +390,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:text="@string/section_alerts_by_sensor"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <TextView
             android:layout_width="match_parent"
@@ -474,8 +399,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:text="@string/alerts_by_sensor_caption"
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -487,7 +411,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -498,8 +425,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/temperature"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchSensorAlertsTemperature"
@@ -516,7 +442,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -527,8 +456,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/water_level"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchSensorAlertsWaterLevel"
@@ -545,7 +473,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -556,8 +487,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/dissolved_solids"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchSensorAlertsDissolvedSolids"
@@ -574,7 +504,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
+                android:minHeight="52dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -585,8 +518,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/ph_level"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchSensorAlertsPhLevel"
@@ -604,9 +536,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
             android:text="@string/section_notification_types"
-            android:textAllCaps="true"
-            android:textColor="@color/text_secondary"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.AquaSense.SectionHeader" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -618,7 +548,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -634,15 +567,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_out_of_range"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_out_of_range_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -661,7 +592,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -677,15 +611,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/abnormal_value_jumps"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/abnormal_value_jumps_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -704,7 +636,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -720,15 +655,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_disconnected"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_disconnected_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
@@ -747,7 +680,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -763,15 +699,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hub_disconnected"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hub_disconnected_desc"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
                 </LinearLayout>
 
