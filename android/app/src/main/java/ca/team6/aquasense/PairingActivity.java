@@ -22,6 +22,7 @@ import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.pairing.PairingFragment;
 import ca.team6.aquasense.pairing.PairingRepository;
 import ca.team6.aquasense.pairing.PairingState;
+import ca.team6.aquasense.ui.WizardProgress;
 
 /**
  * This activity hosts the app to microcontroller pairing flow (BLE-02).
@@ -89,6 +90,12 @@ public class PairingActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_pairing);
+
+        // Only a first installation is walking a numbered set of steps; opened from the aquarium
+        // list, this is a screen on its own.
+        if (this.entryMode == PairingEntryMode.FIRST_RUN) {
+            WizardProgress.show(this, WizardProgress.TOTAL_STEPS);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar_pairing_flow);
         setSupportActionBar(toolbar);
@@ -167,12 +174,15 @@ public class PairingActivity extends AppCompatActivity {
         AuthNavigator.goToDashboard(this);
     }
 
+    /**
+     * Closes the flow once the hub is online, reporting success to whoever started it: the
+     * aquarium list, or the first-installation wizard, which follows with its summary page.
+     *
+     * @param mode kept for the caller's readability; both routes now leave the same way, since
+     *             neither owns what comes after pairing.
+     */
     public void finishPairing(@NonNull PairingEntryMode mode) {
         AuthRepository.getInstance(this).setPairingComplete(true);
-        if (mode == PairingEntryMode.FIRST_RUN) {
-            AuthNavigator.goToDashboard(this);
-            return;
-        }
         setResult(RESULT_OK);
         finish();
     }

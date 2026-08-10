@@ -385,7 +385,12 @@ public class PairingFragment extends Fragment {
 
         this.heroAction.setBackgroundResource(R.drawable.bg_auth_primary_button);
         this.heroAction.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
-        this.showHeroAction(R.string.pairing_action_dashboard, v -> this.leavePairing());
+        // A first installation has one page of the wizard left after this one, so it does not
+        // promise the dashboard yet.
+        this.showHeroAction(this.entryMode == PairingEntryMode.FIRST_RUN
+                        ? R.string.pairing_action_continue
+                        : R.string.pairing_action_dashboard,
+                v -> this.leavePairing());
     }
 
     private void showHero(@NonNull BleStatusOrb.State orbState, int titleResId, int bodyResId) {

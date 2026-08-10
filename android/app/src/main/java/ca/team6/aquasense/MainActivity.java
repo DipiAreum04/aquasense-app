@@ -105,10 +105,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * First-installation setup entry point
+     * First-installation setup entry point: hands the launch over to the SETTINGS-03 wizard.
+     *
+     * <p>This activity finishes behind it. The dashboard has nothing to show until a hub is
+     * paired, and every way out of the wizard marks pairing complete and re-launches the
+     * dashboard on a cleared task, so there is nothing here worth keeping alive underneath.
      */
     private void startFirstRunSetup() {
-        // TODO: Add a custom landing page when user skips pairing on first installation instead of empty dashboard.
+        startActivity(SetupWizardActivity.intent(this));
+        AuthNavigator.applyNoAnimation(this);
+        finish();
     }
 
     private boolean hasNotificationPermission() {

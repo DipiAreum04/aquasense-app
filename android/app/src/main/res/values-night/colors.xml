@@ -210,4 +210,29 @@
     <color name="plan_badge_text">#FF81C784</color>
     <color name="bullet_circle">#FF4A5768</color>
     <color name="bottom_sheet_handle">#FF515A66</color>
+
+    <!--
+      The welcome page's aquarium, lit for a dark room. The tank itself drops to a deep blue that
+      sits just above @color/background, while the fish and plants keep their hue and only lose
+      some brightness: they are the small bright marks that make the picture readable at all, and
+      dimming them with the water leaves an unlit tank.
+    -->
+    <color name="illustration_glass">#FF3F86A8</color>
+    <color name="illustration_water_surface">#FF1B3B4A</color>
+    <color name="illustration_water">#FF15303D</color>
+    <color name="illustration_wave">#FF4E9CBC</color>
+    <color name="illustration_gravel">#FF2C3B44</color>
+    <color name="illustration_mound">#FF2F5F49</color>
+    <color name="illustration_plant">#FF52B37E</color>
+    <color name="illustration_hardware">#FF5F6C77</color>
+    <color name="illustration_fish_warm">#FFF09240</color>
+    <color name="illustration_fish_cool">#FF9B9CF0</color>
+    <color name="illustration_fish_eye">#FF101C26</color>
+    <!-- The hardware inverts: a dark enclosure would be a hole in a dark tank, so it lifts to a
+         light slate and the leads sit a step above it. -->
+    <color name="illustration_hub">#FF7C8CA0</color>
+    <color name="illustration_cable">#FF95A5B8</color>
+    <!-- Still a step darker than the body, which is what makes it read as an opening; it does not
+         follow the body up, or the slot would vanish into it. -->
+    <color name="illustration_hub_slot">#FF3E4A58</color>
 </resources>

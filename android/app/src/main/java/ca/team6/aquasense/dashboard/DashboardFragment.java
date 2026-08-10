@@ -64,6 +64,7 @@ public class DashboardFragment extends Fragment {
 
     private final AquariumRepository.AquariumsObserver aquariumsObserver =
             aquariums -> {
+                showEmptyState();
                 showActiveAquarium();
                 refreshTelemetrySubscription();
                 showSensorCards();
@@ -122,6 +123,10 @@ public class DashboardFragment extends Fragment {
         maintenanceModeStore = new MaintenanceModeStore(requireContext());
 
         setupLoadingOverlay(view);
+
+        view.findViewById(R.id.btnDashboardEmptyCreate).setOnClickListener(v ->
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_dashboardFragment_to_addAquariumFragment));
 
         telemetryRepository.addObserver(telemetryObserver);
         aquariumRepository.addObserver(aquariumsObserver);
@@ -305,6 +310,28 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
+    /**
+     * Swaps the dashboard for its empty state once the aquarium list has loaded with nothing in
+     * it, and back again as soon as one is paired.
+     *
+     * <p>Held until the snapshot arrives: an empty list before that only means the read is still
+     * in flight, and the loading overlay is covering the screen for exactly that moment.
+     */
+    private void showEmptyState() {
+        View view = getView();
+        if (view == null) {
+            return;
+        }
+        boolean empty = aquariumRepository.isLoaded()
+                && aquariumRepository.getActiveAquarium() == null;
+
+        view.findViewById(R.id.dashboardEmptyState)
+                .setVisibility(empty ? View.VISIBLE : View.GONE);
+        // The header and the grid go together: neither has anything to say without an aquarium,
+        // and leaving them under the empty state would scroll it off its own page.
+        view.findViewById(R.id.dashboardScroll).setVisibility(empty ? View.GONE : View.VISIBLE);
+    }
+
     private void showActiveAquarium() {
         if (dashboardHeaderController == null) {
             return;
@@ -473,6 +500,7 @@ public class DashboardFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        showEmptyState();
         showActiveAquarium();
         refreshTelemetrySubscription();
 

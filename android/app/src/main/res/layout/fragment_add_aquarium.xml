@@ -14,12 +14,20 @@
         android:paddingEnd="20dp" 
         android:layout_alignParentTop="true" />
 
+    <!-- Shown by WizardProgress only on a first installation, where this screen is step 1 of 2. -->
+    <include
+        android:id="@+id/wizardProgress"
+        layout="@layout/view_wizard_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_add_aquarium" />
+
     <ScrollView
         android:id="@+id/addAquariumScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomBar"
-        android:layout_below="@id/toolbar_add_aquarium">
+        android:layout_below="@id/wizardProgress">
 
         <LinearLayout
             android:layout_width="match_parent"

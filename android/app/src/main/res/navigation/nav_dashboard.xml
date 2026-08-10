@@ -15,6 +15,12 @@
             android:id="@+id/action_dashboardFragment_to_aquariumSelectorFragment"
             app:destination="@id/aquariumSelectorFragment"
         />
+
+        <!-- From the empty state, which is the dashboard an account with no aquarium gets. -->
+        <action
+            android:id="@+id/action_dashboardFragment_to_addAquariumFragment"
+            app:destination="@id/addAquariumFragment"
+        />
     </fragment>
 
     <fragment
