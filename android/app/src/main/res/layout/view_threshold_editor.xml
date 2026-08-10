@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The per-sensor threshold form, shared by the two screens that collect one.
+
+  Water Parameters (SETTINGS-07) edits an aquarium that already exists; the add-aquarium form's
+  Advanced Settings panel edits one that is about to. Both are the same question - where do this
+  sensor's five bounds sit - so both ask it with this layout and drive it with ThresholdEditor.
+
+  What is deliberately absent: the aquarium selector and the Save button. Each host supplies its
+  own, because one saves an edit and the other carries the values on to be written after pairing.
+
+  Reading down: which sensor, that sensor's range as a bar, the four bounds low to high, then the
+  spike. The spike is its own section because it is a distance rather than a place on the scale.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Tabs are added in code, one per sensor this aquarium's water type can measure. -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabsWaterParameterSensor"
+        style="@style/Widget.AquaSense.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/accent"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="3dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/accent"
+        app:tabTextAppearance="@style/TextAppearance.AquaSense.Tab"
+        app:tabTextColor="@color/text_secondary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/threshold_section_safe_range"
+        android:textAllCaps="true"
+        android:textColor="@color/text_secondary"
+        android:textSize="15sp" />
+
+    <!-- OVERALL RANGE -->
+    <LinearLayout
+        style="@style/Widget.AquaSense.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_settings_card"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:id="@+id/tvOverallRangeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/threshold_overall_range"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Segment widths are assigned as layout weights by ThresholdBandBar, from
+             whatever is currently typed into the four cards below. -->
+        <LinearLayout
+            android:id="@+id/overallRangeBar"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/segmentCriticalLow"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_band_start"
+                android:backgroundTint="@color/template_band_critical" />
+
+            <View
+                android:id="@+id/segmentWarningLow"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/template_band_warning" />
+
+            <View
+                android:id="@+id/segmentSafe"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/template_band_normal" />
+
+            <View
+                android:id="@+id/segmentWarningHigh"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/template_band_warning" />
+
+            <View
+                android:id="@+id/segmentCriticalHigh"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_band_end"
+                android:backgroundTint="@color/template_band_critical" />
+
+        </LinearLayout>
+
+        <!-- Three labels: the outer two mark where critical begins, the middle one is the
+             safe band. These are the only place critical is spelled out as a number, and
+             it is derived from the warning bounds rather than entered. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvOverallRangeLow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:textColor="@color/status_red"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="&lt; 22" />
+
+            <TextView
+                android:id="@+id/tvOverallRangeSafe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/status_blue"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="24 - 27" />
+
+            <TextView
+                android:id="@+id/tvOverallRangeHigh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textColor="@color/status_red"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="&gt; 29" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <LinearLayout style="@style/Widget.AquaSense.AnalyticsLegendKey">
+
+                <ImageView
+                    style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/red_circle_24" />
+
+                <TextView
+                    style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                    android:text="@string/template_legend_critical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.AquaSense.AnalyticsLegendKey"
+                android:layout_marginStart="16dp">
+
+                <ImageView
+                    style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/orange_circle_24" />
+
+                <TextView
+                    style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                    android:text="@string/template_legend_warning" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Widget.AquaSense.AnalyticsLegendKey"
+                android:layout_marginStart="16dp">
+
+                <ImageView
+                    style="@style/Widget.AquaSense.AnalyticsLegendDot"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/blue_circle_24" />
+
+                <TextView
+                    style="@style/Widget.AquaSense.AnalyticsLegendLabel"
+                    android:text="@string/template_legend_safe" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- The four bound cards, inflated from item_threshold_level, low to high so they run
+         in the same direction as the bar above them. -->
+    <LinearLayout
+        android:id="@+id/containerThresholdLevels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <!-- A spike is a distance rather than a place on the scale, so it is its own section
+         rather than a fifth bound. -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/threshold_section_sudden_change"
+        android:textAllCaps="true"
+        android:textColor="@color/text_secondary"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/containerSpikeLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <!-- Says which other tab is holding the host's action back, since its errors are not on screen. -->
+    <TextView
+        android:id="@+id/tvWaterParametersBlocked"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/danger"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="Fix the errors on the pH Level tab before saving."
+        tools:visibility="visible" />
+
+</LinearLayout>

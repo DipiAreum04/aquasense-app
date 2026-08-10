@@ -127,7 +127,6 @@
                         tools:text="Saltwater" />
                 </LinearLayout>
 
-                <!-- Custom tanks are not backed by a template, so this row is dropped for them. -->
                 <View
                     android:id="@+id/completeTemplateDivider"
                     android:layout_width="match_parent"
@@ -162,6 +161,124 @@
                         android:textStyle="bold"
                         tools:text="Freshwater: Tropical" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <!--
+              The two app-wide display choices, asked here and nowhere else in setup.
+
+              Both are settings rather than properties of the aquarium, so neither belongs on the
+              form that creates one. They are worth asking once, and this is the moment they mean
+              something: the hub is online and the user is about to go and read its numbers.
+
+              Each writes straight through on selection - there is no save, and the button below
+              leaves for the dashboard - so they behave the same as they do in Display & Units,
+              which is where they can be changed afterwards.
+            -->
+            <LinearLayout
+                android:id="@+id/completeDisplayPrefs"
+                style="@style/Widget.AquaSense.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_settings_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setup_complete_display_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/setup_complete_display_body"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:letterSpacing="0.06"
+                    android:text="@string/setup_complete_display_temperature"
+                    android:textAllCaps="true"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgSetupTempUnit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbSetupCelsius"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/celsius"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rbSetupFahrenheit"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/fahrenheit"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:letterSpacing="0.06"
+                    android:text="@string/setup_complete_display_precision"
+                    android:textAllCaps="true"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgSetupPrecision"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbSetupPrecisionStandard"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/precision_standard"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/rbSetupPrecisionPrecise"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/precision_precise"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+
+                </RadioGroup>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

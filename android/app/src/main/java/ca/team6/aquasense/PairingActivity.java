@@ -15,8 +15,8 @@ import java.util.List;
 
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
+import ca.team6.aquasense.model.NewAquariumConfig;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
-import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.pairing.DiscoveredBoard;
 import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.pairing.PairingFragment;
@@ -29,23 +29,17 @@ import ca.team6.aquasense.ui.WizardProgress;
  */
 public class PairingActivity extends AppCompatActivity {
 
-    private static final String EXTRA_AQUARIUM_NAME = "extra_aquarium_name";
-    private static final String EXTRA_WATER_TYPE = "extra_water_type";
-    private static final String EXTRA_TEMPLATE_ID = "extra_template_id";
+    private static final String EXTRA_AQUARIUM_CONFIG = "extra_aquarium_config";
     private static final String EXTRA_ENTRY_MODE = "extra_entry_mode";
 
     private static final String TAG_PAIRING_FRAGMENT = "pairing";
 
     @NonNull
     public static Intent intent(@NonNull Context context,
-                                @NonNull String aquariumName,
-                                @NonNull WaterType waterType,
-                                @Nullable String templateId,
+                                @NonNull NewAquariumConfig config,
                                 @NonNull PairingEntryMode entryMode) {
         return new Intent(context, PairingActivity.class)
-                .putExtra(EXTRA_AQUARIUM_NAME, aquariumName)
-                .putExtra(EXTRA_WATER_TYPE, waterType.getKey())
-                .putExtra(EXTRA_TEMPLATE_ID, templateId)
+                .putExtra(EXTRA_AQUARIUM_CONFIG, config)
                 .putExtra(EXTRA_ENTRY_MODE, entryMode.name());
     }
 
@@ -113,13 +107,9 @@ public class PairingActivity extends AppCompatActivity {
 
     @NonNull
     private PairingFragment buildPairingFragment() {
-        Intent intent = getIntent();
-        String name = intent.getStringExtra(EXTRA_AQUARIUM_NAME);
-
         Bundle args = new Bundle();
-        args.putString(PairingFragment.ARG_AQUARIUM_NAME, name == null ? "" : name);
-        args.putString(PairingFragment.ARG_WATER_TYPE, intent.getStringExtra(EXTRA_WATER_TYPE));
-        args.putString(PairingFragment.ARG_TEMPLATE_ID, intent.getStringExtra(EXTRA_TEMPLATE_ID));
+        args.putParcelable(PairingFragment.ARG_AQUARIUM_CONFIG,
+                getIntent().getParcelableExtra(EXTRA_AQUARIUM_CONFIG));
         args.putString(PairingFragment.ARG_ENTRY_MODE, this.entryMode.name());
 
         PairingFragment fragment = new PairingFragment();

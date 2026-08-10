@@ -21,11 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import ca.team6.aquasense.model.AquariumRepository;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.FirebaseDatabaseHelper;
+import ca.team6.aquasense.model.NewAquariumConfig;
 import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.model.SensorReading;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
-import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 
 /**
  * Drives one pairing attempt from end to end: scan, hand over credentials, create the aquarium, then
@@ -61,13 +59,10 @@ public final class PairingRepository {
     // Arrives over BLE, and is the key the aquarium telemetry is written under.
     private String deviceUid = "";
 
-    private String aquariumName = "";
-    private WaterType waterType = WaterType.FRESHWATER;
-    // The built-in template's ID, or null for Custom / no template. Resolved to its thresholds
-    // only when the aquarium is created, so the write is the single place that reads it.
-    // TODO: persist the thresholds for custom templates 
+    // Everything the add-aquarium form collected, held until the board's UID arrives to key it by.
+    // Null until a pairing attempt starts, which is the only thing that can supply one.
     @Nullable
-    private String templateId;
+    private NewAquariumConfig config;
 
     @Nullable
     private FirebaseDatabaseHelper.ListenerHandle telemetryHandle;
@@ -167,9 +162,7 @@ public final class PairingRepository {
     public void pair(@NonNull DiscoveredBoard board,
                      @NonNull String ssid,
                      @NonNull String password,
-                     @NonNull String aquariumName,
-                     @NonNull WaterType waterType,
-                     @Nullable String templateId) {
+                     @NonNull NewAquariumConfig config) {
         String ownerUid = this.currentUid();
         if (ownerUid == null) {
             ScopedLogger.error("Cannot pair while signed out.");
@@ -179,9 +172,7 @@ public final class PairingRepository {
 
         this.deviceUid = "";
         this.failure = null;
-        this.aquariumName = aquariumName;
-        this.waterType = waterType;
-        this.templateId = templateId;
+        this.config = config;
         this.publishState(PairingState.PROVISIONING);
 
         // The board needs the owner's UID as well as the Wi-Fi credentials: telemetry lives at
@@ -246,11 +237,16 @@ public final class PairingRepository {
             this.finish(PairingFailure.INCOMPATIBLE_BOARD);
             return;
         }
+        if (this.config == null) {
+            // Only reachable if the provisioner reported success for an attempt pair() never
+            // started, which would leave nothing to name the aquarium after.
+            ScopedLogger.error("Provisioned a board with no aquarium configuration to claim it.");
+            this.finish(PairingFailure.CLAIM_FAILED);
+            return;
+        }
 
         this.publishState(PairingState.CLAIMING);
-        AquariumTemplate template = BuiltInTemplates.fromId(this.templateId);
-        this.aquariumRepository.addPairedAquarium(
-                this.deviceUid, this.aquariumName, this.waterType, template,
+        this.aquariumRepository.addPairedAquarium(this.deviceUid, this.config,
                 new AquariumRepository.WriteCallback() {
                     @Override
                     public void onSuccess() {

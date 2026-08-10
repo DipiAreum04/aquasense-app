@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
-
 /**
  * Live view of the signed-in user's /{uid}/aquariums node.
  *
@@ -169,12 +167,15 @@ public class AquariumRepository {
     }
 
     /**
-     * Creates the aquarium for a device that has just been paired, keyed by the device's own FirebaseUID.
+     * Creates the aquarium for a device that has just been paired, keyed by the device's own
+     * FirebaseUID, from the configuration the add-aquarium form collected.
+     *
+     * <p>The bands and spike deltas are written with the name and water type in the same update, so
+     * the aquarium is graded against the numbers the user chose from its very first reading rather
+     * than against a template resolved from its water type.
      */
     public void addPairedAquarium(@NonNull String deviceUid,
-                                  @NonNull String name,
-                                  @NonNull WaterType waterType,
-                                  @Nullable AquariumTemplate template,
+                                  @NonNull NewAquariumConfig config,
                                   @NonNull WriteCallback callback) {
         String uid = this.currentUid();
         if (uid == null) {
@@ -188,17 +189,15 @@ public class AquariumRepository {
             return;
         }
 
-        this.write(uid, deviceUid, name, waterType, template, callback);
+        this.write(uid, deviceUid, config, callback);
     }
 
     private void write(@NonNull String uid,
                        @NonNull String aquariumId,
-                       @NonNull String name,
-                       @NonNull WaterType waterType,
-                       @Nullable AquariumTemplate template,
+                       @NonNull NewAquariumConfig config,
                        @NonNull WriteCallback callback) {
-        this.database.writeAquarium(uid, aquariumId, name, waterType.getKey(),
-                template != null ? template.getAllThresholds() : Collections.emptyMap(),
+        this.database.writeAquarium(uid, aquariumId, config.getName(),
+                config.getWaterType().getKey(), config.getThresholds(), config.getSpikeDeltas(),
                 new FirebaseDatabaseHelper.DbCallback() {
                     @Override
                     public void onSuccess() {

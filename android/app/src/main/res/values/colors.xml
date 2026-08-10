@@ -213,6 +213,18 @@
     <color name="template_header_text_muted">#FF3D6C80</color>
     <color name="template_header_badge_bg">#26043D5C</color>
 
+    <!--
+      The "Optional" pill beside the Add Aquarium form's Advanced Settings heading.
+
+      The app's aqua rather than a grey: a translucent grey badge on a grey section label is the
+      one combination that disappears, and this pill is the only thing telling the user that step
+      3 can be skipped. Same ramp as @color/status_blue, taken to L* 34 for the text so it holds
+      contrast at 11sp bold.
+    -->
+    <color name="optional_badge_bg">#FFDDF1F5</color>
+    <color name="optional_badge_stroke">#FFBBE4ED</color>
+    <color name="optional_badge_text">#FF045865</color>
+
     <color name="template_band_normal">#25A839</color>
     <color name="template_band_warning">#F8D36E</color>
     <color name="template_band_critical">#FFDA3E44</color>
