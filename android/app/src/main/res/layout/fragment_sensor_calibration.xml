@@ -15,11 +15,228 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="4dp"
             android:text="@string/calibration_intro"
             android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
             android:textColor="@color/text_muted" />
+
+        <LinearLayout
+            style="@style/Widget.AquaSense.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_settings_card"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/calib_weather_legend_title"
+                android:textAppearance="@style/TextAppearance.AquaSense.RowTitle"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_calibration_weather_spectrum"
+                android:clipToOutline="true"
+                android:orientation="horizontal"
+                android:padding="1dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_never_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_moon"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_never_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_sunny_legend_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_sunny"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_5_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_partly_cloudy_legend_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_partly_cloudy"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_10_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_cloudy_legend_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_cloudy"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_25_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_rainy_legend_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_rainy"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_50_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/calib_weather_stormy_legend_accessibility"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:text="@string/calib_weather_stormy"
+                        android:textSize="21sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:importantForAccessibility="no"
+                        android:maxLines="1"
+                        android:text="@string/calib_weather_over_50_label"
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/calib_weather_explanation"
+                android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+                android:textColor="@color/text_muted" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -124,30 +341,15 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layoutTempError"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvTempWeather"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="12dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/calib_error_label"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvTempError"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="normal"
-                        tools:text="25.0%" />
-
-                </LinearLayout>
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:textSize="23sp"
+                    tools:text="☀️" />
 
             </LinearLayout>
 
@@ -203,30 +405,15 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layoutTdsError"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvTdsWeather"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="12dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/calib_error_label"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvTdsError"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="normal"
-                        tools:text="0.4%" />
-
-                </LinearLayout>
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:textSize="23sp"
+                    tools:text="🌤️" />
 
             </LinearLayout>
 
@@ -282,30 +469,15 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layoutPhError"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvPhWeather"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="12dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/calib_error_label"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvPhError"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
-                        android:textStyle="normal"
-                        tools:text="12.5%" />
-
-                </LinearLayout>
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:textSize="23sp"
+                    tools:text="☁️" />
 
             </LinearLayout>
 

@@ -344,8 +344,33 @@
     <string name="calib_operating_point_hint_plain">Operating point</string>
     <string name="calib_operating_point_precision">Enter a number with at most one decimal place.</string>
     <string name="calib_operating_point_out_of_range">Enter a value inside the normal range (%1$s).</string>
-    <string name="calib_error_label">Error</string>
-    <string name="calib_percent_error">%1$s%%</string>
+    <string name="calib_weather_legend_title">Correction quality</string>
+    <string name="calib_weather_explanation">Correction quality gives you a quick sense of the calibration result. The percentage compares the gap between the sensor readings collected during calibration and the set operating point with the width of the normal range. Lower is better. If it is high, recalibrate in a stable environment. If it remains high, replace the sensor.</string>
+    <string name="calib_weather_moon">🌑</string>
+    <string name="calib_weather_sunny">☀️</string>
+    <string name="calib_weather_partly_cloudy">🌤️</string>
+    <string name="calib_weather_cloudy">☁️</string>
+    <string name="calib_weather_rainy">🌧️</string>
+    <string name="calib_weather_stormy">⛈️</string>
+    <string name="calib_weather_never_label">Never</string>
+    <string name="calib_weather_5_label" formatted="false">≤ 5%</string>
+    <string name="calib_weather_10_label" formatted="false">≤ 10%</string>
+    <string name="calib_weather_25_label" formatted="false">≤ 25%</string>
+    <string name="calib_weather_50_label" formatted="false">≤ 50%</string>
+    <string name="calib_weather_over_50_label" formatted="false">&gt; 50%</string>
+    <string name="calib_weather_never_accessibility">Never calibrated</string>
+    <string name="calib_weather_sunny_legend_accessibility">Sunny: adjustment up to 5 percent</string>
+    <string name="calib_weather_partly_cloudy_legend_accessibility">Partly cloudy: adjustment up to 10 percent</string>
+    <string name="calib_weather_cloudy_legend_accessibility">Cloudy: adjustment up to 25 percent</string>
+    <string name="calib_weather_rainy_legend_accessibility">Rainy: adjustment up to 50 percent</string>
+    <string name="calib_weather_stormy_legend_accessibility">Stormy: adjustment over 50 percent</string>
+    <string name="calib_weather_value_accessibility">Calibration adjustment: %1$s%%, %2$s.</string>
+    <string name="calib_weather_value_unavailable_accessibility">Calibration adjustment unavailable</string>
+    <string name="calib_weather_meaning_very_small">very small</string>
+    <string name="calib_weather_meaning_small">small</string>
+    <string name="calib_weather_meaning_moderate">moderate</string>
+    <string name="calib_weather_meaning_large">large</string>
+    <string name="calib_weather_meaning_very_large">very large</string>
     <string name="calib_last_calibrated">Last calibrated: %1$s</string>
     <string name="calib_value_none">—</string>
     <string name="calib_cannot_be_calibrated">Cannot be calibrated</string>

@@ -201,14 +201,17 @@ public class SensorCalibrationFragment extends Fragment {
     }
 
     private void refreshStatus(View root) {
-        updateProbeRow(root, R.id.tvTempDays, R.id.tvTempError, DatabaseSchema.TEMPERATURE_KEY);
-        updateProbeRow(root, R.id.tvTdsDays, R.id.tvTdsError, DatabaseSchema.DISSOLVED_SOLIDS_KEY);
-        updateProbeRow(root, R.id.tvPhDays, R.id.tvPhError, DatabaseSchema.PH_LEVEL_KEY);
+        updateProbeRow(root, R.id.tvTempDays, R.id.tvTempWeather,
+                DatabaseSchema.TEMPERATURE_KEY);
+        updateProbeRow(root, R.id.tvTdsDays, R.id.tvTdsWeather,
+                DatabaseSchema.DISSOLVED_SOLIDS_KEY);
+        updateProbeRow(root, R.id.tvPhDays, R.id.tvPhWeather, DatabaseSchema.PH_LEVEL_KEY);
     }
 
-    private void updateProbeRow(View root, int lastCalibratedId, int errorId, String sensorId) {
+    private void updateProbeRow(View root, int lastCalibratedId, int weatherId,
+                                String sensorId) {
         TextView tvLastCalibrated = root.findViewById(lastCalibratedId);
-        TextView tvError = root.findViewById(errorId);
+        TextView tvWeather = root.findViewById(weatherId);
 
         Aquarium aquarium = activeAquarium;
         long lastMs = aquarium == null ? 0L : offsets.calibratedAt(aquarium.getId(), sensorId);
@@ -216,7 +219,9 @@ public class SensorCalibrationFragment extends Fragment {
         if (lastMs == 0L) {
             tvLastCalibrated.setText(getString(R.string.calib_last_calibrated,
                     getString(R.string.calib_value_none)));
-            tvError.setText(R.string.calib_value_none);
+            tvWeather.setText(R.string.calib_weather_moon);
+            tvWeather.setContentDescription(
+                    getString(R.string.calib_weather_never_accessibility));
             return;
         }
 
@@ -227,11 +232,35 @@ public class SensorCalibrationFragment extends Fragment {
                 offsets.get(aquarium.getId(), sensorId),
                 band.getSafeLow(), band.getSafeHigh());
         if (Double.isNaN(percent)) {
-            tvError.setText(R.string.calib_value_none);
+            tvWeather.setText(R.string.calib_weather_moon);
+            tvWeather.setContentDescription(
+                    getString(R.string.calib_weather_value_unavailable_accessibility));
             return;
         }
-        tvError.setText(getString(R.string.calib_percent_error,
-                String.format(Locale.getDefault(), "%.1f", percent)));
+
+        tvWeather.setText(weatherIconFor(percent));
+        tvWeather.setContentDescription(getString(
+                R.string.calib_weather_value_accessibility,
+                String.format(Locale.getDefault(), "%.1f", percent),
+                getString(weatherMeaningFor(percent))));
+    }
+
+    @StringRes
+    private static int weatherIconFor(double percent) {
+        if (percent <= 5d) return R.string.calib_weather_sunny;
+        if (percent <= 10d) return R.string.calib_weather_partly_cloudy;
+        if (percent <= 25d) return R.string.calib_weather_cloudy;
+        if (percent <= 50d) return R.string.calib_weather_rainy;
+        return R.string.calib_weather_stormy;
+    }
+
+    @StringRes
+    private static int weatherMeaningFor(double percent) {
+        if (percent <= 5d) return R.string.calib_weather_meaning_very_small;
+        if (percent <= 10d) return R.string.calib_weather_meaning_small;
+        if (percent <= 25d) return R.string.calib_weather_meaning_moderate;
+        if (percent <= 50d) return R.string.calib_weather_meaning_large;
+        return R.string.calib_weather_meaning_very_large;
     }
 
     private static String formatTimestamp(long epochMillis) {
