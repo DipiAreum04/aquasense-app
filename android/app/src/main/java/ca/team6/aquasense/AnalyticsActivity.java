@@ -45,6 +45,7 @@ import ca.team6.aquasense.model.AppSettings;
 import ca.team6.aquasense.model.InfoSheetSection;
 import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.AquariumRepository;
+import ca.team6.aquasense.model.CalibrationOffsetStore;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.FirebaseDatabaseHelper;
 import ca.team6.aquasense.model.ReadingFormatter;
@@ -109,6 +110,8 @@ public class AnalyticsActivity extends AppCompatActivity {
     private AnalyticsSummaryController summaryController;
     private AquariumRepository aquariumRepository;
     private TelemetryRepository telemetryRepository;
+    // Read here only to key the cache on: the buckets themselves arrive already corrected.
+    private CalibrationOffsetStore calibrationOffsets;
     private TextView aquariumNameText;
     private ImageView aquariumIcon;
     private TextView yAxisLabel;
@@ -154,7 +157,9 @@ public class AnalyticsActivity extends AppCompatActivity {
     @Nullable
     private String lastDrawnKey;
 
-    // The buckets the page is reporting on, raw as the database stores them. Held so that a change
+    // The buckets the page is reporting on, in the unit the database stores them in but with the
+    // sensor's calibration correction already applied - the same numbers the dashboard's card is
+    // showing, which is what lets the two screens be read against each other. Held so that a change
     // to the aquarium's thresholds can regrade them, which moves the distribution without moving a
     // single reading, and so a fetch does not have to be repeated to do it.
     @Nullable
@@ -235,6 +240,7 @@ public class AnalyticsActivity extends AppCompatActivity {
         this.setUpInfoSheets();
 
         this.telemetryRepository = TelemetryRepository.getInstance();
+        this.calibrationOffsets = new CalibrationOffsetStore(this);
         this.aquariumRepository = AquariumRepository.getInstance(this);
         // Both fire immediately with whatever their caches hold, so the usual case - arriving from
         // the dashboard, which loaded these long ago - draws the page on these calls. Opening it
@@ -617,8 +623,13 @@ public class AnalyticsActivity extends AppCompatActivity {
 
         AquariumSensor sensor = this.selectedSensor;
         AnalyticsPeriod period = this.selectedPeriod;
+        // The calibration offset is in the key for the same reason the unit is: the repository
+        // corrects the buckets on the way here, and Sensor Calibration may have been run while this
+        // screen sat in the background, so a page that skipped the re-read would keep plotting the
+        // old correction under a card the dashboard has already moved on from.
         String key = aquariumId + "/" + sensor.getId() + "/" + period.getDatabaseKey()
-                + "/" + this.temperatureUnitKey();
+                + "/" + this.temperatureUnitKey()
+                + "/" + this.calibrationOffsets.get(aquariumId, sensor.getId());
         if (key.equals(this.requestKey)) {
             return;
         }
@@ -666,7 +677,9 @@ public class AnalyticsActivity extends AppCompatActivity {
                         selectionHasBuckets = !buckets.isEmpty();
                         showChartActionsEnabled();
                         // Cut to the window once, here, so the graph and the card below it are
-                        // reporting on exactly the same readings.
+                        // reporting on exactly the same readings. They arrive already carrying the
+                        // sensor's calibration correction, applied by the repository alongside the
+                        // one it puts on the live reading the dashboard shows.
                         loadedBuckets = period.within(buckets);
                         drawLoadedBuckets(sensor, period);
                         // On screen now, so coming back to this selection can repaint it rather

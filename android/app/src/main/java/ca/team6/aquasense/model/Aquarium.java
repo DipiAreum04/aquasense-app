@@ -73,6 +73,27 @@ public final class Aquarium {
         return thresholds.get(sensorId);
     }
 
+    /**
+     * The band this aquarium is actually graded against for a sensor: the one configured for it, or
+     * this water type's default where it has not been overridden.
+     *
+     * <p>Null when the sensor is not one this kind of tank measures. Borrowing a band from a
+     * different water type would be worse than having none - it is the difference between "no
+     * opinion" and a confidently wrong one.
+     */
+    @Nullable
+    public ThresholdBand effectiveThresholdFor(@NonNull String sensorId) {
+        ThresholdBand configured = thresholdFor(sensorId);
+        if (configured != null) {
+            return configured;
+        }
+        AquariumTemplate template = template();
+        if (!template.isSensorApplicable(sensorId)) {
+            return null;
+        }
+        return template.getThresholds(sensorId);
+    }
+
     @Nullable
     public Double spikeDeltaFor(@NonNull String sensorId) {
         return spikeDeltas.get(sensorId);

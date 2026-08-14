@@ -125,7 +125,20 @@
         android:id="@+id/sensorCalibrationFragment"
         android:name="ca.team6.aquasense.settings.SensorCalibrationFragment"
         tools:layout="@layout/fragment_sensor_calibration"
-        android:label="Sensor Calibration" />
+        android:label="Sensor Calibration">
+
+        <action
+            android:id="@+id/action_sensorCalibration_to_calibrationGuide"
+            app:destination="@id/calibrationGuideFragment" />
+    </fragment>
+
+    <!-- One sensor's calibration run. A page rather than a dialog: it holds a multi-step guide and
+         a minute-long measurement, which is a task the user is doing rather than a prompt. -->
+    <fragment
+        android:id="@+id/calibrationGuideFragment"
+        android:name="ca.team6.aquasense.settings.CalibrationGuideFragment"
+        tools:layout="@layout/fragment_calibration_guide"
+        android:label="@string/sensor_calibration" />
 
     <!-- ST-1.6 -->
     <fragment

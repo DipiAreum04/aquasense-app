@@ -3,6 +3,7 @@ package ca.team6.aquasense.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -10,9 +11,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +41,24 @@ public class TelemetryRepository {
         void onError();
     }
 
+    // Matches the indent FirebaseDatabaseHelper renders a period with, so re-writing a corrected
+    // copy leaves a file that still reads the way the uncorrected one did.
+    private static final int EXPORT_JSON_INDENT_SPACES = 2;
+
     private static volatile TelemetryRepository instance;
 
     private final FirebaseAuth firebaseAuth;
     private final FirebaseDatabaseHelper database;
+    private final CalibrationOffsetStore calibrationOffsets;
     private final CopyOnWriteArrayList<TelemetryObserver> observers = new CopyOnWriteArrayList<>();
 
+    // What observers see: every value with the aquarium's calibration correction already on it.
     private Map<String, SensorReading> readings = Collections.emptyMap();
+
+    // What the board actually published, kept beside the above so a new offset can be applied to
+    // the samples already in hand, and so the calibration flow has something uncorrected to work
+    // its next offset out from.
+    private Map<String, SensorReading> rawReadings = Collections.emptyMap();
 
     // Diff between the Firebase server clock and this device's clock, so staleness checks compare
     // the board's timestamp against server time instead of a phone clock that may be skewed.
@@ -73,6 +89,8 @@ public class TelemetryRepository {
     private TelemetryRepository() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.database = FirebaseDatabaseHelper.getInstance();
+        this.calibrationOffsets = new CalibrationOffsetStore(
+                FirebaseApp.getInstance().getApplicationContext());
         this.firebaseAuth.addAuthStateListener(auth -> onAuthChanged(auth.getCurrentUser()));
 
         FirebaseDatabase.getInstance().getReference(".info/serverTimeOffset")
@@ -112,6 +130,24 @@ public class TelemetryRepository {
     }
 
     /**
+     * The board's latest sample for a sensor as it was published, for calibration only; every other
+     * consumer wants {@link #getReadings()}, which is the same sample corrected.
+     *
+     * <p>An offset is worked out as the reference minus what the hardware said, so the flow that
+     * derives one has to read past the correction already in force. Deriving it from a corrected
+     * value would fold the old offset into the new one and stack them.
+     */
+    @Nullable
+    public SensorReading getRawReading(@NonNull String sensorId) {
+        return this.rawReadings.get(sensorId);
+    }
+
+    /** Re-publishes cached raw samples after a newly calculated offset is saved. */
+    public void refreshCalibration() {
+        this.publishCorrected();
+    }
+
+    /**
      * Whether every sensor's last_instant has been read at least once since the current aquarium
      * was watched. Until then the published readings are an incomplete view of the database, not a
      * report that the missing sensors are offline.
@@ -134,6 +170,7 @@ public class TelemetryRepository {
         this.watchedUid = uid;
         this.watchedAquariumId = aquariumId;
 
+        this.rawReadings = Collections.emptyMap();
         this.publish(Collections.emptyMap());
 
         for (String sensorId : DatabaseSchema.SENSOR_IDS) {
@@ -169,13 +206,14 @@ public class TelemetryRepository {
         // published" is an answer about the sensor rather than a gap in what we have fetched.
         this.readSensorIds.add(sensorId);
 
-        Map<String, SensorReading> merged = new LinkedHashMap<>(this.readings);
+        Map<String, SensorReading> merged = new LinkedHashMap<>(this.rawReadings);
         if (reading != null) {
             merged.put(sensorId, reading);
         } else {
             merged.remove(sensorId);
         }
-        this.publish(Collections.unmodifiableMap(merged));
+        this.rawReadings = Collections.unmodifiableMap(merged);
+        this.publishCorrected();
     }
 
     /**
@@ -207,7 +245,11 @@ public class TelemetryRepository {
                 new FirebaseDatabaseHelper.BucketsListener() {
                     @Override
                     public void onBuckets(@NonNull List<SensorReading> buckets) {
-                        callback.onBuckets(buckets);
+                        // Corrected here for the same reason last_instant is: a sensor's history and
+                        // its current reading are the same probe, and a graph plotted against an
+                        // uncorrected past would disagree with the card above it.
+                        callback.onBuckets(calibrationOffsets.correctAll(
+                                aquariumId, sensorId, buckets));
                     }
 
                     @Override
@@ -237,7 +279,78 @@ public class TelemetryRepository {
             listener.onError(null);
             return;
         }
-        this.database.readPeriodJson(uid, aquariumId, sensorId, periodKey, listener);
+        this.database.readPeriodJson(uid, aquariumId, sensorId, periodKey,
+                new FirebaseDatabaseHelper.PeriodJsonListener() {
+                    @Override
+                    public void onJson(@NonNull String json) {
+                        try {
+                            listener.onJson(correctPeriodJson(aquariumId, sensorId, json));
+                        } catch (JSONException exception) {
+                            // The node parsed as a period but could not be written back out, so
+                            // what is in hand is a file of uncorrected numbers. Failing the export
+                            // is better than saving one that disagrees with every other screen.
+                            ScopedLogger.error("Could not calibrate the exported period: "
+                                    + exception.getMessage());
+                            listener.onError(exception);
+                        }
+                    }
+
+                    @Override
+                    public void onEmpty() {
+                        listener.onEmpty();
+                    }
+
+                    @Override
+                    public void onError(@Nullable Exception exception) {
+                        listener.onError(exception);
+                    }
+                });
+    }
+
+    /**
+     * Puts the sensor's correction on every bucket of an exported period, leaving the node's shape -
+     * its cursor, its slots, and the ones the board has not come back round to - as it was.
+     *
+     * <p>The export is the one copy of a reading that leaves the app, so it carries the same numbers
+     * the dashboard and the graphs do. It is no longer byte-identical to the database tree because
+     * of it: what the hardware reported is still in the database, and this file is what the app
+     * makes of it.
+     */
+    @NonNull
+    private String correctPeriodJson(@NonNull String aquariumId,
+                                     @NonNull String sensorId,
+                                     @NonNull String json) throws JSONException {
+        double offset = this.calibrationOffsets.get(aquariumId, sensorId);
+        if (offset == 0d) {
+            return json;
+        }
+
+        JSONObject node;
+        try {
+            node = new JSONObject(json);
+        } catch (JSONException notAnObject) {
+            // No object means no buckets node, and so no values an offset could apply to.
+            return json;
+        }
+
+        JSONObject buckets = node.optJSONObject(DatabaseSchema.BUCKETS_KEY);
+        if (buckets == null) {
+            return json;
+        }
+        for (Iterator<String> slots = buckets.keys(); slots.hasNext(); ) {
+            JSONObject bucket = buckets.optJSONObject(slots.next());
+            if (bucket == null) {
+                continue;
+            }
+            double value = bucket.optDouble(DatabaseSchema.VALUE_KEY, Double.NaN);
+            // Gap markers and the offline sentinel are protocol values rather than measurements,
+            // and are left exactly as they are for the same reason they are on screen.
+            if (Double.isNaN(value) || DatabaseSchema.isOffline(value)) {
+                continue;
+            }
+            bucket.put(DatabaseSchema.VALUE_KEY, CalibrationMath.correct(value, offset));
+        }
+        return node.toString(EXPORT_JSON_INDENT_SPACES);
     }
 
     /**
@@ -274,6 +387,7 @@ public class TelemetryRepository {
         this.detach();
         this.watchedUid = null;
         this.watchedAquariumId = null;
+        this.rawReadings = Collections.emptyMap();
         this.publish(Collections.emptyMap());
     }
 
@@ -302,6 +416,7 @@ public class TelemetryRepository {
         }
         this.handles.clear();
         this.readSensorIds.clear();
+        this.rawReadings = Collections.emptyMap();
     }
 
     private void publish(@NonNull Map<String, SensorReading> readings) {
@@ -309,6 +424,29 @@ public class TelemetryRepository {
         for (TelemetryObserver observer : this.observers) {
             observer.onTelemetryChanged(readings);
         }
+    }
+
+    /** Puts the watched aquarium's offsets on every cached raw sample and publishes the result. */
+    private void publishCorrected() {
+        if (this.watchedAquariumId == null) {
+            this.publish(Collections.emptyMap());
+            return;
+        }
+        Map<String, SensorReading> corrected = new LinkedHashMap<>();
+        for (Map.Entry<String, SensorReading> entry : this.rawReadings.entrySet()) {
+            corrected.put(entry.getKey(),
+                    this.correct(this.watchedAquariumId, entry.getKey(), entry.getValue()));
+        }
+        this.publish(Collections.unmodifiableMap(corrected));
+    }
+
+    @NonNull
+    private SensorReading correct(@NonNull String aquariumId,
+                                  @NonNull String sensorId,
+                                  @NonNull SensorReading reading) {
+        return new SensorReading(
+                this.calibrationOffsets.correct(aquariumId, sensorId, reading.getValue()),
+                reading.getTimestampSeconds());
     }
 
     @Nullable

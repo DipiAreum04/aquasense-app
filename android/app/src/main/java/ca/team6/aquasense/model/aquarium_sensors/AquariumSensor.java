@@ -14,7 +14,12 @@ import ca.team6.aquasense.model.SensorReading;
 import ca.team6.aquasense.model.ThresholdBand;
 
 public abstract class AquariumSensor {
-    private static final long STALE_THRESHOLD_SECONDS = 30;
+    /**
+     * How old a sample may be before it stops counting as the sensor's current reading. Public
+     * because the calibration wizard has to make the same call: an offset worked out against a
+     * frozen reading is an offset against whatever the probe last managed to say.
+     */
+    public static final long STALE_THRESHOLD_SECONDS = 30;
 
     private int unitResId;
     private String value;
@@ -72,11 +77,14 @@ public abstract class AquariumSensor {
             this.status = SensorStatus.DISCONNECTED;
             this.spikeTracker.pause();
         } else {
-            this.value = ReadingFormatter.format(context, this.getId(), reading.getValue());
+            // Already carrying its aquarium's calibration correction: TelemetryRepository applies it
+            // as readings arrive, so every screen reading through it agrees without each one having
+            // to remember to correct, and without any risk of a second correction on top.
+            double value = reading.getValue();
+            this.value = ReadingFormatter.format(context, this.getId(), value);
             boolean spiking = this.spikeTracker.grade(
-                    reading.getValue(), reading.getTimestampSeconds(), spikeDelta);
-            this.status = gradedStatus(
-                    spiking, this.statusFor(reading.getValue(), thresholdBand));
+                    value, reading.getTimestampSeconds(), spikeDelta);
+            this.status = gradedStatus(spiking, this.statusFor(value, thresholdBand));
         }
 
         return !Objects.equals(previousValue, this.value) || previousStatus != this.status;

@@ -7,6 +7,13 @@
     <color name="icon_gray">#FF8A93A3</color>
     <color name="text_secondary">#FFA0A8B4</color>
     <color name="text_muted">#FFB0B8C4</color>
+
+    <!--
+      The dark-theme half of @color/text_disabled: dimmer than @color/text_secondary, since here it
+      is darkness rather than lightness that drops a row back. Sits above @color/card_background by
+      enough to stay readable - unavailable, not invisible.
+    -->
+    <color name="text_disabled">#FF6B7480</color>
     <color name="divider">#FF2A3441</color>
     <color name="accent">#FF64B5F6</color>
     <color name="toolbar_ocean">#FF15202B</color>

@@ -25,14 +25,12 @@ import java.util.Set;
 
 import ca.team6.aquasense.model.AppSettings;
 import ca.team6.aquasense.model.Aquarium;
+import ca.team6.aquasense.model.CalibrationOffsetStore;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.FirebaseDatabaseHelper;
 import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
-import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 
 
 public final class FirebaseThresholdMonitor {
@@ -176,6 +174,7 @@ public final class FirebaseThresholdMonitor {
         private final SettingsRepository settingsRepository;
         private final ThresholdAlertDedupeStore dedupeStore;
         private final MaintenanceModeStore maintenanceModeStore;
+        private final CalibrationOffsetStore calibrationOffsets;
         private final String uid;
         private final Handler hubCheckHandler = new Handler(Looper.getMainLooper());
         private final List<SensorWatch> sensorWatches = new ArrayList<>();
@@ -204,6 +203,7 @@ public final class FirebaseThresholdMonitor {
             this.settingsRepository = settingsRepository;
             this.dedupeStore = dedupeStore;
             this.maintenanceModeStore = maintenanceModeStore;
+            this.calibrationOffsets = new CalibrationOffsetStore(appContext);
             this.uid = uid;
             this.aquarium = aquarium;
         }
@@ -340,16 +340,21 @@ public final class FirebaseThresholdMonitor {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            SensorTelemetryReading reading =
+            SensorTelemetryReading raw =
                     SensorTelemetryReading.fromInstantSnapshot(snapshot);
-            if (reading == null) {
+            if (raw == null) {
                 return;
             }
             // Firebase replays the current value on (re)attach, so without this a reconnect would
             // re-alert on a sample that was already handled.
-            if (reading.timestamp <= lastProcessedTimestamp) {
+            if (raw.timestamp <= lastProcessedTimestamp) {
                 return;
             }
+            // Graded on the corrected reading, which is the one the user is being shown. An alert
+            // worked out from the raw value would put a notification in the shade about a number
+            // that appears nowhere in the app, and would contradict the card it is about.
+            SensorTelemetryReading reading = raw.withValue(parent.calibrationOffsets.correct(
+                    parent.aquarium().getId(), sensorId, raw.value));
             settingsRepository.loadSettings(settings -> handleReading(settings, reading));
         }
 
@@ -370,7 +375,7 @@ public final class FirebaseThresholdMonitor {
                         aquariumId,
                         sensorId,
                         reading.timestamp,
-                        lastProcessedValue == null ? reading.value : lastProcessedValue);
+                        lastProcessedValue == null ? reading.rawValue : lastProcessedValue);
                 return;
             }
 
@@ -400,7 +405,10 @@ public final class FirebaseThresholdMonitor {
                     resolveBand(aquarium, sensorId),
                     spikeDelta,
                     reading.value,
-                    lastProcessedValue);
+                    // Stored raw, so it has to be put on the same scale as the value it is being
+                    // compared against or the spike would be measured partly against the offset.
+                    lastProcessedValue == null ? null : parent.calibrationOffsets.correct(
+                            aquariumId, sensorId, lastProcessedValue));
 
             deliverViolations(settings, aquarium, aquariumId, violations, reading);
         }
@@ -415,7 +423,7 @@ public final class FirebaseThresholdMonitor {
                     aquariumId,
                     sensorId,
                     reading.timestamp,
-                    lastProcessedValue == null ? reading.value : lastProcessedValue);
+                    lastProcessedValue == null ? reading.rawValue : lastProcessedValue);
 
             // The sample above is still recorded; only the alert is suppressed, which is how the
             // feeding-silence flag this replaced behaved for every alert type.
@@ -498,9 +506,9 @@ public final class FirebaseThresholdMonitor {
         }
 
         private void rememberSample(String aquariumId, SensorTelemetryReading reading) {
-            lastProcessedValue = reading.value;
+            lastProcessedValue = reading.rawValue;
             dedupeStore.saveLastProcessed(
-                    aquariumId, sensorId, reading.timestamp, reading.value);
+                    aquariumId, sensorId, reading.timestamp, reading.rawValue);
         }
 
         @Override
@@ -580,20 +588,11 @@ public final class FirebaseThresholdMonitor {
         }
     }
 
+    // A sensor the water type cannot measure stays unmonitored rather than alerting on a band
+    // borrowed from a different kind of tank; the aquarium answers that for itself.
     @Nullable
     private static ThresholdBand resolveBand(Aquarium aquarium, String sensorId) {
-        ThresholdBand configured = aquarium.thresholdFor(sensorId);
-        if (configured != null) {
-            return configured;
-        }
-        AquariumTemplate template =
-                BuiltInTemplates.forWaterType(WaterType.fromKey(aquarium.getWaterType()));
-        // A sensor the water type cannot measure stays unmonitored rather than alerting on a band
-        // borrowed from a different kind of tank.
-        if (!template.isSensorApplicable(sensorId)) {
-            return null;
-        }
-        return template.getThresholds(sensorId);
+        return aquarium.effectiveThresholdFor(sensorId);
     }
 
 }

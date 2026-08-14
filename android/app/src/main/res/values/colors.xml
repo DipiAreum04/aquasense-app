@@ -24,6 +24,14 @@
     <color name="status_blue">#FF03A0B5</color>
     <color name="text_secondary">#FF6B6A6A</color>
     <color name="text_muted">#FF555555</color>
+
+    <!--
+      Text for a row that is present but cannot be acted on, e.g. the water level sensor on the
+      calibration page. Deliberately fainter than @color/text_secondary rather than darker: on a
+      white card, less contrast is what reads as unavailable. @color/text_muted is a shade *darker*
+      than text_secondary here, so it makes a row look more prominent than its neighbours, not less.
+    -->
+    <color name="text_disabled">#FF9E9E9E</color>
     <color name="divider">#FFE0E0E0</color>
     <color name="accent">#158AC0</color>
     <color name="toolbar_ocean">#FFDAF1F5</color>
