@@ -21,13 +21,11 @@ public final class QuietHours {
             return false;
         }
         if (startMinutes == endMinutes) {
-            // A zero-length window mutes nothing, which is the safer reading of "start == end".
             return false;
         }
         if (startMinutes < endMinutes) {
             return minutesNow >= startMinutes && minutesNow < endMinutes;
         }
-        // Wraps past midnight, so the window is the union of the two ends of the day.
         return minutesNow >= startMinutes || minutesNow < endMinutes;
     }
 

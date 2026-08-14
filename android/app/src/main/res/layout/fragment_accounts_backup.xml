@@ -10,7 +10,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Profile card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_name_empty"
-                android:textStyle="bold"                
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AquaSense.ProfileName" />
 
             <TextView
@@ -48,7 +47,6 @@
 
         </LinearLayout>
 
-        <!-- Account Actions section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

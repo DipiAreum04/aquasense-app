@@ -32,7 +32,6 @@ import ca.team6.aquasense.model.aquarium_sensors.WaterLevelSensor;
 
 public class DisplayUnitsFragment extends Fragment {
 
-    // How far a card row is dimmed when the active aquarium's water cannot be measured with it.
     private static final float DISABLED_ROW_ALPHA = 0.4f;
 
     private SettingsRepository repo;
@@ -42,11 +41,8 @@ public class DisplayUnitsFragment extends Fragment {
     private LinearLayout containerDashboardCards;
     private TextView tvDashboardCardsDisabledNote;
 
-    // Card rows are driven by this list; index order is the saved display order.
     private final List<AquariumSensor> orderedSensors = new ArrayList<>();
 
-    // Which sensors are measurable depends on the active aquarium, so the rows are redrawn when
-    // the list loads or changes rather than only when this screen is opened.
     private final AquariumRepository.AquariumsObserver aquariumsObserver =
             aquariums -> renderDashboardCardRows();
 
@@ -77,15 +73,11 @@ public class DisplayUnitsFragment extends Fragment {
             rgThemeMode.check(themeModeToId(s.themeMode));
         });
 
-        // Dashboard temperature unit reads this preference.
         rgTemp.setOnCheckedChangeListener((group, checkedId) -> {
             String unit = (checkedId == R.id.rbCelsius) ? "C" : "F";
             prefs.updateField(SettingsRepository.KEY_TEMP_UNIT, unit);
         });
 
-        // TODO: Wire into sensor cards and charts once firmware sends live numeric readings.
-        // Call ReadingFormatter.format(context, sensor.getId(), value) at the point where a
-        // raw reading is turned into card text.
         rgPrecision.setOnCheckedChangeListener((group, checkedId) ->
                 prefs.updateField(SettingsRepository.KEY_READING_PRECISION,
                         idToPrecision(checkedId)));
@@ -104,7 +96,6 @@ public class DisplayUnitsFragment extends Fragment {
     }
 
 
-    // Dashboard card order and visibility
     private void setUpDashboardCardRows() {
         List<AquariumSensor> all = new ArrayList<>();
         all.add(new WaterLevelSensor());
@@ -129,7 +120,6 @@ public class DisplayUnitsFragment extends Fragment {
         renderDashboardCardRows();
     }
 
-    // Rebuilds every row so the up/down buttons reflect the current position.
     private void renderDashboardCardRows() {
         containerDashboardCards.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -169,7 +159,6 @@ public class DisplayUnitsFragment extends Fragment {
 
             visible.setChecked(applicable && !prefs.isSensorHidden(sensor.getId()));
             visible.setOnCheckedChangeListener((b, checked) -> {
-                // Hiding every card would leave the dashboard blank with no way back to it.
                 if (!checked && countVisible() <= 1) {
                     b.setChecked(true);
                     Toast.makeText(requireContext(),
@@ -198,8 +187,6 @@ public class DisplayUnitsFragment extends Fragment {
         renderDashboardCardRows();
     }
 
-    // Counts the cards the dashboard would actually draw, so a sensor that is off because this
-    // aquarium cannot measure it is not counted as one of the cards keeping the grid populated.
     private int countVisible() {
         int visible = 0;
         for (AquariumSensor sensor : orderedSensors) {
@@ -210,13 +197,11 @@ public class DisplayUnitsFragment extends Fragment {
         return visible;
     }
 
-    // Whether the active aquarium's water can be measured with this sensor at all
     private boolean isSensorApplicable(@NonNull AquariumSensor sensor) {
         Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
         return activeAquarium == null || activeAquarium.isSensorApplicable(sensor.getId());
     }
 
-    // Explains the greyed-out rows as notes on the disabled sensors
     private void showDisabledSensorNote() {
         Aquarium activeAquarium = aquariumRepository.getActiveAquarium();
         int noteResId = activeAquarium == null ? 0 : activeAquarium.getSensorDisabledNoteResId();
@@ -228,7 +213,6 @@ public class DisplayUnitsFragment extends Fragment {
         tvDashboardCardsDisabledNote.setVisibility(View.VISIBLE);
     }
 
-    // Preference value <-> ID mapping
 
     private static int precisionToId(String precision) {
         return SettingsRepository.PRECISION_PRECISE.equals(precision)

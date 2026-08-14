@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A page in the settings stack rather than a floating card: the settings toolbar carries the
-     title and the way back, so there is no close button here and the pager takes the height that
-     is left over rather than a fixed box. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -50,7 +47,7 @@
 
         <Button
             android:id="@+id/btnBack"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.AquaSense.Button.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

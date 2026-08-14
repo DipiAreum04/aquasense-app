@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-/** Quiet hours, including the default window that wraps past midnight. */
 public class QuietHoursTest {
 
     private static int at(int hour, int minute) {
@@ -23,7 +22,6 @@ public class QuietHoursTest {
 
     @Test
     public void defaultWindowWrapsPastMidnight() {
-        // 22:00 to 07:00 is the shipped default, so both sides of midnight must be quiet.
         assertTrue(QuietHours.isActiveAt("22:00", "07:00", at(23, 30)));
         assertTrue(QuietHours.isActiveAt("22:00", "07:00", at(2, 0)));
         assertTrue(QuietHours.isActiveAt("22:00", "07:00", at(22, 0)));
@@ -39,8 +37,6 @@ public class QuietHoursTest {
 
     @Test
     public void unreadableBoundsMuteNothing() {
-        // Failing open matters here: a malformed preference silently muting every alert would be
-        // indistinguishable from the monitor being broken.
         assertFalse(QuietHours.isActiveAt(null, "07:00", at(23, 0)));
         assertFalse(QuietHours.isActiveAt("22:00", null, at(23, 0)));
         assertFalse(QuietHours.isActiveAt("10pm", "07:00", at(23, 0)));

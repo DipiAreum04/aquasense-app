@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One built-in template. Populated by AquariumTemplateCardBinder from an AquariumTemplate. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -65,7 +64,6 @@
         android:textSize="14sp"
         tools:text="Warm, near-neutral water. The most common community tank." />
 
-    <!-- Species and threshold bars, shared with the template rows on Add Aquarium. -->
     <include
         layout="@layout/item_template_details"
         android:layout_width="match_parent"

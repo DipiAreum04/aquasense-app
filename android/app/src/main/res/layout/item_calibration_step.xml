@@ -33,8 +33,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- The band the value the user types has to land inside. Shown only on the step that is
-             the calibration point. -->
         <LinearLayout
             android:id="@+id/layoutOperatingPoint"
             android:layout_width="match_parent"
@@ -69,8 +67,6 @@
 
         </LinearLayout>
 
-        <!-- What the app is reading for this sensor right now, so the user can see the probe settle
-             towards the target before starting. Shown only on calibration points. -->
         <LinearLayout
             android:id="@+id/layoutLiveReading"
             android:layout_width="match_parent"
@@ -106,8 +102,6 @@
 
         </LinearLayout>
 
-        <!-- Runs only while the sampling window is open, so the user can see that the app is
-             actually taking readings rather than waiting on them. -->
         <LinearLayout
             android:id="@+id/layoutSampling"
             android:layout_width="match_parent"

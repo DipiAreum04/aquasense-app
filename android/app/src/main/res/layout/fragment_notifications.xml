@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ALERT CHANNELS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,8 +73,6 @@
                 android:background="@color/divider"
                 android:visibility="gone" />
 
-            <!-- Shown only while POST_NOTIFICATIONS is missing: the way back to a system sheet
-                 that the platform has stopped offering. -->
             <LinearLayout
                 android:id="@+id/rowNotificationPermission"
                 android:layout_width="match_parent"
@@ -113,7 +110,6 @@
 
         </LinearLayout>
 
-        <!-- FILTERS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -130,7 +126,6 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Critical alerts only -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -175,7 +170,6 @@
                 android:layout_marginStart="16dp"
                 android:background="@color/divider" />
 
-            <!-- Quiet hours toggle -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -214,7 +208,6 @@
 
             </LinearLayout>
 
-            <!-- Quiet hours start time (shown only when toggle is ON) -->
             <View
                 android:id="@+id/dividerQuietStart"
                 android:layout_width="match_parent"
@@ -255,7 +248,6 @@
 
             </LinearLayout>
 
-            <!-- Quiet hours end time -->
             <View
                 android:id="@+id/dividerQuietEnd"
                 android:layout_width="match_parent"
@@ -302,7 +294,6 @@
                 android:layout_marginStart="16dp"
                 android:background="@color/divider" />
 
-            <!-- Maintenance Mode -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -314,8 +305,6 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp">
 
-                <!-- This row carries the longest subtitle on the screen, so it sizes to its text
-                     instead of a fixed height and keeps a gap before the switch. -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -384,7 +373,6 @@
 
         </LinearLayout>
 
-        <!-- ALERTS PER SENSOR -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -529,7 +517,6 @@
 
         </LinearLayout>
 
-        <!-- NOTIFICATION TYPES -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

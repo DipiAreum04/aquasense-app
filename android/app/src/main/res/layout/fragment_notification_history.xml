@@ -6,10 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- No header of its own: the activity's toolbar already names this screen and carries the
-         way back, and a second title under it read as the page being announced twice. -->
 
-    <!-- Filters -->
     <LinearLayout
         android:id="@+id/filterBar"
         android:layout_width="match_parent"
@@ -91,11 +88,6 @@
         android:paddingEnd="16dp"
         android:paddingBottom="16dp" />
 
-    <!--
-      Shown only once there is more than one page of history, so a short log looks exactly as it
-      did before. While it is gone its zero height still anchors the list, which goes on filling
-      the screen to the bottom.
-    -->
     <LinearLayout
         android:id="@+id/paginationBar"
         android:layout_width="match_parent"
@@ -147,7 +139,7 @@
 
         <Button
             android:id="@+id/btnClearAllNotifications"
-            style="?attr/borderlessButtonStyle"
+            style="@style/Widget.AquaSense.Button.Text.Danger"
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:minWidth="0dp"

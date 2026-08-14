@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Profile card -->
         <LinearLayout
             android:id="@+id/rowProfile"
             android:layout_width="match_parent"
@@ -48,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_name_empty"
-                    android:textStyle="bold"                    
+                    android:textStyle="bold"
                     android:textAppearance="@style/TextAppearance.AquaSense.ProfileName" />
 
                 <TextView
@@ -71,7 +70,6 @@
 
         </LinearLayout>
 
-        <!-- AQUARIUM section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,7 +86,6 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Tank Profiles (other team) -->
             <LinearLayout
                 android:id="@+id/rowTankProfiles"
                 android:layout_width="match_parent"
@@ -146,14 +143,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- SETTINGS-04 / ST-4.2 - Aquarium Templates -->
             <LinearLayout
                 android:id="@+id/rowAquariumTemplates"
                 android:layout_width="match_parent"
@@ -211,14 +206,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- SETTINGS-07 - Water Parameters -->
             <LinearLayout
                 android:id="@+id/rowWaterParameters"
                 android:layout_width="match_parent"
@@ -276,14 +269,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Sensor Calibration (ours) -->
             <LinearLayout
                 android:id="@+id/rowSensorCalibration"
                 android:layout_width="match_parent"
@@ -343,7 +334,6 @@
 
         </LinearLayout>
 
-        <!-- APP & ACCOUNT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -360,7 +350,6 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Display & Units section -->
             <LinearLayout
                 android:id="@+id/rowDisplayUnits"
                 android:layout_width="match_parent"
@@ -424,7 +413,6 @@
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Notifications section -->
             <LinearLayout
                 android:id="@+id/rowNotifications"
                 android:layout_width="match_parent"
@@ -482,14 +470,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Accounts & Backup (ours) -->
             <LinearLayout
                 android:id="@+id/rowAccountsBackup"
                 android:layout_width="match_parent"
@@ -549,7 +535,6 @@
 
         </LinearLayout>
 
-        <!-- HELP & SUPPORT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -566,7 +551,6 @@
             android:elevation="2dp"
             android:orientation="vertical">
 
-            <!-- Troubleshooting Guide -->
             <LinearLayout
                 android:id="@+id/rowTroubleshootingGuide"
                 android:layout_width="match_parent"
@@ -624,14 +608,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Contact & Support -->
             <LinearLayout
                 android:id="@+id/rowContactSupport"
                 android:layout_width="match_parent"
@@ -689,14 +671,12 @@
 
             </LinearLayout>
 
-            <!-- Indented to the text column: 16dp padding + 32dp icon + 14dp gap. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="62dp"
                 android:background="@color/divider" />
 
-            <!-- Privacy Policy -->
             <LinearLayout
                 android:id="@+id/rowPrivacyPolicy"
                 android:layout_width="match_parent"

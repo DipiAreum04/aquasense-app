@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  One aquarium in the analytics dropdown. The tick marks the one being read, which is the same
-  selection the dashboard is showing; every row keeps the space for it so the names stay in a
-  column whichever of them is ticked.
-
-  No background of its own: the list draws its own selector behind the pressed row, and a
-  background here would cover it.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

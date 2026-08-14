@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Label of one analytics period button. The selected one takes the accent, which is the same colour
-  the selected sensor tab above it is drawn in, so the two rows say "this one" the same way. The
-  rest sit on the groove in the muted label colour rather than the secondary one, which is too pale
-  to hold against a fill that is already a shade darker than the page.
--->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:color="@color/accent"

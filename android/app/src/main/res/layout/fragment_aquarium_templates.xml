@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header with the intro and the band-bar legend -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -103,7 +102,6 @@
 
         </LinearLayout>
 
-        <!-- One card per built-in template, inflated by AquariumTemplatesFragment. -->
         <LinearLayout
             android:id="@+id/containerTemplates"
             android:layout_width="match_parent"

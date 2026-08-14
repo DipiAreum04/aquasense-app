@@ -28,9 +28,6 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Liquid Level. Built like the other three so the page reads as one list, but greyed
-                 through and not tappable: the probe reports only whether water is reaching it, so
-                 there is no reading an offset could correct and nothing to open. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,8 +72,6 @@
 
             </LinearLayout>
 
-            <!-- Inset equally on both sides, so the rule reads as one gap in the card rather than a
-                 line that runs off its right edge. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -84,8 +79,6 @@
                 android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
-            <!-- Temperature. The whole row is the target: with no button beside it, a row that only
-                 responded on its title would leave most of its own height dead. -->
             <LinearLayout
                 android:id="@+id/rowGuideTemp"
                 android:layout_width="match_parent"
@@ -131,9 +124,6 @@
 
                 </LinearLayout>
 
-                <!-- How large the stored correction is against the width of the sensor's safe band.
-                     Always present, reading an em dash until there is a correction: a row that grew
-                     a new column on being calibrated would shift the whole list around. -->
                 <LinearLayout
                     android:id="@+id/layoutTempError"
                     android:layout_width="wrap_content"
@@ -168,7 +158,6 @@
                 android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
-            <!-- Dissolved Solids -->
             <LinearLayout
                 android:id="@+id/rowGuideTds"
                 android:layout_width="match_parent"
@@ -248,7 +237,6 @@
                 android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
-            <!-- pH Level -->
             <LinearLayout
                 android:id="@+id/rowGuidePh"
                 android:layout_width="match_parent"

@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The whole of the clear-readings dialog, buttons included. AlertDialog's own title, message and
-  button row are not used and its window background is taken away, because the platform's dialog
-  is square-cornered grey furniture and this one has to read as a card off the analytics page.
-  See AnalyticsClearDialog, which is what puts this in a window.
-
-  It is read top to bottom as one sentence: what is about to happen, what it is about to happen to,
-  and that there is no getting it back.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,8 +10,6 @@
     android:paddingTop="28dp"
     android:paddingBottom="20dp">
 
-    <!-- The bin, on the wash a critical status pill is filled with. The one red thing above the
-         button, so the dialog is recognisable as destructive before a word of it is read. -->
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -42,12 +31,6 @@
         android:textSize="19sp"
         android:textStyle="bold" />
 
-    <!--
-      What is being cleared, quoted from the page rather than described: the three selections at
-      the top of the screen, in the order they are made there. Labels stay a fixed width so the
-      three values line up as a column, which is what makes this read as a record rather than as
-      three more sentences.
-    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -111,11 +94,6 @@
         android:textColor="@color/text_secondary"
         android:textSize="14sp" />
 
-    <!--
-      Cancel first and equal in width to its neighbour: the two are one row of a fixed shape, so
-      the destructive button is never the one under the thumb by default. Only its fill says which
-      is which.
-    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

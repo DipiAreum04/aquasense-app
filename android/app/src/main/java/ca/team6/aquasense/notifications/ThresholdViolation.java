@@ -82,20 +82,11 @@ public final class ThresholdViolation {
                 Double.NaN, Double.NaN, null, Double.NaN);
     }
 
-    /**
-     * Identifies the slot this alert occupies in the shade. Severity is deliberately left out, so
-     * a sensor escalating from warning to critical replaces its earlier notification instead of
-     * stacking a second one beside it.
-     */
     @NonNull
     public String dedupeKey() {
         return aquariumId + ":" + sensorId + ":" + kind.name();
     }
 
-    /**
-     * Identifies the condition for cooldown purposes. Severity is part of the key here, because a
-     * reading that crosses from warning into critical is news even though it is the same sensor.
-     */
     @NonNull
     public String cooldownKey() {
         return dedupeKey() + ":" + severity.name();

@@ -61,9 +61,6 @@ public class SettingsActivity extends AppCompatActivity {
                 navController.navigate(shortcutDestinationId);
             }
 
-            // Skip the Settings Hub entirely when we jumped straight to a destination
-            // (e.g. dashboard shortcut icons) -- exit to the caller instead of surfacing
-            // the Hub screen the user never asked to see.
             getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                 @Override
                 public void handleOnBackPressed() {

@@ -11,16 +11,8 @@ final class SensorTelemetryReading {
 
     final long timestamp;
 
-    /** Graded and reported: the sample with this aquarium's calibration correction on it. */
     final double value;
 
-    /**
-     * Remembered: the sample exactly as the board published it.
-     *
-     * <p>The dedupe store is a record of which samples have been handled, and it outlives any one
-     * offset - recalibrating would otherwise make every stored value describe a reading that was
-     * never taken, and spike deltas measured against it would be off by the change in offset.
-     */
     final double rawValue;
 
     private SensorTelemetryReading(long timestamp, double value) {
@@ -33,11 +25,6 @@ final class SensorTelemetryReading {
         this.rawValue = rawValue;
     }
 
-    /**
-     * The same sample with its value replaced, for putting the sensor's calibration correction on
-     * it before it is graded. Held apart from the read above so what came off the wire and what the
-     * app makes of it stay two separate things.
-     */
     @NonNull
     SensorTelemetryReading withValue(double correctedValue) {
         return new SensorTelemetryReading(this.timestamp, correctedValue, this.rawValue);

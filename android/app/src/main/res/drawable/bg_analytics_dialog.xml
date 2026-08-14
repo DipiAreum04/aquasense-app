@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The panel the clear-readings dialog is drawn on. AlertDialog's own window background is taken
-  away and replaced with this, which is why the shape is declared here rather than left to the
-  platform: the framework's dialog corners are square-ish and grey, and this one has to read as
-  another of the analytics page's cards.
-
-  The radius is more than twice a card's 10dp. A dialog is a card lifted off the page rather than
-  one lying on it, and the softer corner is what says so.
--->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/card_background" />

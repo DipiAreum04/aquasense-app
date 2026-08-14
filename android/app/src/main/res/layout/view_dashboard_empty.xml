@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    What the dashboard shows an account that owns no aquarium.
-
-    It stands in for the header and the sensor grid rather than sitting over them: with nothing
-    paired there is no aquarium to name, no reading to draw and no hub to have lost, so the status
-    header would report a disconnection that has not happened.
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dashboardEmptyState"
@@ -54,6 +47,7 @@
             android:textSize="15sp" />
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnDashboardEmptyCreate"
             android:layout_width="match_parent"
             android:layout_height="56dp"

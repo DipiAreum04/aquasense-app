@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- SUPPORT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +27,6 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Email Support -->
             <LinearLayout
                 android:id="@+id/rowEmailSupport"
                 android:layout_width="match_parent"
@@ -80,7 +78,6 @@
                 android:layout_marginStart="16dp"
                 android:background="@color/divider" />
 
-            <!-- Contact Form -->
             <LinearLayout
                 android:id="@+id/rowContactForm"
                 android:layout_width="match_parent"
@@ -128,7 +125,6 @@
 
         </LinearLayout>
 
-        <!-- ABOUT section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

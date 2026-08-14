@@ -1,5 +1,7 @@
 package ca.team6.aquasense.dashboard;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -25,15 +26,10 @@ import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.ui.FragmentToolbar;
 
-/**
- * Dedicated fragment screen for managing and switching between aquariums.
- */
 public class AquariumSelectorFragment extends Fragment {
 
     private AquariumRepository aquariumRepository;
 
-    // Redraws the cards whenever the database changes, which covers this screen's own deletes as
-    // well as edits made on another device.
     private final AquariumRepository.AquariumsObserver aquariumsObserver = this::showAquariums;
 
     @Nullable
@@ -56,14 +52,12 @@ public class AquariumSelectorFragment extends Fragment {
                 .navigate(R.id.action_aquariumSelectorFragment_to_addAquariumFragment));
 
         aquariumRepository = AquariumRepository.getInstance(requireContext());
-        // Draws the cards now and again on every change.
         aquariumRepository.addObserver(aquariumsObserver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // The observer holds this fragment, and through it the destroyed view hierarchy.
         aquariumRepository.removeObserver(aquariumsObserver);
     }
 
@@ -79,8 +73,6 @@ public class AquariumSelectorFragment extends Fragment {
         container.removeAllViews();
 
         if (aquariums.isEmpty()) {
-            // Stay blank until the first snapshot lands, so opening this screen right after
-            // login does not flash "no aquariums" at a user who has several.
             if (aquariumRepository.isLoaded()) {
                 container.addView(buildEmptyView());
             }
@@ -130,16 +122,11 @@ public class AquariumSelectorFragment extends Fragment {
         return emptyView;
     }
 
-    // The database value is shown as-is when it is not one of the known types: the aquarium is
-    // real either way, so an unrecognised water type should not blank out its badge.
     private String waterTypeLabel(@NonNull Aquarium aquarium) {
         WaterType waterType = WaterType.fromKey(aquarium.getWaterType());
         return waterType == null ? aquarium.getWaterType() : getString(waterType.getLabelResId());
     }
 
-    /**
-     * Puts the aquarium's water type in the same badge as the templates.
-     */
     private void bindWaterTypeBadge(@NonNull TextView badge, @NonNull Aquarium aquarium) {
         badge.setText(waterTypeLabel(aquarium));
         badge.setBackgroundResource(
@@ -148,10 +135,6 @@ public class AquariumSelectorFragment extends Fragment {
                         : R.drawable.bg_water_badge_freshwater);
     }
 
-    /**
-     * Gives the card icon based on the aquarium's water type, so the list is scannable without
-     * reading every aquarium name.
-     */
     private void bindAquariumIcon(ImageView tile, @NonNull Aquarium aquarium) {
         boolean saltwater = WaterType.fromKey(aquarium.getWaterType()) == WaterType.SALTWATER;
 
@@ -162,7 +145,7 @@ public class AquariumSelectorFragment extends Fragment {
 
     private void confirmDeleteAquarium(@NonNull Aquarium aquarium) {
         if (!aquariumRepository.canRemoveAquarium()) {
-            new AlertDialog.Builder(requireContext())
+            new MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.dialog_min_aquarium_title)
                     .setMessage(R.string.dialog_min_aquarium_message)
                     .setPositiveButton(R.string.action_ok, null)
@@ -170,13 +153,12 @@ public class AquariumSelectorFragment extends Fragment {
             return;
         }
 
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_AquaSense_MaterialAlertDialog_Danger)
                 .setTitle(R.string.delete_aquarium_title)
                 .setMessage(getString(R.string.delete_aquarium_message, aquarium.getName()))
                 .setNegativeButton(R.string.delete_aquarium_cancel, null)
                 .setPositiveButton(R.string.delete_aquarium_confirm, (dialog, which) ->
-                        // The cards are not redrawn here: the delete reaches the database, the
-                        // subscription reports the shorter list, and the observer redraws them.
                         aquariumRepository.removeAquarium(aquarium, new AquariumRepository.WriteCallback() {
                             @Override
                             public void onSuccess() {
@@ -191,7 +173,6 @@ public class AquariumSelectorFragment extends Fragment {
                 .show();
     }
 
-    // The write outlives the screen, so its result may arrive after the user has navigated away.
     private void toastIfVisible(@NonNull String message) {
         if (!isAdded()) {
             return;

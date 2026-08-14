@@ -8,21 +8,15 @@
     app:cardCornerRadius="14dp"
     app:cardElevation="2dp"
     app:strokeWidth="1dp"
-><!--
-      The stroke colour is replaced per status at bind time; the one the preview draws comes from
-      the theme.
-    -->
-    <!--
-      Height follows the content rather than being fixed, so every vertical gap is a declared
-      margin. Anchoring the pill to the card's bottom instead left that last gap as whatever a
-      fixed height had spare, which drifted against the 12dp above and with the font scale.
-    -->
+>
+
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="14dp"
     >
-        <!-- Sensor icon and its info affordance share the top rule, one to each edge. -->
         <ImageView
             android:id="@+id/sensorTitleIcon"
             android:layout_width="24dp"
@@ -61,7 +55,6 @@
             app:layout_constraintTop_toBottomOf="@id/sensorTitleIcon"
         />
 
-        <!-- Reading and unit ride the same baseline, centred as one block. -->
         <LinearLayout
             android:id="@+id/sensorReading"
             android:layout_width="wrap_content"

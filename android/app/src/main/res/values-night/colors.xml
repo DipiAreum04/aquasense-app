@@ -8,49 +8,25 @@
     <color name="text_secondary">#FFA0A8B4</color>
     <color name="text_muted">#FFB0B8C4</color>
 
-    <!--
-      The dark-theme half of @color/text_disabled: dimmer than @color/text_secondary, since here it
-      is darkness rather than lightness that drops a row back. Sits above @color/card_background by
-      enough to stay readable - unavailable, not invisible.
-    -->
     <color name="text_disabled">#FF6B7480</color>
     <color name="divider">#FF2A3441</color>
     <color name="accent">#FF64B5F6</color>
+    <color name="color_on_accent">#FF0F1419</color>
+    <color name="button_primary_gradient_start">#FF1976A8</color>
+    <color name="button_primary_gradient_end">#FF0A4A70</color>
     <color name="toolbar_ocean">#FF15202B</color>
     <color name="danger_on_toolbar">#FFEF5350</color>
     <color name="toolbar_gradient_start">#FF1a3940</color>
     <color name="toolbar_gradient_end">#FF4C4366</color>
 
-    <!--
-      See values/colors.xml. Same shape as day, read downwards: the page starts at its darkest and
-      opens into the app's ocean blue at the foot, as day starts white and opens into the aqua.
-
-      L* 6.1 -> 10.3 -> 21.0, a 15-point span where the previous ramp had 6.6 and was not readable
-      as a gradient at all. sRGB gives no other way to widen it: at these lightnesses the blues top
-      out near C* 17, so the deep end is already at 97% of the chroma its hue can hold and every
-      further bit of presence has to come out of lightness. The hue rotates the other way from
-      day's, out of the near-neutral blue the page is tinted with and into the aqua as it lightens
-      (h 261 -> 243 -> 224), so the colour arrives with the light rather than crossing it.
-
-      The centre sits below the midpoint rather than on it, so the dark holds most of the way down
-      and the blue is a glow at the foot instead of a wash over the whole page. That also puts the
-      crossover with @color/card_background (L* 14) into the bottom third: a card is lighter than
-      the page over most of a screen and darker than it only near the foot, where its 6dp elevation
-      is what separates it. Hence the black shadow colour above, rather than day's tinted one.
-    -->
     <color name="app_gradient_bottom">#FF023843</color>
     <color name="app_gradient_center">#FF021F2B</color>
-    <!-- The page colour itself, so the ramp resolves into it exactly. -->
     <color name="app_gradient_top">@color/background</color>
     <color name="status_success">#FF81C784</color>
     <color name="settings_icon_bg">#4D64B5F6</color>
-    <!-- See values/colors.xml: the groove rises above the page here rather than sinking below it,
-         since there is nothing below #0F1419 to sink into. -->
     <color name="analytics_segment_track">#FF171E27</color>
     <color name="analytics_segment_selected">#FF2C3747</color>
-    <!-- See values/colors.xml: the same groove at seven tenths, for the bar laid over the plot. -->
     <color name="analytics_action_bar_track">#B3171E27</color>
-    <!-- The accent again, as in day; the accent itself is what differs between the two schemes. -->
     <color name="analytics_action_ripple">#3364B5F6</color>
 
     <color name="profile_initial_icon">#CCB0F0</color>
@@ -68,21 +44,18 @@
     <color name="settings_icon_purple">#FFBA68C8</color>
     <color name="settings_icon_purple_bg">#4DBA68C8</color>
     <color name="sensor_info_banner_purple">#FF2A2438</color>
-    <!-- Lifted off the banner rather than dropped on it as white. -->
     <color name="sensor_info_icon_circle">#FF3B3350</color>
     <color name="sensor_info_gray_color">#FFA0A8B4</color>
     <color name="sensor_info_title_color">#FFF2F4F8</color>
     <color name="alpha_0x22_background">#220F1419</color>
     <color name="alpha_0xF0_background">#F00F1419</color>
 
-    <!-- Aquarium screens (DS-4): dark-mode counterparts for values/colors.xml -->
     <color name="gray_900">#FFF2F4F8</color>
     <color name="gray_500">#FFA0A8B4</color>
     <color name="gray_400">#FF8A93A3</color>
     <color name="slate_900">#FF3B4A63</color>
     <color name="sky_600">#FF4FC3F7</color>
     <color name="active_badge_bg">#FF163A52</color>
-    <!-- Auth screens -->
     <color name="auth_bg_start">#FF0F1419</color>
     <color name="auth_bg_end">#FF15202B</color>
     <color name="auth_input_fill">#FF243041</color>
@@ -92,7 +65,6 @@
     <color name="auth_wave_soft">#FF152430</color>
     <color name="auth_google_button_bg">#FF1E3348</color>
 
-    <!-- Aquarium templates -->
     <color name="template_accent_freshwater">#FF64B5F6</color>
     <color name="template_accent_coldwater">#FF4DD0E1</color>
     <color name="template_accent_hardwater">#FFFFB74D</color>
@@ -105,8 +77,6 @@
     <color name="template_header_text_muted">#FF95B3C1</color>
     <color name="template_header_badge_bg">#26FFFFFF</color>
 
-    <!-- See the light theme for why this pill is aqua rather than grey. The roles swap here:
-         the deep teal becomes the fill and the bright cyan the text. -->
     <color name="optional_badge_bg">#FF1B3E45</color>
     <color name="optional_badge_stroke">#FF23616D</color>
     <color name="optional_badge_text">#FF50DDF6</color>
@@ -116,7 +86,6 @@
     <color name="water_badge_freshwater">#FF43A047</color>
     <color name="water_badge_saltwater">#FF1E88E5</color>
 
-    <!-- BLE-02 pairing -->
     <color name="pairing_orb_fill">#FF10243A</color>
     <color name="pairing_orb_stroke">#FF3BA9F4</color>
     <color name="pairing_orb_icon">#FF3BA9F4</color>
@@ -138,72 +107,24 @@
     <color name="pairing_signal_on">#FF3BA9F4</color>
     <color name="pairing_signal_off">#FF2A3441</color>
 
-    <!--
-      Dashboard and sensor cards. The light scheme fixes an (L*, C*) per role and varies only the
-      hue per status; night does the same with its own constants, so a status keeps its identity
-      and only the ramp it sits on is rebuilt. Read the block in values/colors.xml first: the hues
-      below are that file's, unchanged.
-
-      Light                                       Night
-        pill label   L* 60, on white                L* 74, on a dark fill
-        pill fill    L* 93, a wash of the status    L* 24, a tint just above the card
-        card stroke  L* 88                          L* 38
-        gradient     L* 77 -> 88, pastel bands      L* 17 -> 28, deep bands
-        accent       L* 34, dark on the gradient    L* 82, light on the gradient
-        wave         L* 95, a shade off the bg      L* 10, a shade off the bg
-
-      Every chroma is scaled by how saturated its own status is (C*/30, capped at 1). Disconnected
-      is a near-neutral grey whose hue is noise at C* 4.6, and handing it the same chromatic target
-      as the others turned it into a periwinkle. The scale leaves the four coloured statuses at the
-      target and keeps grey grey.
-
-      The four dark tinted surfaces (both pill fill and stroke, both gradient bands) also take a
-      floor of 65% of whatever chroma their hue can hold at that lightness. sRGB's gamut narrows
-      as lightness drops, and by a different amount per hue: at L* 17 aqua can only hold about
-      C* 20, so the C* 14 above is most of it and reads as a saturated teal, but red can hold C* 43
-      there, so the same C* 14 was a third of it. A dark, unsaturated warm is precisely what brown
-      is, and critical came out looking like dried blood. The floor is only on those four because
-      brown lives at the bottom of the lightness scale: the pill label and the accent are light
-      colours that cannot go brown, and the wave is meant to sit a shade off the background rather
-      than carry the status. Aqua is inside the floor everywhere, so normal is untouched by it.
-
-      Warning needed one thing more, and chroma could not give it: yellow has no dark form. Every
-      other hue keeps its identity as it darkens, since dark blue is navy and dark red is maroon,
-      but dark yellow is brown by definition, so amber at the shared lightness read as gloom no
-      matter how saturated it was. Warning's four dark surfaces therefore sit higher up the ramp
-      than the others: gradient L* 25 and 38 rather than 17 and 28, pill fill 28, stroke 44. The
-      lift stops where the contrasts do, which is why it is not higher still.
-
-      scratchpad/rehue_night.py derives every value below.
-
-      This puts each pill label at 4.9:1 or better on its own fill and ~7.7:1 on the card, each
-      accent at 4.3:1 or better on the gradient, and the reading at 12:1 on the card. The two
-      lowest of those are warning's, bought with the lift: the pill label is 11sp bold and so is
-      held to 4.5:1, while the accent is a 24sp bold heading and a 76dp icon, large text at 3:1.
-    -->
     <color name="status_blue">#FF01C8E2</color>
     <color name="status_orange">#FFDEAE62</color>
     <color name="status_red">#FFFF9B93</color>
     <color name="status_gray">#FFB4B5C2</color>
     <color name="status_green">#FF70C88B</color>
 
-    <!-- Pill fill: L* 24, a tint of the status sitting just above @color/card_background.
-         Warning is at L* 28, for the reason given above. -->
     <color name="status_blue_soft">#FF1B3E45</color>
     <color name="status_green_soft">#FF1E4029</color>
     <color name="status_orange_soft">#FF543E1C</color>
     <color name="status_red_soft">#FF662222</color>
     <color name="status_gray_soft">#FF38393F</color>
 
-    <!-- Card stroke: L* 38. Day puts this at 42% of the status chroma; night cannot, because at
-         this lightness that is the starved end of the gamut the floor above exists to avoid. -->
     <color name="status_blue_edge">#FF23616D</color>
     <color name="status_green_edge">#FF326442</color>
     <color name="status_orange_edge">#FF826330</color>
     <color name="status_red_edge">#FF9A3938</color>
     <color name="status_gray_edge">#FF585962</color>
 
-    <!-- Header bands. _start is still the deeper one, at the foot where it meets the wave. -->
     <color name="aquarium_sensors_status_normal_gradient_start">#FF042F36</color>
     <color name="aquarium_sensors_status_normal_gradient_end">#FF024954</color>
     <color name="aquarium_sensors_status_warning_gradient_start">#FF7E411C</color>
@@ -213,7 +134,6 @@
     <color name="aquarium_sensors_status_disconnected_gradient_start">#FF292A2F</color>
     <color name="aquarium_sensors_status_disconnected_gradient_end">#FF414249</color>
 
-    <!-- The accent inverts: light on the gradient here, where it was dark on it in day. -->
     <color name="aquarium_sensors_status_normal_accent">#FF50DDF6</color>
     <color name="aquarium_sensors_status_warning_accent">#FFF1C586</color>
     <color name="aquarium_sensors_status_critical_accent">#FFFFBBB5</color>
@@ -224,11 +144,6 @@
     <color name="aquarium_sensors_status_critical_wave">#FF231918</color>
     <color name="aquarium_sensors_status_disconnected_wave">#FF1B1B1C</color>
 
-    <!--
-      Header furniture. The chip and the icon disc go back to a translucent-dark fill: they lift
-      off a deep gradient here the way translucent white lifts them off a pale one in day, and the
-      light heading and icon they carry read better against it.
-    -->
     <color name="dashboard_header_description">#FFC3CED0</color>
     <color name="dashboard_header_updated">#FF9DA8AA</color>
     <color name="dashboard_header_chip_bg">#4D000000</color>
@@ -236,11 +151,9 @@
     <color name="dashboard_header_chip_title">#FFF2F4F8</color>
     <color name="dashboard_header_icon_circle">#38000000</color>
 
-    <!-- The reading and the sensor's own icon invert from navy to a cool near-white. -->
     <color name="sensor_content_primary">#FFD0E6EB</color>
     <color name="sensor_name_text">#FF98A2A5</color>
 
-    <!-- Remaining day-only colours that had no night counterpart. -->
     <color name="danger">#FFEF5350</color>
     <color name="warning">#FFFFB74D</color>
     <color name="plan_badge_bg">#FF1E4029</color>
@@ -248,12 +161,6 @@
     <color name="bullet_circle">#FF4A5768</color>
     <color name="bottom_sheet_handle">#FF515A66</color>
 
-    <!--
-      The welcome page's aquarium, lit for a dark room. The tank itself drops to a deep blue that
-      sits just above @color/background, while the fish and plants keep their hue and only lose
-      some brightness: they are the small bright marks that make the picture readable at all, and
-      dimming them with the water leaves an unlit tank.
-    -->
     <color name="illustration_glass">#FF3F86A8</color>
     <color name="illustration_water_surface">#FF1B3B4A</color>
     <color name="illustration_water">#FF15303D</color>
@@ -265,11 +172,7 @@
     <color name="illustration_fish_warm">#FFF09240</color>
     <color name="illustration_fish_cool">#FF9B9CF0</color>
     <color name="illustration_fish_eye">#FF101C26</color>
-    <!-- The hardware inverts: a dark enclosure would be a hole in a dark tank, so it lifts to a
-         light slate and the leads sit a step above it. -->
     <color name="illustration_hub">#FF7C8CA0</color>
     <color name="illustration_cable">#FF95A5B8</color>
-    <!-- Still a step darker than the body, which is what makes it read as an opening; it does not
-         follow the body up, or the slot would vanish into it. -->
     <color name="illustration_hub_slot">#FF3E4A58</color>
 </resources>

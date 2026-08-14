@@ -20,35 +20,18 @@ import ca.team6.aquasense.model.SensorReading;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
-/**
- * Owns the two cards that sit either side of the analytics graph: the sensor's health, and the
- * distribution of the readings behind the line.
- *
- * <p>They are driven from two different places and are updated separately for that reason. The
- * health line - the lamp, the status and the moment the sensor was last heard from - comes from the
- * live {@code last_instant} subscription and changes about once a second. Everything else is read
- * off a period's hundred buckets, which are fetched once when the selection changes and do not move
- * until it changes again.
- */
 public class AnalyticsSummaryController {
 
-    /** The bands of the distribution bar, left to right, worst last. */
     private static final SensorStatus[] DISTRIBUTION_BANDS = {
             SensorStatus.NORMAL, SensorStatus.WARNING, SensorStatus.CRITICAL};
 
-    /** Where the mean sits in the minimum-mean-maximum row; see the arrays built in the constructor. */
     private static final int AVERAGE_INDEX = 1;
 
-    /** What the three columns are called for a sensor whose readings are a quantity. */
     private static final int[] STAT_LABELS = {
             R.string.analytics_stat_min,
             R.string.analytics_stat_avg,
             R.string.analytics_stat_max};
 
-    /**
-     * What they are called for the water level detector, whose figures are shares rather than
-     * readings; see {@link #formatReading} for what is being shared.
-     */
     private static final int[] WATER_LEVEL_STAT_LABELS = {
             R.string.analytics_stat_water_level_min,
             R.string.analytics_stat_water_level_avg,
@@ -74,7 +57,6 @@ public class AnalyticsSummaryController {
         this.uptimeRing = root.findViewById(R.id.analyticsUptimeRing);
         this.uptimeValue = root.findViewById(R.id.analyticsUptimeValue);
 
-        // Minimum, mean, maximum - the order the row draws them in, which the arrays below index by.
         this.statLabels = new TextView[]{
                 root.findViewById(R.id.analyticsStatMinLabel),
                 root.findViewById(R.id.analyticsStatAvgLabel),
@@ -98,19 +80,9 @@ public class AnalyticsSummaryController {
                 root.findViewById(R.id.analyticsDistributionCriticalValue)};
     }
 
-    /**
-     * Shows the selected sensor's live state: the same lamp and word its card on the dashboard
-     * carries, without the pill around them, and the moment the board last spoke for it.
-     *
-     * @param reading the sensor's {@code last_instant}, or null when it has never published one.
-     *                Its timestamp is used even when it carries the offline sentinel: the board
-     *                wrote that too, so it is still the last time the sensor was heard from.
-     */
     public void showSensorHealth(@NonNull AquariumSensor sensor,
                                  @Nullable SensorReading reading,
                                  long nowMillis) {
-        // The disc arrives already tinted for its status, so nothing here has to colour it. The
-        // word beside it stays in the text colour; see the layout for why it is not the status one.
         this.statusLed.setImageResource(sensor.getStatusIconResId());
         this.statusText.setText(sensor.getStatusTextResId());
         this.lastSeenText.setText(
@@ -120,17 +92,6 @@ public class AnalyticsSummaryController {
         this.showStatLabels(sensor);
     }
 
-    /**
-     * Names the three columns for the sensor on show.
-     *
-     * <p>Done here rather than alongside the figures because the figures are cleared to dashes
-     * between selections, and a column with nothing in it still has to say what it is going to
-     * hold. Every sensor but one reports a quantity, and the minimum, mean and maximum of a
-     * quantity are what those words ordinarily mean. The water level detector reports whether there
-     * is water at its height, and a bucket of those averages to the share of the bucket that had
-     * it: "Minimum 100%" invites the reading "the level never went below 100%", which is not what
-     * the figure is measuring and not something this sensor can measure at all.
-     */
     private void showStatLabels(@NonNull AquariumSensor sensor) {
         int[] labels = DatabaseSchema.WATER_LEVEL_KEY.equals(sensor.getId())
                 ? WATER_LEVEL_STAT_LABELS
@@ -140,16 +101,6 @@ public class AnalyticsSummaryController {
         }
     }
 
-    /**
-     * Draws the two figures that carry the accent - the uptime ring and the average - in the
-     * disconnected grey instead, while the sensor is unreachable.
-     *
-     * <p>These are the card's live-looking parts: the accent is what the page uses to say "this is
-     * the number to read", and a sensor that is not reporting has no such number. The other two
-     * figures either side of the average are in the ordinary text colour already and have nothing
-     * to say about reachability, so they are left alone. The colour is the resource the lamp above
-     * them is tinted with, which carries its own day and night values.
-     */
     private void showAccentedFiguresConnected(boolean connected) {
         int color = ContextCompat.getColor(this.uptimeValue.getContext(),
                 connected ? R.color.accent : R.color.status_gray);
@@ -158,29 +109,10 @@ public class AnalyticsSummaryController {
         this.statValues[AVERAGE_INDEX].setTextColor(color);
     }
 
-    /**
-     * Blanks the period's half of the summary.
-     *
-     * <p>Called for the same reason the chart is emptied: leaving the previous sensor's spread and
-     * distribution up under the new tab's name would be reporting one sensor's readings as
-     * another's, and they cannot be left to arrive on their own because a fetch that fails would
-     * never take them down.
-     */
     public void clearPeriod() {
         this.showPeriod(null, null);
     }
 
-    /**
-     * Shows what the selected period made of the sensor: how much of the time it covers the board
-     * was reporting for, the spread of the readings, and how they fell across the aquarium's band.
-     *
-     * <p>The two halves empty separately, because the two questions do. A period holding nothing
-     * but gap markers has an uptime worth reporting - nought - and no spread or distribution to
-     * report at all.
-     *
-     * @param statistics null while the period is being fetched, and for a period the board has
-     *                   committed nothing to; both leave the numbers as dashes.
-     */
     public void showPeriod(@Nullable PeriodStatistics statistics,
                            @Nullable AquariumSensor sensor) {
         Context context = this.uptimeValue.getContext();
@@ -208,9 +140,6 @@ public class AnalyticsSummaryController {
                 ? statistics.percentagesOf(DISTRIBUTION_BANDS)
                 : new int[DISTRIBUTION_BANDS.length];
         for (int i = 0; i < this.distributionBands.length; i++) {
-            // The bar is laid out against a weight sum of 100, so the shares are its widths as
-            // they stand. Taking the rounded shares rather than the raw counts is what keeps a
-            // band the same size as the percentage printed under it.
             LinearLayout.LayoutParams params =
                     (LinearLayout.LayoutParams) this.distributionBands[i].getLayoutParams();
             params.weight = shares[i];
@@ -221,16 +150,6 @@ public class AnalyticsSummaryController {
         }
     }
 
-    /**
-     * Formats one of the three statistics in the unit the app reads that sensor in.
-     *
-     * <p>Everything but water level goes through the formatter the sensor cards use, which converts
-     * the temperature if Display &amp; Units asks for Fahrenheit and picks the decimals the sensor
-     * has any business claiming. Water level cannot: its formatter answers LOW or SAFE, which is
-     * the right answer for a detector read once and the wrong one for the average of a bucket. What
-     * is being averaged is the share of the bucket that had water at the sensor, so that is what is
-     * shown - the same quantity the graph's y axis plots for it.
-     */
     @NonNull
     private static String formatReading(@NonNull Context context,
                                         @NonNull AquariumSensor sensor,
@@ -246,11 +165,6 @@ public class AnalyticsSummaryController {
         return context.getString(R.string.analytics_percent, value);
     }
 
-    /**
-     * How long ago the board last wrote this sensor's {@code last_instant}, in the largest unit
-     * that leaves a number worth reading. The dashboard says the same thing about the aquarium as
-     * a whole; here it is about the one sensor on show, which is why the wording differs.
-     */
     @NonNull
     private static CharSequence lastSeen(@NonNull Context context,
                                          @Nullable SensorReading reading,
@@ -259,8 +173,6 @@ public class AnalyticsSummaryController {
             return context.getString(R.string.analytics_last_seen_pending);
         }
 
-        // Clamped at zero: the board's clock may be a second or two ahead of the server's, and
-        // "last seen -1 minutes ago" is a worse answer than "just now".
         long ageSeconds = Math.max(0L, nowMillis / 1000L - reading.getTimestampSeconds());
         Resources resources = context.getResources();
         if (ageSeconds < 60L) {

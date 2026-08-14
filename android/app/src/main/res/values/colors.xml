@@ -10,45 +10,20 @@
     <color name="status_orange">#FFCC983F</color>
     <color name="status_green">#FF45A366</color>
     <color name="status_gray">#FF84858D</color>
-    <!--
-      Normal reads as aquarium blue rather than green. The hue is #BDECF6's, which is h 217 in
-      CIELAB, an aqua rather than a true blue; this is that hue taken down to the green's own
-      L* 60, where it is a colour in its own right instead of a wash. The chroma stops at 34
-      because that is as far as h 217 reaches at that lightness in sRGB, so this is as saturated
-      as the hue gets without going darker. Lightness matching the green is what keeps the pill
-      label at the same 3.1:1 against white the other statuses carry.
-
-      @color/status_green stays as it was: the auth and template screens use it for "valid", which
-      is a different claim from a sensor being in its band.
-    -->
     <color name="status_blue">#FF03A0B5</color>
     <color name="text_secondary">#FF6B6A6A</color>
     <color name="text_muted">#FF555555</color>
 
-    <!--
-      Text for a row that is present but cannot be acted on, e.g. the water level sensor on the
-      calibration page. Deliberately fainter than @color/text_secondary rather than darker: on a
-      white card, less contrast is what reads as unavailable. @color/text_muted is a shade *darker*
-      than text_secondary here, so it makes a row look more prominent than its neighbours, not less.
-    -->
     <color name="text_disabled">#FF9E9E9E</color>
     <color name="divider">#FFE0E0E0</color>
     <color name="accent">#158AC0</color>
+    <color name="color_on_accent">#FFFFFFFF</color>
+    <color name="button_primary_gradient_start">@color/accent</color>
+    <color name="button_primary_gradient_end">@color/launcher_ocean_end</color>
     <color name="toolbar_ocean">#FFDAF1F5</color>
     <color name="toolbar_gradient_start">#FFC1DFE0</color>
     <color name="toolbar_gradient_end">#FFCFC1DE</color>
 
-    <!--
-      App-wide page background (@drawable/bg_app_gradient), drawn top to bottom.
-
-      One hue the whole way down rather than three: the bottom is the app's aqua, the middle is
-      that same colour lightened, and the top is white. Holding h 174 and dropping the chroma as
-      the lightness climbs is what makes it read as one wash deepening towards the foot of the
-      page instead of as three bands meeting.
-
-      The middle sits at L* 94, halfway between the other two, so neither half of the ramp turns
-      over faster than the other and no seam shows where the stops meet.
-    -->
     <color name="app_gradient_top">#FFFFFFFF</color>
     <color name="app_gradient_center">#FFE6F4F3</color>
     <color name="app_gradient_bottom">#FFCDE9E6</color>
@@ -73,36 +48,11 @@
     <color name="profile_initial_icon">#4C3075</color>
     <color name="profile_initial_icon_bg">#C5A3EB</color>
 
-    <!--
-      The analytics period selector, which is a groove with one button raised out of it.
-
-      Day builds that the way the rest of the light scheme does: the groove is a shade below
-      @color/background so it reads as cut into the page, and the raised button is the card white
-      already used for every surface that sits on top of something. Night has to invert the first
-      half of that - a groove below #0F1419 is black - so there the groove is the shade just above
-      the page and the raised button a further step up again. Either way the pair stays one step
-      apart, which is what the recess is made of.
-
-      The labels are @color/text_muted on the groove and @color/accent on the raised button, at
-      5.7:1 and 6.9:1 in day, 8.4:1 and 5.4:1 in night.
-    -->
     <color name="analytics_segment_track">#FFE3E8EF</color>
     <color name="analytics_segment_selected">#FFFFFFFF</color>
 
-    <!--
-      The same groove for the bar the two chart actions sit in, but laid over the plot rather than
-      on the card, so it is let down to seven tenths and the line it covers reads through it. The
-      icons on top keep their own full strength, so what is traded away is the bar's opacity rather
-      than their legibility.
-    -->
     <color name="analytics_action_bar_track">#B3E3E8EF</color>
 
-    <!--
-      Press feedback for the two chart actions and for the dialog's cancel button. The cards ripple
-      with @color/alpha_0x22_background, which is the page colour and so shows on white; these sit
-      on @color/analytics_segment_track, which is already that colour a shade darker, so the ripple
-      is cut from @color/accent instead at the alpha the page colour carries.
-    -->
     <color name="analytics_action_ripple">#33158AC0</color>
 
     <color name="settings_icon_cyan">#FF00ACC1</color>
@@ -121,7 +71,6 @@
     <color name="sensor_info_gray_color">#FF566173</color>
     <color name="sensor_info_title_color">#FF243247</color>
     <color name="sensor_info_bulb_tint">#FFF4B400</color>
-    <!-- Plate behind the sensor info sheet's icon, on @color/sensor_info_banner_purple. -->
     <color name="sensor_info_icon_circle">#FFFFFFFF</color>
     <color name="bottom_sheet_handle">#FFBDBDBD</color>
     <color name="bullet_circle">#FFCDD5E1</color>
@@ -138,27 +87,7 @@
     <color name="alpha_0xF0_white">#F0F2F4F8</color>
     <color name="alpha_0x22_background">#22F2F4F8</color>
     <color name="alpha_0xF0_background">#F0F2F4F8</color>
-    <!--
-      Dashboard header. Every colour below is derived from the status colour the sensor cards use
-      for the same status, so the header and the grid speak with one voice:
 
-        normal @color/status_blue, warning @color/status_orange,
-        critical @color/status_red, disconnected @color/status_gray
-
-      The gradient and the wave keep the lightness and the chroma they were tuned to and take only
-      the hue of that status colour, so each status holds the ramp the header was designed at
-      while still reading as itself. The accent is the status colour at a fixed lightness, dark
-      enough to carry the heading over the band beneath it.
-
-      All of it is measured in CIELAB, not HSL: HSL lightness is (max+min)/2, which says green and
-      blue of the same "lightness" look equally light when green is far lighter. Re-hueing the
-      blue header in HSL flattened the green ramp by a fifth. In LCh the rule is exactly
-      gradient/wave = (own L*, own C*, status hue) and accent = (L* 34, status C*, status hue),
-      and scratchpad/rehue.py re-derives every value below from those two lines.
-    -->
-
-    <!-- Drawn at angle=90, i.e. bottom-to-top, so _start is the deeper band that meets the wave
-         and _end the lighter band behind the aquarium chip. -->
     <color name="aquarium_sensors_status_normal_gradient_start">#FF87C9D6</color>
     <color name="aquarium_sensors_status_normal_gradient_end">#FFBAE5EE</color>
     <color name="aquarium_sensors_status_warning_gradient_start">#FFF6B43E</color>
@@ -168,22 +97,16 @@
     <color name="aquarium_sensors_status_disconnected_gradient_start">#FFD5D5DB</color>
     <color name="aquarium_sensors_status_disconnected_gradient_end">#FFF0F1F3</color>
 
-    <!-- Heading, status icon and hub button label take the accent of the status on show. -->
     <color name="aquarium_sensors_status_normal_accent">#FF045865</color>
     <color name="aquarium_sensors_status_warning_accent">#FF6C4A00</color>
     <color name="aquarium_sensors_status_critical_accent">#FFA40022</color>
     <color name="aquarium_sensors_status_disconnected_accent">#FF4F5057</color>
 
-    <!--
-      The crest that closes the header. Kept within a shade or two of @color/background so the
-      seam where it meets the sensor grid stays soft while still carrying the status hue.
-    -->
     <color name="aquarium_sensors_status_normal_wave">#FFE7F4F7</color>
     <color name="aquarium_sensors_status_warning_wave">#FFFFF2E2</color>
     <color name="aquarium_sensors_status_critical_wave">#FFFBEAE8</color>
     <color name="aquarium_sensors_status_disconnected_wave">#FFF1F2F4</color>
 
-    <!-- Header furniture that stays put whichever status is on show. -->
     <color name="dashboard_header_description">#FF43505C</color>
     <color name="dashboard_header_updated">#FF4C5966</color>
     <color name="dashboard_header_chip_bg">#8CFFFFFF</color>
@@ -191,31 +114,21 @@
     <color name="dashboard_header_chip_title">#FF1E2A35</color>
     <color name="dashboard_header_icon_circle">#73FFFFFF</color>
 
-    <!--
-      Sensor cards. The card stays white and the status shows in its edge and in the pill. The
-      sensor's own icon and the reading both stay navy, so the number is read as a number rather
-      than as a second alarm beside the pill already giving one.
-
-      Both tints are cut from the status colour in CIELAB (see the dashboard header block).
-    -->
     <color name="sensor_content_primary">#FF16506B</color>
     <color name="sensor_name_text">#FF4F5B66</color>
 
-    <!-- Pill fill: L* 92-96, a wash of the status colour. -->
     <color name="status_blue_soft">#FFDDF1F5</color>
     <color name="status_green_soft">#FFE2F1E8</color>
     <color name="status_orange_soft">#FFFDF1DB</color>
     <color name="status_red_soft">#FFFBE3E4</color>
     <color name="status_gray_soft">#FFEBEDEF</color>
 
-    <!-- Card stroke: L* 88, chroma at 42% of the status colour. -->
     <color name="status_blue_edge">#FFBBE4ED</color>
     <color name="status_green_edge">#FFC1E6C9</color>
     <color name="status_orange_edge">#FFF5D8B3</color>
     <color name="status_red_edge">#FFFFD3CE</color>
     <color name="status_gray_edge">#FFDCDCE0</color>
 
-    <!-- Auth screens -->
     <color name="auth_bg_start">#FFEAF6FB</color>
     <color name="auth_bg_end">#FFF7FBFD</color>
     <color name="auth_input_fill">#FFF1F5F9</color>
@@ -239,14 +152,6 @@
     <color name="template_header_text_muted">#FF3D6C80</color>
     <color name="template_header_badge_bg">#26043D5C</color>
 
-    <!--
-      The "Optional" pill beside the Add Aquarium form's Advanced Settings heading.
-
-      The app's aqua rather than a grey: a translucent grey badge on a grey section label is the
-      one combination that disappears, and this pill is the only thing telling the user that step
-      3 can be skipped. Same ramp as @color/status_blue, taken to L* 34 for the text so it holds
-      contrast at 11sp bold.
-    -->
     <color name="optional_badge_bg">#FFDDF1F5</color>
     <color name="optional_badge_stroke">#FFBBE4ED</color>
     <color name="optional_badge_text">#FF045865</color>
@@ -259,7 +164,6 @@
     <color name="water_badge_saltwater">#FF1565C0</color>
     <color name="water_badge_text">#FFFFFFFF</color>
 
-    <!-- BLE-02 pairing -->
     <color name="pairing_orb_fill">#EEF8FF</color>
     <color name="pairing_orb_stroke">#1584C0</color>
     <color name="pairing_orb_icon">#1584C0</color>
@@ -281,12 +185,6 @@
     <color name="pairing_signal_on">#157EC0</color>
     <color name="pairing_signal_off">#FFCDD5E1</color>
 
-    <!--
-      Palette of the aquarium illustration on the first-installation wizard's welcome page
-      (@drawable/illustration_aquarium). Its own set rather than the app's UI colours: the
-      drawing is one picture whose parts have to stay in balance with each other, and in dark
-      mode the whole scene is dimmed together rather than each part following a UI role.
-    -->
     <color name="illustration_glass">#FF7FD3F2</color>
     <color name="illustration_water_surface">#FFE2F4FC</color>
     <color name="illustration_water">#FFC8E9F8</color>
@@ -298,9 +196,7 @@
     <color name="illustration_fish_warm">#FFF5851F</color>
     <color name="illustration_fish_cool">#FF8E8FE8</color>
     <color name="illustration_fish_eye">#FF2B3A4A</color>
-    <!-- Hub enclosure, probe bodies and leads, on the mounting diagram. -->
     <color name="illustration_hub">#FF3A4A5C</color>
     <color name="illustration_cable">#FF5A6A7C</color>
-    <!-- The opening in the enclosure's top face, a step darker than the body it is cut into. -->
     <color name="illustration_hub_slot">#FF212C38</color>
 </resources>

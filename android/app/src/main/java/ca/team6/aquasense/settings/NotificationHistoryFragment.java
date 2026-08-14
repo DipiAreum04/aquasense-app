@@ -1,5 +1,7 @@
 package ca.team6.aquasense.settings;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.graphics.Color;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -35,22 +37,12 @@ import ca.team6.aquasense.model.NotificationLogEntry;
 import ca.team6.aquasense.model.NotificationLogRepository;
 import ca.team6.aquasense.model.SensorType;
 
-/**
- * NF-3.2: lists past logged notifications, filterable by aquarium and sensor.
- *
- * <p>Reached from the Notifications tab of the dashboard's navigation bar, which opens it as a
- * shortcut destination so the Settings hub is never shown on the way in or out. It opens on every
- * aquarium, newest first.
- */
 public class NotificationHistoryFragment extends Fragment {
 
-    // Fixed display order for the sensor filter, matching the order sensors already
-    // appear in on the Dashboard (Water Level, Temperature, Dissolved Solids, pH Level).
     private static final SensorType[] SENSOR_FILTER_ORDER = {
             SensorType.WATER_LEVEL, SensorType.TEMPERATURE, SensorType.DISSOLVED_SOLIDS, SensorType.PH_LEVEL
     };
 
-    /** One screenful of history. The log itself is kept whole; only the list is divided. */
     private static final int PAGE_SIZE = 20;
 
     private List<Aquarium> aquariums = java.util.Collections.emptyList();
@@ -65,14 +57,13 @@ public class NotificationHistoryFragment extends Fragment {
     private View btnNextPage;
     private View btnClearAll;
 
-    private String selectedAquariumId; // null = all aquariums
-    private SensorType selectedSensorType; // null = all sensors
+    private String selectedAquariumId;
+    private SensorType selectedSensorType;
 
-    private int currentPage; // 0-based
+    private int currentPage;
 
     private final AquariumRepository.AquariumsObserver aquariumsObserver = this::onAquariumsChanged;
     private final NotificationLogRepository.HistoryObserver notificationHistoryObserver = () -> {
-        // A new alert belongs at the front of the newest-first history.
         showPage(0);
         if (recyclerView != null) recyclerView.scrollToPosition(0);
     };
@@ -289,7 +280,6 @@ public class NotificationHistoryFragment extends Fragment {
                 if (dX < 0) {
                     View item = viewHolder.itemView;
                     int saveCount = canvas.save();
-                    // Paint only the portion uncovered by the card as it moves left.
                     canvas.clipRect(item.getRight() + dX, item.getTop(),
                             item.getRight(), item.getBottom());
                     canvas.drawRoundRect(new RectF(item.getLeft(), item.getTop(),
@@ -319,13 +309,12 @@ public class NotificationHistoryFragment extends Fragment {
     private void confirmClearAll() {
         View content = getLayoutInflater().inflate(
                 R.layout.dialog_notification_history_clear, null);
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setView(content)
                 .create();
 
         Window window = dialog.getWindow();
         if (window != null) {
-            // The custom card owns the 24dp corners; remove the platform's square backdrop.
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 

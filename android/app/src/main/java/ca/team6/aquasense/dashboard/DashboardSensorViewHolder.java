@@ -26,7 +26,6 @@ public class DashboardSensorViewHolder extends RecyclerView.ViewHolder {
     public DashboardSensorViewHolder(@NonNull View view) {
         super(view);
 
-        // The card is the root of sensor_card.xml, so it is the item view itself.
         this.sensorCard = (MaterialCardView) view;
         this.sensorTitleIcon = view.findViewById(R.id.sensorTitleIcon);
         this.sensorName = view.findViewById(R.id.sensorName);

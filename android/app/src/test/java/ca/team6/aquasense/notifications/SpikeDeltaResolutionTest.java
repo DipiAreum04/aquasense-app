@@ -12,11 +12,6 @@ import ca.team6.aquasense.model.Aquarium;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ThresholdBand;
 
-/**
- * Covers where a spike delta comes from. The database value for that aquarium and sensor is the
- * source; the constants in {@link SensorThresholds} are only a fallback for an aquarium that has
- * none stored.
- */
 public class SpikeDeltaResolutionTest {
 
     private static Aquarium aquariumWithDeltas(Map<String, Double> spikeDeltas) {
@@ -48,7 +43,6 @@ public class SpikeDeltaResolutionTest {
                 0.1,
                 SensorThresholds.resolveSpikeDelta(aquarium, DatabaseSchema.PH_LEVEL_KEY),
                 0.0);
-        // Not configured, so this one still falls back.
         assertEquals(
                 SensorThresholds.DEFAULT_TEMPERATURE_SPIKE_C,
                 SensorThresholds.resolveSpikeDelta(aquarium, DatabaseSchema.TEMPERATURE_KEY),
@@ -74,7 +68,6 @@ public class SpikeDeltaResolutionTest {
                 0.0);
     }
 
-    /** A zero delta would make every reading a spike, so it is treated as unset. */
     @Test
     public void aNonPositiveStoredDeltaIsIgnored() {
         Aquarium zero = aquariumWithDeltas(
@@ -92,7 +85,6 @@ public class SpikeDeltaResolutionTest {
                 0.0);
     }
 
-    /** Water level is a boolean sensor, so there is no jump size that means anything for it. */
     @Test
     public void aSensorThatCannotSpikeResolvesToNaN() {
         assertTrue(Double.isNaN(SensorThresholds.resolveSpikeDelta(

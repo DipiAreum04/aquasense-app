@@ -15,11 +15,6 @@ import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.ui.RevealSequence;
 
-/**
- * First page of the first-installation wizard (SETTINGS-03): what AquaSense is, and the two steps
- * that follow. Nothing here writes anything; it hands off to the add-aquarium form, which is where
- * setup actually begins.
- */
 public class WelcomeFragment extends Fragment {
 
     @Nullable
@@ -53,10 +48,6 @@ public class WelcomeFragment extends Fragment {
         }
     }
 
-    /**
-     * Leaves setup with nothing created. The dashboard has an empty state for an account with no
-     * hub, and pairing can be started again from there.
-     */
     private void skipSetup() {
         AuthRepository.getInstance(requireContext()).setPairingComplete(true);
         AuthNavigator.goToDashboard(requireActivity());

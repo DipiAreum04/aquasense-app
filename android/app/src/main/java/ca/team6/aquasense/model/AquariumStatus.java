@@ -49,11 +49,7 @@ public enum AquariumStatus {
     public final int descriptionResId;
     public final int gradientStartColorResId;
     public final int gradientEndColorResId;
-    // Carries the status through the parts of the header that sit on the gradient rather than
-    // being coloured by it: the heading, the status icon and the hub button's label.
     public final int accentColorResId;
-    // Flat tint for the crest at the foot of the header. bg_auth_wave draws two overlapping
-    // paths, and an ImageView tint cannot address them separately, so both take this colour.
     public final int waveColorResId;
 
     AquariumStatus(
@@ -74,14 +70,6 @@ public enum AquariumStatus {
         this.waveColorResId = waveColorResId;
     }
 
-    /**
-     * The aquarium takes the worst of its sensors: a sensor that is critical or has stopped
-     * reporting makes the aquarium critical, and a sensor merely out of its comfortable band makes
-     * it a warning. Only when nothing is reporting at all does the aquarium read as disconnected,
-     * since then there is no reading to call critical.
-     *
-     * <p>Pass the sensors the dashboard is showing, not every sensor that exists.
-     */
     public static AquariumStatus forSensors(List<AquariumSensor> sensors) {
         if (sensors.isEmpty()) {
             return AquariumStatus.DISCONNECTED;

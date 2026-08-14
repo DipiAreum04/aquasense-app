@@ -6,7 +6,6 @@
     android:id="@+id/nav_settings"
     app:startDestination="@id/settingsHubFragment">
 
-    <!-- Hub - the main settings list -->
     <fragment
         android:id="@+id/settingsHubFragment"
         android:name="ca.team6.aquasense.settings.SettingsHubFragment"
@@ -45,7 +44,6 @@
             app:destination="@id/waterParametersFragment" />
     </fragment>
 
-    <!-- SETTINGS-07 / ST-7.1-7.3 - user-configurable sensor thresholds -->
     <fragment
         android:id="@+id/waterParametersFragment"
         android:name="ca.team6.aquasense.settings.WaterParametersFragment"
@@ -68,28 +66,24 @@
         tools:layout="@layout/fragment_add_aquarium"
         android:label="@string/title_add_aquarium" />
 
-    <!-- SETTINGS-04 / ST-4.2 - Aquarium Templates -->
     <fragment
         android:id="@+id/aquariumTemplatesFragment"
         android:name="ca.team6.aquasense.settings.AquariumTemplatesFragment"
         tools:layout="@layout/fragment_aquarium_templates"
         android:label="@string/aquarium_templates" />
 
-    <!-- ST-1.5 -->
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="ca.team6.aquasense.settings.NotificationsFragment"
         tools:layout="@layout/fragment_notifications"
         android:label="Notifications" />
 
-    <!-- NF-3.2 -->
     <fragment
         android:id="@+id/notificationHistoryFragment"
         android:name="ca.team6.aquasense.settings.NotificationHistoryFragment"
         tools:layout="@layout/fragment_notification_history"
         android:label="@string/title_notification_history" />
 
-    <!-- ST-1.3 -->
     <fragment
         android:id="@+id/accountsBackupFragment"
         android:name="ca.team6.aquasense.settings.AccountsBackupFragment"
@@ -106,21 +100,18 @@
         tools:layout="@layout/fragment_edit_profile"
         android:label="@string/edit_profile" />
 
-    <!-- PRIVSEC - Privacy Policy (from Help & Support) -->
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="ca.team6.aquasense.settings.PrivacyPolicyFragment"
         tools:layout="@layout/fragment_privacy_policy"
         android:label="@string/privacy_policy" />
 
-    <!-- ST-1.6 -->
     <fragment
         android:id="@+id/displayUnitsFragment"
         android:name="ca.team6.aquasense.settings.DisplayUnitsFragment"
         tools:layout="@layout/fragment_display_units"
         android:label="Display &amp; Units" />
 
-    <!-- ST-1.6 -->
     <fragment
         android:id="@+id/sensorCalibrationFragment"
         android:name="ca.team6.aquasense.settings.SensorCalibrationFragment"
@@ -132,15 +123,12 @@
             app:destination="@id/calibrationGuideFragment" />
     </fragment>
 
-    <!-- One sensor's calibration run. A page rather than a dialog: it holds a multi-step guide and
-         a minute-long measurement, which is a task the user is doing rather than a prompt. -->
     <fragment
         android:id="@+id/calibrationGuideFragment"
         android:name="ca.team6.aquasense.settings.CalibrationGuideFragment"
         tools:layout="@layout/fragment_calibration_guide"
         android:label="@string/sensor_calibration" />
 
-    <!-- ST-1.6 -->
     <fragment
         android:id="@+id/contactSupportFragment"
         android:name="ca.team6.aquasense.settings.ContactSupportFragment"
@@ -151,14 +139,12 @@
             app:destination="@id/contactFormFragment" />
     </fragment>
 
-    <!-- SETTINGS-05 / ST-5.2 - Troubleshooting Guide -->
     <fragment
         android:id="@+id/troubleshootingGuideFragment"
         android:name="ca.team6.aquasense.settings.TroubleshootingGuideFragment"
         tools:layout="@layout/fragment_troubleshooting_guide"
         android:label="@string/troubleshooting_guide" />
 
-    <!-- SETTINGS-02 - Contact Form -->
     <fragment
         android:id="@+id/contactFormFragment"
         android:name="ca.team6.aquasense.settings.ContactFormFragment"

@@ -5,20 +5,15 @@ import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
-/**
- * Hooks a fragment's own toolbar up to the navigation graph, unless the host activity already
- * supplies one.
- *
- * <p>MainActivity carries no action bar, so its screens each draw a toolbar of their own.
- * SettingsActivity sets one toolbar as the action bar for every destination it hosts, and drives
- * its title and up arrow from the graph. A screen reachable from both hosts would otherwise stack
- * two title bars when opened from Settings.
- */
+import ca.team6.aquasense.R;
+
 public final class FragmentToolbar {
 
     private FragmentToolbar() {
@@ -31,7 +26,25 @@ public final class FragmentToolbar {
             toolbar.setVisibility(View.GONE);
             return;
         }
-        NavigationUI.setupWithNavController(toolbar, Navigation.findNavController(root));
+
+        NavController navController = Navigation.findNavController(root);
+        // This toolbar belongs to this fragment, so keep its state fixed while the fragment
+        // exits. A destination listener would update the still-visible toolbar one frame early.
+        NavDestination destination = navController.getCurrentDestination();
+        if (destination != null && destination.getLabel() != null) {
+            toolbar.setTitle(destination.getLabel());
+        }
+
+        if (navController.getPreviousBackStackEntry() != null) {
+            DrawerArrowDrawable backArrow = new DrawerArrowDrawable(toolbar.getContext());
+            backArrow.setProgress(1f);
+            toolbar.setNavigationIcon(backArrow);
+            toolbar.setNavigationContentDescription(R.string.action_back);
+            toolbar.setNavigationOnClickListener(v -> navController.navigateUp());
+        } else {
+            toolbar.setNavigationIcon(null);
+            toolbar.setNavigationOnClickListener(null);
+        }
     }
 
     private static boolean hostSuppliesActionBar(@NonNull Fragment fragment) {

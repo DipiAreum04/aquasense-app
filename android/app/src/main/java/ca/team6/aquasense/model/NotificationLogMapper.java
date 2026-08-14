@@ -5,9 +5,6 @@ import androidx.annotation.NonNull;
 import ca.team6.aquasense.notifications.SensorThresholds;
 import ca.team6.aquasense.notifications.ThresholdViolation;
 
-/**
- * Maps a delivered threshold alert into a {@link NotificationLogEntry} for the history screen.
- */
 public final class NotificationLogMapper {
 
     private NotificationLogMapper() {}
@@ -22,11 +19,6 @@ public final class NotificationLogMapper {
                 System.currentTimeMillis());
     }
 
-    /**
-     * Anything that is not one of the four sensors is recorded against the hub, the hub's own
-     * dedupe key included. Falling back to a real sensor would file board-level alerts under a
-     * reading the user can go and look at, which is what {@link SensorType#HUB} exists to stop.
-     */
     @NonNull
     private static SensorType sensorTypeFor(@NonNull String sensorId) {
         switch (sensorId) {

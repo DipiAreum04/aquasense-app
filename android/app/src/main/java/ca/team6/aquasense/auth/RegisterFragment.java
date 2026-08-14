@@ -80,15 +80,12 @@ public class RegisterFragment extends Fragment {
         InputFieldError.track(etEmail, boxEmail,
                 () -> emailErrorFor(textOf(etEmail)) == 0);
 
-        // The password rules are the one thing the user cannot know visually, so a pass
-        // earns a green outline and a tick rather than just the absence of red.
         InputFieldError.track(etPassword, boxPassword,
                 () -> ProfileInputValidator.getPasswordErrorResId(rawTextOf(etPassword)) == 0,
                 icPasswordValid);
         InputFieldError.track(etConfirmPassword, boxConfirmPassword,
                 () -> confirmPasswordErrorFor(rawTextOf(etPassword), rawTextOf(etConfirmPassword)) == 0,
                 icConfirmPasswordValid);
-        // Editing the password changes whether confirm still matches, so it re-checks that box too.
         InputFieldError.watch(etPassword, boxConfirmPassword,
                 () -> confirmPasswordErrorFor(rawTextOf(etPassword), rawTextOf(etConfirmPassword)) == 0,
                 icConfirmPasswordValid);
@@ -103,8 +100,7 @@ public class RegisterFragment extends Fragment {
         linkLogin.setOnClickListener(v -> goToLogin());
     }
 
-    
-    // Opens login whether register was the start destination or the user reached register from login.
+
     private void goToLogin() {
         NavController navController = NavHostFragment.findNavController(this);
         if (!navController.popBackStack(R.id.loginFragment, false)) {
@@ -122,7 +118,6 @@ public class RegisterFragment extends Fragment {
         String password = rawTextOf(etPassword);
         String confirmPassword = rawTextOf(etConfirmPassword);
 
-        // Re-check every field on each submit so outlines reflect the current state
         int fullNameError = nameErrorFor(fullName, R.string.auth_full_name_required);
         int emailError = emailErrorFor(email);
         int passwordError = ProfileInputValidator.getPasswordErrorResId(password);
@@ -134,7 +129,6 @@ public class RegisterFragment extends Fragment {
         InputFieldError.set(boxConfirmPassword, passStateFor(confirmPasswordError),
                 icConfirmPasswordValid);
 
-        // Every failing field is outlined, but only the first message is toasted.
         int firstError = firstNonZero(fullNameError, emailError,
                 passwordError, confirmPasswordError);
         if (firstError != 0) {
@@ -211,17 +205,14 @@ public class RegisterFragment extends Fragment {
         return visible;
     }
 
-    // Most fields simply lose their outline when they pass validation
     private static InputFieldError.State stateFor(int errorResId) {
         return errorResId == 0 ? InputFieldError.State.NEUTRAL : InputFieldError.State.ERROR;
     }
 
-    // The password pair goes green instead to indicate that the password meets the rules
     private static InputFieldError.State passStateFor(int errorResId) {
         return errorResId == 0 ? InputFieldError.State.VALID : InputFieldError.State.ERROR;
     }
 
-    // Each of these returns the message for the first failed rule, or 0 when the value is valid
     @StringRes
     private static int nameErrorFor(String name, @StringRes int requiredMessage) {
         if (TextUtils.isEmpty(name)) {
@@ -255,7 +246,6 @@ public class RegisterFragment extends Fragment {
         return 0;
     }
 
-    // Picks the message to toast: the first failure in the order the fields appear on screen.
     @StringRes
     private static int firstNonZero(int... errors) {
         for (int error : errors) {

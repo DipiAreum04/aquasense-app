@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The per-sensor threshold form, shared by the two screens that collect one.
-
-  Water Parameters (SETTINGS-07) edits an aquarium that already exists; the add-aquarium form's
-  Advanced Settings panel edits one that is about to. Both are the same question - where do this
-  sensor's five bounds sit - so both ask it with this layout and drive it with ThresholdEditor.
-
-  What is deliberately absent: the aquarium selector and the Save button. Each host supplies its
-  own, because one saves an edit and the other carries the values on to be written after pairing.
-
-  Reading down: which sensor, that sensor's range as a bar, the four bounds low to high, then the
-  spike. The spike is its own section because it is a distance rather than a place on the scale.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +6,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Tabs are added in code, one per sensor this aquarium's water type can measure. -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabsWaterParameterSensor"
         style="@style/Widget.AquaSense.Card"
@@ -47,7 +33,6 @@
         android:textColor="@color/text_secondary"
         android:textSize="15sp" />
 
-    <!-- OVERALL RANGE -->
     <LinearLayout
         style="@style/Widget.AquaSense.Card"
         android:layout_width="match_parent"
@@ -69,8 +54,6 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <!-- Segment widths are assigned as layout weights by ThresholdBandBar, from
-             whatever is currently typed into the four cards below. -->
         <LinearLayout
             android:id="@+id/overallRangeBar"
             android:layout_width="match_parent"
@@ -112,9 +95,6 @@
 
         </LinearLayout>
 
-        <!-- Three labels: the outer two mark where critical begins, the middle one is the
-             safe band. These are the only place critical is spelled out as a number, and
-             it is derived from the warning bounds rather than entered. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -210,16 +190,12 @@
 
     </LinearLayout>
 
-    <!-- The four bound cards, inflated from item_threshold_level, low to high so they run
-         in the same direction as the bar above them. -->
     <LinearLayout
         android:id="@+id/containerThresholdLevels"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <!-- A spike is a distance rather than a place on the scale, so it is its own section
-         rather than a fifth bound. -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -237,7 +213,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <!-- Says which other tab is holding the host's action back, since its errors are not on screen. -->
     <TextView
         android:id="@+id/tvWaterParametersBlocked"
         android:layout_width="match_parent"

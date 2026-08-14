@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  A sensor's threshold bands, drawn as a proportional bar so the width of each colour shows how much
-  headroom the template actually allows. Segment widths are assigned as layout weights at bind time
-  by AquariumTemplateCardBinder.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -60,7 +55,6 @@
 
     </LinearLayout>
 
-    <!-- Three labels: The outer two mark where critical begins, and the middle one is the safe range. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The way out. An outline rather than a fill, so the pair of buttons says which of the two is the
-  action and which is the retreat before either is read.
--->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/analytics_action_ripple">
 

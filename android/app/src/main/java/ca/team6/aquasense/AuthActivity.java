@@ -12,11 +12,6 @@ import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
-/**
- * Implements the login / registration activity page.
- * Redirects to registration page until the user has successfully authenticated at least once;
- * later logged-out launches open login.
- */
 public class AuthActivity extends AppCompatActivity {
 
     @Override
@@ -36,7 +31,6 @@ public class AuthActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_auth);
 
-        // Only choose the start screen on the first creation
         if (savedInstanceState == null) {
             setupAuthStartDestination(prefs);
         }
@@ -56,8 +50,6 @@ public class AuthActivity extends AppCompatActivity {
                 : R.id.registerFragment;
 
         NavController navController = navHost.getNavController();
-        // XML already attached nav_auth (start = login). Re-apply with the correct start
-        // destination before the first frame for first-time vs returning users.
         if (navController.getGraph().getStartDestinationId() != startDestination) {
             NavGraph graph = navController.getNavInflater().inflate(R.navigation.nav_auth);
             graph.setStartDestination(startDestination);

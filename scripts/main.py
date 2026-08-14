@@ -2,7 +2,6 @@
 
 import logging
 from time import time, sleep
-from random import choice
 
 from simulations import (
     SensorPeriods,
@@ -46,33 +45,8 @@ if __name__ == "__main__":
         for sensor in sensors
     }
 
-    testable_sensors = [sensor_temperature, sensor_dissolved_solids, sensor_ph_level]
-    test_start_time = start_time
-    sensor_under_test = None
-    TEST_PERIOD_SECS = 60
-
     while True:
         current_time = int(time())
-        if current_time-test_start_time > TEST_PERIOD_SECS:
-            test_start_time = current_time
-            if sensor_under_test is None:
-                sensor_under_test = choice(testable_sensors)
-                sensor_under_test.begin_sweep_test(TEST_PERIOD_SECS)
-                logger.info("Beginning sweep test for %s", sensor_under_test.name)
-            elif sensor_under_test.sweep_test_active:
-                sensor_under_test.stop_tests()
-                sensor_under_test = choice(testable_sensors)
-                sensor_under_test.begin_spike_test()
-                logger.info("Beginning spike test for %s", sensor_under_test.name)
-            elif sensor_under_test.spike_test_active:
-                sensor_under_test.stop_tests()
-                sensor_under_test = choice(testable_sensors)
-                sensor_under_test.begin_offline_test()
-                logger.info("Beginning offline test for %s", sensor_under_test.name)
-            else:
-                sensor_under_test.stop_tests()
-                sensor_under_test = None
-                logger.info("Test epoch ended, returning to normal operation.")
 
         database.ensure_fresh_token(current_time)
         thresholds.poll(current_time)

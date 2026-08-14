@@ -306,6 +306,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AquaSense.Button.Primary"
                     android:id="@+id/btnRegister"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
@@ -354,7 +355,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnGoogleRegister"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.AquaSense.Button.Google"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:background="@drawable/bg_auth_google_button"

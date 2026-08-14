@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    One scan ring. Three of these are stacked in the pairing screen and animated outwards
-    on a stagger while the state is SCANNING; they are hidden otherwise.
--->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <solid android:color="@android:color/transparent" />

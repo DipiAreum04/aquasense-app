@@ -25,7 +25,7 @@ public class SharedPreferenceHelper {
 
     public static synchronized SharedPreferenceHelper getInstance(Context context) {
         if (context == null) return null;
-        
+
         if (instance == null) {
             instance = new SharedPreferenceHelper(context);
         }
@@ -33,18 +33,15 @@ public class SharedPreferenceHelper {
         return instance;
     }
 
-    // Method to show a Toast for features that are not implemented yet
     public static void showComingSoon(Context context) {
         if (context == null) return;
         Toast.makeText(context.getApplicationContext(), R.string.coming_soon, Toast.LENGTH_SHORT).show();
     }
 
-    // Applies the saved theme preference at app startup.
     public void applySavedThemeMode() {
         applyThemeMode(getThemeMode());
     }
 
-    // Returns the saved theme mode
     public String getThemeMode() {
         String mode = getString(SettingsRepository.KEY_THEME_MODE, null);
         if (mode != null) {
@@ -53,7 +50,6 @@ public class SharedPreferenceHelper {
         return SettingsRepository.THEME_SYSTEM;
     }
 
-    // Saves the preference and switches the app theme.
     public void setThemeMode(String mode) {
         setString(SettingsRepository.KEY_THEME_MODE, mode);
         applyThemeMode(mode);
@@ -86,7 +82,6 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().putBoolean(key, value).apply();
     }
 
-    /** Persists before returning so a second lifecycle callback cannot re-read a stale value. */
     public void setBooleanSync(String key, boolean value) {
         sharedPreferences.edit().putBoolean(key, value).commit();
     }
@@ -119,7 +114,6 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().remove(key).apply();
     }
 
-    /** Removes a value before returning, for one-time local data migrations. */
     public void removeSync(String key) {
         sharedPreferences.edit().remove(key).commit();
     }
@@ -136,12 +130,7 @@ public class SharedPreferenceHelper {
         }
     }
 
-    // Dashboard card order / visibility.
-    // Both are stored as comma-separated sensor IDs (see AquariumSensor.getId()) rather than
-    // a string Set, because insertion order is what makes the order preference meaningful.
 
-    // Returns the saved card order, then appends any sensor IDs the user has never seen
-    // (e.g. a sensor added in a later build) so new cards still show up.
     public List<String> getSensorOrder(List<String> knownIds) {
         List<String> ordered = new ArrayList<>();
         for (String id : splitCsv(getString(SettingsRepository.KEY_SENSOR_ORDER, ""))) {

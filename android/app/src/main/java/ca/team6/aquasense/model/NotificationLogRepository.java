@@ -19,7 +19,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
-/** Stores notification history only on this device and reads it in bounded pages. */
 public class NotificationLogRepository {
     private static final String KEY_NOTIFICATION_LOG = "notificationLog";
     private static final String KEY_NOTIFICATION_LOG_MIGRATED = "notificationLogMigratedToLocalStore";
@@ -39,7 +38,6 @@ public class NotificationLogRepository {
         migrateLegacyHistory();
     }
 
-    /** Returns one newest-first page. Neither this method nor the UI loads the full history. */
     public List<NotificationLogEntry> loadPage(
             int page, int pageSize, String aquariumId, SensorType sensorType) {
         int safePage = Math.max(0, page);
@@ -66,7 +64,6 @@ public class NotificationLogRepository {
                             SensorStatus.valueOf(cursor.getString(4)),
                             cursor.getLong(5)));
                 } catch (IllegalArgumentException ignored) {
-                    // Ignore records from an app version with values this build does not know.
                 }
             }
         }
@@ -82,7 +79,6 @@ public class NotificationLogRepository {
         }
     }
 
-    /** Appends without deleting older entries; history has no application-defined maximum. */
     public void addEntry(NotificationLogEntry entry) {
         store.getWritableDatabase().insertOrThrow(TABLE, null, valuesFor(entry));
         notifyObservers();
@@ -94,12 +90,10 @@ public class NotificationLogRepository {
                 TABLE, "id = ?", new String[]{Long.toString(localId)});
     }
 
-    /** Deletes the complete device-local history, independent of active screen filters. */
     public void clearAll() {
         store.getWritableDatabase().delete(TABLE, null, null);
     }
 
-    /** Observes successful history inserts from this app process on the main thread. */
     public void addObserver(HistoryObserver observer) {
         OBSERVERS.add(observer);
     }
@@ -143,20 +137,17 @@ public class NotificationLogRepository {
                                 obj.getLong("timestamp"));
                         db.insertOrThrow(TABLE, null, valuesFor(entry));
                     } catch (JSONException | IllegalArgumentException ignored) {
-                        // Preserve every readable legacy entry even if another is malformed.
                     }
                 }
             }
             db.setTransactionSuccessful();
             migrationFinished = true;
         } catch (JSONException ignored) {
-            // A malformed top-level legacy value has no recoverable entries; do not retry it.
             migrationFinished = true;
         } finally {
             db.endTransaction();
         }
         if (migrationFinished) {
-            // Mark it only after the local transaction commits, so a crash cannot lose history.
             prefs.setBooleanSync(KEY_NOTIFICATION_LOG_MIGRATED, true);
             prefs.removeSync(KEY_NOTIFICATION_LOG);
         }
@@ -220,7 +211,6 @@ public class NotificationLogRepository {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // No schema upgrades yet.
         }
     }
 }

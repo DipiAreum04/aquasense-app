@@ -7,10 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 >
-    <!--
-      Header and grid scroll together as one page, so they live in a single scrolling column
-      between the top of the screen and the footer, which stays put.
-    -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/dashboardScroll"
         android:layout_width="0dp"
@@ -49,7 +45,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
             >
-                <!-- Aquarium Selector -->
                 <LinearLayout
                     android:id="@+id/aquariumSelector"
                     android:layout_width="wrap_content"
@@ -133,17 +128,6 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!--
-              Aquarium Sensors Status Icon, on the disc that lifts it off the gradient.
-
-              This margin is the top of the block the disc and the three lines under it form: they
-              hang off each other, so the block only moves as one from here. It is spent against
-              the wave's own top margin below, which is what holds the header's height while the
-              block rides higher within it. Moving the block means trading between those two.
-
-              DashboardFragment also sets this margin at runtime, along with the two below it, to
-              land the header on its target height.
-            -->
             <FrameLayout
                 android:id="@+id/aquariumSensorsStatusIconCircle"
                 android:layout_width="@dimen/dashboard_status_disc_size"
@@ -163,7 +147,6 @@
                 />
             </FrameLayout>
 
-            <!-- Aquarium Sensor Status Title -->
             <TextView
                 android:id="@+id/aquariumSensorsStatusHeading"
                 android:layout_width="wrap_content"
@@ -176,7 +159,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
             />
 
-            <!-- Aquarium Sensor Text -->
             <TextView
                 android:id="@+id/aquariumSensorsStatusDescription"
                 android:layout_width="match_parent"
@@ -192,7 +174,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
             />
 
-            <!-- Last reading stamp; its own line under the description, never appended to it -->
             <TextView
                 android:id="@+id/aquariumSensorsStatusUpdated"
                 android:layout_width="match_parent"
@@ -208,15 +189,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
             />
 
-            <!--
-              Hands the header off to the sensor grid; tinted per status by the controller.
-
-              The wave is cropped to its own ink (see the drawable), so the top of this view is the
-              crest itself and the margin below is the whole of the gap under the stamp. The height
-              is the crop's share of the 76dp this used to stand at, which leaves the wave the size
-              it already drew at; raising it makes the wave taller rather than lower.
-
-            -->
             <ImageView
                 android:id="@+id/dashboardHeaderWave"
                 android:layout_width="0dp"
@@ -233,12 +205,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!--
-      Pulled up over the foot of the header so the cards ride on the wave rather than sitting
-      below it, and declared after the header so it draws in front. Height is wrap_content and
-      nested scrolling is off: the grid lays all four cards out at full height and lets the
-      NestedScrollView above do the scrolling, instead of scrolling within itself.
-    -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sensorGrid"
         android:layout_width="match_parent"
@@ -377,11 +343,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--
-      Stands in for the scrolling column above when the account owns no aquarium. Constrained to
-      the same span, so the footer's navigation stays reachable and the loading overlay declared
-      after it still covers both.
-    -->
     <include
         android:id="@+id/dashboardEmptyState"
         layout="@layout/view_dashboard_empty"

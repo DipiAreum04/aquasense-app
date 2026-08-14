@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Inherits the shared items from values/themes.xml; only the API 35+ specific
-         opt-out is added here. -->
     <style name="Theme.AquaSense" parent="Base.Theme.AquaSense">
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>

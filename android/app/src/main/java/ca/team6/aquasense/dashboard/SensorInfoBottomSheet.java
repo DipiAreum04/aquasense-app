@@ -57,11 +57,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
 
     public SensorInfoBottomSheet() {}
 
-    /**
-     * Builds the sheet for a sensor as it stands right now. The reading, the status and the
-     * sections are resolved here rather than at inflation time, so the sheet keeps saying what the
-     * card said when it was tapped instead of following the next reading in mid-read.
-     */
     public static SensorInfoBottomSheet from(Context context, AquariumSensor sensor) {
         SensorInfoBottomSheet fragment = new SensorInfoBottomSheet();
 
@@ -90,19 +85,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         return fragment;
     }
 
-    /**
-     * Builds the sheet as an explainer: a heading, a lead line and the sections under it, about
-     * something on the screen rather than about a sensor.
-     *
-     * <p>The analytics page opens two of these, one per card, to say what its percentages are
-     * shares of. Everything the sheet ordinarily carries about a sensor is left out - the reading,
-     * the status pill, the threshold bands - because none of it has an answer here: an explanation
-     * of what uptime counts is the same explanation whichever tab is open and whatever the tank is
-     * currently doing.
-     *
-     * @param aboutTitleResId the heading over the lead line. Named rather than derived, since the
-     *                        sheet has no sensor to be "About" the way {@link #from} does.
-     */
     public static SensorInfoBottomSheet explaining(@DrawableRes int iconResId,
                                                    @StringRes int titleResId,
                                                    @StringRes int aboutTitleResId,
@@ -115,8 +97,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         args.putInt(TITLE_KEY, titleResId);
         args.putInt(ABOUT_TITLE_KEY, aboutTitleResId);
         args.putInt(ABOUT_KEY, aboutResId);
-        // The icon is tinted with this and nothing else reads it here: there is no status to
-        // report, so the sheet's mark is the page's own accent rather than a verdict's colour.
         args.putInt(STATUS_COLOR_KEY, R.color.accent);
         args.putBoolean(HAS_READING_KEY, false);
         args.putByteArray(SECTIONS_KEY, InfoSheetSection.serialize(sections));
@@ -145,8 +125,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         }
 
         Context context = view.getContext();
-        // Whether this sheet is about a sensor or about something on the screen; the second kind
-        // has no reading, status or bands to report. See explaining.
         boolean hasReading = arguments.getBoolean(HAS_READING_KEY, true);
         int statusColor = ContextCompat.getColor(context, arguments.getInt(STATUS_COLOR_KEY));
 
@@ -166,8 +144,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         if (hasReading) {
             String name = context.getString(arguments.getInt(NAME_KEY));
 
-            // The same pill the card carries, so the sheet and the card it came from agree at a
-            // glance.
             ((ImageView) view.findViewById(R.id.sensorInfoStatusIcon))
                     .setImageResource(arguments.getInt(STATUS_ICON_KEY));
             TextView statusTextView = view.findViewById(R.id.sensorInfoStatusText);
@@ -191,8 +167,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
             aboutTitleView.setText(context.getString(R.string.sensor_info_about, name));
         } else {
             aboutTitleView.setText(arguments.getInt(ABOUT_TITLE_KEY));
-            // That margin is the gap between this heading and the reading over it, which has just
-            // been taken out. Left alone it would open the sheet on a band of empty space.
             ((ViewGroup.MarginLayoutParams) aboutTitleView.getLayoutParams()).topMargin = 0;
         }
 
@@ -226,7 +200,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         return view;
     }
 
-    /** Which of the three band rows the sensor is sitting in, or none while it has stopped reporting. */
     private static int activeBand(SensorStatus status) {
         switch (status) {
             case NORMAL:
@@ -240,10 +213,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         }
     }
 
-    /**
-     * Lists all three bands this aquarium grades the sensor against, or hides the block when it has
-     * none to quote.
-     */
     private void bindBands(View view, @Nullable String[] bands, int activeBand) {
         View ranges = view.findViewById(R.id.sensorInfoRanges);
         if (bands == null) {
@@ -295,10 +264,6 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         rangeValue.setTextColor(color);
     }
 
-    /**
-     * Caps the sheet short of the top of the screen. Without a ceiling a long sheet grows until it
-     * runs off the display, since the layout only starts scrolling once something bounds it.
-     */
     @Override
     public void onStart() {
         super.onStart();
@@ -314,9 +279,9 @@ public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
         }
 
         BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(sheet);
+        behavior.setShouldRemoveExpandedCorners(false);
         behavior.setMaxHeight(Math.round(
                 getResources().getDisplayMetrics().heightPixels * MAX_HEIGHT_FRACTION));
-        // A sheet this short would otherwise open half-collapsed and need a drag to read.
         behavior.setSkipCollapsed(true);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }

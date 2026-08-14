@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  One configurable bound on the Water Parameters screen: the four band edges and the spike delta all
-  bind to this same card. Everything that varies between them - icon, tint, title, badge wording,
-  the comparator in front of the field - is set by WaterParametersFragment at bind time, so the five
-  cards stay one layout rather than five copies of one.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Widget.AquaSense.Card"
@@ -43,8 +37,6 @@
             android:textStyle="bold"
             tools:text="Critical Low" />
 
-        <!-- Fill is tinted to the level's soft status colour at bind time; the label takes the
-             status colour itself, exactly as the dashboard's sensor pills do. -->
         <TextView
             android:id="@+id/tvThresholdLevelBadge"
             android:layout_width="wrap_content"
@@ -70,8 +62,6 @@
         android:textSize="13sp"
         tools:text="Temperature below this is an immediate danger to your aquarium." />
 
-    <!-- The box InputFieldError outlines in red, so its padding is restated in code terms: the
-         helper swaps the background and restores exactly these four values. -->
     <LinearLayout
         android:id="@+id/boxThresholdLevelValue"
         android:layout_width="match_parent"
@@ -84,9 +74,6 @@
         android:paddingStart="14dp"
         android:paddingEnd="14dp">
 
-        <!-- Only the spike shows anything here, and what it shows is the "±" that says a jump
-             counts the same in either direction. A bound is a place on the scale and needs no
-             prefix, so this stays gone for the other four. -->
         <TextView
             android:id="@+id/tvThresholdLevelPrefix"
             android:layout_width="wrap_content"

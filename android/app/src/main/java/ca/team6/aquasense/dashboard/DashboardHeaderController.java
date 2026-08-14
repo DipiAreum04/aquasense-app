@@ -41,7 +41,6 @@ public class DashboardHeaderController {
     private final View dashboardHeaderGradientView;
     private final GradientDrawable dashboardHeaderGradient;
 
-    // The status currently on show, which is what a new one is compared against and faded from.
     @Nullable
     private AquariumStatus shownStatus;
     @Nullable
@@ -60,8 +59,6 @@ public class DashboardHeaderController {
         this.dashboardHeaderWave = view.findViewById(R.id.dashboardHeaderWave);
 
         this.dashboardHeaderGradientView = view.findViewById(R.id.dashboardHeaderGradient);
-        // mutate() so recolouring this header cannot reach any other view that inflated the same
-        // drawable resource, since a drawable straight out of XML shares its constant state.
         Drawable potentialGradientDrawable = this.dashboardHeaderGradientView.getBackground().mutate();
         if (potentialGradientDrawable instanceof GradientDrawable) {
             this.dashboardHeaderGradient = (GradientDrawable) potentialGradientDrawable;
@@ -85,7 +82,6 @@ public class DashboardHeaderController {
         this.aquariumWaterTypeBadge.setVisibility(View.VISIBLE);
     }
 
-    /** Shows the active maintenance-mode countdown, or hides it when the aquarium is not snoozed. */
     public void setMaintenanceModeBadge(@Nullable CharSequence remainingLabel) {
         if (remainingLabel == null) {
             this.maintenanceModeBadge.setVisibility(View.GONE);
@@ -106,8 +102,6 @@ public class DashboardHeaderController {
     }
 
     public void setDashboardSensorsStatus(AquariumStatus aquariumStatus) {
-        // Readings land about once a second and each one re-reports the status, so only an actual
-        // change may start a transition. Without this the header would restart the fade endlessly.
         if (this.shownStatus == aquariumStatus) {
             return;
         }
@@ -116,12 +110,10 @@ public class DashboardHeaderController {
         this.shownStatus = aquariumStatus;
 
         if (this.statusTransition != null) {
-            // Ends on the status it was heading for, which is where the new fade starts from.
             this.statusTransition.cancel();
             this.statusTransition = null;
         }
 
-        // Nothing to fade from on the first bind, so the opening status is simply drawn.
         if (previousStatus == null) {
             applyStatusColors(aquariumStatus, aquariumStatus, 1f);
             applyStatusContent(aquariumStatus);
@@ -144,8 +136,6 @@ public class DashboardHeaderController {
                 float fraction = (float) animation.getAnimatedValue();
                 applyStatusColors(from, to, fraction);
 
-                // Colours tween, but an icon and a line of text cannot: they cross-fade out to
-                // the midpoint, swap while invisible, and come back in on the far side.
                 if (!contentSwapped && fraction >= 0.5f) {
                     contentSwapped = true;
                     applyStatusContent(to);
@@ -156,8 +146,6 @@ public class DashboardHeaderController {
         transition.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                // Also runs on cancel, which settles the header on `to` so a replacement fade has
-                // a whole status to start from rather than a half-faded one.
                 applyStatusColors(to, to, 1f);
                 applyStatusContent(to);
                 setStatusContentAlpha(1f);
@@ -194,10 +182,6 @@ public class DashboardHeaderController {
                     blend(context, from.gradientStartColorResId, to.gradientStartColorResId, fraction),
                     blend(context, from.gradientEndColorResId, to.gradientEndColorResId, fraction),
             });
-            // The gradient is this ViewGroup's background, and the drawable invalidating itself
-            // is not enough to get the group's display list re-recorded mid-animation: the
-            // children fading on top redraw, the background behind them keeps its old colours
-            // until something else dirties the group. Ask for that redraw directly.
             this.dashboardHeaderGradientView.invalidate();
         }
     }
@@ -209,7 +193,6 @@ public class DashboardHeaderController {
                 ContextCompat.getColor(context, toColorResId));
     }
 
-    /** Stops a fade in progress, so a torn-down header is not left driving detached views. */
     public void cancelStatusTransition() {
         if (this.statusTransition != null) {
             this.statusTransition.cancel();
@@ -217,7 +200,6 @@ public class DashboardHeaderController {
         }
     }
 
-    /** The moment of the newest reading, shown on its own line beneath the status description. */
     public void setDashboardLastUpdated(CharSequence lastUpdated) {
         this.aquariumSensorsStatusUpdated.setText(lastUpdated);
     }

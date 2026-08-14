@@ -34,8 +34,7 @@ public class ContactSupportFragment extends Fragment {
 
         view.findViewById(R.id.rowEmailSupport).setOnClickListener(v -> {
             String email = getString(R.string.support_email);
-            
-            // TODO: After Firebase is set up, replace this with in-app auto-send email or support ticket creation.
+
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
             startActivity(Intent.createChooser(intent, getString(R.string.contact_choose_email_app)));
         });
@@ -46,15 +45,11 @@ public class ContactSupportFragment extends Fragment {
     }
 
 
-    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
     @SuppressWarnings("unused")
-    // TODO: After Firebase is set up, fetch the linked device ID from Firestore and pass it into this method
     private void bindDeviceId(@NonNull TextView tvDeviceId) {
-        String deviceId = null; // TODO: replace with Firebase fetch 
-        // displayDeviceId(tvDeviceId, deviceId);
+        String deviceId = null;
     }
 
-    // TODO: REMOVE IF ACTUALLY UNUSED BY END OF SPRINT 2
     @SuppressWarnings("unused")
     private void displayDeviceId(@NonNull TextView tvDeviceId, @Nullable String deviceId) {
         if (TextUtils.isEmpty(deviceId)) {

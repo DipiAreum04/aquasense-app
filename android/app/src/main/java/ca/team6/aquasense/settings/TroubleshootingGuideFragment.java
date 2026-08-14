@@ -40,7 +40,6 @@ public class TroubleshootingGuideFragment extends Fragment {
         boolean nightMode = isNightMode();
 
         WebView webView = view.findViewById(R.id.webTroubleshootingGuide);
-        // The guide is a self-contained local asset with no links, so block navigation outright
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(@NonNull WebView view,
@@ -60,7 +59,6 @@ public class TroubleshootingGuideFragment extends Fragment {
                 null);
     }
 
-    // Reflects whatever AppCompatDelegate resolved, so it follows the in-app theme settings
     private boolean isNightMode() {
         int uiMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return uiMode == Configuration.UI_MODE_NIGHT_YES;

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Template details block on Add Aquarium screen -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,7 +16,6 @@
         android:textSize="13sp"
         android:textStyle="bold" />
 
-    <!-- Wraps onto as many lines as the species need. -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/containerSpecies"
         android:layout_width="match_parent"
@@ -52,7 +50,6 @@
 
     </LinearLayout>
 
-    <!-- One band bar per ranged sensor. -->
     <LinearLayout
         android:id="@+id/containerParameters"
         android:layout_width="match_parent"
@@ -60,7 +57,6 @@
         android:layout_marginTop="14dp"
         android:orientation="vertical" />
 
-    <!-- Shown only when the template disables a sensor -->
     <TextView
         android:id="@+id/tvDisabledNote"
         android:layout_width="match_parent"

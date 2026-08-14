@@ -1,7 +1,10 @@
 package ca.team6.aquasense.settings;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
+
 import android.Manifest;
-import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -45,7 +48,6 @@ import ca.team6.aquasense.notifications.MonitoringController;
 
 public class NotificationsFragment extends Fragment {
 
-    // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
     @SuppressWarnings("FieldCanBeLocal")
     private SettingsRepository repo;
     private SharedPreferenceHelper prefs;
@@ -60,20 +62,16 @@ public class NotificationsFragment extends Fragment {
     private SwitchCompat switchMaintenance;
     private boolean suppressMaintenanceToggleCallback;
 
-    // Quiet-hours time row references (shown/hidden with toggle)
     private View dividerQuietStart, dividerQuietEnd;
     private View rowQuietStart, rowQuietEnd;
     private View dividerNotificationPermission, rowNotificationPermission;
     private TextView tvQuietStart, tvQuietEnd;
 
-    // Maintenance snooze duration row (shown while maintenance mode is active)
     private View dividerMaintenanceDuration, rowMaintenanceDuration;
     private TextView tvMaintenanceRemaining;
 
     private final ActivityResultLauncher<String> requestNotificationPermission =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
-                // MainActivity only asks once per install, so a grant from here is what arms the
-                // monitor for users who reached this row after refusing on first launch.
                 prefs.setBooleanSync(SettingsRepository.KEY_NOTIF_PERMISSION_ASKED, true);
                 MonitoringController.sync(requireContext());
                 updateNotificationPermissionRowVisibility();
@@ -121,7 +119,6 @@ public class NotificationsFragment extends Fragment {
         SwitchCompat switchSensorTds   = view.findViewById(R.id.switchSensorAlertsDissolvedSolids);
         SwitchCompat switchSensorPh    = view.findViewById(R.id.switchSensorAlertsPhLevel);
 
-        // Bind before listeners so the initial values do not toast.
         repo.loadSettings(s -> {
             switchPush.setChecked(s.pushNotifications);
             switchCritical.setChecked(s.criticalAlertsOnly);
@@ -141,8 +138,6 @@ public class NotificationsFragment extends Fragment {
 
         switchPush.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_PUSH_NOTIF, checked);
-            // Starts or stops the background monitor immediately, so the persistent "Monitoring
-            // aquarium" notice disappears the moment alerts are switched off.
             MonitoringController.sync(requireContext());
         });
         switchCritical.setOnCheckedChangeListener((b, checked) -> {
@@ -164,20 +159,15 @@ public class NotificationsFragment extends Fragment {
             setMaintenanceDurationRowVisible(false);
             MonitoringController.sync(requireContext());
         });
-        // NF-1.1: handled by FirebaseThresholdMonitor when push + param alerts are enabled.
         switchParam.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_PARAM, checked);
             MonitoringController.sync(requireContext());
         });
-        // NF-1.3: abnormal value jump alerts within the safe range.
         switchJumps.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_ABNORMAL_JUMPS, checked);
             MonitoringController.sync(requireContext());
         });
 
-        // NF-1.3: per-sensor toggles. Before sending a notification, check the flag for the sensor
-        // it concerns. If false, drop the alert regardless of the notification-type toggles.
-        // Critical alerts are the one exception and must still deliver.
         switchSensorTemp.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_TEMP, checked);
         });
@@ -191,7 +181,6 @@ public class NotificationsFragment extends Fragment {
             prefs.updateField(SettingsRepository.KEY_SENSOR_ALERTS_PH, checked);
         });
 
-        // NF-1.2: handled by FirebaseThresholdMonitor when push + sensor offline alerts are enabled.
         switchSensor.setOnCheckedChangeListener((b, checked) -> {
             prefs.updateField(SettingsRepository.KEY_NOTIFY_SENSOR, checked);
             MonitoringController.sync(requireContext());
@@ -223,13 +212,8 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // The dashboard switches the active aquarium through local preferences, which the profile
-        // listener never sees. Without re-reading it here the toggle keeps describing whichever
-        // aquarium was selected when this screen was last opened, and switching it off would
-        // release maintenance mode on that one instead of the aquarium now on screen.
         syncActiveAquariumFromPrefs();
         refreshMaintenanceModeToggle();
-        // The row tracks system state that the user can change while this screen is backgrounded.
         updateNotificationPermissionRowVisibility();
     }
 
@@ -335,19 +319,15 @@ public class NotificationsFragment extends Fragment {
 
         View content = getLayoutInflater().inflate(R.layout.dialog_maintenance_duration, null);
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setView(content)
                 .create();
 
         Window window = dialog.getWindow();
         if (window != null) {
-            // The layout draws its own rounded card, so the window behind it has to stop drawing
-            // one: AlertDialog's background is an opaque square-cornered surface, and left in
-            // place it shows at all four corners of the card as a grey right angle.
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Paired with DURATION_OPTIONS by position, as the labels array was.
         int[] optionIds = {
                 R.id.maintenanceDuration15m,
                 R.id.maintenanceDuration30m,
@@ -365,8 +345,6 @@ public class NotificationsFragment extends Fragment {
             });
         }
 
-        // Only a duration commits. Back and a tap outside both land here and put the switch back
-        // the way it was, so the picker cannot leave maintenance mode half on.
         dialog.setOnCancelListener(d -> refreshMaintenanceModeToggle());
         dialog.show();
     }
@@ -413,11 +391,6 @@ public class NotificationsFragment extends Fragment {
         return hours + " hr " + minutes + " min";
     }
 
-    /**
-     * Sends the user wherever the permission can still be granted. The system sheet handles the
-     * first refusal, but the platform stops showing it after the second and answers silently, so
-     * from that point the app's notification settings are the only way through.
-     */
     private void requestNotificationAccess() {
         boolean askedBefore =
                 prefs.getBoolean(SettingsRepository.KEY_NOTIF_PERMISSION_ASKED, false);
@@ -453,10 +426,17 @@ public class NotificationsFragment extends Fragment {
         String[] parts = currentTime.split(":");
         int hour   = Integer.parseInt(parts[0]);
         int minute = Integer.parseInt(parts[1]);
-        new TimePickerDialog(requireContext(), (tp, h, m) -> {
-            String newTime = String.format(Locale.getDefault(), "%02d:%02d", h, m);
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(hour)
+                .setMinute(minute)
+                .build();
+        picker.addOnPositiveButtonClickListener(v -> {
+            String newTime = String.format(
+                    Locale.getDefault(), "%02d:%02d", picker.getHour(), picker.getMinute());
             displayView.setText(newTime);
             prefs.updateField(key, newTime);
-        }, hour, minute, true).show();
+        });
+        picker.show(getParentFragmentManager(), "quiet-hours-time-picker");
     }
 }

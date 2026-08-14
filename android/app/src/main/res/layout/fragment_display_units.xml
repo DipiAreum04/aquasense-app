@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- THEME -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,7 +81,6 @@
 
         </LinearLayout>
 
-        <!-- TEMPERATURE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,7 +133,6 @@
 
         </LinearLayout>
 
-        <!-- READING PRECISION -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -199,7 +196,6 @@
 
         </LinearLayout>
 
-        <!-- DASHBOARD CARDS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -217,7 +213,6 @@
             android:orientation="vertical"
             android:paddingBottom="4dp">
 
-            <!-- Rows are added at runtime by DisplayUnitsFragment, one per sensor card. -->
             <LinearLayout
                 android:id="@+id/containerDashboardCards"
                 android:layout_width="match_parent"

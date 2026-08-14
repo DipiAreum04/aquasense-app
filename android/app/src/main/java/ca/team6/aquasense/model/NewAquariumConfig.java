@@ -9,23 +9,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Everything the add-aquarium form collected, carried intact to the moment it can be written.
- *
- * <p>An aquarium is keyed by the paired board's UID, so nothing can be stored until the board
- * reports it over BLE — several screens and an activity boundary after the user finished typing.
- * This is what crosses that gap.
- *
- * <p>It is deliberately a single value rather than the four extras the pairing flow used to thread
- * through {@code PairingActivity}, {@code PairingFragment} and {@code PairingRepository}: the parts
- * are only ever meaningful together, and passing them separately meant every screen in between had
- * to know the shape of a configuration it does nothing with but forward.
- *
- * <p>The template itself is not carried. {@code database/rules.json} has nowhere to put it —
- * {@code $other: false} allows only name, water type, thresholds and spike deltas — so a template
- * is a source of starting numbers at creation time and nothing afterwards. By the time this is
- * built, those numbers have already been read out of it.
- */
 public final class NewAquariumConfig implements Parcelable {
 
     private final String name;
@@ -33,10 +16,6 @@ public final class NewAquariumConfig implements Parcelable {
     private final Map<String, ThresholdBand> thresholds;
     private final Map<String, Double> spikeDeltas;
 
-    /**
-     * @param thresholds  bands by sensor ID, in the units the database stores.
-     * @param spikeDeltas deltas by sensor ID, likewise stored units and every one positive.
-     */
     public NewAquariumConfig(@NonNull String name,
                              @NonNull WaterType waterType,
                              @NonNull Map<String, ThresholdBand> thresholds,
@@ -67,9 +46,6 @@ public final class NewAquariumConfig implements Parcelable {
         return this.spikeDeltas;
     }
 
-    // The two maps are written as independent sections rather than one row per sensor. They happen
-    // to carry the same keys today, but nothing in the schema requires it: thresholds and spike
-    // deltas are separate optional nodes, and a sensor may have either without the other.
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
         out.writeString(this.name);
@@ -106,9 +82,6 @@ public final class NewAquariumConfig implements Parcelable {
             Map<String, ThresholdBand> thresholds = new LinkedHashMap<>();
             for (int written = in.readInt(); written > 0; written--) {
                 String sensorId = in.readString();
-                // fromValues rather than the constructor: a band that somehow arrives out of order
-                // is dropped, leaving that sensor unconfigured, rather than throwing on the far
-                // side of a parcel where there is no user action to blame it on.
                 ThresholdBand band = ThresholdBand.fromValues(
                         in.readDouble(), in.readDouble(), in.readDouble(), in.readDouble());
                 if (sensorId != null && band != null) {

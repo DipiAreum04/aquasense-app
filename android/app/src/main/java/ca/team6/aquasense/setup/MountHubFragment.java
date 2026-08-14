@@ -24,17 +24,6 @@ import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.ui.FragmentToolbar;
 import ca.team6.aquasense.ui.WizardProgress;
 
-/**
- * Step 2 of the first-installation wizard: fitting the hub and its four sensors to the aquarium.
- *
- * <p>Reading only. It sits between the form and pairing because that is the order the work
- * happens in: pairing ends by waiting for the board's first real reading, so a hub that is still
- * in its box, or whose probes are dry, fails the last stage of step 3 rather than the first.
- *
- * <p>It also carries the aquarium details across, and launches pairing itself, because pairing is
- * a separate activity: whoever starts it is the one that hears it finish, and the summary page
- * comes after.
- */
 public class MountHubFragment extends Fragment {
 
     private final ActivityResultLauncher<Intent> pairingLauncher =
@@ -64,16 +53,10 @@ public class MountHubFragment extends Fragment {
         view.findViewById(R.id.btnSkipSetup).setOnClickListener(v -> this.skipSetup());
     }
 
-    /**
-     * Hands the configuration collected on step 1 to the pairing flow, which is what writes the
-     * aquarium once the board reports the UID it will be keyed by.
-     */
     private void goToPairing() {
         NewAquariumConfig config =
                 this.requireArgs().getParcelable(SetupArgs.AQUARIUM_CONFIG);
         if (config == null) {
-            // Step 1 always sends one, so this only happens if the fragment is shown outside the
-            // wizard. Pairing with nothing to claim the board would strand it.
             ScopedLogger.error("Reached the mount-hub step with no aquarium configuration.");
             return;
         }
@@ -82,25 +65,16 @@ public class MountHubFragment extends Fragment {
                 PairingActivity.intent(requireContext(), config, PairingEntryMode.FIRST_RUN));
     }
 
-    /** Closes the wizard on its summary page, carrying the same details one destination further. */
     private void goToSetupSummary() {
         Navigation.findNavController(requireView()).navigate(
                 R.id.action_mountHubFragment_to_setupCompleteFragment, new Bundle(this.requireArgs()));
     }
 
-    /**
-     * Leaves setup with nothing created. The dashboard has an empty state for an account with no
-     * aquarium, and pairing can be started again from there.
-     */
     private void skipSetup() {
         AuthRepository.getInstance(requireContext()).setPairingComplete(true);
         AuthNavigator.goToDashboard(requireActivity());
     }
 
-    /**
-     * The destination's arguments, which the graph gives defaults for, so this is only empty if
-     * the fragment is ever shown outside the wizard.
-     */
     @NonNull
     private Bundle requireArgs() {
         Bundle args = getArguments();

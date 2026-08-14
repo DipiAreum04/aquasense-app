@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Shared theme items live on the base style so the API 35+ variant in
-         values-v35/themes.xml can inherit them. Redeclaring Theme.AquaSense in a
-         qualified folder replaces the whole style rather than merging into it. -->
     <style name="Base.Theme.AquaSense" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Covers screens that do not set a background on their root view. @color/background
-             is DayNight-aware, so values-night/colors.xml still supplies the dark variant. -->
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/accent</item>
+        <item name="colorOnPrimary">@color/color_on_accent</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent</item>
+        <item name="colorOnSecondary">@color/color_on_accent</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorError">@color/danger</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="colorControlActivated">@color/accent</item>
+        <item name="colorControlNormal">@color/text_secondary</item>
+        <item name="colorControlHighlight">@color/analytics_action_ripple</item>
+
+        <item name="buttonStyle">@style/Widget.AquaSense.Button.Primary</item>
+        <item name="materialButtonStyle">@style/Widget.AquaSense.Button.Primary</item>
+        <item name="borderlessButtonStyle">@style/Widget.AquaSense.Button.Text</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.AquaSense.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.AquaSense.MaterialAlertDialog</item>
+        <item name="materialTimePickerTheme">@style/ThemeOverlay.AquaSense.MaterialTimePicker</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.AquaSense.BottomSheetDialog</item>
+
         <item name="android:windowBackground">@color/background</item>
         <item name="android:colorBackground">@color/background</item>
-        <!-- Matches the left edge of @drawable/bg_toolbar_gradient so the status bar
-             reads as part of the toolbar rather than a separate band. Both are
-             DayNight-aware, so no values-night theme is needed. -->
         <item name="android:statusBarColor">@color/toolbar_gradient_start</item>
         <item name="android:windowLightStatusBar">@bool/light_status_bar_icons</item>
     </style>

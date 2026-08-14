@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The aquarium chip now sits on a light gradient, so it lifts off with translucent white rather
-  than the translucent-dark fill used when the header was a deep colour.
--->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/dashboard_header_chip_bg"/>
     <corners android:radius="20dp"/>

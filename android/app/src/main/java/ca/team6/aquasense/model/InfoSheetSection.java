@@ -15,13 +15,6 @@ import java.io.Serializable;
 
 import ca.team6.aquasense.R;
 
-/**
- * One titled block of the sensor info sheet: a heading and the bullets underneath it.
- *
- * <p>The text arrives already resolved rather than as string resource IDs, because a bullet
- * quotes the aquarium's configured thresholds and the sensor's latest reading, and neither is
- * known until the sheet is opened.
- */
 public class InfoSheetSection implements Serializable {
     private final String title;
     private final String[] items;

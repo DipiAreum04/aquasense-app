@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Press feedback for one chart action. The mask is a 20dp radius on a 40dp button, i.e. a circle,
-  so the ripple reads as a disc lighting up inside the bar rather than a square in a rounded row.
-
-  The ripple is cut from the accent rather than from the page colour the cards use: those ripple
-  over white, and this one has to show over @color/analytics_segment_track, which is already a
-  shade off the page.
--->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/analytics_action_ripple">
 

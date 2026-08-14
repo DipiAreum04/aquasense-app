@@ -14,9 +14,6 @@ import ca.team6.aquasense.R;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 
-/**
- * Read-only reference for the built-in aquarium templates.
- */
 public class AquariumTemplatesFragment extends Fragment {
 
     @Nullable
@@ -34,7 +31,6 @@ public class AquariumTemplatesFragment extends Fragment {
         LinearLayout container = view.findViewById(R.id.containerTemplates);
         LayoutInflater inflater = getLayoutInflater();
 
-        // A fixed list of four that never reorders or recycles, so plain inflation is simpler than a RecyclerView.
         for (AquariumTemplate template : BuiltInTemplates.all()) {
             container.addView(
                     AquariumTemplateCardBinder.createCard(inflater, container, template));

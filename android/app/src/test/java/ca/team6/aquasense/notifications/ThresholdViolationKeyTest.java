@@ -8,11 +8,6 @@ import org.junit.Test;
 import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ThresholdBand;
 
-/**
- * Covers the two keys a violation carries. They intentionally disagree about severity: the shade
- * slot ignores it so an escalation replaces the earlier notification, while the cooldown window
- * respects it so that escalation is not mistaken for the same alert repeating.
- */
 public class ThresholdViolationKeyTest {
 
     private static final String AQUARIUM = "tank-1";

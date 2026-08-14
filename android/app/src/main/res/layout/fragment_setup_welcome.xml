@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Landing page of the first-installation wizard (SETTINGS-03). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -18,7 +17,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Hero -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,7 +92,6 @@
                 android:contentDescription="@null"
                 android:src="@drawable/illustration_aquarium" />
 
-            <!-- What the wizard is about to walk through -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -242,6 +239,7 @@
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnGetStarted"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -254,8 +252,6 @@
             android:textStyle="bold"
             app:backgroundTint="@null" />
 
-        <!-- Setup can be left at any point; the dashboard carries an empty state for hubless
-             accounts and Settings can start the pairing flow again later. -->
         <TextView
             android:id="@+id/btnSkipSetup"
             android:layout_width="match_parent"

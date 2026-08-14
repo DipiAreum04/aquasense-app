@@ -34,18 +34,9 @@ import java.util.UUID;
 
 import ca.team6.aquasense.model.ScopedLogger;
 
-/**
- * Talks to the hub over Bluetooth LE: scans for it, then hands it one complete set of credentials.
- *
- * <p><b>One GATT operation may be in progress at a time.</b> Issuing a second read, write or
- * descriptor write before the first has called back does not queue it and does not raise an error, rather
- * it is dropped. Every operation therefore goes through {@link #pending}, processed one at a time after
- * the completion of the previous one. This ensures that the exchange is completed in the correct order.
- */
 @SuppressLint("MissingPermission")
 public final class BleProvisioner implements Provisioner {
 
-    /** A single GATT call. Returns false when the stack refused to dispatch the operation at all. */
     private interface GattOperation {
         boolean dispatch();
     }
@@ -67,7 +58,6 @@ public final class BleProvisioner implements Provisioner {
 
     private boolean finished = true;
 
-    // Set once the commit write is successful
     private boolean commitWritten;
 
     private String ssid = "";
@@ -89,11 +79,7 @@ public final class BleProvisioner implements Provisioner {
         this.listener = listener;
     }
 
-    // -------------------------------------------------------------------------------------------
-    // Scanning
-    // -------------------------------------------------------------------------------------------
 
-    /** Scans for boards advertising the BLE pairing service, stopping on its own after a timeout */
     @Override
     public void startScan() {
         this.stopScan();
@@ -113,7 +99,6 @@ public final class BleProvisioner implements Provisioner {
         this.boardsSeen.clear();
         this.scanning = true;
 
-        // Filtering on the service UUID rather than the advertised name
         List<ScanFilter> filters = Collections.singletonList(
                 new ScanFilter.Builder()
                         .setServiceUuid(new ParcelUuid(PairingContract.SERVICE_UUID))
@@ -155,7 +140,6 @@ public final class BleProvisioner implements Provisioner {
             if (device == null) {
                 return;
             }
-            // Read the name from the advertisement (board)
             ScanRecord record = result.getScanRecord();
             DiscoveredBoard board = new DiscoveredBoard(
                     device, record == null ? null : record.getDeviceName(), result.getRssi());
@@ -182,17 +166,7 @@ public final class BleProvisioner implements Provisioner {
         }
     };
 
-    // -------------------------------------------------------------------------------------------
-    // Provisioning exchange
-    // -------------------------------------------------------------------------------------------
 
-    /**
-     * Runs the whole exchange against one board: connect, discover, negotiate MTU, read the UID,
-     * write the three credential fields, then commit.
-     *
-     * <p>Takes every field up front so no user input is needed once the link is open. An idle GATT
-     * connection held while someone types a Wi-Fi password is the most common way this flow drops.
-     */
     @Override
     public void provision(@NonNull DiscoveredBoard board,
                           @NonNull String ssid,
@@ -267,9 +241,6 @@ public final class BleProvisioner implements Provisioner {
         public void onMtuChanged(BluetoothGatt g, int mtu, int status) {
             main.post(() -> {
                 if (status != BluetoothGatt.GATT_SUCCESS) {
-                    // Not fatal. Android falls back to prepared writes and read-blob for values
-                    // past the default 20-byte payload, so the exchange still completes - it just
-                    // takes more round trips.
                     ScopedLogger.error("MTU request refused; continuing at the default size.");
                 }
                 completeOperation(true);
@@ -323,15 +294,10 @@ public final class BleProvisioner implements Provisioner {
                 if (PairingContract.STATUS_RECEIVED.equals(reported)) {
                     succeed();
                 }
-                // STATUS_WAITING is the board's resting state and arrives on subscribing.
             });
         }
     };
 
-    /**
-     * Queues the whole exchange in the order the board expects, with {@code commit} last so a
-     * partially delivered set is never acted on.
-     */
     private void queueExchange() {
         this.enqueue(this::requestMtu);
         this.enqueue(this::subscribeToStatus);
@@ -373,12 +339,6 @@ public final class BleProvisioner implements Provisioner {
         return this.gatt != null && this.gatt.requestMtu(PairingContract.MTU_REQUEST);
     }
 
-    /**
-     * Turns on notifications for the status characteristic.
-     *
-     * <p>Both halves are required: {@code setCharacteristicNotification} only tells the local
-     * stack to deliver them, while the CCCD write is what actually asks the board to send any.
-     */
     private boolean subscribeToStatus() {
         BluetoothGattCharacteristic status = this.characteristic(PairingContract.STATUS_UUID);
         if (this.gatt == null || status == null) {
@@ -401,8 +361,6 @@ public final class BleProvisioner implements Provisioner {
         return this.gatt != null && deviceUid != null && this.gatt.readCharacteristic(deviceUid);
     }
 
-    // WRITE_TYPE_DEFAULT is write-with-response, which is what makes onCharacteristicWrite fire
-    // and therefore what the queue is sequenced on.
     private boolean writeText(@NonNull UUID uuid, @NonNull String value) {
         BluetoothGattCharacteristic characteristic = this.characteristic(uuid);
         if (this.gatt == null || characteristic == null) {
@@ -440,14 +398,6 @@ public final class BleProvisioner implements Provisioner {
         return true;
     }
 
-    /**
-     * Handles the link going away.
-     *
-     * <p>A disconnect straight after {@code commit} is the expected ending, not a fault: the board
-     * saves the credentials, drops BLE and switches its radio over to Wi-Fi, and its RECEIVED
-     * notification can easily lose the race with that. Treating it as acceptance costs nothing,
-     * because whether the credentials actually work is decided by Firebase either way.
-     */
     private void onLinkDropped() {
         if (this.finished) {
             return;
@@ -485,8 +435,6 @@ public final class BleProvisioner implements Provisioner {
         }
     }
 
-    // For failures raised before an exchange is under way, where there is no connection to tear
-    // down and no in-flight attempt for the finished latch to protect.
     private void report(@NonNull PairingFailure failure) {
         Listener current = this.listener;
         if (current != null) {
@@ -513,14 +461,11 @@ public final class BleProvisioner implements Provisioner {
         this.operationInFlight = false;
         if (this.gatt != null) {
             this.gatt.disconnect();
-            // close() is what releases the underlying client interface. Skipping it leaks a GATT
-            // client, and Android allows only a handful before every later connect fails outright.
             this.gatt.close();
             this.gatt = null;
         }
     }
 
-    /** Stops any scan, closes any connection and releases the listener. Safe to call twice. */
     @Override
     public void close() {
         this.stopScan();

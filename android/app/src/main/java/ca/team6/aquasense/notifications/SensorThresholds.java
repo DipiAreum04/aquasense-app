@@ -15,10 +15,6 @@ public final class SensorThresholds {
     public static final double WATER_LEVEL_DETECTED = 1.0;
     public static final double WATER_LEVEL_LOW = 0.0;
 
-    /**
-     * How long one condition stays quiet after alerting. Held per sensor <em>and</em> status, so a
-     * warning that turns critical still gets through while the same reading repeating does not.
-     */
     public static final long NOTIFICATION_COOLDOWN_MS = 15 * 60 * 1000L;
 
     public static final String HUB_DEDUPE_KEY = "__hub__";
@@ -29,24 +25,8 @@ public final class SensorThresholds {
 
     private SensorThresholds() {}
 
-    /**
-     * How far one sensor of one aquarium has to move between samples to count as a spike.
-     *
-     * <p>Read from {@code /{uid}/aquariums/{id}/spike_deltas/{sensor}}. The constants below are a
-     * fallback for an aquarium that has no delta stored, not the normal source: whenever the
-     * database has a value for that aquarium and sensor, that value wins.
-     *
-     * <p>Both callers hold an {@link Aquarium} kept current by a live listener on
-     * {@code /{uid}/aquariums}, so a delta edited in the database takes effect on the next reading
-     * without restarting the app.
-     *
-     * @return the delta, or {@link Double#NaN} when this sensor is not a ranged measurement and so
-     *     cannot spike at all.
-     */
     public static double resolveSpikeDelta(@Nullable Aquarium aquarium, @NonNull String sensorId) {
         Double configured = aquarium == null ? null : aquarium.spikeDeltaFor(sensorId);
-        // The schema requires a positive delta. A zero or negative one that reached the database
-        // anyway would make every reading a spike, so it is treated as unset rather than obeyed.
         if (configured != null && configured > 0d) {
             return configured;
         }

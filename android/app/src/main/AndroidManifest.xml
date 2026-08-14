@@ -5,15 +5,9 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!--
-      specialUse, not dataSync: from Android 15 a dataSync foreground service may only run about
-      six hours per day before the system stops it, and an aquarium has to be watched continuously.
-    -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <!-- Re-arms monitoring after a reboot, which otherwise silently ends alerting. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- Permissions for BLE pairing -->
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation" />

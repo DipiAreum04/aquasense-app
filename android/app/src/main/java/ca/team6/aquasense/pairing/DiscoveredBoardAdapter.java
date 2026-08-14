@@ -17,20 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ca.team6.aquasense.R;
 
-/**
- * Renders the hubs a bluetooth scan has discovered.
- */
 public class DiscoveredBoardAdapter extends ListAdapter<DiscoveredBoard, DiscoveredBoardAdapter.BoardViewHolder> {
 
     public enum RowState {
 
-        IDLE,           // Discovered, not chosen
+        IDLE,
 
-        SELECTED,       // The user selected this hub
+        SELECTED,
 
-        BUSY,           // The app is sending it credentials
+        BUSY,
 
-        DONE            // The board received the credentials and came online   
+        DONE
     }
 
     public interface OnBoardClickListener {
@@ -48,15 +45,12 @@ public class DiscoveredBoardAdapter extends ListAdapter<DiscoveredBoard, Discove
                 @Override
                 public boolean areContentsTheSame(@NonNull DiscoveredBoard oldBoard,
                                                   @NonNull DiscoveredBoard newBoard) {
-                    // Compared on the banding rather than the raw RSSI, so the row is only redrawn
-                    // when the meter would actually look different.
                     return oldBoard.getSignalBars() == newBoard.getSignalBars();
                 }
             };
 
     private final OnBoardClickListener clickListener;
 
-    // The picked hub's address, or null while the user is still choosing.
     @Nullable
     private String selectedAddress;
     @NonNull
@@ -170,8 +164,6 @@ public class DiscoveredBoardAdapter extends ListAdapter<DiscoveredBoard, Discove
         }
 
         private void showSignal(@NonNull DiscoveredBoard board) {
-            // getSignalBars is 0..3, and an entirely unlit meter would read as "no signal" for a
-            // board the scan is currently hearing, so the weakest band still lights one bar.
             int lit = board.getSignalBars() + 1;
 
             for (int index = 0; index < this.signalBars.length; index++) {

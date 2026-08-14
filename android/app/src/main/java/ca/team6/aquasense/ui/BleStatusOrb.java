@@ -20,10 +20,6 @@ import java.util.List;
 
 import ca.team6.aquasense.R;
 
-/**
- * The Bluetooth status dynamic icon at the top of the pairing screen: a tinted icon, a soft halo and three
- * rings that sweep outwards while the radio is busy.
- */
 public class BleStatusOrb extends FrameLayout {
 
     public enum State {
@@ -32,13 +28,10 @@ public class BleStatusOrb extends FrameLayout {
 
         SCANNING(R.drawable.bluetooth_searching_24px, R.drawable.bg_pairing_orb, R.color.pairing_orb_icon, true, true),
 
-        // A GATT link is open and the credentials are going across
         CONNECTING(R.drawable.bluetooth_connected_24px, R.drawable.bg_pairing_orb, R.color.pairing_orb_icon, true, true),
 
-        // The board has disconnected its Bluetooth to connect to Wi-Fi, so the icon switches to Wi-Fi
         AWAITING(R.drawable.wifi_24px, R.drawable.bg_pairing_orb, R.color.pairing_orb_icon, true, true),
 
-        // The board published telemetry, so the pairing is successful.
         SUCCESS(R.drawable.wifi_24px, R.drawable.bg_pairing_orb_success, R.color.pairing_success_stroke, false, false),
 
         BLOCKED(R.drawable.bluetooth_disabled_24px, R.drawable.bg_pairing_orb_error, R.color.pairing_error_stroke, false, false);
@@ -64,13 +57,10 @@ public class BleStatusOrb extends FrameLayout {
         }
     }
 
-    // One full sweep duration, from the icon circle's edge out to the faded rim.
     private static final long SWEEP_DURATION_MS = 1_800L;
 
-    // Three rings evenly spaced across one sweep, so a new one leaves as the last fades.
     private static final long SWEEP_STAGGER_MS = SWEEP_DURATION_MS / 3;
 
-    // How far a ring travels
     private static final float SWEEP_MAX_SCALE = 1.75f;
 
     private final List<View> rings = new ArrayList<>(3);
@@ -110,7 +100,6 @@ public class BleStatusOrb extends FrameLayout {
         return this.state;
     }
 
-    /** Repeated calls with the same state are ignored, so a re-render cannot restart the sweep. */
     public void setState(@NonNull State next) {
         if (this.state == next) {
             return;

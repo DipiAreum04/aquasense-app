@@ -6,15 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-/**
- * Covers how a dashboard card grades a jump between samples: the spike rule itself, and what
- * status a spike shows as once the band has had its say.
- */
 public class SpikeStatusTest {
 
     private static final double DELTA = 2.0;
 
-    /** Consecutive samples, one second apart, which is what a live board produces. */
     private static boolean gradeNext(SpikeTracker tracker, double value, long timestamp) {
         return tracker.grade(value, timestamp, DELTA);
     }
@@ -48,10 +43,6 @@ public class SpikeStatusTest {
         assertTrue(gradeNext(tracker, 22.0, 2L));
     }
 
-    /**
-     * The dashboard re-applies a reading it already holds whenever any other sensor publishes. The
-     * verdict has to survive that, or the spike clears a moment after it is raised.
-     */
     @Test
     public void reapplyingTheSameSampleKeepsTheVerdict() {
         SpikeTracker tracker = new SpikeTracker();
@@ -68,7 +59,6 @@ public class SpikeStatusTest {
         gradeNext(tracker, 25.0, 1L);
         assertTrue(gradeNext(tracker, 27.0, 2L));
 
-        // Settled next to the spiked value, so the card goes back to whatever the band says.
         assertFalse(gradeNext(tracker, 27.5, 3L));
     }
 
@@ -98,7 +88,6 @@ public class SpikeStatusTest {
         assertFalse(gradeNext(tracker, 40.0, 2L));
     }
 
-    /** The one warning a reading that is in range can earn, and the only case a jump changes. */
     @Test
     public void aSpikeThatLandsInRangeShowsAsWarning() {
         assertEquals(
@@ -130,10 +119,6 @@ public class SpikeStatusTest {
                 AquariumSensor.gradedStatus(false, SensorStatus.CRITICAL));
     }
 
-    /**
-     * The rule end to end, over the readings a card actually sees: a jump inside the safe band
-     * raises a warning, and the next reading that does not jump puts the card back to normal.
-     */
     @Test
     public void aSpikeWarnsForOneReadingAndThenClears() {
         SpikeTracker tracker = new SpikeTracker();
@@ -144,7 +129,6 @@ public class SpikeStatusTest {
         assertEquals(SensorStatus.NORMAL, statusOf(tracker, 27.6, 3L, SensorStatus.NORMAL));
     }
 
-    /** A jump out of the safe band is that band's business, and clears with it rather than early. */
     @Test
     public void aJumpOutOfRangeHoldsItsBandForAsLongAsTheReadingIsOutOfRange() {
         SpikeTracker tracker = new SpikeTracker();
@@ -152,11 +136,9 @@ public class SpikeStatusTest {
 
         assertEquals(SensorStatus.CRITICAL, statusOf(tracker, 31.0, 2L, SensorStatus.CRITICAL));
 
-        // Settled well inside critical, so there is no jump left, but the band has not moved.
         assertEquals(SensorStatus.CRITICAL, statusOf(tracker, 31.1, 3L, SensorStatus.CRITICAL));
     }
 
-    /** Grades one reading the way a card does: the tracker's verdict settled against the band. */
     private static SensorStatus statusOf(
             SpikeTracker tracker, double value, long timestamp, SensorStatus banded) {
         return AquariumSensor.gradedStatus(gradeNext(tracker, value, timestamp), banded);

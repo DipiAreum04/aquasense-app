@@ -63,7 +63,6 @@
                 android:text="@string/edit_profile_email"
                 android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
 
-            <!-- Read-only since the email is the firebase auth identity -->
             <TextView
                 android:id="@+id/tvEditProfileEmail"
                 android:layout_width="match_parent"
@@ -86,6 +85,7 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnSaveProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

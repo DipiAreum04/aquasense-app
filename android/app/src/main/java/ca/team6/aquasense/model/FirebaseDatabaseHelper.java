@@ -19,9 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The single entry point for every read and write against the Realtime Database.
- */
 public final class FirebaseDatabaseHelper {
 
     public interface DbCallback {
@@ -30,7 +27,6 @@ public final class FirebaseDatabaseHelper {
         void onError(@Nullable Exception exception);
     }
 
-    /** Releases a live subscription. Safe to call more than once. */
     public interface ListenerHandle {
         void remove();
     }
@@ -48,30 +44,19 @@ public final class FirebaseDatabaseHelper {
     }
 
     public interface BucketsListener {
-        /**
-         * A period's buckets, oldest first. Empty when the board has committed none. Delivered
-         * again on every change, so a screen holding one of these redraws rather than refetches.
-         */
         void onBuckets(@NonNull List<SensorReading> buckets);
 
         void onError(@NonNull DatabaseError error);
     }
 
-    /** One-shot read of a period node as the JSON the database stores it as; see {@link #readPeriodJson}. */
     public interface PeriodJsonListener {
         void onJson(@NonNull String json);
 
-        /**
-         * The node does not exist. In Realtime Database that is the same state as an empty one - a
-         * node with no children is not stored - so this covers both a board that has committed
-         * nothing here and a window that has already been cleared.
-         */
         void onEmpty();
 
         void onError(@Nullable Exception exception);
     }
 
-    /** Indent of the JSON {@link #readPeriodJson} writes, which is meant to be read by a person. */
     private static final int JSON_INDENT_SPACES = 2;
 
     private static volatile FirebaseDatabaseHelper instance;
@@ -93,8 +78,6 @@ public final class FirebaseDatabaseHelper {
         return instance;
     }
 
-    // Writes /{uid}/account/{name,email}. Both keys are required by the schema, so callers that
-    // have no display name should pass an empty string rather than omitting it.
     public void writeAccount(@NonNull String uid,
                              @NonNull String name,
                              @NonNull String email,
@@ -108,7 +91,6 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Writes /{uid}/account/name without touching the sibling email key.
     public void updateAccountName(@NonNull String uid,
                                   @NonNull String name,
                                   @NonNull DbCallback callback) {
@@ -118,25 +100,12 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // TODO: Remove this and add a new method to allocate received deviceUID as the aquarium key
-    // Unused while AquariumRepository hardcodes the mock board's UID as the key; kept because an
-    // aquarium may yet need a key of its own before a board is paired to it.
     @SuppressWarnings("unused")
     @Nullable
     public String newAquariumId(@NonNull String uid) {
         return aquariumsRef(uid).push().getKey();
     }
 
-    /**
-     * Writes /{uid}/aquariums/{aquariumId}, whose key is the paired board's UID.
-     * Merges rather than replaces,so even if the user changes the aquarium name,
-     * the thresholds and spike deltas will still be there.
-     *
-     * <p>The identity and the grading go in one update rather than a create followed by a
-     * configure. Both halves are what the add-aquarium form collected, and a claim that half
-     * succeeded would leave a board publishing into a node the rules accept but the dashboard
-     * grades against a fallback template the user never chose.
-     */
     public void writeAquarium(@NonNull String uid,
                               @NonNull String aquariumId,
                               @NonNull String name,
@@ -155,13 +124,6 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    /**
-     * Replaces the bands and spike deltas of the sensors named, and only those sensors.
-     *
-     * <p>Both maps are keyed by sensor ID and either may be empty; a sensor absent from a map keeps
-     * whatever it already has. The two go in one update so a sensor cannot end up graded against a
-     * new band while still spiking against its old delta.
-     */
     public void writeSensorThresholds(@NonNull String uid,
                                       @NonNull String aquariumId,
                                       @NonNull Map<String, ThresholdBand> thresholds,
@@ -170,7 +132,6 @@ public final class FirebaseDatabaseHelper {
         Map<String, Object> updates = new HashMap<>();
         addSensorPaths(updates, thresholds, spikeDeltas);
         if (updates.isEmpty()) {
-            // Nothing to write is a success, and an empty updateChildren is a no-op anyway.
             callback.onSuccess();
             return;
         }
@@ -181,14 +142,6 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    /**
-     * Adds one entry per band and per delta to an update keyed from the aquarium node.
-     *
-     * <p>The key is the deep path {@code thresholds/{sensor}} rather than {@code thresholds}, which
-     * is what keeps editing one sensor from wiping the rest: Firebase merges an update per path
-     * segment, so addressing the sensor leaves its siblings untouched, where addressing their
-     * shared parent would replace all of them with whatever this one map happens to hold.
-     */
     private static void addSensorPaths(@NonNull Map<String, Object> updates,
                                        @NonNull Map<String, ThresholdBand> thresholds,
                                        @NonNull Map<String, Double> spikeDeltas) {
@@ -202,8 +155,6 @@ public final class FirebaseDatabaseHelper {
         }
     }
 
-    // Turns one band into the four-key node the schema stores it as. All four go in together,
-    // since parseThresholds drops any band that is missing one of them.
     @NonNull
     private static Map<String, Object> boundsOf(@NonNull ThresholdBand band) {
         Map<String, Object> bounds = new HashMap<>();
@@ -214,15 +165,7 @@ public final class FirebaseDatabaseHelper {
         return bounds;
     }
 
-    // Removes an aquarium along with the telemetry recorded under it. Both paths go in one
-    // update so the aquarium can never vanish from the picker while its telemetry subtree
-    // survives with no owner to ever delete it.
-    
-    // This is also how a hub is unpaired. The telemetry rules admit a board only while its
-    // aquarium node exists, so dropping that node revokes the board, and the firmware reads a
-    // run of refusals as its cue to erase its stored pairing and advertise over BLE again. A hub
-    // whose aquarium is deleted must be left re-pairable: its own UID is the aquarium key, so
-    // nothing else can hand it back.
+
     public void deleteAquarium(@NonNull String uid,
                                @NonNull String aquariumId,
                                @NonNull DbCallback callback) {
@@ -235,16 +178,12 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Removes the whole /{uid} subtree: account, aquariums and telemetry.
     public void deleteUserNode(@NonNull String uid, @NonNull DbCallback callback) {
         userRef(uid)
                 .removeValue()
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    // Watches /{uid}/aquariums. Each child key is an aquarium ID and its value is the aquarium
-    // record (name, water type and optional bands). The dashboard needs this before it can watch
-    // telemetry, since the ID is part of every telemetry path.
     @NonNull
     public ListenerHandle observeAquariums(@NonNull String uid,
                                            @NonNull AquariumsListener listener) {
@@ -261,10 +200,6 @@ public final class FirebaseDatabaseHelper {
         });
     }
 
-    /**
-     * Parses a whole {@code /{uid}/aquariums} snapshot. Exposed so background workers that already
-     * hold the snapshot can reuse the same parsing rules instead of re-deriving the tree shape.
-     */
     @NonNull
     public static List<Aquarium> parseAquariums(@NonNull DataSnapshot aquariumsSnapshot) {
         List<Aquarium> aquariums = new ArrayList<>();
@@ -277,14 +212,6 @@ public final class FirebaseDatabaseHelper {
         return Collections.unmodifiableList(aquariums);
     }
 
-    /**
-     * Watches a single sensor's latest sample, at
-     * /{uid}/telemetry/{aquariumId}/{sensorId}/last_instant.
-     *
-     * <p>Subscribe once per sensor rather than once on their shared parent. The parent also holds
-     * six periods of a hundred buckets each, so a listener there syncs and caches hundreds of KB
-     * to reach four numbers, and re-fires every time a bucket closes.
-     */
     @NonNull
     public ListenerHandle observeLastInstant(@NonNull String uid,
                                              @NonNull String aquariumId,
@@ -307,16 +234,6 @@ public final class FirebaseDatabaseHelper {
         });
     }
 
-    /**
-     * Watches one period node - /{uid}/telemetry/{aquariumId}/{sensorId}/{period} - and reports its
-     * buckets in chronological order, again on every change.
-     *
-     * <p>This is the payload {@link #observeLastInstant} is deliberately shaped to avoid: a period
-     * is a hundred buckets, and watching one means being woken every time the board closes another.
-     * That is the cost of a graph that follows the board rather than showing the moment it was
-     * opened, and it is only paid while a screen is actually plotting the period - hence the handle,
-     * which the caller is expected to release the moment it plots something else.
-     */
     @NonNull
     public ListenerHandle observePeriod(@NonNull String uid,
                                         @NonNull String aquariumId,
@@ -336,19 +253,6 @@ public final class FirebaseDatabaseHelper {
         });
     }
 
-    /**
-     * Reads one period node once and hands it back as JSON text, for saving a copy of it.
-     *
-     * <p>Unparsed, deliberately. {@link #observePeriod} unrolls the ring buffer into the readings a
-     * graph is drawn from, which is a reading of the node rather than the node; a copy taken off
-     * the database should be what the database holds - the cursor, the slots, and whichever of them
-     * the board has not come back round to yet - so that it can be compared against the tree it
-     * came out of.
-     *
-     * <p>A single-value read rather than {@code get()}, so a screen already watching this node is
-     * served from the copy that subscription keeps in sync instead of fetching the hundred buckets
-     * a second time.
-     */
     public void readPeriodJson(@NonNull String uid,
                                @NonNull String aquariumId,
                                @NonNull String sensorId,
@@ -379,13 +283,6 @@ public final class FirebaseDatabaseHelper {
                 });
     }
 
-    /**
-     * Removes one period node whole: its cursor and all hundred of its buckets.
-     *
-     * <p>Nothing else goes with it. A period is one of six windows a sensor is recorded over and
-     * they are written independently, so clearing the hour leaves the day, and the sensor's
-     * {@code last_instant} - which is not under this node - keeps reporting either way.
-     */
     public void deletePeriod(@NonNull String uid,
                              @NonNull String aquariumId,
                              @NonNull String sensorId,
@@ -396,12 +293,6 @@ public final class FirebaseDatabaseHelper {
                 .addOnCompleteListener(task -> report(task.isSuccessful(), task.getException(), callback));
     }
 
-    /**
-     * Renders a snapshot as indented JSON text.
-     *
-     * <p>Indented because these are written to a file a person opens: a period is a hundred buckets
-     * of two fields each, and on one line that is unreadable.
-     */
     @NonNull
     private static String toJsonText(@NonNull DataSnapshot snapshot) throws JSONException {
         Object json = toJson(snapshot);
@@ -410,14 +301,6 @@ public final class FirebaseDatabaseHelper {
                 : String.valueOf(json);
     }
 
-    /**
-     * Rebuilds a snapshot as JSON, keys and all.
-     *
-     * <p>Walked child by child rather than handed {@code snapshot.getValue()} to a serialiser: that
-     * returns whatever Java types the values happened to arrive as, and turns any node whose keys
-     * are 0, 1, 2… into a List with nulls in the holes. Walking the snapshot writes the tree the
-     * database actually stores.
-     */
     @NonNull
     private static Object toJson(@NonNull DataSnapshot snapshot) throws JSONException {
         if (!snapshot.hasChildren()) {
@@ -435,20 +318,10 @@ public final class FirebaseDatabaseHelper {
         return object;
     }
 
-    /**
-     * Unrolls a period's ring buffer into chronological order.
-     *
-     * <p>{@code index} names the slot holding the newest bucket, so the walk runs backwards from
-     * there and reverses at the end. It stops on the first slot the ring has not reached yet, and
-     * on one whose timestamp is newer than the bucket ahead of it: a board that restarted its
-     * cursor leaves later readings sitting in slots the walk is about to call older, and those are
-     * stale rather than history.
-     */
     @NonNull
     private static List<SensorReading> parsePeriod(@NonNull DataSnapshot periodSnapshot) {
         Integer index = periodSnapshot.child(DatabaseSchema.INDEX_KEY).getValue(Integer.class);
         if (index == null) {
-            // No cursor means nothing has ever been committed here, which is not a malformed node.
             return Collections.emptyList();
         }
 
@@ -471,8 +344,6 @@ public final class FirebaseDatabaseHelper {
         return Collections.unmodifiableList(newestFirst);
     }
 
-    // Reads one /{uid}/aquariums/{aquariumId} entry. Name and water type are required by the
-    // schema, so an entry missing either is skipped rather than surfaced half-built.
     @Nullable
     private static Aquarium parseAquarium(@NonNull DataSnapshot snapshot) {
         String id = snapshot.getKey();
@@ -490,9 +361,6 @@ public final class FirebaseDatabaseHelper {
                 parseSpikeDeltas(snapshot.child(DatabaseSchema.SPIKE_DELTAS_KEY)));
     }
 
-    // Reads the optional thresholds map, keyed by sensor ID. An absent node yields an empty map,
-    // which is indistinguishable from an empty one in Realtime Database: a node with no children
-    // does not exist, so "no bands configured" and "thresholds key missing" are the same state.
     @NonNull
     private static Map<String, ThresholdBand> parseThresholds(@NonNull DataSnapshot snapshot) {
         Map<String, ThresholdBand> bands = new LinkedHashMap<>();
@@ -502,8 +370,6 @@ public final class FirebaseDatabaseHelper {
             Double safeLow = sensorSnapshot.child(DatabaseSchema.SAFE_LOW_KEY).getValue(Double.class);
             Double safeHigh = sensorSnapshot.child(DatabaseSchema.SAFE_HIGH_KEY).getValue(Double.class);
             Double warnHigh = sensorSnapshot.child(DatabaseSchema.WARN_HIGH_KEY).getValue(Double.class);
-            // The schema requires all four together, so a partial band is dropped whole rather
-            // than defaulted, which would silently classify readings against a made-up range.
             if (sensorId == null || warnLow == null || safeLow == null
                     || safeHigh == null || warnHigh == null) {
                 ScopedLogger.error("Incomplete threshold band at " + sensorSnapshot.getRef());
@@ -533,9 +399,6 @@ public final class FirebaseDatabaseHelper {
         return Collections.unmodifiableMap(deltas);
     }
 
-    // Reads {timestamp, value}, the shape both last_instant and every bucket in a period share.
-    // Returns null when the node is absent or malformed; a partially written node is treated as no
-    // reading rather than a zero one.
     @Nullable
     private static SensorReading parseSample(@NonNull DataSnapshot sampleSnapshot) {
         if (!sampleSnapshot.exists()) {
@@ -569,7 +432,6 @@ public final class FirebaseDatabaseHelper {
 
         @Override
         public void remove() {
-            // Idempotent: a screen may release its handles from both onStop() and onDestroyView().
             if (removed) {
                 return;
             }
@@ -578,7 +440,6 @@ public final class FirebaseDatabaseHelper {
         }
     }
 
-    // The UID is the root key, so every path starts here.
     @NonNull
     private DatabaseReference userRef(@NonNull String uid) {
         return database.getReference().child(uid);
@@ -599,10 +460,6 @@ public final class FirebaseDatabaseHelper {
         return userRef(uid).child(DatabaseSchema.TELEMETRY_KEY).child(aquariumId);
     }
 
-    /**
-     * One window of one sensor's history. The three ways it is reached - watched, read once,
-     * removed - all come through here, so a period is one path written in one place.
-     */
     @NonNull
     private DatabaseReference periodRef(@NonNull String uid,
                                         @NonNull String aquariumId,
