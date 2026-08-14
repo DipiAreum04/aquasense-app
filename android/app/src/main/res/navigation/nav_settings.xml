@@ -88,7 +88,7 @@
         android:id="@+id/accountsBackupFragment"
         android:name="ca.team6.aquasense.settings.AccountsBackupFragment"
         tools:layout="@layout/fragment_accounts_backup"
-        android:label="Accounts &amp; Backup">
+        android:label="@string/account_settings">
         <action
             android:id="@+id/action_accounts_to_editProfile"
             app:destination="@id/editProfileFragment" />

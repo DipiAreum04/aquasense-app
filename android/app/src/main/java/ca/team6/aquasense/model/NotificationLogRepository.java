@@ -8,9 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.os.Looper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.Nullable;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,26 +24,32 @@ public class NotificationLogRepository {
     private static final String KEY_NOTIFICATION_LOG = "notificationLog";
     private static final String KEY_NOTIFICATION_LOG_MIGRATED = "notificationLogMigratedToLocalStore";
     private static final String DATABASE_NAME = "notification_history.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLE = "notification_history";
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
     private static final Set<HistoryObserver> OBSERVERS = new CopyOnWriteArraySet<>();
 
     private final SharedPreferenceHelper prefs;
     private final LocalStore store;
+    @Nullable
+    private final String userId;
 
     public NotificationLogRepository(Context context) {
         Context appContext = context.getApplicationContext();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        userId = user != null ? user.getUid() : null;
         prefs = SharedPreferenceHelper.getInstance(appContext);
         store = new LocalStore(appContext);
-        migrateLegacyHistory();
+        discardUnscopedLegacyHistory();
     }
 
     public List<NotificationLogEntry> loadPage(
             int page, int pageSize, String aquariumId, SensorType sensorType) {
+        if (userId == null) return new ArrayList<>();
+
         int safePage = Math.max(0, page);
         int safePageSize = Math.max(1, pageSize);
-        Selection selection = Selection.forFilters(aquariumId, sensorType);
+        Selection selection = Selection.forFilters(userId, aquariumId, sensorType);
         List<NotificationLogEntry> entries = new ArrayList<>();
 
         try (Cursor cursor = store.getReadableDatabase().query(
@@ -71,7 +78,9 @@ public class NotificationLogRepository {
     }
 
     public long countEntries(String aquariumId, SensorType sensorType) {
-        Selection selection = Selection.forFilters(aquariumId, sensorType);
+        if (userId == null) return 0;
+
+        Selection selection = Selection.forFilters(userId, aquariumId, sensorType);
         try (Cursor cursor = store.getReadableDatabase().query(
                 TABLE, new String[]{"COUNT(*)"}, selection.clause, selection.args,
                 null, null, null)) {
@@ -80,18 +89,23 @@ public class NotificationLogRepository {
     }
 
     public void addEntry(NotificationLogEntry entry) {
-        store.getWritableDatabase().insertOrThrow(TABLE, null, valuesFor(entry));
+        if (userId == null) return;
+
+        store.getWritableDatabase().insertOrThrow(TABLE, null, valuesFor(userId, entry));
         notifyObservers();
     }
 
     public void deleteEntry(long localId) {
-        if (localId < 0) return;
+        if (localId < 0 || userId == null) return;
         store.getWritableDatabase().delete(
-                TABLE, "id = ?", new String[]{Long.toString(localId)});
+                TABLE,
+                "id = ? AND user_id = ?",
+                new String[]{Long.toString(localId), userId});
     }
 
     public void clearAll() {
-        store.getWritableDatabase().delete(TABLE, null, null);
+        if (userId == null) return;
+        store.getWritableDatabase().delete(TABLE, "user_id = ?", new String[]{userId});
     }
 
     public void addObserver(HistoryObserver observer) {
@@ -114,47 +128,16 @@ public class NotificationLogRepository {
         void onHistoryChanged();
     }
 
-    private void migrateLegacyHistory() {
+    private void discardUnscopedLegacyHistory() {
         if (prefs == null || prefs.getBoolean(KEY_NOTIFICATION_LOG_MIGRATED, false)) return;
 
-        String json = prefs.getString(KEY_NOTIFICATION_LOG, "");
-        SQLiteDatabase db = store.getWritableDatabase();
-        boolean migrationFinished = false;
-        db.beginTransaction();
-        try {
-            if (!json.isEmpty()) {
-                JSONArray array = new JSONArray(json);
-                for (int i = 0; i < array.length(); i++) {
-                    try {
-                        JSONObject obj = array.getJSONObject(i);
-                        String aquariumId = obj.optString(
-                                "aquariumId", obj.optString("aquariumHardwareAddress", ""));
-                        NotificationLogEntry entry = new NotificationLogEntry(
-                                aquariumId,
-                                SensorType.valueOf(obj.getString("sensorType")),
-                                NotificationTrigger.valueOf(obj.getString("trigger")),
-                                SensorStatus.valueOf(obj.getString("severity")),
-                                obj.getLong("timestamp"));
-                        db.insertOrThrow(TABLE, null, valuesFor(entry));
-                    } catch (JSONException | IllegalArgumentException ignored) {
-                    }
-                }
-            }
-            db.setTransactionSuccessful();
-            migrationFinished = true;
-        } catch (JSONException ignored) {
-            migrationFinished = true;
-        } finally {
-            db.endTransaction();
-        }
-        if (migrationFinished) {
-            prefs.setBooleanSync(KEY_NOTIFICATION_LOG_MIGRATED, true);
-            prefs.removeSync(KEY_NOTIFICATION_LOG);
-        }
+        prefs.removeSync(KEY_NOTIFICATION_LOG);
+        prefs.setBooleanSync(KEY_NOTIFICATION_LOG_MIGRATED, true);
     }
 
-    private static ContentValues valuesFor(NotificationLogEntry entry) {
+    private static ContentValues valuesFor(String userId, NotificationLogEntry entry) {
         ContentValues values = new ContentValues();
+        values.put("user_id", userId);
         values.put("aquarium_id", entry.aquariumId);
         values.put("sensor_type", entry.sensorType.name());
         values.put("trigger", entry.trigger.name());
@@ -172,9 +155,11 @@ public class NotificationLogRepository {
             this.args = args;
         }
 
-        static Selection forFilters(String aquariumId, SensorType sensorType) {
+        static Selection forFilters(String userId, String aquariumId, SensorType sensorType) {
             List<String> clauses = new ArrayList<>();
             List<String> args = new ArrayList<>();
+            clauses.add("user_id = ?");
+            args.add(userId);
             if (aquariumId != null) {
                 clauses.add("aquarium_id = ?");
                 args.add(aquariumId);
@@ -198,19 +183,31 @@ public class NotificationLogRepository {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + TABLE + " ("
                     + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "user_id TEXT NOT NULL,"
                     + "aquarium_id TEXT NOT NULL,"
                     + "sensor_type TEXT NOT NULL,"
                     + "trigger TEXT NOT NULL,"
                     + "severity TEXT NOT NULL,"
                     + "timestamp INTEGER NOT NULL)");
-            db.execSQL("CREATE INDEX notification_history_timestamp_idx ON " + TABLE
-                    + " (timestamp DESC)");
-            db.execSQL("CREATE INDEX notification_history_aquarium_sensor_idx ON " + TABLE
-                    + " (aquarium_id, sensor_type, timestamp DESC)");
+            createIndexes(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            if (oldVersion < 2) {
+                db.execSQL("ALTER TABLE " + TABLE + " ADD COLUMN user_id TEXT");
+                db.delete(TABLE, null, null);
+                db.execSQL("DROP INDEX IF EXISTS notification_history_timestamp_idx");
+                db.execSQL("DROP INDEX IF EXISTS notification_history_aquarium_sensor_idx");
+                createIndexes(db);
+            }
+        }
+
+        private static void createIndexes(SQLiteDatabase db) {
+            db.execSQL("CREATE INDEX notification_history_user_timestamp_idx ON " + TABLE
+                    + " (user_id, timestamp DESC)");
+            db.execSQL("CREATE INDEX notification_history_user_aquarium_sensor_idx ON " + TABLE
+                    + " (user_id, aquarium_id, sensor_type, timestamp DESC)");
         }
     }
 }
