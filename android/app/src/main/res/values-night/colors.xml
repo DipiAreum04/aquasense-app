@@ -19,8 +19,8 @@
     <color name="toolbar_gradient_start">#FF1a3940</color>
     <color name="toolbar_gradient_end">#FF4C4366</color>
 
-    <color name="app_gradient_bottom">#FF023843</color>
-    <color name="app_gradient_center">#FF021F2B</color>
+    <color name="app_gradient_bottom">#FF022026</color>
+    <color name="app_gradient_center">@color/background</color>
     <color name="app_gradient_top">@color/background</color>
     <color name="status_success">#FF81C784</color>
     <color name="settings_icon_bg">#4D64B5F6</color>
