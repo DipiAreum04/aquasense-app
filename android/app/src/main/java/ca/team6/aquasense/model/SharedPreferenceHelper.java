@@ -107,6 +107,14 @@ public class SharedPreferenceHelper {
         sharedPreferences.edit().putLong(key, value).apply();
     }
 
+    public float getFloat(String key, float defaultValue) {
+        return sharedPreferences.getFloat(key, defaultValue);
+    }
+
+    public void setFloat(String key, float value) {
+        sharedPreferences.edit().putFloat(key, value).apply();
+    }
+
     private void remove(String key) {
         sharedPreferences.edit().remove(key).apply();
     }
@@ -123,6 +131,8 @@ public class SharedPreferenceHelper {
             setString(key, (String) value);
         } else if (value instanceof Long) {
             setLong(key, (Long) value);
+        } else if (value instanceof Float) {
+            setFloat(key, (Float) value);
         }
     }
 

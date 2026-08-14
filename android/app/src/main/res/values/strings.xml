@@ -343,13 +343,57 @@
     <string name="calibration_intro">Tap a sensor name to view the calibration guide.</string>
     <string name="never_calibrated">Never calibrated</string>
     <string name="never">Never</string>
-    <string name="calibrate">Calibrated</string>
+    <string name="calibrate">Calibrate</string>
     <string name="calib_status_good">Good</string>
     <string name="calib_status_overdue">Overdue</string>
     <string name="calib_status_replace">Replace</string>
     <string name="calib_today">Today</string>
     <string name="calib_days_ago">%1$d days ago</string>
     <string name="calib_day_ago">%1$d day ago</string>
+
+    <!-- Calibration offsets: the correction the wizard works out and the app applies from then on -->
+    <string name="calib_row_offset">%1$s · %2$s</string>
+    <string name="calib_water_level_not_calibratable">Not calibratable — this probe only detects whether water reaches it, so there is no reading to correct.</string>
+    <string name="calib_offset_saved">Calibration saved. Readings are now corrected by %1$s.</string>
+    <string name="calib_offset_cleared">Calibration saved. No correction is being applied.</string>
+    <string name="calibration_no_aquarium">Select an aquarium before calibrating a sensor.</string>
+    <string name="calibration_sensor_unavailable">This sensor is not available for the selected aquarium.</string>
+    <string name="calibration_thresholds_required">Set this aquarium\'s normal range for the sensor before calibrating it.</string>
+
+    <!-- Operating-point calibration: the user names the value, the app measures the probe at it -->
+    <string name="calib_safe_range_label">Normal range</string>
+    <string name="calib_operating_point_hint">Operating point (%1$s)</string>
+    <string name="calib_operating_point_hint_plain">Operating point</string>
+    <string name="calib_operating_point_precision">Enter a number with at most one decimal place.</string>
+    <string name="calib_operating_point_out_of_range">Enter a value inside the normal range (%1$s).</string>
+    <!-- Stacked on the right of a calibration row: "Error" over the value. -->
+    <string name="calib_error_label">Error</string>
+    <string name="calib_percent_error">%1$s%%</string>
+    <string name="calib_last_calibrated">Last calibrated: %1$s</string>
+    <!-- Stands in for both the timestamp and the error percentage before a sensor is calibrated. -->
+    <string name="calib_value_none">—</string>
+    <string name="calib_cannot_be_calibrated">Cannot be calibrated</string>
+    <string name="calibration_start">Calibrate</string>
+    <string name="calibration_collecting">Keep everything still · %1$d samples · %2$ds left</string>
+    <string name="calibration_no_samples">The sensor did not report during the measurement. Check that it is connected, then try again.</string>
+    <string name="calibration_prepare_environment">Prepare a container of water at a value inside this aquarium\'s normal range, and confirm it with a reference instrument you trust. Pick a value the tank actually sits at: the correction is most accurate where it is measured.</string>
+    <string name="calibration_environment_ready">The water is steady at a value I have measured</string>
+    <string name="calibration_place_sensor">Put the AquaSense probe into the prepared water. Keep the sensing area fully submerged and away from the sides of the container.</string>
+    <string name="calibration_sensor_submerged">The sensing area is fully submerged</string>
+    <string name="calibration_sensor_connected">The sensor is connected and reporting</string>
+    <string name="calibration_ready_to_sample">Enter the value you brought the water to, keep everything still, and tap Calibrate. AquaSense averages every raw reading it receives over the next %1$d seconds and stores the difference as this sensor\'s correction.</string>
+    <string name="calibration_keep_still">I am ready to hold the probe and water still</string>
+    <string name="calibration_reference_note">A single correction is exact where it was taken and drifts either side of it, so calibrate at a value your aquarium normally holds.</string>
+    <string name="calib_live_reading_label">AquaSense is reading</string>
+    <string name="calib_live_reading_none">Not reporting</string>
+    <string name="calib_input_reference_temp">Reference temperature (%1$s)</string>
+    <string name="calib_input_reference_ph_7">Buffer\'s stated pH (e.g. 7.00)</string>
+    <string name="calib_input_reference_ph_4">Buffer\'s stated pH (e.g. 4.00)</string>
+    <string name="calib_input_reference_tds">Reference TDS value (ppm)</string>
+    <string name="calib_exit_title">Exit Calibration</string>
+    <string name="calib_exit_message">Are you sure you want to exit? Calibration is not done.</string>
+    <string name="calib_exit_confirm">Exit</string>
+    <string name="calib_exit_cancel">Cancel</string>
     <string name="got_it">Got it</string>
     <string name="guide_title_liquid">Water Level Sensor: Calibration Guide</string>
     <string name="guide_title_temp">Temperature Sensor: Calibration Guide</string>
@@ -359,6 +403,89 @@
     <string name="guide_temp">1. Place the sensor in a verified ice-water bath (0 °C / 32 °F).\n2. Wait 60 seconds for the reading to stabilise.\n3. Optionally repeat with a warm reference (e.g. 40 °C / 104 °F).\n4. Note any offset and adjust in your controller if needed.</string>
     <string name="guide_tds">1. Rinse the probe with distilled water.\n2. Submerge in a 0 ppm (DI) solution and wait 30 seconds for a near-zero reading.\n3. Rinse, then submerge in a known TDS calibration solution (e.g. 342 ppm or 1000 ppm).\n4. Wait for the reading to match the solution value, then rinse before returning to the tank.</string>
     <string name="guide_ph">1. Rinse the probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. The probe is ready.</string>
+
+    <!-- Water Level Sensor Steps -->
+    <string name="guide_liquid_step_1">In an appropriately sized glass or clear container, fill it halfway with water.</string>
+    <string name="check_liquid_container">I have an appropriately sized glass or clear container</string>
+    <string name="check_liquid_half_full">It is filled halfway with water</string>
+    <string name="guide_liquid_step_2">Ensure the water level sensor is plugged in.</string>
+    <string name="check_liquid_plugged">Water level sensor is plugged in</string>
+    <string name="guide_liquid_step_3">Place the water sensor on the side of the container and move it up and down from water level to no water level.</string>
+    <string name="check_liquid_position">Sensor is placed on the side of the container</string>
+    <string name="check_liquid_movement">I have moved it up and down from water level to no water level</string>
+    <string name="guide_liquid_step_4">Ensure the sensor\'s red light is flashing on the non-water level.</string>
+    <string name="check_liquid_light">The red light is flashing on the non-water level</string>
+
+    <!-- Temperature Sensor Steps -->
+    <string name="guide_temp_step_1">Ensure you have a reliable secondary temperature reference — a calibrated thermometer or digital temperature meter.</string>
+    <string name="check_temp_step_1_ref">I have a reliable secondary temperature reference</string>
+    <string name="guide_temp_step_2">Verify the AquaSense temperature sensor is correctly installed and operating with stable readings.</string>
+    <string name="check_temp_step_2_installed">AquaSense sensor is correctly installed</string>
+    <string name="check_temp_step_2_stable">Readings are stable</string>
+    <string name="guide_temp_step_3">Place both sensors in water at multiple temperature points (cold, room‑temperature, warm, hot). Confirm the AquaSense readings match the secondary reference at each point.</string>
+    <string name="check_temp_step_3_points">Tested at multiple temperature points</string>
+    <string name="check_temp_step_3_match">Readings match the secondary reference</string>
+    <string name="guide_temp_step_4">With both sensors still in the same water, compare the two. If they disagree, enter the temperature your reference is showing — AquaSense reads its own sensor and stores the difference.</string>
+    <string name="check_temp_step_4_recorded">Both sensors are in the same water and settled</string>
+
+    <!-- pH Sensor Steps -->
+    <string name="guide_ph_note">Note: The temperature sensor must be fully calibrated before beginning pH calibration.</string>
+    <string name="guide_ph_step_1">Gather required materials: pH test strips, 4.00 and 7.00 pH buffer solutions, distilled water, and the AquaSense temperature sensor.</string>
+    <string name="check_ph_step_1_strips">I have pH test strips</string>
+    <string name="check_ph_step_1_buffer_4">I have 4.00 pH buffer solution</string>
+    <string name="check_ph_step_1_buffer_7">I have 7.00 pH buffer solution</string>
+    <string name="check_ph_step_1_water">I have distilled water</string>
+    <string name="check_ph_step_1_temp">I have the AquaSense temperature sensor</string>
+    <string name="guide_ph_step_2">Prepare both buffer solutions according to the instructions on the packaging.</string>
+    <string name="check_ph_step_2_prepared">Both buffers are prepared correctly</string>
+    <string name="guide_ph_step_3">Verify buffer accuracy by testing each solution with two pH test strips.</string>
+    <string name="check_ph_step_3_verified">Buffer accuracy verified with test strips</string>
+    <string name="guide_ph_step_4">Ensure both the pH sensor and temperature sensor are connected and functioning.</string>
+    <string name="check_ph_step_4_ph">pH sensor is connected and functioning</string>
+    <string name="check_ph_step_4_temp">Temperature sensor is connected and functioning</string>
+    <string name="guide_ph_step_5">Clean the sensors with distilled water and wipe with a clean paper towel. (Ensure the pH sensor\'s glass bulb is not touched).</string>
+    <string name="check_ph_step_5_clean">Sensors cleaned with distilled water</string>
+    <string name="check_ph_step_5_wipe">Sensors wiped (glass bulb untouched)</string>
+    <string name="guide_ph_step_6">Place both sensors in the 7.00 pH buffer and observe the readings. The pH sensor should read a value matching the buffer’s stated pH.</string>
+    <string name="check_ph_step_6_in">Both sensors are in the 7.00 pH buffer</string>
+    <string name="check_ph_step_6_observed">Readings observed and stabilized</string>
+    <string name="guide_ph_step_7">If a deviation occurs, enter the pH the buffer is stated to be — AquaSense reads its own sensor and stores the difference.</string>
+    <string name="check_ph_step_7_recorded">The pH sensor is still in the 7.00 buffer</string>
+    <string name="guide_ph_step_8">Clean the sensors with distilled water again and wipe with a clean paper towel. (Do not touch the pH sensor\'s glass bulb).</string>
+    <string name="check_ph_step_8_clean">Sensors cleaned again with distilled water</string>
+    <string name="check_ph_step_8_wipe">Sensors wiped (glass bulb untouched)</string>
+    <string name="guide_ph_step_9">Place both sensors in the 4.00 pH buffer and observe the readings. The pH sensor should read a value matching the buffer’s stated pH.</string>
+    <string name="check_ph_step_9_in">Both sensors are in the 4.00 pH buffer</string>
+    <string name="check_ph_step_9_observed">Readings observed and stabilized</string>
+    <string name="guide_ph_step_10">If a deviation occurs, enter the pH the buffer is stated to be. The two buffers are averaged into a single correction.</string>
+    <string name="check_ph_step_10_recorded">The pH sensor is still in the 4.00 buffer</string>
+
+    <!-- TDS Sensor Steps -->
+    <string name="guide_tds_note">Note: The temperature sensor must be fully calibrated before beginning TDS calibration.</string>
+    <string name="guide_tds_step_1">Gather required materials: distilled water, a clean glass container (preferred because it attracts fewer particles), a TDS ppm calibration packet, and the AquaSense temperature sensor.</string>
+    <string name="check_tds_step_1_water">I have distilled water</string>
+    <string name="check_tds_step_1_glass">I have a clean glass container</string>
+    <string name="check_tds_step_1_packet">I have a TDS ppm calibration packet</string>
+    <string name="check_tds_step_1_temp">I have the AquaSense temperature sensor</string>
+    <string name="guide_tds_step_2">Prepare the calibration solution exactly as specified in the packet instructions.</string>
+    <string name="check_tds_step_2_prepared">Solution prepared exactly as specified</string>
+    <string name="guide_tds_step_3">Place the temperature sensor in the solution and check the TDS value corresponding to the measured temperature (as listed on the calibration packet). Record this reference value.</string>
+    <string name="check_tds_step_3_temp">Temperature sensor in solution</string>
+    <string name="check_tds_step_3_recorded">Reference value recorded</string>
+    <string name="guide_tds_step_4">Place the TDS sensor in the solution. If it disagrees with the reference value, enter that reference value — AquaSense reads its own sensor and stores the difference.</string>
+    <string name="check_tds_step_4_tds">TDS sensor in solution</string>
+    <string name="check_tds_step_4_recorded">Reading has settled</string>
+
+    <string name="action_next">Next</string>
+    <string name="action_done">Done</string>
+    <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Deviation Questions -->
+    <string name="question_temp_deviation">Does a deviation occur between the secondary reference and AquaSense sensor?</string>
+    <string name="question_ph7_deviation">Does a deviation occur between the 7.00 buffer and the sensor reading?</string>
+    <string name="question_ph4_deviation">Does a deviation occur between the 4.00 buffer and the sensor reading?</string>
+    <string name="question_tds_deviation">Does a deviation occur between the expected TDS value and the sensor reading?</string>
 
     <!-- Aquarium Management & Templates -->
     <string name="title_my_aquariums">My Aquariums</string>
@@ -567,7 +694,7 @@
         <item>Banggai Cardinalfish</item>
     </string-array>
 
-    <string name="template_tds_disabled_saltwater">TDS sensor range (0-1000 ppm) is below saltwater levels, so it is disabled for saltwater aquariums. Marine salinity can be measured with a refractometer or a salinity sensor instead.</string>
+    <string name="template_tds_disabled_saltwater">TDS sensor range (1-1600 ppm) is below saltwater levels, so it is disabled for saltwater aquariums. Marine salinity can be measured with a refractometer or a salinity sensor instead.</string>
 
     <!-- Aquarium Templates screen (ST-4.2) -->
     <string name="aquarium_templates">Aquarium Templates</string>

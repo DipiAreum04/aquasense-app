@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,7 +28,9 @@
             style="@style/Widget.AquaSense.Card"
             android:orientation="vertical">
 
-            <!-- Liquid Level -->
+            <!-- Liquid Level. Built like the other three so the page reads as one list, but greyed
+                 through and not tappable: the probe reports only whether water is reaching it, so
+                 there is no reading an offset could correct and nothing to open. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,79 +38,82 @@
                 android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="14dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/water_24px"
+                    app:tint="@color/text_disabled" />
 
                 <LinearLayout
-                    android:id="@+id/rowGuideLiquid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sensor_info_water_level_title"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle.Accent" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowTitle"
+                        android:textColor="@color/text_disabled" />
 
                     <TextView
-                        android:id="@+id/tvLiquidDays"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/never_calibrated"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
+                        android:text="@string/calib_cannot_be_calibrated"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+                        android:textColor="@color/text_disabled" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvLiquidStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/never"
-                    android:textStyle="bold"                    
-                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
-
-                <Button
-                    android:id="@+id/btnCalibrateLiquid"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/calibrate"
-                    android:textColor="@color/accent"
-                    android:textSize="13sp" />
-
             </LinearLayout>
 
+            <!-- Inset equally on both sides, so the rule reads as one gap in the card rather than a
+                 line that runs off its right edge. -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
-            <!-- Temperature -->
+            <!-- Temperature. The whole row is the target: with no button beside it, a row that only
+                 responded on its title would leave most of its own height dead. -->
             <LinearLayout
+                android:id="@+id/rowGuideTemp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="14dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/thermometer_24px"
+                    app:tint="@color/accent" />
 
                 <LinearLayout
-                    android:id="@+id/rowGuideTemp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -117,58 +124,79 @@
 
                     <TextView
                         android:id="@+id/tvTempDays"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/never_calibrated"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+                        tools:text="Last calibrated: —" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvTempStatus"
+                <!-- How large the stored correction is against the width of the sensor's safe band.
+                     Always present, reading an em dash until there is a correction: a row that grew
+                     a new column on being calibrated would shift the whole list around. -->
+                <LinearLayout
+                    android:id="@+id/layoutTempError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/never"
-                    android:textStyle="bold"                   
-                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnCalibrateTemp"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/calibrate"
-                    android:textColor="@color/accent"
-                    android:textSize="13sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/calib_error_label"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvTempError"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="normal"
+                        tools:text="25.0%" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
             <!-- Dissolved Solids -->
             <LinearLayout
+                android:id="@+id/rowGuideTds"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="14dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/total_dissolved_solids_24px"
+                    app:tint="@color/accent" />
 
                 <LinearLayout
-                    android:id="@+id/rowGuideTds"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -179,58 +207,76 @@
 
                     <TextView
                         android:id="@+id/tvTdsDays"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/never_calibrated"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+                        tools:text="Last calibrated: —" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvTdsStatus"
+                <LinearLayout
+                    android:id="@+id/layoutTdsError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/never"
-                    android:textStyle="bold"                    
-                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnCalibrateTds"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/calibrate"
-                    android:textColor="@color/accent"
-                    android:textSize="13sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/calib_error_label"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvTdsError"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="normal"
+                        tools:text="0.4%" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
+                android:layout_height="1dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/divider" />
 
             <!-- pH Level -->
             <LinearLayout
+                android:id="@+id/rowGuidePh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingEnd="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="14dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/water_ph_24px"
+                    app:tint="@color/accent" />
 
                 <LinearLayout
-                    android:id="@+id/rowGuidePh"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
@@ -241,30 +287,37 @@
 
                     <TextView
                         android:id="@+id/tvPhDays"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/never_calibrated"
-                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc" />
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowDesc"
+                        tools:text="Last calibrated: —" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvPhStatus"
+                <LinearLayout
+                    android:id="@+id/layoutPhError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/never"
-                    android:textStyle="bold"                    
-                    android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted" />
+                    android:layout_marginStart="12dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnCalibratePh"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/calibrate"
-                    android:textColor="@color/accent"
-                    android:textSize="13sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/calib_error_label"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPhError"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AquaSense.RowValue.Muted"
+                        android:textStyle="normal"
+                        tools:text="12.5%" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
