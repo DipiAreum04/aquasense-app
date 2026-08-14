@@ -42,9 +42,6 @@ import ca.team6.aquasense.model.SettingsRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.notifications.ThresholdMonitorService;
 
-/**
- * Wrapper functions for Firebase Auth and the user profile node in Realtime Database.
- */
 public class AuthRepository {
 
     public interface AuthCallback {
@@ -72,8 +69,6 @@ public class AuthRepository {
     private final SharedPreferenceHelper prefs;
     private final CredentialManager credentialManager;
     private final FirebaseDatabaseHelper database;
-    // Credential Manager needs a background executor to deliver its result on. One shared pool
-    // for the app, since a new pool per sign-in attempt would never be shut down.
     private final ExecutorService credentialExecutor;
 
     private AuthRepository(@NonNull Context appContext) {
@@ -105,8 +100,6 @@ public class AuthRepository {
         return getCurrentUser() != null;
     }
 
-    // The UID is the root key of the database tree, so screens that read telemetry need it.
-    // Exposed as a plain String to keep FirebaseUser out of the UI layer.
     @Nullable
     public String getUid() {
         FirebaseUser user = getCurrentUser();
@@ -159,8 +152,6 @@ public class AuthRepository {
     }
 
 
-    // Google Sign-In via Credential Manager to get Firebase Auth credential.
-    // Uses the Web client ID from google-services.json ({@code R.string.default_web_client_id}).
     public void signInWithGoogle(@NonNull Activity activity, @NonNull AuthCallback callback) {
         requestGoogleCredential(activity, new GoogleCredentialCallback() {
             @Override
@@ -175,8 +166,6 @@ public class AuthRepository {
         });
     }
 
-    // Prompts the Credential Manager sheet and hands back a Firebase credential.
-    // Shared by Google sign-in and by re-authentication before account deletion.
     private void requestGoogleCredential(@NonNull Activity activity,
                                          @NonNull GoogleCredentialCallback callback) {
         String serverClientId = appContext.getString(R.string.default_web_client_id);
@@ -192,7 +181,6 @@ public class AuthRepository {
                 new CredentialManagerCallback<>() {
                     @Override
                     public void onResult(GetCredentialResponse result) {
-                        // Credential Manager may call back off the main thread.
                         activity.runOnUiThread(() -> {
                             AuthCredential credential = toFirebaseCredential(result.getCredential());
                             if (credential == null) {
@@ -209,7 +197,6 @@ public class AuthRepository {
                             if (e instanceof GetCredentialCancellationException) {
                                 callback.onError(R.string.auth_error_google_cancelled);
                             } else if (e instanceof NoCredentialException) {
-                                // The device has no Google account
                                 callback.onError(R.string.auth_error_google_no_account);
                             } else {
                                 callback.onError(R.string.auth_error_google);
@@ -236,7 +223,6 @@ public class AuthRepository {
     }
 
 
-    // Fetch display name from Firebase when available, otherwise fetch from locally cached profile name
     @NonNull
     public String getProfileDisplayName() {
         FirebaseUser user = getCurrentUser();
@@ -252,8 +238,7 @@ public class AuthRepository {
         return "";
     }
 
-    
-    // Fetch email from Firebase when available, otherwise fetch from locally cached profile email
+
     @NonNull
     public String getProfileEmail() {
         FirebaseUser user = getCurrentUser();
@@ -269,9 +254,7 @@ public class AuthRepository {
         return "";
     }
 
-    
-    // Write Firebase Auth profile fields into local prefs when present so settings
-    // screens stay in sync after login / register.
+
     public void syncProfileCacheFromFirebase() {
         FirebaseUser user = getCurrentUser();
         if (user == null || prefs == null) {
@@ -285,11 +268,6 @@ public class AuthRepository {
         }
     }
 
-    // Sends a Firebase password reset email.
-    // Deliberately reports success when Firebase says the account does not exist: the caller
-    // shows a neutral "if an account exists" message, so a stranger cannot use this screen to
-    // discover which emails are registered. Google-only accounts land here too, since they have
-    // no password credential to reset.
     public void sendPasswordReset(@NonNull String email,
                                   @NonNull ActionCallback callback) {
         firebaseAuth.sendPasswordResetEmail(email)
@@ -307,9 +285,6 @@ public class AuthRepository {
                 && "ERROR_USER_NOT_FOUND".equals(((FirebaseAuthException) exception).getErrorCode());
     }
 
-    // Renames the account: Firebase Auth display name first, then /{uid}/account/name so the
-    // two never disagree, then updates the local cache the settings screens read from.
-    // Email is not editable here; it is the account identity and changing it requires extra steps.
     public void updateProfileName(@NonNull String name,
                                   @NonNull ActionCallback callback) {
         FirebaseUser user = getCurrentUser();
@@ -336,8 +311,6 @@ public class AuthRepository {
 
                 @Override
                 public void onError(@Nullable Exception exception) {
-                    // Auth already took the new name, so the cache follows it and the
-                    // next sign-in rewrites /{uid}/account from Auth.
                     cacheProfileName(name);
                     callback.onError(R.string.edit_profile_save_failed);
                 }
@@ -355,14 +328,11 @@ public class AuthRepository {
         ThresholdMonitorService.stop(appContext);
         firebaseAuth.signOut();
         if (prefs != null) {
-            // Keep KEY_HAS_AUTHENTICATED so the next launch opens login instead of register
             prefs.updateField(SettingsRepository.KEY_PROFILE_NAME, "");
             prefs.updateField(SettingsRepository.KEY_PROFILE_EMAIL, "");
         }
     }
 
-    // True when the account can be re-authenticated with a password prompt.
-    // Google-only accounts have no password and must re-run the Google sheet instead.
     public boolean hasPasswordProvider() {
         FirebaseUser user = getCurrentUser();
         if (user == null) {
@@ -376,7 +346,6 @@ public class AuthRepository {
         return false;
     }
 
-    // Deletes the account after re-authenticating with the account password.
     public void deleteAccountWithPassword(@NonNull String password,
                                           @NonNull ActionCallback callback) {
         FirebaseUser user = getCurrentUser();
@@ -389,7 +358,6 @@ public class AuthRepository {
         reauthenticateAndDelete(user, credential, callback);
     }
 
-    // Deletes the account after re-authenticating through the Google credential sheet.
     public void deleteAccountWithGoogle(@NonNull Activity activity,
                                         @NonNull ActionCallback callback) {
         FirebaseUser user = getCurrentUser();
@@ -410,7 +378,6 @@ public class AuthRepository {
         });
     }
 
-    // Firebase only allows delete() on a recent login, so refresh the session first.
     private void reauthenticateAndDelete(@NonNull FirebaseUser user,
                                          @NonNull AuthCredential credential,
                                          @NonNull ActionCallback callback) {
@@ -424,9 +391,6 @@ public class AuthRepository {
                 });
     }
 
-    // Removes /{uid} (account, aquariums, telemetry) per the database schema, then the Auth user.
-    // The schema node must go first: database rules are keyed on auth.uid, so deleting the Auth
-    // user first would leave the node orphaned with no signed-in user able to remove it.
     private void deleteProfileNodeThenUser(@NonNull FirebaseUser user,
                                            @NonNull ActionCallback callback) {
         database.deleteUserNode(user.getUid(), new FirebaseDatabaseHelper.DbCallback() {
@@ -434,8 +398,6 @@ public class AuthRepository {
             public void onSuccess() {
                 user.delete().addOnCompleteListener(deleteTask -> {
                     if (!deleteTask.isSuccessful()) {
-                        // Schema node is gone but the login survives; writeUserProfile()
-                        // restores /{uid}/account on the next successful sign-in.
                         callback.onError(mapError(deleteTask.getException()));
                         return;
                     }
@@ -446,14 +408,11 @@ public class AuthRepository {
 
             @Override
             public void onError(@Nullable Exception exception) {
-                // Auth user is untouched, so the account still works and can retry.
                 callback.onError(R.string.delete_profile_error_data);
             }
         });
     }
 
-    // Unlike signOut(), a deleted account has nothing to return to, so send the next
-    // launch to register rather than login.
     private void clearSessionAfterDelete() {
         firebaseAuth.signOut();
         if (prefs != null) {
@@ -519,15 +478,12 @@ public class AuthRepository {
             if (!TextUtils.isEmpty(resolvedName)) {
                 prefs.updateField(SettingsRepository.KEY_PROFILE_NAME, resolvedName);
             }
-            // After any successful authentication, future logged-out launches start at login.
             prefs.setBoolean(SettingsRepository.KEY_HAS_AUTHENTICATED, true);
             if (isNewAccount) {
-                // New accounts always go through the SETTINGS-03 pairing wizard.
                 prefs.setBoolean(SettingsRepository.KEY_PAIRING_COMPLETE, false);
             }
         }
 
-        // /{uid}/account requires email (UID is the root key) per database schema
         if (TextUtils.isEmpty(resolvedEmail)) {
             callback.onError(R.string.auth_error_generic);
             return;
@@ -536,11 +492,6 @@ public class AuthRepository {
     }
 
 
-    // Writes /{uid}/account/{name,email} to the realtime database per database schema.
-    // Both keys are required by the schema, so name falls back to an empty string when the
-    // provider gives no display name.
-    // On write failure for a brand-new account, signs out so the user is not left half-registered.
-    // Returning logins also write to the db so a prior failed write can be fixed.
     private void writeUserProfile(@NonNull String uid,
                                   @NonNull String email,
                                   @Nullable String name,
@@ -557,12 +508,10 @@ public class AuthRepository {
                     @Override
                     public void onError(@Nullable Exception exception) {
                         if (isNewAccount) {
-                            // Auth user may already exist, so clear the local session to allow retry.
                             signOut();
                             callback.onError(R.string.auth_error_profile_save);
                             return;
                         }
-                        // TODO: FIX THIS LATER:Schema write is retried on the next auth success if it fails.
                         callback.onSuccess(user);
                     }
                 });
@@ -581,7 +530,6 @@ public class AuthRepository {
                     return R.string.auth_error_user_not_found;
                 case "ERROR_EMAIL_ALREADY_IN_USE":
                     return R.string.auth_error_email_in_use;
-                // Google sign-in with an email already registered via email/password.
                 case "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL":
                     return R.string.auth_error_account_exists_with_password;
                 case "ERROR_WEAK_PASSWORD":
@@ -591,7 +539,6 @@ public class AuthRepository {
                     return R.string.auth_error_invalid_credentials;
                 case "ERROR_NETWORK_REQUEST_FAILED":
                     return R.string.auth_error_network;
-                // Re-auth token went stale between the prompt and delete().
                 case "ERROR_REQUIRES_RECENT_LOGIN":
                     return R.string.delete_profile_error_recent_login;
                 default:
@@ -599,7 +546,7 @@ public class AuthRepository {
             }
         }
         if (exception != null && exception.getMessage() != null
-            && exception.getMessage().toLowerCase(Locale.ROOT).contains("network")) { // Check if the error message contains "network" to map to the correct error message
+            && exception.getMessage().toLowerCase(Locale.ROOT).contains("network")) {
             return R.string.auth_error_network;
         }
         return R.string.auth_error_generic;

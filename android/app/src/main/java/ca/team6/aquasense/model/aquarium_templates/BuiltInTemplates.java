@@ -13,15 +13,6 @@ import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.WaterType;
 
-/**
- * This class defines the four built-in aquarium templates (SETTINGS-04).
- *
- * <p>The threshold values defined here are the single source of truth for what "safe"/"warning"/"critical"
- * means on the dashboard. Temperatures are in Celsius, TDS is in ppm. Water level is a boolean sensor 
- * and is not included in the thresholds. Moreover, only the saltwater template disables the TDS sensor 
- * as saltwater has a very high TDS range that cannot be read by our TDS sensor.
- *
- */
 public final class BuiltInTemplates {
 
     public static final String FRESHWATER_ID = "freshwater";
@@ -88,7 +79,6 @@ public final class BuiltInTemplates {
             R.drawable.template_saltwater,
             R.color.template_accent_saltwater,
             WaterType.SALTWATER,
-            // The TDS sensor cannot read saltwater, so it is disabled for this template.
             bands()
                     .temperature(22, 24, 26, 28)
                     .phLevel(7.8, 8.1, 8.4, 8.6)
@@ -106,14 +96,10 @@ public final class BuiltInTemplates {
 
     private BuiltInTemplates() {}
 
-    /** All built-in templates, in the order they are displayed to the user. */
     public static List<AquariumTemplate> all() {
         return ALL;
     }
 
-    /**
-     * Looks up a template by its persisted ID.
-     */
     @Nullable
     public static AquariumTemplate fromId(@Nullable String id) {
         for (AquariumTemplate template : ALL) {
@@ -124,30 +110,18 @@ public final class BuiltInTemplates {
         return null;
     }
 
-    /** The template a new aquarium starts on is freshwater as it is the most common tank type. */
     public static AquariumTemplate getDefault() {
         return FRESHWATER;
     }
 
-    /**
-     * The template to fall back on for an aquarium that stores a water type but no thresholds of
-     * its own. The schema only records {@code water_type}, not which template it came from, so an
-     * aquarium created before templates existed can only be resolved this far.
-     */
     public static AquariumTemplate forWaterType(@Nullable WaterType waterType) {
         return waterType == WaterType.SALTWATER ? SALTWATER : FRESHWATER;
     }
 
-    /** Starts a threshold set for a template. */
     private static Bands bands() {
         return new Bands();
     }
 
-    /**
-     * Small builder for each template's thresholds.
-     * One line per sensor, named with its key and the four bounds in the same order as the
-     * {@link ThresholdBand} constructor parameters (warnLow, safeLow, safeHigh, warnHigh).
-     */
     private static final class Bands {
 
         private final Map<String, ThresholdBand> map = new LinkedHashMap<>();

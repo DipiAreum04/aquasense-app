@@ -3,13 +3,11 @@
     android:height="200dp"
     android:viewportWidth="200"
     android:viewportHeight="200">
-    <!-- Test Strip -->
     <path
         android:pathData="M80,30 L120,30 L120,170 L80,170 Z"
         android:fillColor="@color/white"
         android:strokeColor="@color/accent"
         android:strokeWidth="2"/>
-    <!-- pH Colors -->
     <path android:fillColor="#FF4444" android:pathData="M85,40 L115,40 L115,60 L85,60 Z" />
     <path android:fillColor="#FFFF44" android:pathData="M85,70 L115,70 L115,90 L85,90 Z" />
     <path android:fillColor="#44FF44" android:pathData="M85,100 L115,100 L115,120 L85,120 Z" />

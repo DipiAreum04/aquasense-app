@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BLE-02: the whole pairing flow on one screen -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -57,9 +56,8 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="15sp" />
 
-                <!-- One button covering every hero action: start, rescan, turn Bluetooth on,
-                     grant permission, open settings. Its label and click target are set in code. -->
                 <Button
+                    style="@style/Widget.AquaSense.Button.Secondary"
                     android:id="@+id/btnHeroAction"
                     android:layout_width="wrap_content"
                     android:layout_height="54dp"
@@ -78,7 +76,6 @@
 
             </LinearLayout>
 
-            <!-- Discovered hubs -->
             <LinearLayout
                 android:id="@+id/devicesSection"
                 android:layout_width="match_parent"
@@ -110,7 +107,6 @@
 
             </LinearLayout>
 
-            <!-- Wi-Fi credentials, revealed once a hub is selected -->
             <LinearLayout
                 android:id="@+id/wifiSection"
                 android:layout_width="match_parent"
@@ -153,7 +149,6 @@
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
-                <!-- SSID -->
                 <LinearLayout
                     android:id="@+id/wifiSsidBox"
                     android:layout_width="match_parent"
@@ -200,7 +195,6 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
 
-                <!-- Password -->
                 <LinearLayout
                     android:id="@+id/wifiPasswordBox"
                     android:layout_width="match_parent"
@@ -260,6 +254,7 @@
                     tools:visibility="visible" />
 
                 <Button
+                    style="@style/Widget.AquaSense.Button.Primary"
                     android:id="@+id/btnWifiSubmit"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
@@ -275,7 +270,6 @@
 
             </LinearLayout>
 
-            <!-- Stage and failure reporting -->
             <LinearLayout
                 android:id="@+id/noticeCard"
                 android:layout_width="match_parent"
@@ -333,6 +327,7 @@
                     tools:visibility="visible" />
 
                 <Button
+                    style="@style/Widget.AquaSense.Button.Secondary"
                     android:id="@+id/btnNoticeRetry"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The day-mode status bar fill is light, so the system icons drawn on top
-         of it must be dark. values-night flips this. -->
     <bool name="light_status_bar_icons">true</bool>
 </resources>

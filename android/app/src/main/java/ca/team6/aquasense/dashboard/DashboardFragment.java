@@ -48,7 +48,7 @@ import ca.team6.aquasense.notifications.SensorThresholds;
 
 public class DashboardFragment extends Fragment {
     private DashboardHeaderController dashboardHeaderController;
-    @SuppressWarnings("FieldCanBeLocal") // TODO: TEMPORARY; SHOULD BE ADDRESSED BY END OF SPRINT 2
+    @SuppressWarnings("FieldCanBeLocal")
     private RecyclerView recycler;
     private DashboardSensorAdapter sensorAdapter;
 
@@ -56,7 +56,7 @@ public class DashboardFragment extends Fragment {
     private TelemetryRepository telemetryRepository;
     private MaintenanceModeStore maintenanceModeStore;
 
-   
+
     private List<View> headerSlackViews;
     private int[] headerSlackMargins;
     private View dashboardFooter;
@@ -74,7 +74,6 @@ public class DashboardFragment extends Fragment {
     private final TelemetryRepository.TelemetryObserver telemetryObserver =
             this::applyTelemetry;
 
-    // Longest the loading overlay is allowed to cover the dashboard
     private static final long LOADING_OVERLAY_TIMEOUT_MS = 2_500L;
     private View loadingOverlay;
     private boolean overlayDismissed;
@@ -92,7 +91,6 @@ public class DashboardFragment extends Fragment {
         }
     };
 
-    // TODO: NOT SURE ABOUT THIS; NEED TO DECIDE BY END OF SPRINT 2.
     private static final AquariumSensor TEMPERATURE = new TemperatureSensor();
     private static final AquariumSensor WATER_LEVEL = new WaterLevelSensor();
     private static final AquariumSensor DISSOLVED_SOLIDS = new DissolvedSolidsSensor();
@@ -136,12 +134,8 @@ public class DashboardFragment extends Fragment {
         LinearLayout navbarAnalytics = view.findViewById(R.id.navbarAnalytics);
         LinearLayout navbarSettings = view.findViewById(R.id.navbarSettings);
 
-        // TODO: ONCLICK HANDLERS MUST BE DEFINED PROPERLY.
         navbarDashboard.setOnClickListener(v -> {
         });
-        // Straight to the history rather than the notification settings: the tab is for reading
-        // what has already happened. SettingsActivity treats a start destination as a shortcut and
-        // exits to the dashboard on back, so the Settings hub never appears in between.
         navbarNotifications.setOnClickListener(v ->
             startActivity(new Intent(v.getContext(), SettingsActivity.class)
                     .putExtra(SettingsActivity.EXTRA_START_DESTINATION,
@@ -161,10 +155,6 @@ public class DashboardFragment extends Fragment {
         recycler.addItemDecoration(new GridSpacingItemDecoration(
                 this.getResources().getDisplayMetrics()));
 
-        // A payload-less notifyItemChanged() makes the default animator cross-fade a second
-        // ViewHolder over the old one, which reads as the card flashing. Readings land about
-        // once a second, so that fires constantly; add/remove/move animations are left on for
-        // the sensor order / visibility preference.
         RecyclerView.ItemAnimator itemAnimator = recycler.getItemAnimator();
         if (itemAnimator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
@@ -194,8 +184,6 @@ public class DashboardFragment extends Fragment {
             return true;
         }
 
-        // Halfway is still measured against the whole screen, footer included, so a screen with
-        // the room to spare draws exactly as it did before the grid got a say.
         int target = root.getHeight() / 2;
         if (recycler.getHeight() > 0) {
             int leftByGrid = root.getHeight() - dashboardFooter.getHeight()
@@ -268,10 +256,6 @@ public class DashboardFragment extends Fragment {
         overlayHandler.postDelayed(overlayTimeout, LOADING_OVERLAY_TIMEOUT_MS);
     }
 
-    /**
-     * True once the dashboard has enough to show without the loading overlay: the aquarium list has
-     * loaded and either the user has no aquarium or the first full set of readings has landed.
-     */
     private boolean isDashboardReady() {
         if (!aquariumRepository.isLoaded()) {
             return false;
@@ -310,13 +294,6 @@ public class DashboardFragment extends Fragment {
                 });
     }
 
-    /**
-     * Swaps the dashboard for its empty state once the aquarium list has loaded with nothing in
-     * it, and back again as soon as one is paired.
-     *
-     * <p>Held until the snapshot arrives: an empty list before that only means the read is still
-     * in flight, and the loading overlay is covering the screen for exactly that moment.
-     */
     private void showEmptyState() {
         View view = getView();
         if (view == null) {
@@ -327,8 +304,6 @@ public class DashboardFragment extends Fragment {
 
         view.findViewById(R.id.dashboardEmptyState)
                 .setVisibility(empty ? View.VISIBLE : View.GONE);
-        // The header and the grid go together: neither has anything to say without an aquarium,
-        // and leaving them under the empty state would scroll it off its own page.
         view.findViewById(R.id.dashboardScroll).setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 
@@ -381,9 +356,6 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
-        // The sensors arrive on four independent listeners, so deciding on every publish walks the
-        // header through DISCONNECTED > CRITICAL > NORMAL as they land. Hold it at DISCONNECTED
-        // until all four have been read, then decide once from a complete set.
         AquariumStatus aquariumStatus = telemetryRepository.hasReadAllSensors()
                 ? AquariumStatus.forSensors(visibleSensors())
                 : AquariumStatus.DISCONNECTED;
@@ -395,8 +367,6 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
-        // The sensors publish independently, so the header reports the freshest of them: that is
-        // the last moment the aquarium was known to be saying anything at all.
         long newestSeconds = Long.MIN_VALUE;
         for (SensorReading reading : readingsBySensorId.values()) {
             if (!reading.isOffline() && reading.getTimestampSeconds() > newestSeconds) {
@@ -441,10 +411,6 @@ public class DashboardFragment extends Fragment {
             loadingOverlay.animate().cancel();
         }
         loadingOverlay = null;
-        // Deliberately not calling telemetryRepository.unwatch() here: the RTDB subscription is
-        // meant to keep running for the whole signed-in session (it only tears down on sign-out,
-        // see TelemetryRepository#onAuthChanged) so a future background-alerts feature can act on
-        // live telemetry while the dashboard isn't on screen.
         if (dashboardHeaderController != null) {
             dashboardHeaderController.cancelStatusTransition();
         }
@@ -481,8 +447,6 @@ public class DashboardFragment extends Fragment {
             SensorReading reading = readingsBySensorId.get(sensor.getId());
             ThresholdBand thresholdBand =
                     activeAquarium != null ? activeAquarium.thresholdFor(sensor.getId()) : null;
-            // Per aquarium and sensor, from the database when it has one stored. The repository
-            // keeps a live listener on /{uid}/aquariums, so an edited delta lands here on its own.
             double spikeDelta =
                     SensorThresholds.resolveSpikeDelta(activeAquarium, sensor.getId());
             boolean changed = sensor.applyReading(
@@ -512,7 +476,6 @@ public class DashboardFragment extends Fragment {
         stalenessHandler.post(stalenessTick);
     }
 
-    // Re-applies the card order and visibility
     private void showSensorCards() {
         if (sensorAdapter == null) {
             return;
@@ -551,9 +514,6 @@ public class DashboardFragment extends Fragment {
         return ordered;
     }
 
-    // Sets the unit shown on the temperature card. The reading itself is converted by
-    // ReadingFormatter, which runs per reading rather than per resume, so this only has to keep
-    // the label agreeing with it.
     private void applyTemperatureUnitPreference() {
         SharedPreferenceHelper prefs = SharedPreferenceHelper.getInstance(requireContext());
         if (prefs == null)

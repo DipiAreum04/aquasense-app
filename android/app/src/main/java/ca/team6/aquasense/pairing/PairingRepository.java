@@ -25,11 +25,6 @@ import ca.team6.aquasense.model.NewAquariumConfig;
 import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.model.SensorReading;
 
-/**
- * Drives one pairing attempt from end to end: scan, hand over credentials, create the aquarium, then
- * wait for the board to come online and publish telemetry. This is a singleton to ensure that only
- * one pairing attempt can be in progress at a time.
- */
 public final class PairingRepository {
 
     public interface PairingObserver {
@@ -47,7 +42,6 @@ public final class PairingRepository {
     private final FirebaseDatabaseHelper database;
     private final CopyOnWriteArrayList<PairingObserver> observers = new CopyOnWriteArrayList<>();
 
-    // Keyed by address so a board re-reported mid-scan updates its RSSI instead of adding a row.
     private final Map<String, DiscoveredBoard> boards = new LinkedHashMap<>();
 
     private final Provisioner provisioner;
@@ -56,21 +50,16 @@ public final class PairingRepository {
     @Nullable
     private PairingFailure failure;
 
-    // Arrives over BLE, and is the key the aquarium telemetry is written under.
     private String deviceUid = "";
 
-    // Everything the add-aquarium form collected, held until the board's UID arrives to key it by.
-    // Null until a pairing attempt starts, which is the only thing that can supply one.
     @Nullable
     private NewAquariumConfig config;
 
     @Nullable
     private FirebaseDatabaseHelper.ListenerHandle telemetryHandle;
 
-    /** Stands in for "the node was empty", and sorts below every real timestamp. */
     private static final long NO_SAMPLE = Long.MIN_VALUE;
 
-    // The sample sitting at the watched node when the wait began. See isNewWrite.
     private long baselineTimestampSeconds = NO_SAMPLE;
     private boolean baselineCaptured;
 
@@ -101,13 +90,11 @@ public final class PairingRepository {
         return this.state;
     }
 
-    /** Why the attempt stopped. Only meaningful while the state is FAILED. */
     @Nullable
     public PairingFailure getFailure() {
         return this.failure;
     }
 
-    /** The paired board's UID, which is also the new aquarium's key in the database. */
     @NonNull
     public String getDeviceUid() {
         return this.deviceUid;
@@ -116,23 +103,15 @@ public final class PairingRepository {
     @NonNull
     public List<DiscoveredBoard> getBoards() {
         List<DiscoveredBoard> sorted = new ArrayList<>(this.boards.values());
-        // Strongest connection strength first among several boards
         sorted.sort((left, right) -> Integer.compare(right.getRssi(), left.getRssi()));
         return Collections.unmodifiableList(sorted);
     }
 
-    /**
-     * The board or boards with this address, or null once the list has been cleared by a new scan.
-     */
     @Nullable
     public DiscoveredBoard getBoard(@Nullable String address) {
         return address == null ? null : this.boards.get(address);
     }
 
-    /**
-     * This observer tracks state and board updates, firing both immediately so a screen renders from the
-     * callback alone.
-     */
     public void addObserver(@NonNull PairingObserver observer) {
         this.observers.addIfAbsent(observer);
         observer.onPairingStateChanged(this.state);
@@ -158,14 +137,6 @@ public final class PairingRepository {
         }
     }
 
-    /**
-     * Runs the full attempt against one board.
-     *
-     * <p>Every piece of user input is collected before this is called: the Wi-Fi credentials on the
-     * pairing screen, the name and water type on the add-aquarium form ahead of it. That leaves the
-     * BLE link to be opened, used and closed in one burst, with nothing waiting on the user in the
-     * middle of it.
-     */
     public void pair(@NonNull DiscoveredBoard board,
                      @NonNull String ssid,
                      @NonNull String password,
@@ -182,12 +153,9 @@ public final class PairingRepository {
         this.config = config;
         this.publishState(PairingState.PROVISIONING);
 
-        // The board needs the owner's UID as well as the Wi-Fi credentials: telemetry lives at
-        // /{ownerUid}/telemetry/{aqId}, so without it the board cannot build a single write path.
         this.provisioner.provision(board, ssid, password, ownerUid);
     }
 
-    /** Abandons whatever is under way and returns to {@link PairingState#IDLE}. */
     public void reset() {
         this.main.removeCallbacks(this.onlineTimeout);
         this.stopWatchingTelemetry();
@@ -232,12 +200,6 @@ public final class PairingRepository {
         }
     };
 
-    /**
-     * Writes {@code /{uid}/aquariums/{deviceUid}}, which is what authorises the board to publish.
-     *
-     * <p>The security rule on telemetry requires this node to exist, so the ordering is not
-     * cosmetic: claim first, then watch. Watching before claiming would time out every time.
-     */
     private void claimAquarium() {
         if (this.deviceUid.isEmpty()) {
             ScopedLogger.error("Board acknowledged the credentials without reporting a UID.");
@@ -245,8 +207,6 @@ public final class PairingRepository {
             return;
         }
         if (this.config == null) {
-            // Only reachable if the provisioner reported success for an attempt pair() never
-            // started, which would leave nothing to name the aquarium after.
             ScopedLogger.error("Provisioned a board with no aquarium configuration to claim it.");
             this.finish(PairingFailure.CLAIM_FAILED);
             return;
@@ -262,8 +222,6 @@ public final class PairingRepository {
 
                     @Override
                     public void onError() {
-                        // The board is provisioned either way and will keep trying, so this is
-                        // reported apart from a Wi-Fi failure: phone's connection needs to be fixed.
                         ScopedLogger.error("Claimed no aquarium for the newly paired board.");
                         finish(PairingFailure.CLAIM_FAILED);
                     }
@@ -281,13 +239,6 @@ public final class PairingRepository {
         this.baselineCaptured = false;
         this.baselineTimestampSeconds = NO_SAMPLE;
 
-        /* One sensor is enough. The board publishes all four together on the same tick,
-         * so one fresh temperature reading proves the whole chain: Wi-Fi, the Firebase
-         * sign-in, the security rules and a real write.
-         *
-         * Watching the aquarium's whole telemetry node instead would also carry six
-         * periods of a hundred buckets each - hundreds of KB synced to learn one bit.
-         */
         this.telemetryHandle = this.database.observeLastInstant(
                 uid, this.deviceUid, DatabaseSchema.TEMPERATURE_KEY,
                 new FirebaseDatabaseHelper.ReadingListener() {
@@ -316,10 +267,6 @@ public final class PairingRepository {
         this.main.postDelayed(this.onlineTimeout, PairingContract.ONLINE_TIMEOUT_MS);
     }
 
-    /**
-     * Whether this sample was published after the credentials were handed over, rather than left
-     * behind by an earlier run.
-     */
     private boolean isNewWrite(@Nullable SensorReading reading) {
         if (!this.baselineCaptured) {
             this.baselineCaptured = true;

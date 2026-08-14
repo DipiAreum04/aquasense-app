@@ -42,7 +42,6 @@ public class ContactFormFragment extends Fragment {
         EditText etMessage = view.findViewById(R.id.etContactMessage);
         Button btnSend = view.findViewById(R.id.btnSendContact);
 
-        // Prefill from local profile (SharedPreferences).
         new SettingsRepository(requireContext()).loadSettings(settings -> {
             if (!TextUtils.isEmpty(settings.profileName)) {
                 etName.setText(settings.profileName);
@@ -124,16 +123,12 @@ public class ContactFormFragment extends Fragment {
                     .append(message)
                     .append("\n");
 
-            // TODO: After Firebase is set up, implement automatic email send within the app
-            // User writes and submits the form, which will be written to Firebase Firestore and/or Cloud Function,
-            // The email will be formatted automatically and sent to the support team.
             openSupportEmail(subject, body.toString());
         });
     }
 
     private void openSupportEmail(@NonNull String subject, @NonNull String body) {
         String supportEmail = getString(R.string.support_email);
-        // mailto opens the user's preferred email app (Gmail, Outlook, etc.)
         Uri mailto = Uri.parse("mailto:" + supportEmail +
                 "?subject=" + Uri.encode(subject) +
                 "&body=" + Uri.encode(body));

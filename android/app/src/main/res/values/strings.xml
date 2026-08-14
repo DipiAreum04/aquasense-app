@@ -25,8 +25,6 @@
     <string name="sensor_info_dissolved_solids_title">Dissolved Solids Sensor</string>
     <string name="sensor_info_ph_level_title">pH Level Sensor</string>
     <string name="no_aquariums">No aquariums found</string>
-    <!-- Dashboard with nothing paired yet. Deliberately not phrased as a hub having dropped out:
-         nothing has gone wrong, the account simply has no aquarium in it. -->
     <string name="dashboard_empty_title">No Aquarium Yet</string>
     <string name="dashboard_empty_body">Create and pair an aquarium to see its live readings on your dashboard!</string>
     <string name="dashboard_empty_action">Create An Aquarium</string>
@@ -56,9 +54,6 @@
         <item quantity="other">Updated %d days ago</item>
     </plurals>
 
-    <!-- ===================================================================================
-         Sensor info sheet, opened from the (i) on a dashboard card.
-         ==================================================================================== -->
 
     <string name="sensor_info_range">%1$s - %2$s</string>
     <string name="sensor_info_current">Current %1$s</string>
@@ -79,13 +74,11 @@
     <string name="sensor_info_note_critical">Current reading is past this aquarium\'s critical threshold!!!</string>
     <string name="sensor_info_note_disconnected">No reading has arrived in the last 30 seconds.</string>
 
-    <!-- Heading over the sheet's one advice section, picked by status. -->
     <string name="sensor_info_section_keep">Keeping It Steady</string>
     <string name="sensor_info_section_todo">What To Do</string>
     <string name="sensor_info_section_act">Immediate Action</string>
     <string name="sensor_info_section_reconnect">Getting It Back Online</string>
 
-    <!-- Temperature. -->
     <string name="sensor_info_temperature_about">Temperature is important because it affects how fast your fish\'s metabolism runs. Steady temperature readings matter more than an exact value.</string>
     <string name="sensor_info_temperature_normal_1">Keep the aquarium out of direct sunlight and away from vents and windows.</string>
     <string name="sensor_info_temperature_normal_2">Do not change the heater\'s heat output while readings are steady.</string>
@@ -102,7 +95,6 @@
     <string name="sensor_info_temperature_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
 
 
-    <!-- pH level. -->
     <string name="sensor_info_ph_level_about">pH tells you how acidic or basic your water is. It moves up and down a little every day on its own, so a steady reading matters more than an exact value.</string>
     <string name="sensor_info_ph_level_normal_1">Do not try to fix the current pH with pH chemicals. Aquatic creatures handle a steady pH much better than a perfect pH reading.</string>
     <string name="sensor_info_ph_level_normal_2">Keep changing part of the aquarium water regularly. That is what keeps pH from drifting.</string>
@@ -118,7 +110,6 @@
     <string name="sensor_info_ph_level_disconnected_3">Once it works again, calibrate it from Settings \u2192 Sensor Calibration. Buy pH buffer solutions for accurate calibration.</string>
     <string name="sensor_info_ph_level_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
 
-    <!-- Dissolved solids. -->
     <string name="sensor_info_dissolved_solids_about">Dissolved solids tells you about everything dissolved in your water, like minerals, salts and fish waste. It slowly goes up between water changes and drops right after one.</string>
     <string name="sensor_info_dissolved_solids_normal_1">Look at the reading right after a water change. That number is what normal looks like for your aquarium!</string>
     <string name="sensor_info_dissolved_solids_normal_2">Watch how the number moves over a few days. One reading on its own does not say much.</string>
@@ -134,7 +125,6 @@
     <string name="sensor_info_dissolved_solids_disconnected_3">Once it works again, calibrate it from Settings → Sensor Calibration.</string>
     <string name="sensor_info_dissolved_solids_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
 
-    <!-- Water level -->
     <string name="sensor_info_water_level_about">Water Level is a simple water detector. It only alerts you if the water drops below the spot where it sits, not how deep the water is. Attach the water level sensor at the appropriate height of your aquarium\'s water level!</string>
     <string name="sensor_info_note_water_level_safe">Your aquarium\'s water level is currently fine :)</string>
     <string name="sensor_info_note_water_level_low">The water has dropped below the sensor. Your aquarium needs a water refill!!!</string>
@@ -153,13 +143,11 @@
     <string name="sensor_info_water_level_disconnected_3">If the hub has power but still sends no reading, pair it again from the pairing screen.</string>
     <string name="sensor_info_water_level_disconnected_4">In case of persistent issues, see Troubleshooting Guide (Settings \u2192 Troubleshooting Guide) or contact customer support (Settings \u2192 Contact &amp; Support) for further assistance.</string>
 
-    <!-- Settings -->
     <string name="profile_name_placeholder">Jane Doe</string>
     <string name="profile_email_placeholder">janedoe@example.com</string>
     <string name="profile_name_empty">No name</string>
     <string name="profile_email_empty">No email</string>
 
-    <!-- Settings hub -->
     <string name="section_aquarium">AQUARIUM</string>
     <string name="section_app_account">APP &amp; ACCOUNT</string>
     <string name="section_help_support">HELP &amp; SUPPORT</string>
@@ -180,7 +168,6 @@
     <string name="contact_support">Contact &amp; Support</string>
     <string name="contact_support_desc">Help, contact form &amp; app info</string>
 
-    <!-- Accounts & Backup -->
     <string name="edit_profile">Edit Profile</string>
     <string name="edit_profile_name">Name</string>
     <string name="edit_profile_email">Email</string>
@@ -210,7 +197,6 @@
     <string name="delete_profile_error_data">Could not delete your aquarium data. Check your connection and try again.</string>
     <string name="delete_profile_error_recent_login">For your security, please sign in again before deleting your account.</string>
 
-    <!-- Display & Units -->
     <string name="section_temperature">TEMPERATURE</string>
     <string name="celsius">Celsius (°C)</string>
     <string name="fahrenheit">Fahrenheit (°F)</string>
@@ -234,7 +220,6 @@
     <string name="dashboard_card_move_down">Move down</string>
     <string name="dashboard_card_last_visible">At least one card must stay visible.</string>
 
-    <!-- Notifications -->
     <string name="section_alert_channels">ALERT CHANNELS</string>
     <string name="push_notifications">Push notifications</string>
     <string name="push_notifications_desc">In-app and device alerts</string>
@@ -278,14 +263,12 @@
     <string name="notification_channel_monitoring_desc">Shows while AquaSense watches your aquarium for threshold alerts</string>
     <string name="notification_monitoring_title">Monitoring aquarium</string>
 
-    <!-- Threshold alert copy. %1$s is the aquarium name, %2$s the sensor name. -->
     <string name="alert_title_warning_range">%1$s: %2$s in warning range</string>
     <string name="alert_title_critical_range">%1$s: %2$s in critical range</string>
     <string name="alert_title_spike">%1$s: %2$s spike</string>
     <string name="alert_title_water_level">%1$s: Water level alert</string>
     <string name="alert_title_sensor_offline">%1$s: %2$s offline</string>
     <string name="alert_title_hub_disconnected">%1$s: Hub disconnected</string>
-    <!-- Readings already carry their unit, so the placeholders are strings rather than numbers. -->
     <string name="alert_body_warning_range">%1$s is %2$s (warning range). Safe range is %3$s to %4$s.</string>
     <string name="alert_body_critical_range">%1$s is %2$s (critical range). Safe range is %3$s to %4$s.</string>
     <string name="alert_body_warning_range_no_band">%1$s is %2$s, in the warning range.</string>
@@ -298,12 +281,10 @@
     <string name="notification_permission_settings_title">Allow notifications</string>
     <string name="notification_permission_settings_desc">Required. Android is blocking AquaSense alerts.</string>
 
-    <!-- Privacy Policy -->
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_policy_desc">How AquaSense handles your data</string>
     <string name="privacy_policy_link_failed">No app available to open this link.</string>
 
-    <!-- Contact & Support -->
     <string name="section_support">SUPPORT</string>
     <string name="email_support">Email Support</string>
     <string name="support_email">automaticaquariummonitoringsystem@outlook.com</string>
@@ -339,7 +320,6 @@
     <string name="device_id_not_connected">Not connected</string>
     <string name="coming_soon">Coming soon</string>
 
-    <!-- Sensor Calibration (matches dashboard sensors; settings-only display names) -->
     <string name="calibration_intro">Tap a sensor name to view the calibration guide.</string>
     <string name="never_calibrated">Never calibrated</string>
     <string name="never">Never</string>
@@ -351,7 +331,6 @@
     <string name="calib_days_ago">%1$d days ago</string>
     <string name="calib_day_ago">%1$d day ago</string>
 
-    <!-- Calibration offsets: the correction the wizard works out and the app applies from then on -->
     <string name="calib_row_offset">%1$s · %2$s</string>
     <string name="calib_water_level_not_calibratable">Not calibratable — this probe only detects whether water reaches it, so there is no reading to correct.</string>
     <string name="calib_offset_saved">Calibration saved. Readings are now corrected by %1$s.</string>
@@ -360,17 +339,14 @@
     <string name="calibration_sensor_unavailable">This sensor is not available for the selected aquarium.</string>
     <string name="calibration_thresholds_required">Set this aquarium\'s normal range for the sensor before calibrating it.</string>
 
-    <!-- Operating-point calibration: the user names the value, the app measures the probe at it -->
     <string name="calib_safe_range_label">Normal range</string>
     <string name="calib_operating_point_hint">Operating point (%1$s)</string>
     <string name="calib_operating_point_hint_plain">Operating point</string>
     <string name="calib_operating_point_precision">Enter a number with at most one decimal place.</string>
     <string name="calib_operating_point_out_of_range">Enter a value inside the normal range (%1$s).</string>
-    <!-- Stacked on the right of a calibration row: "Error" over the value. -->
     <string name="calib_error_label">Error</string>
     <string name="calib_percent_error">%1$s%%</string>
     <string name="calib_last_calibrated">Last calibrated: %1$s</string>
-    <!-- Stands in for both the timestamp and the error percentage before a sensor is calibrated. -->
     <string name="calib_value_none">—</string>
     <string name="calib_cannot_be_calibrated">Cannot be calibrated</string>
     <string name="calibration_start">Calibrate</string>
@@ -404,7 +380,6 @@
     <string name="guide_tds">1. Rinse the probe with distilled water.\n2. Submerge in a 0 ppm (DI) solution and wait 30 seconds for a near-zero reading.\n3. Rinse, then submerge in a known TDS calibration solution (e.g. 342 ppm or 1000 ppm).\n4. Wait for the reading to match the solution value, then rinse before returning to the tank.</string>
     <string name="guide_ph">1. Rinse the probe with distilled water.\n2. Submerge in pH 7 buffer solution for 60 seconds.\n3. Rinse again, then submerge in pH 4 (or pH 10) buffer for 60 seconds.\n4. Rinse thoroughly. The probe is ready.</string>
 
-    <!-- Water Level Sensor Steps -->
     <string name="guide_liquid_step_1">In an appropriately sized glass or clear container, fill it halfway with water.</string>
     <string name="check_liquid_container">I have an appropriately sized glass or clear container</string>
     <string name="check_liquid_half_full">It is filled halfway with water</string>
@@ -416,7 +391,6 @@
     <string name="guide_liquid_step_4">Ensure the sensor\'s red light is flashing on the non-water level.</string>
     <string name="check_liquid_light">The red light is flashing on the non-water level</string>
 
-    <!-- Temperature Sensor Steps -->
     <string name="guide_temp_step_1">Ensure you have a reliable secondary temperature reference — a calibrated thermometer or digital temperature meter.</string>
     <string name="check_temp_step_1_ref">I have a reliable secondary temperature reference</string>
     <string name="guide_temp_step_2">Verify the AquaSense temperature sensor is correctly installed and operating with stable readings.</string>
@@ -428,7 +402,6 @@
     <string name="guide_temp_step_4">With both sensors still in the same water, compare the two. If they disagree, enter the temperature your reference is showing — AquaSense reads its own sensor and stores the difference.</string>
     <string name="check_temp_step_4_recorded">Both sensors are in the same water and settled</string>
 
-    <!-- pH Sensor Steps -->
     <string name="guide_ph_note">Note: The temperature sensor must be fully calibrated before beginning pH calibration.</string>
     <string name="guide_ph_step_1">Gather required materials: pH test strips, 4.00 and 7.00 pH buffer solutions, distilled water, and the AquaSense temperature sensor.</string>
     <string name="check_ph_step_1_strips">I have pH test strips</string>
@@ -460,7 +433,6 @@
     <string name="guide_ph_step_10">If a deviation occurs, enter the pH the buffer is stated to be. The two buffers are averaged into a single correction.</string>
     <string name="check_ph_step_10_recorded">The pH sensor is still in the 4.00 buffer</string>
 
-    <!-- TDS Sensor Steps -->
     <string name="guide_tds_note">Note: The temperature sensor must be fully calibrated before beginning TDS calibration.</string>
     <string name="guide_tds_step_1">Gather required materials: distilled water, a clean glass container (preferred because it attracts fewer particles), a TDS ppm calibration packet, and the AquaSense temperature sensor.</string>
     <string name="check_tds_step_1_water">I have distilled water</string>
@@ -481,27 +453,22 @@
     <string name="action_back">Back</string>
     <string name="action_cancel">Cancel</string>
 
-    <!-- Deviation Questions -->
     <string name="question_temp_deviation">Does a deviation occur between the secondary reference and AquaSense sensor?</string>
     <string name="question_ph7_deviation">Does a deviation occur between the 7.00 buffer and the sensor reading?</string>
     <string name="question_ph4_deviation">Does a deviation occur between the 4.00 buffer and the sensor reading?</string>
     <string name="question_tds_deviation">Does a deviation occur between the expected TDS value and the sensor reading?</string>
 
-    <!-- Aquarium Management & Templates -->
     <string name="title_my_aquariums">My Aquariums</string>
     <string name="action_add_new_aquarium">+ Add New Aquarium</string>
     <string name="title_add_aquarium">Add Aquarium</string>
     <string name="label_aquarium_name">AQUARIUM NAME</string>
     <string name="hint_aquarium_name">e.g. My Goldfish Aquarium</string>
     <string name="label_choose_template">CHOOSE A TEMPLATE</string>
-    <!-- The Add Aquarium screen lists the built-in templates themselves, so their names and
-         descriptions all come from BuiltInTemplates. -->
     <string name="template_choice_show_details">Tap to see details</string>
     <string name="template_choice_hide_details">Hide details</string>
     <string name="toast_choose_template">Choose a template for this aquarium</string>
     <string name="label_advanced_settings">Advanced Settings</string>
 
-    <!-- Step 3 of the Add Aquarium form: the template's own numbers, opened up for editing. -->
     <string name="label_advanced_thresholds">ADVANCED SETTINGS</string>
     <string name="advanced_optional_badge">Optional</string>
     <string name="advanced_collapsed_hint">Tap here to adjust the chosen template\'s recommended thresholds.</string>
@@ -540,7 +507,6 @@
     <string name="dialog_min_aquarium_title">Can\'t Delete</string>
     <string name="dialog_min_aquarium_message">You must have at least one aquarium. Add another before deleting this one.</string>
 
-    <!-- Advanced Aquarium Settings (DS-4.4, inside Add Aquarium) -->
     <string name="label_min">MIN</string>
     <string name="label_max">MAX</string>
     <string name="hint_threshold_value">e.g. 50</string>
@@ -548,12 +514,10 @@
     <string name="label_water_level_alert">Alert when water level is low</string>
     <string name="label_temperature_threshold">Temperature (%1$s)</string>
 
-    <!-- Shared email (auth, settings, contact) -->
     <string name="email_hint">name@example.com</string>
     <string name="email_required">Please enter your email.</string>
     <string name="email_invalid">Please enter a valid email address.</string>
 
-    <!-- Auth (FIREBASE-02 / FB-2.2) -->
     <string name="auth_tagline_login">Your aquariums, always in sight</string>
     <string name="auth_tagline_register">Monitor your aquatic worlds with precision</string>
     <string name="auth_welcome_back">Welcome back!</string>
@@ -607,11 +571,9 @@
     <string name="auth_error_generic">Something went wrong. Please try again.</string>
     <string name="auth_error_profile_save">Account created, but profile saving failed. Check your connection and try signing in again.</string>
 
-    <!-- First-installation -->
     <string name="add_aquarium_first_run_skip">Skip: Pair Hub Later</string>
     <string name="add_aquarium_create_and_pair">Create &amp; Pair Hub</string>
 
-    <!-- SETTINGS-03 first-installation setup wizard -->
     <string name="setup_step_label">STEP %1$d OF %2$d</string>
     <string name="setup_welcome_title">Welcome Aboard!</string>
     <string name="setup_welcome_body">Set up your smart aquarium monitor in three simple steps :)</string>
@@ -626,8 +588,6 @@
     <string name="setup_step_tank_title">Set Up Your Aquarium</string>
     <string name="add_aquarium_first_run_next">Next: Mount Your Hub</string>
 
-    <!-- Step 2: fitting the hardware to the aquarium. Instructions only; nothing on this screen
-         talks to the hub, which is why it can be read before the hub is even unboxed. -->
     <string name="setup_step_mount_title">Mount Your Hub</string>
     <string name="setup_mount_illustration_description">The structure of a set-up aquarium: the hub hangs on the aquarium rim edge by its hooks. The waterline marks the level it watches. Three probes are submerged in the water, and the water level sensor is stuck to the outside of the glass.</string>
     <string name="setup_mount_intro">Attach the hardware hub to your aquarium before pairing. The hub needs to be set up and powered up before progressing to the next step.</string>
@@ -646,14 +606,11 @@
     <string name="setup_complete_label_environment">Environment</string>
     <string name="setup_complete_label_template">Template</string>
     <string name="setup_complete_action">Go To Dashboard</string>
-    <!-- The two app-wide display choices, offered once at the end of setup, where the user has
-         just seen their first real readings and the question means something concrete. -->
     <string name="setup_complete_display_title">How would you like to see the dashboard readings?</string>
     <string name="setup_complete_display_body">These apply across the app. You can change them any time in Settings \u2192 Display &amp; Units</string>
     <string name="setup_complete_display_temperature">Temperature Unit </string>
     <string name="setup_complete_display_precision">Reading Format</string>
 
-    <!-- SETTINGS-04 built-in aquarium templates -->
     <string name="template_freshwater">Freshwater: Tropical</string>
     <string name="template_freshwater_desc">Warm, near-neutral water. The most common community aquarium.</string>
     <string-array name="template_freshwater_species">
@@ -696,7 +653,6 @@
 
     <string name="template_tds_disabled_saltwater">TDS sensor range (1-1600 ppm) is below saltwater levels, so it is disabled for saltwater aquariums. Marine salinity can be measured with a refractometer or a salinity sensor instead.</string>
 
-    <!-- Aquarium Templates screen (ST-4.2) -->
     <string name="aquarium_templates">Aquarium Templates</string>
     <string name="aquarium_templates_desc">View built-in template thresholds &amp; species</string>
     <string name="aquarium_templates_intro">Here you can view the built-in template thresholds &amp; example species to help you get started with your aquarium! Each template presets the safe, warning, and critical thresholds for your water parameters. Pick a template when you add an aquarium and you can change any threshold value later on!</string>
@@ -713,7 +669,6 @@
     <string name="template_legend_warning">Warning</string>
     <string name="template_legend_critical">Critical</string>
 
-    <!-- NF-3.2 notification history -->
     <string name="label_filter_aquarium">Aquarium</string>
     <string name="label_filter_sensor">Sensor</string>
     <string name="title_notification_history">Notification History</string>
@@ -724,7 +679,6 @@
     <string name="trigger_offline">Sensor Offline</string>
     <string name="trigger_time_triggered">Scheduled Check-In</string>
     <string name="notification_history_subtitle">%1$s • %2$s</string>
-    <!-- Names the board rather than a sensor, for hub-level alerts in the history list. -->
     <string name="notification_history_hub">Hub</string>
     <string name="notification_history_page">Page %1$d of %2$d</string>
     <string name="notification_history_previous_page">Previous page</string>
@@ -734,7 +688,6 @@
     <string name="notification_history_clear_all_message">This deletes every notification in your history, including notifications on other pages and hidden by the current filters.</string>
     <string name="notification_history_clear_all_cancel">Cancel</string>
     <string name="notification_history_clear_all_confirm">Clear all</string>
-    <!-- Water Parameters (SETTINGS-07): the thresholds every alert and status colour is judged against -->
     <string name="water_parameters_no_aquarium">Thresholds are stored per aquarium, so there is nothing to configure until a hub is paired.</string>
     <string name="threshold_section_safe_range">Threshold Ranges</string>
     <string name="threshold_section_sudden_change">Sudden Change</string>
@@ -744,8 +697,6 @@
     <string name="threshold_level_safe_high">Safe High</string>
     <string name="threshold_level_warning_high">Warning High</string>
     <string name="threshold_level_spike">Abnormal Spike</string>
-    <!-- Each badge names what crossing that bound outward costs you, which is where the critical
-         bands are declared: they are never typed in, only implied by the warning bounds. -->
     <string name="threshold_badge_critical_below">Critical below</string>
     <string name="threshold_badge_warning_below">Warning below</string>
     <string name="threshold_badge_warning_above">Warning above</string>
@@ -756,7 +707,6 @@
     <string name="threshold_desc_warning_high">The top of the warning band. %1$s above this is critical and alerts you straight away.</string>
     <string name="threshold_desc_spike">Alert when %1$s changes by more than this value between two readings, in either direction, even while it is still inside the safe range.</string>
     <string name="threshold_value_hint">Value</string>
-    <!-- A spike is a distance rather than a place, and counts the same in both directions. -->
     <string name="threshold_spike_prefix">±</string>
     <string name="threshold_error_number">Enter a number</string>
     <string name="threshold_error_above_warning_low">Must be above Warning Low</string>
@@ -774,7 +724,6 @@
     <string name="threshold_water_level_note_title">Why is Water Level not here?</string>
     <string name="threshold_water_level_note">The hub\’s water level sensor is a capacitive detector mounted on the outside of the aquarium tank. It only detects whether water is at the level of its position, alerting "Normal" when it detects water and "Critical" water drops below its level. So, there is no threshold range to set for this sensor. To adjust the water level trigger, physically move the sensor up or down.</string>
 
-    <!-- Analytics screen (DASH-03) -->
     <string name="analytics_chart_loading">Loading readings…</string>
     <string name="analytics_chart_error">Couldn\'t load readings. Please tap to retry</string>
     <string name="analytics_chart_no_aquarium">Add an aquarium to see its readings</string>
@@ -785,35 +734,22 @@
     <string name="analytics_period_1m">1M</string>
     <string name="analytics_period_6m">6M</string>
     <string name="analytics_period_1y">1Y</string>
-    <!--
-      The same six windows spelled out, for the places a button's width is not the constraint and
-      an abbreviation would have to be decoded: so far, the clear-readings dialog, which is naming
-      what it is about to delete.
-    -->
     <string name="analytics_period_1h_long">Last hour</string>
     <string name="analytics_period_1d_long">Last 24 hours</string>
     <string name="analytics_period_1w_long">Last 7 days</string>
     <string name="analytics_period_1m_long">Last 30 days</string>
     <string name="analytics_period_6m_long">Last 6 months</string>
     <string name="analytics_period_1y_long">Last 12 months</string>
-    <!-- x axis: what one step along it means, per selected period. -->
     <string name="analytics_axis_minutes_ago">Minutes ago</string>
     <string name="analytics_axis_hours_ago">Hours ago</string>
     <string name="analytics_axis_days_ago">Days ago</string>
     <string name="analytics_axis_months_ago">Months ago</string>
-    <!--
-      y axis, for the two sensors whose readings carry no unit. pH is a scale rather than a
-      quantity; water level is detected or not, and a bucket averages it, so the plotted value is
-      how much of that bucket the water stayed up.
-    -->
     <string name="analytics_axis_ph">pH</string>
     <string name="analytics_axis_water_level">% of time safe</string>
 
-    <!-- Aquarium selector, at the head of the page. -->
     <string name="analytics_active_aquarium">Active Aquarium</string>
     <string name="analytics_aquarium_selector_description">Change Aquarium</string>
 
-    <!-- System health card: the selected sensor's live state, over the selected period's buckets. -->
     <string name="analytics_system_health">System Health</string>
     <string name="analytics_uptime">Uptime</string>
     <string name="analytics_last_seen_pending">No readings yet</string>
@@ -833,29 +769,14 @@
     <string name="analytics_stat_min">Minimum</string>
     <string name="analytics_stat_avg">Average</string>
     <string name="analytics_stat_max">Maximum</string>
-    <!-- The same three columns for the water level detector, which has no reading to take a minimum
-         of: what it contributes to a bucket is the share of that bucket it sensed water for, so the
-         three figures are the lowest and highest such share and the share over the whole period. -->
     <string name="analytics_stat_water_level_min">Lowest</string>
     <string name="analytics_stat_water_level_avg">Time safe</string>
     <string name="analytics_stat_water_level_max">Highest</string>
-    <!-- Stands in for a statistic the period has no readings to compute. -->
     <string name="analytics_stat_empty">—</string>
     <string name="analytics_percent">%1$d%%</string>
 
-    <!-- Reading distribution card. Its three bands are labelled with @string/normal, @string/warning
-         and @string/critical, which is what the sensor cards call the same three states. -->
     <string name="analytics_distribution_title">Reading Distribution</string>
 
-    <!--
-      The two info sheets on this page, opened from the ⓘ on each of the two cards.
-
-      Split rather than combined because the two cards count different things and that is the
-      confusing part: uptime is a share of time, the distribution is a share of readings.
-
-      These describe the page rather than a sensor, so unlike the sensor sheets they carry no
-      reading, no status and no threshold bands - see SensorInfoBottomSheet.explaining.
-    -->
     <string name="analytics_info_open">About these numbers</string>
     <string name="analytics_info_lead_title">What this card shows</string>
 
@@ -882,24 +803,12 @@
     <string name="analytics_info_distribution_grading_title">How readings are graded</string>
     <string name="analytics_info_distribution_grading_1">The ranges come from this aquarium\'s thresholds. Change them and this updates right away.</string>
 
-    <!--
-      The two actions on the graph card, and everything they can say back. Both act on the one
-      period node the graph is drawn from, so both are described in terms of the selection at the
-      top of the page rather than in terms of the database.
-    -->
     <string name="analytics_download_description">Download these readings</string>
     <string name="analytics_clear_description">Clear these readings</string>
     <string name="analytics_download_saved">Saved to your Downloads folder</string>
-    <!-- The window holds nothing, so there is no file to write. Said rather than writing an empty
-         one, which would look like a success and be worth nothing. -->
     <string name="analytics_download_empty">No data to download</string>
     <string name="analytics_download_failed">Couldn\'t save the file. Try again.</string>
 
-    <!--
-      The clear-readings dialog. It names all three of the selections it is about to act on,
-      because a window of readings is only identified by all three, and says plainly that they are
-      not coming back.
-    -->
     <string name="analytics_clear_title">Clear these readings?</string>
     <string name="analytics_clear_message">This erases the stored readings for this window from the database. They cannot be recovered.</string>
     <string name="analytics_clear_field_aquarium">Aquarium</string>
@@ -910,7 +819,6 @@
     <string name="analytics_clear_done">Readings cleared</string>
     <string name="analytics_clear_failed">Couldn\'t clear the readings. Check your connection and try again.</string>
 
-    <!-- BLE-02: App <-> Hardware pairing -->
     <string name="pairing_flow_title">Pair Your Hub</string>
     <string name="pairing_hero_idle_title">Ready to Scan</string>
     <string name="pairing_hero_idle_body">Make sure your AquaSense hub is plugged in and nearby.</string>
@@ -929,7 +837,6 @@
     <string name="pairing_bluetooth_turn_on">Turn On Bluetooth</string>
     <string name="pairing_grant_permission">Grant Permission</string>
 
-    <!-- Discovered hub list -->
     <string name="pairing_section_devices">Nearby Hubs</string>
     <string name="pairing_board_unnamed">AquaSense Hub</string>
     <string name="pairing_board_subtitle">AQS-01</string>
@@ -939,7 +846,6 @@
     <string name="pairing_board_paired">Paired!</string>
     <string name="pairing_board_signal_description">Signal Strength %1$d of 4</string>
 
-    <!-- Wi-Fi section, revealed once a hub is selected -->
     <string name="pairing_section_wifi">Connect Hub to Wi-Fi</string>
     <string name="pairing_wifi_body">Your hub needs Wi-Fi connection to send sensor data to the app. It must be a 2.4 GHz network since the hub cannot connect to 5 GHz networks.</string>
     <string name="pairing_wifi_ssid_hint">Your Wi-Fi Network Name (SSID)</string>

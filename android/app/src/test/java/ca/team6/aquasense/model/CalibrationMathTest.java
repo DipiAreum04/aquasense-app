@@ -36,13 +36,11 @@ public class CalibrationMathTest {
         assertEquals(25.5d, CalibrationMath.parseOperatingPoint("25.5"), 1e-9);
         assertEquals(-3.2d, CalibrationMath.parseOperatingPoint("-3.2"), 1e-9);
         assertEquals(0.5d, CalibrationMath.parseOperatingPoint("0.5"), 1e-9);
-        // Surrounding whitespace is the keyboard's doing, not the user changing their mind.
         assertEquals(7d, CalibrationMath.parseOperatingPoint("  7 "), 1e-9);
     }
 
     @Test
     public void parseOperatingPoint_acceptsACommaSeparator() {
-        // What a comma-locale keyboard emits for the same value.
         assertEquals(25.5d, CalibrationMath.parseOperatingPoint("25,5"), 1e-9);
     }
 
@@ -77,10 +75,8 @@ public class CalibrationMathTest {
 
     @Test
     public void percentError_measuresTheOffsetAgainstTheBandWidth() {
-        // Half a degree on a two-degree band is 25%, either side of the reference.
         assertEquals(25d, CalibrationMath.percentError(0.5d, 24d, 26d), 1e-9);
         assertEquals(25d, CalibrationMath.percentError(-0.5d, 24d, 26d), 1e-9);
-        // The same absolute offset is a far smaller error on a band hundreds wide.
         assertEquals(0.2d, CalibrationMath.percentError(0.5d, 150d, 400d), 1e-9);
     }
 

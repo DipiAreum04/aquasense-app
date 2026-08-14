@@ -1,27 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    The aquarium on the first-installation wizard's welcome page.
-
-    Drawn rather than shipped as an image: it is flat shapes, so a vector costs a couple of KB at
-    every screen density instead of a PNG per bucket, and every colour is a resource, which is
-    what lets @color/illustration_* re-light the whole scene for dark mode.
-
-    Painted back to front: glass interior, water, then what sits in the tank, and finally the
-    glass outline over the top of it all.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="360dp"
     android:height="244dp"
     android:viewportWidth="360"
     android:viewportHeight="244">
 
-    <!-- Air above the waterline -->
     <path
         android:fillColor="@color/illustration_water_surface"
         android:pathData="M32,8 L328,8 A24,24 0 0 1 352,32 L352,204 A24,24 0 0 1 328,228 L32,228
             A24,24 0 0 1 8,204 L8,32 A24,24 0 0 1 32,8 Z" />
 
-    <!-- Water, its top edge left uneven so the surface reads as moving -->
     <path
         android:fillColor="@color/illustration_water"
         android:pathData="M8,62 C40,54 70,72 108,66 C146,60 180,50 220,58 C258,66 300,52 352,60
@@ -33,7 +21,6 @@
         android:strokeWidth="3"
         android:strokeLineCap="round" />
 
-    <!-- Plant pots, tucked under the gravel bar at either end -->
     <path
         android:fillColor="@color/illustration_hardware"
         android:pathData="M62,200 L76,200 A4,4 0 0 1 80,204 L80,222 A4,4 0 0 1 76,226 L62,226
@@ -43,12 +30,10 @@
         android:pathData="M286,200 L300,200 A4,4 0 0 1 304,204 L304,222 A4,4 0 0 1 300,226 L286,226
             A4,4 0 0 1 282,222 L282,204 A4,4 0 0 1 286,200 Z" />
 
-    <!-- Gravel bed -->
     <path
         android:fillColor="@color/illustration_gravel"
         android:pathData="M34,200 L326,200 A12,12 0 0 1 326,224 L34,224 A12,12 0 0 1 34,200 Z" />
 
-    <!-- Planted mounds sitting on it -->
     <path
         android:fillColor="@color/illustration_mound"
         android:pathData="M78,202 A32,10 0 1 0 142,202 A32,10 0 1 0 78,202 Z" />
@@ -59,7 +44,6 @@
         android:fillColor="@color/illustration_mound"
         android:pathData="M228,202 A24,9 0 1 0 276,202 A24,9 0 1 0 228,202 Z" />
 
-    <!-- Two plants, a pair of leaves each -->
     <path
         android:pathData="M68,216 C56,198 54,178 64,158"
         android:strokeColor="@color/illustration_plant"
@@ -81,7 +65,6 @@
         android:strokeWidth="7"
         android:strokeLineCap="round" />
 
-    <!-- The big fish, mid-tank, facing left -->
     <path
         android:fillColor="@color/illustration_fish_warm"
         android:pathData="M152,132 C152,123 168,118 181,123 C190,126 195,129 198,132
@@ -93,7 +76,6 @@
         android:fillColor="@color/illustration_fish_eye"
         android:pathData="M158,129 A2.6,2.6 0 1 0 163.2,129 A2.6,2.6 0 1 0 158,129 Z" />
 
-    <!-- A smaller one behind and below it -->
     <path
         android:fillColor="@color/illustration_fish_cool"
         android:pathData="M200,172 C200,166 211,163 219,166 C224,168 227,170 229,172
@@ -105,7 +87,6 @@
         android:fillColor="@color/illustration_fish_eye"
         android:pathData="M204,170 A1.8,1.8 0 1 0 207.6,170 A1.8,1.8 0 1 0 204,170 Z" />
 
-    <!-- Bubbles rising off each fish -->
     <path
         android:pathData="M168,104 A5,5 0 1 0 178,104 A5,5 0 1 0 168,104 Z"
         android:strokeColor="@color/illustration_wave"
@@ -123,7 +104,6 @@
         android:strokeColor="@color/illustration_wave"
         android:strokeWidth="2" />
 
-    <!-- The temperature probe, the one piece of AquaSense hardware in the picture -->
     <path
         android:fillColor="@color/illustration_hardware"
         android:pathData="M312,70 A6,6 0 0 1 318,76 L318,144 A6,6 0 0 1 306,144 L306,76
@@ -132,7 +112,6 @@
         android:fillColor="@color/illustration_wave"
         android:pathData="M301,150 A11,11 0 1 0 323,150 A11,11 0 1 0 301,150 Z" />
 
-    <!-- Glass, over everything so the tank contains what is in it -->
     <path
         android:pathData="M32,8 L328,8 A24,24 0 0 1 352,32 L352,204 A24,24 0 0 1 328,228 L32,228
             A24,24 0 0 1 8,204 L8,32 A24,24 0 0 1 32,8 Z"

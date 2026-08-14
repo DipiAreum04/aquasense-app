@@ -10,14 +10,10 @@ import java.util.regex.Pattern;
 
 import ca.team6.aquasense.R;
 
-/**
- * Shared validator class for profile/contact form fields.
- */
 public final class ProfileInputValidator {
 
     public static final int MAX_LENGTH = 100;
 
-    // Name may contain letters, spaces, hyphens, or apostrophes.
     private static final Pattern NAME_PATTERN =
             Pattern.compile("^\\p{L}+([ '\\-]\\p{L}+)*$");
 
@@ -26,8 +22,6 @@ public final class ProfileInputValidator {
 
     private ProfileInputValidator() {}
 
-    // Name validation method for profile/edit profile fragment
-    // Name must not be empty and must not exceed 100 characters
     public static boolean isInvalidName(@Nullable String name) {
         if (TextUtils.isEmpty(name)) {
             return true;
@@ -44,8 +38,6 @@ public final class ProfileInputValidator {
         return trimmed.length() > MAX_LENGTH || !AQUARIUM_NAME_PATTERN.matcher(trimmed).matches();
     }
 
-    // Optional name validation method for contact form
-    // Empty name is OK; otherwise must pass validation check
     public static boolean isInvalidOptionalName(@Nullable String name) {
         if (TextUtils.isEmpty(name) || name.trim().isEmpty()) {
             return false;
@@ -53,8 +45,6 @@ public final class ProfileInputValidator {
         return isInvalidName(name);
     }
 
-    // Email validation method
-    // Email must contain an @ symbol, max 100 characters, and must be a valid email address
     public static boolean isInvalidEmail(@Nullable String email) {
         if (TextUtils.isEmpty(email)) {
             return true;
@@ -65,8 +55,6 @@ public final class ProfileInputValidator {
                 || !Patterns.EMAIL_ADDRESS.matcher(trimmed).matches();
     }
 
-    // Minimum password length is 6 characters (Firebase Auth requirement)
-    // Maximum password length is 100 characters
     public static final int MIN_PASSWORD_LENGTH = 6;
     public static final int MAX_PASSWORD_LENGTH = 100;
 
@@ -76,9 +64,6 @@ public final class ProfileInputValidator {
     private static final Pattern PASSWORD_SPECIAL = Pattern.compile("[^A-Za-z0-9]");
 
 
-    // Returns a string resource for the first failed password rule, or 0 if valid.
-    // Password must be 6–100 characters and include at least
-    // one uppercase letter, one lowercase letter, one digit, and one special character.
     @StringRes
     public static int getPasswordErrorResId(@Nullable String password) {
         if (TextUtils.isEmpty(password)) {
@@ -105,7 +90,6 @@ public final class ProfileInputValidator {
         return 0;
     }
 
-    // Confirm password must match the password field
     public static boolean passwordsDoNotMatch(@Nullable String password, @Nullable String confirmPassword) {
         if (password == null || confirmPassword == null) {
             return true;

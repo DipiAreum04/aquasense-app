@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Heading over a block of bullets in the sensor info sheet. Sized to match the "About" heading
-     above it, so the sheet reads as one page rather than a stack of banners. -->
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/title"

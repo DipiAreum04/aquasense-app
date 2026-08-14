@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 
-    // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
 }
 
@@ -65,34 +64,23 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
 
-    // When using the BoM, you don't specify versions in Firebase library dependencies
 
-    // Add the dependency for the Firebase SDK for Google Analytics
     implementation("com.google.firebase:firebase-analytics")
 
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    // https://firebase.google.com/docs/android/setup#available-libraries
 
-    // Add the dependency for firebase auth for user authentication
     implementation("com.google.firebase:firebase-auth")
 
-    // Add the dependency for firebase realtime database for sensor data
     implementation("com.google.firebase:firebase-database")
 
-    // Add the dependency for firebase messaging for aquarium alerts and notifications
     implementation("com.google.firebase:firebase-messaging")
 
-    // Add the dependency for Credential Manager and Google ID for Sign in with Google
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     implementation("com.google.android.material:material:1.12.0")
 
-    // Add the dependency for MPAndroidChart, which draws the analytics graphs
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

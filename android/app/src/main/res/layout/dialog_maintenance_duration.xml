@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  How long maintenance mode should hold. AlertDialog's own title and list are not used and its
-  window background is taken away, because the platform's picker is square-cornered grey furniture
-  and this one has to read as a card off the settings page. See NotificationsFragment, which is
-  what puts this in a window.
-
-  There is no cancel button: the four durations are the only choices, and backing out is the back
-  button or a tap outside, which the fragment already treats as leaving the switch as it was.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

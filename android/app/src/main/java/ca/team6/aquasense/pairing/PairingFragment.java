@@ -44,13 +44,6 @@ import ca.team6.aquasense.model.ScopedLogger;
 import ca.team6.aquasense.ui.BleStatusOrb;
 import ca.team6.aquasense.ui.InputFieldError;
 
-/**
- * BLE-02: the entire app <-> hardware pairing flow.
- *
- * <p>The aquarium's name and water type are collected on the add-aquarium form before this screen
- * opens. Nothing is written to the database until the board reports its UID over BLE, 
- * because that UID is the aquarium's key.
- */
 public class PairingFragment extends Fragment {
 
     public static final String ARG_AQUARIUM_CONFIG = "aquariumConfig";
@@ -89,13 +82,10 @@ public class PairingFragment extends Fragment {
     private TextView noticeBody;
     private Button noticeRetry;
 
-    // What the add-aquarium form collected. Forwarded to the repository untouched; this screen
-    // collects Wi-Fi credentials and reads nothing out of it.
     @Nullable
     private NewAquariumConfig aquariumConfig;
     private PairingEntryMode entryMode = PairingEntryMode.ADD_AQUARIUM;
 
-    // The hub the user tapped, or null while they are still choosing.
     @Nullable
     private String selectedAddress;
 
@@ -103,8 +93,6 @@ public class PairingFragment extends Fragment {
 
     private List<DiscoveredBoard> boards = new ArrayList<>();
 
-    // Only used to decide whether a change is worth animating: RSSI updates arrive several times a
-    // second, and running a transition for each would leave the screen permanently mid-animation.
     @Nullable
     private PairingState renderedState;
 
@@ -126,7 +114,6 @@ public class PairingFragment extends Fragment {
                         render();
                     });
 
-    // Listens for the system's Bluetooth state broadcast, which is sent when the user toggles it to off or on.
     private final BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -282,7 +269,6 @@ public class PairingFragment extends Fragment {
         this.noticeRetry = view.findViewById(R.id.btnNoticeRetry);
     }
 
-    // ----- rendering -----
 
     private void render() {
         if (getView() == null) {
@@ -303,10 +289,6 @@ public class PairingFragment extends Fragment {
         this.renderNotice(state, failure);
     }
 
-    /**
-     * Renders the hero section, which is the icon, title, body and action button at the top of the
-     * pairingscreen.
-     */
     private void renderHero(@NonNull PairingState state, @Nullable PairingFailure failure) {
         PairingFailure blocker = this.currentBlocker();
 
@@ -362,11 +344,6 @@ public class PairingFragment extends Fragment {
         }
     }
 
-    /**
-     * Turns the hero into the success page. The orb, title, body and action are the same views the
-     * rest of the flow uses, so a paired hub lands on a screen that matches the one it started on
-     * rather than a separate confirmation layout.
-     */
     private void renderSuccessHero() {
         this.heroSection.setVisibility(View.VISIBLE);
         this.orb.setState(BleStatusOrb.State.SUCCESS);
@@ -376,8 +353,6 @@ public class PairingFragment extends Fragment {
 
         this.heroAction.setBackgroundResource(R.drawable.bg_auth_primary_button);
         this.heroAction.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
-        // A first installation has one page of the wizard left after this one, so it does not
-        // promise the dashboard yet.
         this.showHeroAction(this.entryMode == PairingEntryMode.FIRST_RUN
                         ? R.string.pairing_action_continue
                         : R.string.pairing_action_dashboard,
@@ -421,7 +396,6 @@ public class PairingFragment extends Fragment {
                 break;
 
             default:
-                // UNSUPPORTED: there is no Bluetooth support in the phone, no action available.
                 this.heroAction.setVisibility(View.GONE);
                 break;
         }
@@ -438,7 +412,6 @@ public class PairingFragment extends Fragment {
         this.boardAdapter.setSelected(this.selectedAddress, rowStateFor(state));
     }
 
-    /** Displays every discovered hub while the user is still choosing and only the selected one afterwards */
     @NonNull
     private List<DiscoveredBoard> displayedBoards() {
         if (this.selectedAddress == null) {
@@ -552,7 +525,6 @@ public class PairingFragment extends Fragment {
         this.noticeRetry.setVisibility(retryable ? View.VISIBLE : View.GONE);
     }
 
-    // ----- actions -----
 
     private void startScan() {
         if (!BlePermissions.isGranted(requireContext())) {
@@ -590,7 +562,6 @@ public class PairingFragment extends Fragment {
 
     private void submitCredentials() {
 
-        // Flag whichever fields are empty
         String ssid = this.ssidInput.getText().toString().trim();
         String password = this.passwordInput.getText().toString();
 
@@ -614,8 +585,6 @@ public class PairingFragment extends Fragment {
             return;
         }
         if (this.aquariumConfig == null) {
-            // Every route into this screen comes through the add-aquarium form, which cannot reach
-            // it without one. Provisioning anyway would strand a board with nothing to claim it.
             ScopedLogger.error("Reached the pairing screen with no aquarium configuration.");
             return;
         }
@@ -669,7 +638,6 @@ public class PairingFragment extends Fragment {
         }
     }
 
-    // ----- helpers -----
 
     @Nullable
     private PairingFailure currentBlocker() {
@@ -703,8 +671,6 @@ public class PairingFragment extends Fragment {
         if (paired != null) {
             return paired.getName();
         }
-        // The write has landed but the subscription has not caught up yet, so the name the form
-        // collected is the same name, just not read back from the database.
         return this.aquariumConfig == null ? "" : this.aquariumConfig.getName();
     }
 

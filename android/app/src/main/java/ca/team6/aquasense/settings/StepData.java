@@ -15,37 +15,17 @@ public class StepData implements Parcelable {
     public final ArrayList<String> checklist;
     public final ArrayList<String> inputHints;
 
-    // State preservation
     public final boolean[] checklistStates;
     public final String[] inputValues;
 
-    // Branching logic
     public final String choiceQuestion;
-    public int selectedChoice = -1; // -1 = none, 0 = Yes, 1 = No
+    public int selectedChoice = -1;
 
-    /**
-     * The sensor this step measures, which makes it a calibration point: the user names a value they
-     * have put the probe in, the guide samples the sensor while it is there, and the mean is left in
-     * {@link #capturedValue}. Null on every step that is only instructions.
-     */
     public final String sensorId;
 
-    /**
-     * The sensor's safe band for this aquarium, in the unit the database stores.
-     *
-     * <p>Carried on the step because it is what the operating point the user types is checked
-     * against: a correction is exact where it was measured and drifts either side of it, so one
-     * taken outside the range the tank is meant to hold is accurate in a place it will never sit.
-     * {@link Double#NaN} on steps that are not calibration points.
-     */
     public final double safeLow;
     public final double safeHigh;
 
-    /**
-     * The mean of what the board reported for {@link #sensorId} across the sampling window, raw and
-     * in the unit the database stores. {@link Double#NaN} until the window has run, and also when
-     * the sensor never reported during it - there is nothing to measure an offset from in that case.
-     */
     public double capturedValue = Double.NaN;
 
     public StepData(String instruction, @DrawableRes int imageResId, List<String> checklist) {
@@ -62,10 +42,6 @@ public class StepData implements Parcelable {
                 Double.NaN, Double.NaN);
     }
 
-    /**
-     * The calibration point of a guide: the user types the value they have brought the water to,
-     * which has to land inside {@code [safeLow, safeHigh]}, and the guide samples the sensor there.
-     */
     public static StepData calibrationPoint(String instruction, @DrawableRes int imageResId,
                                             List<String> checklist, String inputHint,
                                             String sensorId, double safeLow, double safeHigh) {
@@ -92,16 +68,10 @@ public class StepData implements Parcelable {
         }
     }
 
-    /** Whether this step is one the calibration reads an offset out of. */
     public boolean isCalibrationPoint() {
         return this.sensorId != null;
     }
 
-    /**
-     * What the user typed as the operating point, trimmed, or an empty string when they have not
-     * typed anything. Unparsed - what counts as a usable value depends on the display unit, which
-     * is the guide's business rather than this holder's.
-     */
     public String typedOperatingPoint() {
         return this.inputValues.length == 0 || this.inputValues[0] == null
                 ? ""

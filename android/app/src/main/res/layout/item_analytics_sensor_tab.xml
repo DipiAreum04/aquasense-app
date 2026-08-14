@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The label of one sensor tab, set as that tab's custom view by AnalyticsActivity.
-  This is to ensure that the text appearance is set dynamically based on phone size.
--->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

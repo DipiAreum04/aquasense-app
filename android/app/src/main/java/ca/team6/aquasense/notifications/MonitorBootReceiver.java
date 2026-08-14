@@ -22,7 +22,6 @@ public final class MonitorBootReceiver extends BroadcastReceiver {
             return;
         }
         ScopedLogger.info("Restoring threshold monitoring after " + action);
-        // Re-checks sign-in and the notification settings rather than assuming it should run.
         MonitoringController.sync(context);
     }
 }

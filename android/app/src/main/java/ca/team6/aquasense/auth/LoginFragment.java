@@ -1,5 +1,7 @@
 package ca.team6.aquasense.auth;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -74,7 +76,7 @@ public class LoginFragment extends Fragment {
         btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
         linkForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
         linkRegister.setOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigate(R.id.action_login_to_register)); // TODO: check if this is correct
+                NavHostFragment.findNavController(this).navigate(R.id.action_login_to_register));
     }
 
     private void attemptLogin() {
@@ -85,17 +87,14 @@ public class LoginFragment extends Fragment {
         String email = textOf(etEmail);
         String password = rawTextOf(etPassword);
 
-        // A new attempt supersedes whatever the last one was rejected for
         credentialRejection.reset();
 
-        // Re-check every field on each submit so outlines reflect the current state
         int emailError = emailErrorFor(email);
         int passwordError = passwordErrorFor(password);
 
         InputFieldError.set(boxEmail, stateFor(emailError));
         InputFieldError.set(boxPassword, stateFor(passwordError));
 
-        // Every failing field is outlined, but only the first message is toasted.
         if (emailError != 0) {
             toast(emailError);
             return;
@@ -159,18 +158,16 @@ public class LoginFragment extends Fragment {
     private void showForgotPasswordDialog() {
         View content = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
         EditText etResetEmail = content.findViewById(R.id.etForgotPasswordEmail);
-        // Carry over whatever they already typed so the common case is one tap.
         etResetEmail.setText(textOf(etEmail));
         etResetEmail.setSelection(etResetEmail.getText().length());
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.auth_forgot_password_title)
                 .setView(content)
                 .setNegativeButton(R.string.delete_profile_cancel, null)
                 .setPositiveButton(R.string.auth_forgot_password_send, null)
                 .create();
 
-        // Bound after show() so a validation failure does not dismiss the dialog.
         dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(v -> {
                     String email = textOf(etResetEmail);
@@ -207,7 +204,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void showResetSentDialog(@NonNull String email) {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.auth_forgot_password_sent_title)
                 .setMessage(getString(R.string.auth_forgot_password_sent, email))
                 .setPositiveButton(R.string.got_it, null)
@@ -239,22 +236,16 @@ public class LoginFragment extends Fragment {
         etPassword.setSelection(Math.max(selection, 0));
     }
 
-    /**
-     * True for errors that mean "this email and password combination is invalid".
-     * Network and generic failures are excluded on purpose.
-     */
     private static boolean isCredentialError(int messageResId) {
         return messageResId == R.string.auth_error_invalid_credentials
                 || messageResId == R.string.auth_error_wrong_password
                 || messageResId == R.string.auth_error_user_not_found;
     }
 
-    // Login fields stay unoutlined when they pass
     private static InputFieldError.State stateFor(int errorResId) {
         return errorResId == 0 ? InputFieldError.State.NEUTRAL : InputFieldError.State.ERROR;
     }
 
-    // Returns the message for the first failed rule, or 0 when the value is acceptable.
     @StringRes
     private static int emailErrorFor(String email) {
         if (TextUtils.isEmpty(email)) {
@@ -266,7 +257,6 @@ public class LoginFragment extends Fragment {
         return 0;
     }
 
-    // Login only checks that a password was entered.
     @StringRes
     private static int passwordErrorFor(String password) {
         if (TextUtils.isEmpty(password)) {

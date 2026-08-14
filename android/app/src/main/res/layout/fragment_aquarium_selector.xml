@@ -4,14 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Header Navigation Bar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_aquarium_selector"
         style="@style/Widget.AquaSense.Toolbar"
-        android:paddingEnd="20dp" 
+        android:paddingEnd="20dp"
         android:layout_alignParentTop="true" />
 
-    <!-- Aquarium List Scroll Container -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,11 +22,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-            <!-- Dynamic aquarium item cards populated in Java -->
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Action Bar -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -37,6 +33,7 @@
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnAddNewAquarium"
             android:layout_width="match_parent"
             android:layout_height="56dp"

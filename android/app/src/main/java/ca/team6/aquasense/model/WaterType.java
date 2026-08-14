@@ -5,12 +5,6 @@ import androidx.annotation.StringRes;
 
 import ca.team6.aquasense.R;
 
-/**
- * The water chemistry family an aquarium belongs to.
- *
- * <p>This is a property of the water itself, not of the threshold numbers, so it survives the user
- * editing an aquarium's bands.
- */
 public enum WaterType {
 
     FRESHWATER("freshwater", R.string.water_type_freshwater),
@@ -24,18 +18,15 @@ public enum WaterType {
         this.labelResId = labelResId;
     }
 
-    /** The value stored in the database. Matches the {@code water_type} enum in schema.json. */
     public String getKey() {
         return this.key;
     }
 
-    /** Display name for this water type. Never write this to the database, use {@link #getKey()}. */
     @StringRes
     public int getLabelResId() {
         return this.labelResId;
     }
 
-    // Parses a stored water type from the database.
     @Nullable
     public static WaterType fromKey(@Nullable String key) {
         for (WaterType waterType : values()) {

@@ -66,7 +66,6 @@ public class EditProfileFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            // If the name is unchanged, do nothing
             if (editedName.equals(name)) {
                 Navigation.findNavController(v).navigateUp();
                 return;
@@ -97,8 +96,6 @@ public class EditProfileFragment extends Fragment {
         });
     }
 
-    // Firebase Auth and the database node are two sequential writes, so block a second tap
-    // from starting a competing rename while the first is still in flight.
     private void setSaving(@NonNull Button btnSave, boolean saving) {
         btnSave.setEnabled(!saving);
         btnSave.setText(saving ? R.string.edit_profile_saving : R.string.edit_profile_save);

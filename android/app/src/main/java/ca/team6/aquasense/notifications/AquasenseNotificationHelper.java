@@ -28,10 +28,8 @@ public final class AquasenseNotificationHelper {
     public static final String CHANNEL_ID = "aquasense_threshold_alerts";
     public static final String MONITORING_CHANNEL_ID = "aquasense_background_monitoring";
 
-    /** The aquarium a tapped alert is about, so the dashboard opens on that tank. */
     public static final String EXTRA_AQUARIUM_ID = "ca.team6.aquasense.extra.AQUARIUM_ID";
 
-    // The monitoring notice is not about one aquarium, so it only needs a request code of its own.
     private static final int MONITORING_REQUEST_CODE = 1;
 
     private AquasenseNotificationHelper() {}
@@ -58,7 +56,6 @@ public final class AquasenseNotificationHelper {
         NotificationChannel channel = new NotificationChannel(
                 MONITORING_CHANNEL_ID,
                 context.getString(R.string.notification_channel_monitoring_name),
-                // Low importance keeps the persistent monitoring notice silent and collapsed.
                 NotificationManager.IMPORTANCE_LOW
         );
         channel.setDescription(context.getString(R.string.notification_channel_monitoring_desc));
@@ -93,7 +90,6 @@ public final class AquasenseNotificationHelper {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                // A spike is advisory, a band breach needs attention now.
                 .setPriority(violation.isCritical()
                         ? NotificationCompat.PRIORITY_HIGH
                         : NotificationCompat.PRIORITY_DEFAULT)
@@ -111,16 +107,6 @@ public final class AquasenseNotificationHelper {
         new NotificationLogRepository(context).addEntry(NotificationLogMapper.fromViolation(violation));
     }
 
-    /**
-     * The colour the shade tints an alert's icon and app name with (ST-7.3), taken from the same
-     * {@link SensorStatus} the dashboard colours the sensor's card with. A notification and the
-     * card it sends you to therefore agree on sight, before either has been read.
-     *
-     * <p>A violation that is not about a reading has no severity to show. Both of those - a sensor
-     * that stopped reporting and a hub that went quiet - are the disconnected grey the dashboard
-     * greys the same card to, rather than a red that would claim the water is in trouble when what
-     * is actually in trouble is the hardware.
-     */
     @ColorRes
     private static int accentColorResIdFor(@NonNull ThresholdViolation violation) {
         switch (violation.kind) {
@@ -132,23 +118,12 @@ public final class AquasenseNotificationHelper {
         }
     }
 
-    /**
-     * Tapping an AquaSense notification opens the dashboard, on {@code aquariumId} when one is
-     * given.
-     *
-     * <p>{@code requestCode} must be unique per notification. Two PendingIntents are the same when
-     * their request codes match and their intents are {@link Intent#filterEquals} — which ignores
-     * extras — so a shared request code would let {@link PendingIntent#FLAG_UPDATE_CURRENT} rewrite
-     * the target aquarium of every alert already sitting in the shade.
-     */
     private static PendingIntent openAppIntent(
             @NonNull Context context,
             @Nullable String aquariumId,
             int requestCode
     ) {
         Intent intent = new Intent(context, MainActivity.class)
-                // SINGLE_TOP hands the intent to a running MainActivity's onNewIntent instead of
-                // tearing the dashboard down and rebuilding it.
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_SINGLE_TOP);

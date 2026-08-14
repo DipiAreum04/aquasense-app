@@ -35,7 +35,6 @@ import ca.team6.aquasense.model.ThresholdBand;
 
 public final class FirebaseThresholdMonitor {
 
-    // The sensors NF-1.1 alerts on, matching the telemetry node names in the schema.
     private static final String[] MONITORED_SENSORS = {
             DatabaseSchema.TEMPERATURE_KEY,
             DatabaseSchema.PH_LEVEL_KEY,
@@ -112,7 +111,6 @@ public final class FirebaseThresholdMonitor {
         aquariumsRef.addValueEventListener(aquariumsListener);
     }
 
-    /** Releases every subscription but leaves the auth listener in place. */
     private void detach() {
         if (aquariumsRef != null) {
             aquariumsRef.removeEventListener(aquariumsListener);
@@ -147,8 +145,6 @@ public final class FirebaseThresholdMonitor {
                 watches.put(aquarium.getId(), watch);
                 watch.start();
             } else {
-                // Bands and the display name are editable, so refresh them without tearing the
-                // sensor listeners down and re-downloading every reading.
                 watch.updateAquarium(aquarium);
             }
         }
@@ -167,7 +163,6 @@ public final class FirebaseThresholdMonitor {
         }
     }
 
-    // One aquarium's set of sensor subscriptions and hub connectivity watch.
     private static final class AquariumWatch {
 
         private final Context appContext;
@@ -270,8 +265,6 @@ public final class FirebaseThresholdMonitor {
             if (!shouldDeliverAlert(settings, violation, SensorThresholds.HUB_DEDUPE_KEY)) {
                 return;
             }
-            // checkHubConnectivity runs once a minute for as long as the hub stays silent, so
-            // without the cooldown this re-fires every tick.
             if (!dedupeStore.cooldownElapsed(violation.cooldownKey())) {
                 return;
             }
@@ -282,7 +275,6 @@ public final class FirebaseThresholdMonitor {
         }
     }
 
-    /** One sensor's {@code last_instant} subscription. */
     private static final class SensorWatch implements ValueEventListener {
 
         private final Context appContext;
@@ -345,14 +337,9 @@ public final class FirebaseThresholdMonitor {
             if (raw == null) {
                 return;
             }
-            // Firebase replays the current value on (re)attach, so without this a reconnect would
-            // re-alert on a sample that was already handled.
             if (raw.timestamp <= lastProcessedTimestamp) {
                 return;
             }
-            // Graded on the corrected reading, which is the one the user is being shown. An alert
-            // worked out from the raw value would put a notification in the shade about a number
-            // that appears nowhere in the app, and would contradict the card it is about.
             SensorTelemetryReading reading = raw.withValue(parent.calibrationOffsets.correct(
                     parent.aquarium().getId(), sensorId, raw.value));
             settingsRepository.loadSettings(settings -> handleReading(settings, reading));
@@ -380,17 +367,11 @@ public final class FirebaseThresholdMonitor {
             }
 
             if (maintenanceModeStore.isActive(aquariumId)) {
-                // Recorded like the alerts-disabled case below, so the first reading after the
-                // snooze ends is compared against a real previous sample rather than a spike.
-                // Clearing active violation keys is no longer needed: alerts are re-gated by the
-                // per-condition cooldowns rather than a set of live violations.
                 rememberSample(aquariumId, reading);
                 return;
             }
 
             if (!paramAlertsEnabled(settings) && !spikeAlertsEnabled(settings)) {
-                // Still recorded, so re-enabling alerts compares against the real previous sample
-                // instead of reading the first value after the gap as a spike.
                 rememberSample(aquariumId, reading);
                 return;
             }
@@ -405,8 +386,6 @@ public final class FirebaseThresholdMonitor {
                     resolveBand(aquarium, sensorId),
                     spikeDelta,
                     reading.value,
-                    // Stored raw, so it has to be put on the same scale as the value it is being
-                    // compared against or the spike would be measured partly against the offset.
                     lastProcessedValue == null ? null : parent.calibrationOffsets.correct(
                             aquariumId, sensorId, lastProcessedValue));
 
@@ -425,8 +404,6 @@ public final class FirebaseThresholdMonitor {
                     reading.timestamp,
                     lastProcessedValue == null ? reading.rawValue : lastProcessedValue);
 
-            // The sample above is still recorded; only the alert is suppressed, which is how the
-            // feeding-silence flag this replaced behaved for every alert type.
             if (!sensorOfflineAlertsEnabled(settings) || maintenanceModeStore.isActive(aquariumId)) {
                 return;
             }
@@ -447,10 +424,6 @@ public final class FirebaseThresholdMonitor {
                 List<ThresholdViolation> violations,
                 SensorTelemetryReading reading
         ) {
-            // Every violation that clears its own window, not just the one that gets shown. The
-            // shade only has room for the most serious, but a spike the band breach outranked was
-            // still reported to the user by that notification, so it opens its window too --
-            // otherwise it fires unsuppressed on the very next sample.
             List<ThresholdViolation> notifiable = new ArrayList<>(violations.size());
             ThresholdViolation notifyViolation = null;
             for (ThresholdViolation violation : violations) {
@@ -465,8 +438,6 @@ public final class FirebaseThresholdMonitor {
                 if (!shouldDeliverAlert(settings, violation, sensorId)) {
                     continue;
                 }
-                // Cooldowns are per condition, so they are applied before the winner is picked:
-                // a muted band breach must not swallow a spike that is still allowed to speak.
                 if (dedupeStore.cooldownElapsed(violation.cooldownKey())) {
                     notifiable.add(violation);
                     notifyViolation = pickHigherPriorityViolation(notifyViolation, violation);
@@ -588,8 +559,6 @@ public final class FirebaseThresholdMonitor {
         }
     }
 
-    // A sensor the water type cannot measure stays unmonitored rather than alerting on a band
-    // borrowed from a different kind of tank; the aquarium answers that for itself.
     @Nullable
     private static ThresholdBand resolveBand(Aquarium aquarium, String sensorId) {
         return aquarium.effectiveThresholdFor(sensorId);

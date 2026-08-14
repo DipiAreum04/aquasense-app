@@ -40,33 +40,12 @@ import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 import ca.team6.aquasense.notifications.SensorThresholds;
 import ca.team6.aquasense.ui.InputFieldError;
 
-/**
- * Drives the {@code view_threshold_editor} form: one sensor at a time, five inputs each, graded as
- * they are typed.
- *
- * <p>Two screens ask the same question and so share this. The Water Parameters screen (SETTINGS-07)
- * edits an aquarium that exists, seeding from {@link #showAquarium} and writing the sensors that
- * changed. The add-aquarium form's Advanced Settings panel edits one that does not yet, seeding
- * from {@link #showTemplate} and handing every sensor to the pairing flow to write after the board
- * reports the UID it will be keyed by.
- *
- * <p>That second case is why the editor is seeded whether or not the user ever opens the panel: the
- * numbers a template implies and the numbers the panel shows are the same numbers, so opening it
- * and changing nothing writes exactly what leaving it closed writes.
- *
- * <p>What is not here: where the values come from beyond an aquarium or a template, and what a host
- * does with them. Both hosts supply their own action button, and only they know whether pressing it
- * saves or carries on.
- */
 public final class ThresholdEditor {
 
-    /** Told whenever what is typed changes, so a host can re-check its own action button. */
     public interface Listener {
         void onEditorChanged();
     }
 
-    // Two decimals is past what any of these sensors resolve, so this only ever trims trailing
-    // zeroes - it is here to keep a converted Fahrenheit bound from arriving as 71.60000000000001.
     private static final DecimalFormat FIELD_FORMAT = new DecimalFormat("0.##");
 
     private static final String STATE_SENSOR_IDS = "thresholdEditor:sensorIds";
@@ -74,18 +53,6 @@ public final class ThresholdEditor {
     private static final String STATE_VALUES_PREFIX = "thresholdEditor:values:";
     private static final String STATE_SAVED_PREFIX = "thresholdEditor:saved:";
 
-    /**
-     * The five inputs, in the order they are stacked. Each is the same layout with different words,
-     * so what changes between them lives here rather than in five near-identical blocks of code.
-     *
-     * <p>The four bounds run low to high, matching the bar above them, which reads left to right.
-     * Each is named after the band it opens - the same name the database column carries - while its
-     * badge names what crossing it outward costs. That badge is where critical is declared: it is
-     * never typed in, only implied by where the two warning bounds sit.
-     *
-     * <p>Colours run red, orange, orange, red from top to bottom, which is the bar's own ramp read
-     * from the outside in.
-     */
     private enum Level {
         WARNING_LOW(
                 ThresholdForm.Field.WARNING_LOW,
@@ -123,11 +90,6 @@ public final class ThresholdEditor {
                 R.color.status_red_soft,
                 R.drawable.ic_arrow_up_24px,
                 R.string.threshold_error_above_safe_high),
-        /**
-         * A distance rather than a place on the scale, and the only input that is not a band edge.
-         * It says so three ways at once: its own section, the app's accent instead of a severity
-         * colour, and no badge, because there is no band to cross and so nothing for one to name.
-         */
         SPIKE(
                 ThresholdForm.Field.SPIKE,
                 R.string.threshold_level_spike,
@@ -141,16 +103,10 @@ public final class ThresholdEditor {
         final ThresholdForm.Field field;
         @StringRes final int titleResId;
         @StringRes final int descriptionResId;
-        /** Names the band crossing this bound outward puts you in. Zero for the spike. */
         @StringRes final int badgeResId;
         @ColorRes final int accentColorResId;
         @ColorRes final int badgeFillColorResId;
         @DrawableRes final int iconResId;
-        /**
-         * What to say when this bound is not strictly above the one below it, named after that
-         * bound so the message points at the field to compare it with. Zero for the two inputs
-         * with nothing beneath them: Warning Low is the floor, and a spike is a width.
-         */
         @StringRes final int outOfOrderResId;
 
         Level(ThresholdForm.Field field,
@@ -172,7 +128,6 @@ public final class ThresholdEditor {
         }
     }
 
-    /** The views of one inflated card, held so binding a tab does not search the tree again. */
     private static final class LevelCard {
         final ImageView icon;
         final TextView title;
@@ -197,50 +152,26 @@ public final class ThresholdEditor {
         }
     }
 
-    /**
-     * One sensor's in-progress edit. Holds what is typed rather than what it parses to, so a field
-     * halfway through being retyped survives a tab change intact.
-     */
     private static final class Draft {
         final ThresholdForm.Units units;
         final String[] values = new String[Level.values().length];
-        /** What the editor was seeded with, formatted the same way, so an edit is a string comparison. */
         final String[] saved = new String[Level.values().length];
-        /**
-         * Whether each field's problem has been revealed. A field is not marked wrong while it is
-         * still being typed into - only once the user leaves it.
-         */
         final boolean[] revealed = new boolean[Level.values().length];
 
         ThresholdForm.Result result;
-        /**
-         * The last set of bounds that made sense, so the bar keeps its shape while a field is
-         * momentarily blank mid-edit instead of collapsing and springing back.
-         */
         @Nullable
         ThresholdBand lastValidBand;
 
-        /**
-         * True while some of what is shown was filled in from a fallback rather than read from the
-         * aquarium. What is on screen is then not what the aquarium is actually being graded
-         * against, so the host's save has to be live even before anything is touched - otherwise
-         * the one thing the Water Parameters screen exists to fix would be the one thing it cannot.
-         *
-         * <p>Always true for an editor seeded from a template, where nothing has been stored yet
-         * and every value is by definition waiting to be written.
-         */
         boolean showingFallback;
 
         Draft(ThresholdForm.Units units) {
             this.units = units;
         }
 
-        /** Whether the user themselves changed anything, which is what is at risk of being lost. */
         boolean isEdited() {
             return !Arrays.equals(this.values, this.saved);
         }
 
-        /** Whether there is anything worth writing, which a fallback counts towards and an edit is. */
         boolean isDirty() {
             return this.showingFallback || this.isEdited();
         }
@@ -251,12 +182,6 @@ public final class ThresholdEditor {
         }
     }
 
-    /**
-     * A set of values captured at one moment, ready to be written.
-     *
-     * <p>Taken rather than read live because a write is asynchronous: the user can keep typing
-     * while it is in flight, and what comes back successful has to be the thing that went out.
-     */
     public static final class Snapshot {
 
         private final Map<String, ThresholdBand> thresholds;
@@ -285,10 +210,6 @@ public final class ThresholdEditor {
             return this.thresholds.isEmpty() && this.spikeDeltas.isEmpty();
         }
 
-        /**
-         * Accepts exactly the drafts this snapshot was taken from as the new baseline. Call it once
-         * a write of these values has succeeded; anything typed since stays dirty.
-         */
         public void markSaved() {
             for (Draft draft : this.captured) {
                 draft.markSaved();
@@ -315,13 +236,8 @@ public final class ThresholdEditor {
     @Nullable
     private String selectedSensorId;
 
-    /** True while fields are being filled from a draft, so the watchers ignore their own writes. */
     private boolean binding;
 
-    /**
-     * @param editorRoot the view produced by including {@code view_threshold_editor}.
-     * @param listener   told on every keystroke, or null for a host with nothing to re-check.
-     */
     public ThresholdEditor(@NonNull View editorRoot, @Nullable Listener listener) {
         this.context = editorRoot.getContext();
         this.fahrenheit = ReadingFormatter.isFahrenheit(this.context);
@@ -341,10 +257,6 @@ public final class ThresholdEditor {
                 editorRoot.findViewById(R.id.containerSpikeLevel));
     }
 
-    /**
-     * Rebuilds the form for an aquarium, from what it stores and the template its water type
-     * resolves to for anything it does not.
-     */
     public void showAquarium(@NonNull Aquarium aquarium) {
         AquariumTemplate fallback =
                 BuiltInTemplates.forWaterType(WaterType.fromKey(aquarium.getWaterType()));
@@ -360,10 +272,6 @@ public final class ThresholdEditor {
         this.buildTabs();
     }
 
-    /**
-     * Rebuilds the form for an aquarium that does not exist yet, from the template it is being
-     * created off. Every value shown is one that will be written, so every draft starts dirty.
-     */
     public void showTemplate(@NonNull AquariumTemplate template) {
         this.reset();
         for (String sensorId : ThresholdForm.CONFIGURABLE_SENSOR_IDS) {
@@ -376,18 +284,12 @@ public final class ThresholdEditor {
         this.buildTabs();
     }
 
-    /**
-     * Empties the form, for a host whose subject has gone away - a template deselected on the
-     * add-aquarium screen. An empty editor is vacuously valid and not dirty, so a host gating on
-     * {@link #isValid()} is not held up by numbers that are no longer being asked for.
-     */
     public void clear() {
         this.reset();
         this.buildTabs();
         this.showBlockingTab();
     }
 
-    /** The sensors currently offering a tab, which is water type dependent. */
     @NonNull
     public List<String> getSensorIds() {
         return Collections.unmodifiableList(this.sensorIds);
@@ -397,12 +299,10 @@ public final class ThresholdEditor {
         return !this.sensorIds.isEmpty();
     }
 
-    /** Whether every sensor's form holds together, including the tabs that are not on screen. */
     public boolean isValid() {
         return this.firstInvalidSensorId() == null;
     }
 
-    /** Whether any sensor has something worth writing. */
     public boolean isDirty() {
         for (Draft draft : this.drafts.values()) {
             if (draft.isDirty()) {
@@ -412,7 +312,6 @@ public final class ThresholdEditor {
         return false;
     }
 
-    /** Whether the user themselves typed something, which is what a discard prompt is about. */
     public boolean hasUnsavedEdits() {
         for (Draft draft : this.drafts.values()) {
             if (draft.isEdited()) {
@@ -422,7 +321,6 @@ public final class ThresholdEditor {
         return false;
     }
 
-    /** The first sensor whose form does not hold together, in tab order, or null when all do. */
     @Nullable
     public String firstInvalidSensorId() {
         for (Map.Entry<String, Draft> entry : this.drafts.entrySet()) {
@@ -433,26 +331,16 @@ public final class ThresholdEditor {
         return null;
     }
 
-    /** Every sensor's values, for a host creating an aquarium, where all of them are new. */
     @NonNull
     public Snapshot snapshotAll() {
         return this.snapshot(false);
     }
 
-    /**
-     * Only the sensors with something worth writing, for a host editing an aquarium, so a screen
-     * where one tab was touched leaves the rest of the record alone.
-     */
     @NonNull
     public Snapshot snapshotDirty() {
         return this.snapshot(true);
     }
 
-    /**
-     * @return an empty snapshot while any sensor's form does not hold together. Both hosts already
-     *     gate their action on {@link #isValid()}, so this only ever fires as a backstop - but a
-     *     half-valid set of thresholds is not something either of them should be able to write.
-     */
     @NonNull
     private Snapshot snapshot(boolean dirtyOnly) {
         Map<String, ThresholdBand> bands = new LinkedHashMap<>();
@@ -475,10 +363,6 @@ public final class ThresholdEditor {
         return new Snapshot(bands, spikeDeltas, captured);
     }
 
-    /**
-     * Says which other tab is holding the host's action back, since its errors are not on screen.
-     * Hosts call this after their own enable check so the button is never inexplicably dead.
-     */
     public void showBlockingTab() {
         String firstInvalid = this.firstInvalidSensorId();
         if (firstInvalid == null || firstInvalid.equals(this.selectedSensorId)) {
@@ -490,12 +374,6 @@ public final class ThresholdEditor {
         this.tvBlocked.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * Writes what is typed into a bundle, so a rotation does not cost the user their edits.
-     *
-     * <p>Which sensors exist is saved with them: they follow from the water type, and restoring
-     * values onto a different set of tabs would put one sensor's numbers under another's name.
-     */
     public void saveState(@NonNull Bundle outState) {
         outState.putStringArrayList(STATE_SENSOR_IDS, new ArrayList<>(this.sensorIds));
         outState.putString(STATE_SELECTED, this.selectedSensorId);
@@ -506,10 +384,6 @@ public final class ThresholdEditor {
         }
     }
 
-    /**
-     * Puts back what {@link #saveState} took, over an editor already seeded with the same sensors.
-     * A bundle from a different set of tabs is ignored rather than partly applied.
-     */
     public void restoreState(@Nullable Bundle savedState) {
         if (savedState == null) {
             return;
@@ -537,8 +411,6 @@ public final class ThresholdEditor {
         int index = selected == null ? -1 : this.sensorIds.indexOf(selected);
         TabLayout.Tab tab = index < 0 ? null : this.tabs.getTabAt(index);
         if (tab != null) {
-            // Selecting the tab re-binds the cards through the listener, which is what puts the
-            // restored values back on screen.
             tab.select();
         } else {
             this.bindSensor(this.sensorIds.get(0));
@@ -565,7 +437,6 @@ public final class ThresholdEditor {
         }
     }
 
-    /** Fills in everything about a card that depends on the level rather than the sensor. */
     private void bindLevelChrome(LevelCard card, Level level) {
         int accent = ContextCompat.getColor(this.context, level.accentColorResId);
 
@@ -602,8 +473,6 @@ public final class ThresholdEditor {
             }
         });
 
-        // Leaving a field is the moment its problem becomes worth pointing out; while the caret is
-        // still in it the user is mid-thought and a half-typed number is not yet wrong.
         card.value.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus || this.selectedSensorId == null) {
                 return;
@@ -617,16 +486,6 @@ public final class ThresholdEditor {
         });
     }
 
-    /**
-     * Starts one sensor's draft from what the aquarium holds, falling back to the template.
-     *
-     * <p>An aquarium can be missing a band - the schema makes thresholds optional - and showing
-     * blank fields would ask the user to invent numbers the app already has a sensible answer for.
-     * Templates carry no spike deltas at all, so that field always falls back.
-     *
-     * @param aquarium null when the aquarium does not exist yet, which makes the template the only
-     *     source and every field a fallback.
-     */
     private Draft draftFor(@Nullable Aquarium aquarium,
                            @NonNull AquariumTemplate template,
                            @NonNull String sensorId) {
@@ -646,17 +505,12 @@ public final class ThresholdEditor {
             Arrays.fill(draft.values, "");
         }
 
-        // resolveSpikeDelta answers with a built-in default for an aquarium that stores none - and
-        // for the null one - so this field too is only showing a stored value when there is one.
         double spikeDelta = SensorThresholds.resolveSpikeDelta(aquarium, sensorId);
         draft.values[Level.SPIKE.ordinal()] = Double.isNaN(spikeDelta)
                 ? ""
                 : format(units.deltaToDisplay(spikeDelta));
 
         draft.markSaved();
-        // Declared after markSaved, which clears the flag along with the baseline. Anything filled
-        // in from a fallback is not what the aquarium is being graded against, so the host's action
-        // stays live before the user has touched a thing. A new aquarium is entirely fallback.
         draft.showingFallback = aquarium == null
                 || stored == null
                 || aquarium.spikeDeltaFor(sensorId) == null;
@@ -694,12 +548,9 @@ public final class ThresholdEditor {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // The listener is attached after the tabs, so the first one's selection has already
-        // happened silently and its cards have to be filled in by hand.
         this.bindSensor(this.sensorIds.get(0));
     }
 
-    /** Swaps the five cards over to another sensor's draft. */
     private void bindSensor(String sensorId) {
         Draft draft = this.drafts.get(sensorId);
         if (draft == null) {
@@ -730,7 +581,6 @@ public final class ThresholdEditor {
         this.notifyChanged();
     }
 
-    /** Pulls the five fields into the current draft and regrades it, on every keystroke. */
     private void onFieldEdited() {
         if (this.binding || this.selectedSensorId == null) {
             return;
@@ -768,11 +618,6 @@ public final class ThresholdEditor {
                 draft.units);
     }
 
-    /**
-     * Outlines and captions the fields whose problems have been revealed. A problem that clears
-     * takes its outline with it immediately, whether or not the user has left the field: being
-     * told a field is fixed the moment it is fixed is never unwelcome.
-     */
     private void showProblems(Draft draft) {
         for (Level level : Level.values()) {
             LevelCard card = this.cards.get(level.ordinal());
@@ -781,9 +626,6 @@ public final class ThresholdEditor {
             if (problem == null) {
                 draft.revealed[level.ordinal()] = false;
             }
-            // Anything not being pointed out is cleared rather than left alone, because these five
-            // cards are reused across the tabs: leaving a card as it was would carry the previous
-            // sensor's red outline over onto a field that is perfectly fine.
             if (problem == null || !draft.revealed[level.ordinal()]) {
                 InputFieldError.set(card.box, InputFieldError.State.NEUTRAL);
                 card.error.setVisibility(View.GONE);
@@ -800,8 +642,6 @@ public final class ThresholdEditor {
     private static int messageFor(Level level, ThresholdForm.Problem problem) {
         switch (problem) {
             case NOT_ABOVE_PREVIOUS:
-                // Zero for the two levels with nothing below them, which the validator never
-                // reports out of order; falling through keeps a caption on screen either way.
                 return level.outOfOrderResId != 0
                         ? level.outOfOrderResId
                         : R.string.threshold_error_number;
@@ -812,7 +652,6 @@ public final class ThresholdEditor {
         }
     }
 
-    /** Redraws the bar and its three labels from the bounds as they currently stand. */
     private void showOverallRange(Draft draft) {
         ThresholdBand band = draft.result.isValid() ? draft.result.getBand() : draft.lastValidBand;
         if (band == null) {

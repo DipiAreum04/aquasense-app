@@ -1,5 +1,7 @@
 package ca.team6.aquasense.settings;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -24,7 +26,6 @@ import android.widget.Toast;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
@@ -50,29 +51,15 @@ import ca.team6.aquasense.model.SensorReading;
 import ca.team6.aquasense.model.TelemetryRepository;
 import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
 
-/**
- * A sensor's calibration run, as a page of its own in the settings stack.
- *
- * <p>Prepare, place, measure. The first steps are instructions to tick off; the last is the
- * calibration point, where the user names the value they have brought the water to and the guide
- * reads the sensor there for itself.
- */
 public class CalibrationGuideFragment extends Fragment {
 
-    /** Handed back to {@link SensorCalibrationFragment} on the way out of a completed run. */
     public static final String RESULT_KEY = "calibration_guide_result";
     public static final String RESULT_SENSOR_ID = "sensorId";
     public static final String RESULT_STEPS = "steps";
 
-    /** What a calibration point shows and measures, so the pages do not reach for a repository. */
     interface LiveReadingSource {
-        /**
-         * What the board is reporting for this sensor right now, raw and in the unit the database
-         * stores, or {@link Double#NaN} when it is offline, stale, or has published nothing.
-         */
         double rawValue(@NonNull String sensorId);
 
-        /** The same reading as the rest of the app shows it, or null when there is none. */
         @Nullable
         String displayText(@NonNull String sensorId);
     }
@@ -82,15 +69,8 @@ public class CalibrationGuideFragment extends Fragment {
     private static final String ARG_STEPS = "steps";
     private static final String ARG_SENSOR_ID = "sensorId";
 
-    // A sensor going quiet publishes nothing, so nothing arrives to take the reading off the page
-    // when it stops being current. The dashboard re-reads its own on the same kind of tick.
     private static final long STALENESS_CHECK_INTERVAL_MS = 5_000;
 
-    /**
-     * How long the probe is measured for once the user starts. Long enough that the mean is taken
-     * across many of the board's samples rather than whatever noise one of them carried, and short
-     * enough to be a thing the user stands and waits through.
-     */
     public static final long SAMPLE_DURATION_MS = 60_000L;
 
     private static final long SAMPLE_TICK_MS = 1_000L;
@@ -104,16 +84,9 @@ public class CalibrationGuideFragment extends Fragment {
     private TelemetryRepository telemetryRepository;
     private ViewPager2 vpGuide;
 
-    // Every distinct sample the board published during the measurement, and the timestamps already
-    // counted so a repaint cannot bank the same one twice. One instantaneous reading carries
-    // whatever noise that sample happened to have; the offset is a correction the app then applies
-    // to everything, so it is taken as the mean of the whole window.
     private final List<Double> stepSamples = new ArrayList<>();
     private final Set<Long> sampledTimestamps = new HashSet<>();
 
-    // Open only between the user starting the measurement and the window running out. While it is,
-    // the guide is not navigable: leaving the step mid-window would abandon a measurement the user
-    // is standing over, and going back into it would blend two windows into one mean.
     private boolean sampling;
     private long samplingEndsAt;
 
@@ -156,7 +129,6 @@ public class CalibrationGuideFragment extends Fragment {
         }
     };
 
-    /** Arguments for the nav action into this page. */
     public static Bundle argsFor(String title, String note, ArrayList<StepData> steps,
                                  String sensorId) {
         Bundle args = new Bundle();
@@ -200,8 +172,6 @@ public class CalibrationGuideFragment extends Fragment {
             tvNote.setVisibility(View.VISIBLE);
         }
 
-        // The dashboard leaves this subscription running for the whole session, so arriving here
-        // from it costs nothing; opening Settings cold is what this call is for.
         telemetryRepository = TelemetryRepository.getInstance();
         Aquarium active = AquariumRepository.getInstance(requireContext()).getActiveAquarium();
         if (active != null) {
@@ -212,7 +182,6 @@ public class CalibrationGuideFragment extends Fragment {
         vpGuide.setUserInputEnabled(true);
         setupDots(layoutDots, steps.size());
 
-        // After the adapter, since both of these repaint the pages the moment they are wired up.
         telemetryRepository.addObserver(telemetryObserver);
         stalenessHandler.post(stalenessTick);
 
@@ -224,8 +193,6 @@ public class CalibrationGuideFragment extends Fragment {
                     return;
                 }
 
-                // A step's window belongs to that step: what was read while the user was preparing
-                // the previous one says nothing about the value this one is sitting in.
                 resetSamples();
                 updateDots(layoutDots, position);
                 validateCurrentPage(vpGuide);
@@ -248,17 +215,11 @@ public class CalibrationGuideFragment extends Fragment {
         }
 
         btnDone.setOnClickListener(v -> {
-            // While a measurement is running the same button is the way out of it, so a user who
-            // realises the probe is in the wrong water is one tap from stopping rather than stuck
-            // watching a minute they already know is wasted.
             if (sampling) {
                 cancelSampling();
                 return;
             }
             int current = vpGuide.getCurrentItem();
-            // On a calibration point the button starts the measurement rather than turning the
-            // page: the value is already named, so what is left is to hold the probe in it and let
-            // the app read the sensor for itself.
             if (steps.get(current).isCalibrationPoint()) {
                 startSampling();
                 return;
@@ -268,8 +229,6 @@ public class CalibrationGuideFragment extends Fragment {
 
         updatePrimaryButtonText(0);
 
-        // Leaving part-way through abandons the run, and mid-measurement it abandons a minute the
-        // user has been standing over. Worth a question either way.
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
                 new OnBackPressedCallback(true) {
                     @Override
@@ -280,7 +239,8 @@ public class CalibrationGuideFragment extends Fragment {
     }
 
     private void confirmExit() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_AquaSense_MaterialAlertDialog_Danger)
                 .setTitle(R.string.calib_exit_title)
                 .setMessage(R.string.calib_exit_message)
                 .setPositiveButton(R.string.calib_exit_confirm, (dialog, which) -> leave())
@@ -300,8 +260,6 @@ public class CalibrationGuideFragment extends Fragment {
         samplingHandler.removeCallbacks(samplingTick);
         sampling = false;
         if (telemetryRepository != null) {
-            // Deliberately not unwatching: as on the dashboard, the last_instant subscription is
-            // meant to run for the whole signed-in session.
             telemetryRepository.removeObserver(telemetryObserver);
         }
         vpGuide = null;
@@ -333,14 +291,11 @@ public class CalibrationGuideFragment extends Fragment {
         NavHostFragment.findNavController(this).popBackStack();
     }
 
-    /** Opens the measurement window and locks the guide in place for its duration. */
     private void startSampling() {
         resetSamples();
         sampling = true;
         samplingEndsAt = SystemClock.elapsedRealtime() + SAMPLE_DURATION_MS;
 
-        // Stays enabled, because for the length of the window this button reads Cancel - and turns
-        // red with it, so the one control on screen cannot be mistaken for the one that started it.
         btnDone.setText(R.string.action_cancel);
         btnDone.setEnabled(true);
         btnDone.setAlpha(1f);
@@ -350,33 +305,20 @@ public class CalibrationGuideFragment extends Fragment {
             btnBack.setEnabled(false);
         }
 
-        // The first sample is taken now rather than a second from now, so a board that publishes
-        // slowly still contributes the reading that was already on screen when the user tapped.
         collectSample();
         showLiveReadings();
         samplingHandler.postDelayed(samplingTick, SAMPLE_TICK_MS);
     }
 
-    /**
-     * Abandons the measurement and puts the step back exactly as it was before it started - no
-     * samples, no progress, Calibrate offered again - except for the operating point, which the
-     * user typed and has no reason to type twice.
-     */
     private void cancelSampling() {
         if (!sampling) {
             return;
         }
         closeSamplingWindow();
         resetSamples();
-        // Repaints the pages on screen, which is what takes the progress row away and brings the
-        // operating point field back, and re-checks whether Calibrate can be offered again.
         showLiveReadings();
     }
 
-    /**
-     * Ends the window and gives the guide back its controls, without touching what was collected.
-     * The mean is read out of those samples after a window that ran its course.
-     */
     private void closeSamplingWindow() {
         sampling = false;
         samplingHandler.removeCallbacks(samplingTick);
@@ -394,22 +336,12 @@ public class CalibrationGuideFragment extends Fragment {
         tintPrimaryButton(R.color.accent);
     }
 
-    /** Accent while the button advances the guide, red while it is the way out of a measurement. */
     private void tintPrimaryButton(@ColorRes int colorResId) {
         btnDone.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(btnDone.getContext(), colorResId)));
     }
 
-    /**
-     * Closes the window and records its mean on the step.
-     *
-     * <p>A window that caught nothing leaves {@code capturedValue} untouched and says so, rather
-     * than storing a correction derived from no measurement: the sensor was silent for a full
-     * minute, which is a broken connection to fix, not an offset to apply.
-     */
     private void finishSampling() {
-        // Closes the window without clearing what it collected - the mean is about to be read out
-        // of those samples. Cancelling is the path that throws them away.
         closeSamplingWindow();
         if (vpGuide == null) {
             return;
@@ -430,11 +362,7 @@ public class CalibrationGuideFragment extends Fragment {
         advanceFrom(current);
     }
 
-    /** Banks the sample on screen, if it is one and it has not been counted already. */
     private void collectSample() {
-        // Only inside the window. A reading the user was watching while they read the instructions
-        // is not part of the measurement they started, and averaging it in would quietly widen the
-        // window past the minute they were told about.
         if (!sampling || vpGuide == null || steps == null) {
             return;
         }
@@ -452,21 +380,11 @@ public class CalibrationGuideFragment extends Fragment {
         }
     }
 
-    /** Starts the next step's window empty, so its samples are only ever its own. */
     private void resetSamples() {
         stepSamples.clear();
         sampledTimestamps.clear();
     }
 
-    /**
-     * The board's current sample for a sensor as it published it, or null when there is not one to
-     * calibrate against - never published, reporting offline, or too old to still be describing the
-     * water the probe is in now.
-     *
-     * <p>Read raw rather than through {@link TelemetryRepository#getReadings()}: an offset is the
-     * operating point minus what the hardware said, so deriving one from an already-corrected value
-     * would fold the correction in force into its own replacement.
-     */
     @Nullable
     private SensorReading freshRawReading(@NonNull String sensorId) {
         if (telemetryRepository == null) {
@@ -483,24 +401,16 @@ public class CalibrationGuideFragment extends Fragment {
         return reading;
     }
 
-    /** The raw value of the above, or NaN when there is nothing current to read. */
     private double currentRawValue(@NonNull String sensorId) {
         SensorReading reading = freshRawReading(sensorId);
         return reading == null ? Double.NaN : reading.getValue();
     }
 
-    /**
-     * The same reading as the rest of the app shows it - corrected by the offset already in force,
-     * because that is what the repository publishes - so the number on this page is the number the
-     * dashboard is showing.
-     */
     @Nullable
     private String currentDisplayText(@NonNull String sensorId) {
         if (telemetryRepository == null || getContext() == null) {
             return null;
         }
-        // Gated on the raw read so this label and the sample collection agree about whether the
-        // sensor is reporting: same node, same staleness rule, one verdict.
         if (freshRawReading(sensorId) == null) {
             return null;
         }
@@ -512,10 +422,6 @@ public class CalibrationGuideFragment extends Fragment {
         return formatReading(requireContext(), sensorId, reading.getValue());
     }
 
-    /**
-     * A value stored in database units, rendered the way the app shows that sensor - so what is on
-     * the page is in whatever unit Display &amp; Units is set to, and reads like the dashboard.
-     */
     static String formatReading(@NonNull Context context, @NonNull String sensorId,
                                 double databaseValue) {
         String unit = unitFor(context, sensorId);
@@ -528,7 +434,6 @@ public class CalibrationGuideFragment extends Fragment {
                 sensorId, ReadingFormatter.isFahrenheit(context))).trim();
     }
 
-    /** The safe band as the user is shown it, e.g. {@code 24 – 26 °C}. */
     static String safeRangeText(@NonNull Context context, @NonNull StepData step) {
         String unit = unitFor(context, step.sensorId);
         String range = ReadingFormatter.format(context, step.sensorId, step.safeLow)
@@ -536,21 +441,11 @@ public class CalibrationGuideFragment extends Fragment {
         return unit.isEmpty() ? range : range + " " + unit;
     }
 
-    /**
-     * The value the user typed, converted to the unit the database stores, or {@link Double#NaN}
-     * when it is not one this calibration can run against.
-     *
-     * <p>At most one decimal place, per {@link CalibrationMath#parseOperatingPoint}, and inside the
-     * safe band, per {@link CalibrationMath#isWithinSafeRange} - the correction is exact where it
-     * is taken, so it is worth taking where the tank actually sits.
-     */
     static double operatingPointOf(@NonNull Context context, @NonNull StepData step) {
         double typed = CalibrationMath.parseOperatingPoint(step.typedOperatingPoint());
         if (Double.isNaN(typed)) {
             return Double.NaN;
         }
-        // Typed in whatever unit the app is displaying; the band it is checked against, and the
-        // offset it goes on to produce, are both in the unit the database stores.
         double database = DatabaseSchema.TEMPERATURE_KEY.equals(step.sensorId)
                 ? ReadingFormatter.fromDisplayTemperature(typed,
                         ReadingFormatter.isFahrenheit(context))
@@ -560,13 +455,10 @@ public class CalibrationGuideFragment extends Fragment {
                 : Double.NaN;
     }
 
-    /** Why the typed operating point cannot be used, or null when it can be (or is still blank). */
     @Nullable
     static String operatingPointError(@NonNull Context context, @NonNull StepData step) {
         String raw = step.typedOperatingPoint();
         if (raw.isEmpty()) {
-            // Not yet an error: an empty field is a step that is not finished, which the disabled
-            // button already says. Complaining before the first keystroke would be shouting.
             return null;
         }
         if (Double.isNaN(CalibrationMath.parseOperatingPoint(raw))) {
@@ -578,10 +470,6 @@ public class CalibrationGuideFragment extends Fragment {
                 : null;
     }
 
-    /**
-     * Repaints the live reading on whichever pages are on screen, without rebinding them. A
-     * notifyDataSetChanged here would rebuild the text fields under the user's cursor once a second.
-     */
     private void showLiveReadings() {
         collectSample();
         if (vpGuide == null || !(vpGuide.getChildAt(0) instanceof RecyclerView)) {
@@ -601,13 +489,10 @@ public class CalibrationGuideFragment extends Fragment {
                 guideHolder.showSampling(sampling, stepSamples.size(), secondsLeft, percent);
             }
         }
-        // A reading arriving or going stale can be what makes the page answerable or not.
         validateCurrentPage(vpGuide);
     }
 
     private void validateCurrentPage(ViewPager2 vp) {
-        // The button belongs to the measurement while one is running; re-enabling it here would
-        // hand the user a second Calibrate tap partway through the window.
         if (sampling) {
             return;
         }
@@ -621,10 +506,8 @@ public class CalibrationGuideFragment extends Fragment {
             btnDone.setAlpha(isValid ? 1.0f : 0.5f);
 
             if (isValid) {
-                // If valid, allow progression to the NEXT step
                 maxReachedPosition = Math.max(maxReachedPosition, current + 1);
             } else {
-                // If invalid, the user cannot move FORWARD from here
                 maxReachedPosition = current;
             }
         }
@@ -738,7 +621,6 @@ public class CalibrationGuideFragment extends Fragment {
                     ivIllustration.setVisibility(View.GONE);
                 }
 
-                // Checklists with state preservation
                 layoutChecklist.removeAllViews();
                 checkBoxes.clear();
                 for (int i = 0; i < data.checklist.size(); i++) {
@@ -757,7 +639,6 @@ public class CalibrationGuideFragment extends Fragment {
                     layoutChecklist.addView(row);
                 }
 
-                // Branching Logic Choice
                 if (data.choiceQuestion != null) {
                     layoutChoice.setVisibility(View.VISIBLE);
                     tvChoiceQuestion.setText(data.choiceQuestion);
@@ -776,7 +657,6 @@ public class CalibrationGuideFragment extends Fragment {
                     layoutChoice.setVisibility(View.GONE);
                 }
 
-                // Inputs with state preservation
                 layoutInputs.removeAllViews();
                 editTexts.clear();
                 for (int i = 0; i < data.inputHints.size(); i++) {
@@ -809,7 +689,6 @@ public class CalibrationGuideFragment extends Fragment {
                 showSampling(false, 0, 0, 0);
             }
 
-            /** Names the band the typed value has to land inside, in the unit the user is shown. */
             void showSafeRange() {
                 if (boundData == null || !boundData.isCalibrationPoint()
                         || Double.isNaN(boundData.safeLow) || Double.isNaN(boundData.safeHigh)) {
@@ -820,7 +699,6 @@ public class CalibrationGuideFragment extends Fragment {
                 tvSafeRange.setText(safeRangeText(itemView.getContext(), boundData));
             }
 
-            /** Puts the reason a typed value cannot be used under the field, or clears it. */
             void showOperatingPointError() {
                 if (operatingPointInput == null || boundData == null) {
                     return;
@@ -829,15 +707,6 @@ public class CalibrationGuideFragment extends Fragment {
                         operatingPointError(itemView.getContext(), boundData));
             }
 
-            /**
-             * Swaps the step between its two states: taking an operating point, and measuring at
-             * one. The field goes away for the length of the window - it is not editable then, and
-             * a value that could not take effect until the next run only invites the user to try -
-             * and comes back with what they typed still in it when the window ends either way.
-             *
-             * <p>Resets the bar to empty on the way out, so a cancelled run does not leave a
-             * part-filled progress bar behind to be mistaken for one still going.
-             */
             void showSampling(boolean sampling, int samples, int secondsLeft, int percent) {
                 if (!sampling || boundData == null || !boundData.isCalibrationPoint()) {
                     layoutSampling.setVisibility(View.GONE);
@@ -854,11 +723,6 @@ public class CalibrationGuideFragment extends Fragment {
                         R.string.calibration_collecting, samples, secondsLeft));
             }
 
-            /**
-             * Puts the app's current reading for this step's sensor on the page, or says it has
-             * none. Called on bind and again whenever a reading lands or ages out, and touches
-             * nothing but the one label so a running edit is left alone.
-             */
             void showLiveReading() {
                 if (boundData == null || !boundData.isCalibrationPoint()) {
                     layoutLiveReading.setVisibility(View.GONE);
@@ -873,7 +737,6 @@ public class CalibrationGuideFragment extends Fragment {
             }
 
             private void toggleInputVisibility(StepData data) {
-                // Show inputs only if YES (deviation exists) is selected
                 if (data.choiceQuestion != null) {
                     layoutInputs.setVisibility(data.selectedChoice == 0 ? View.VISIBLE : View.GONE);
                 } else {
@@ -896,27 +759,21 @@ public class CalibrationGuideFragment extends Fragment {
                 }
 
                 if (boundData.isCalibrationPoint()) {
-                    // A whole number inside the safe band, and a sensor that is actually reporting
-                    // - there is no measurement to take against a probe that has gone quiet.
                     return !Double.isNaN(operatingPointOf(itemView.getContext(), boundData))
                             && hasReadingToCompareAgainst();
                 }
 
                 if (boundData.choiceQuestion != null) {
                     if (boundData.selectedChoice == -1) return false;
-                    if (boundData.selectedChoice == 0) { // Yes, deviation exists
+                    if (boundData.selectedChoice == 0) {
                         return inputsFilled();
                     }
-                    return true; // No deviation, so valid
+                    return true;
                 }
 
                 return inputsFilled();
             }
 
-            /**
-             * A calibration point cannot be answered while the sensor is silent: the difference
-             * being recorded is against a reading, and there is not one to take.
-             */
             private boolean hasReadingToCompareAgainst() {
                 return !Double.isNaN(liveReadingSource.rawValue(boundData.sensorId));
             }

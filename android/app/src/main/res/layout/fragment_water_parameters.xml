@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  SETTINGS-07 - the thresholds every alert, every dashboard status colour and every analytics
-  in-range count is judged against, for one sensor of one aquarium at a time.
-
-  Reading down: which aquarium, the tabs, then that sensor's range and its spike limit. The two
-  notes explaining the sensors that have no tab are last, below the save, so that the screen leads
-  with what can be configured and leaves what cannot to the end. TDS comes first of the two since
-  it is the conditional one, appearing only for saltwater; water level closes the page, as it is
-  absent for every aquarium.
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,10 +13,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!--
-          Which aquarium's thresholds are being edited. This is the same selection the dashboard
-          and analytics show, so changing it here changes it there: one active aquarium throughout.
-        -->
         <LinearLayout
             android:id="@+id/waterParametersAquariumSelector"
             style="@style/Widget.AquaSense.Card"
@@ -81,7 +67,6 @@
 
             </LinearLayout>
 
-            <!-- Turned the rest of the way over while the list is open; see AquariumDropdown. -->
             <ImageView
                 android:id="@+id/waterParametersAquariumChevron"
                 android:layout_width="24dp"
@@ -93,7 +78,6 @@
 
         </LinearLayout>
 
-        <!-- Shown instead of the form when the user has no aquarium yet. -->
         <TextView
             android:id="@+id/tvWaterParametersEmpty"
             style="@style/Widget.AquaSense.Card"
@@ -114,9 +98,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- The form itself, shared with the add-aquarium screen's Advanced Settings panel
-                 and driven by ThresholdEditor. Everything below it here is this screen's own:
-                 the save, and the notes about the sensors that have no tab. -->
             <include
                 android:id="@+id/waterParametersEditor"
                 layout="@layout/view_threshold_editor"
@@ -125,6 +106,7 @@
                 android:layout_marginTop="20dp" />
 
             <com.google.android.material.button.MaterialButton
+                style="@style/Widget.AquaSense.Button.Primary"
                 android:id="@+id/btnSaveThresholds"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
@@ -138,13 +120,6 @@
 
         </LinearLayout>
 
-        <!--
-          The two sensors with no tab, explained where they cannot be mistaken for something to fill
-          in. Both are the same card: an icon, what is missing, and why.
-
-          DISSOLVED SOLIDS - only for the saltwater template, whose TDS probe cannot read that range.
-          The body is set from the template's own note, so this card carries no wording of its own.
-        -->
         <LinearLayout
             android:id="@+id/cardWaterParametersTdsNote"
             style="@style/Widget.AquaSense.Card"
@@ -196,10 +171,6 @@
 
         </LinearLayout>
 
-        <!--
-          WATER LEVEL - last on the page, since unlike the TDS note above it applies to every
-          aquarium rather than only the saltwater ones.
-        -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

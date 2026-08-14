@@ -1,31 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Cross-section of a mounted hub, for step 2 of the first-installation wizard.
-
-    Drawn from the team's own 3D-printed enclosure rather than a generic box, so a user can match
-    the picture against the thing in their hands: a near-cube body, the hook flange that straddles
-    the rim with the glass in the channel between it and the body, the slot on the top face that
-    every lead leaves through, and the status light showing in that slot.
-
-    It settles the three placements the instructions beside it describe, and that a photo of one
-    particular tank would not generalise: the enclosure hangs on the rim and stays above the
-    waterline, the three probes hang free in the water and clear of the gravel, and the water
-    level sensor is on the *outside* of the glass, watching the line it is stuck at. That last one
-    is the one people get wrong, so it gets the dashed line and the only other use of the accent.
-
-    Painted back to front: water, then what is in it, then the glass over its own contents, then
-    the hardware that sits on and outside the glass.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="380dp"
     android:height="210dp"
     android:viewportWidth="380"
     android:viewportHeight="210">
 
-    <!--
-      Water, its surface left uneven so it reads as water rather than as a fill, and filled to
-      well below the rim: the gap above it is what the hub's body has to stay clear of.
-    -->
     <path
         android:fillColor="@color/illustration_water"
         android:pathData="M66,98 C96,91 132,104 178,97 C224,90 280,103 334,96 L334,170
@@ -37,15 +16,10 @@
         android:strokeWidth="3"
         android:strokeLineCap="round" />
 
-    <!-- Gravel bed, run wall to wall so it reads as the floor rather than as an object on it -->
     <path
         android:fillColor="@color/illustration_gravel"
         android:pathData="M78,160 L322,160 A11,11 0 0 1 322,182 L78,182 A11,11 0 0 1 78,160 Z" />
 
-    <!--
-      The level the sensor is watching. Dashed by hand: a vector drawable has no dash support, so
-      the gaps are cut into the path itself.
-    -->
     <path
         android:pathData="M70,120 L84,120 M92,120 L106,120 M114,120 L128,120 M136,120 L150,120
             M158,120 L172,120 M180,120 L194,120 M202,120 L216,120 M224,120 L238,120
@@ -54,7 +28,6 @@
         android:strokeWidth="2.5"
         android:strokeLineCap="round" />
 
-    <!-- Probe tips, at three depths and all hanging clear of the gravel bed below them -->
     <path
         android:fillColor="@color/illustration_hub"
         android:pathData="M103.5,126.5 A4.5,4.5 0 0 1 112.5,126.5 L112.5,145.5
@@ -68,14 +41,12 @@
         android:pathData="M167.5,128.5 A4.5,4.5 0 0 1 176.5,128.5 L176.5,145.5
             A4.5,4.5 0 0 1 167.5,145.5 Z" />
 
-    <!-- Glass, open at the top, drawn over the water it holds -->
     <path
         android:pathData="M64,44 L64,170 A18,18 0 0 0 82,188 L318,188 A18,18 0 0 0 336,170 L336,44"
         android:strokeColor="@color/illustration_glass"
         android:strokeWidth="5"
         android:strokeLineCap="round" />
 
-    <!-- Water level sensor: outside the glass, its sensing face against it -->
     <path
         android:fillColor="@color/illustration_hub"
         android:pathData="M345,108 L353,108 A5,5 0 0 1 358,113 L358,127 A5,5 0 0 1 353,132
@@ -84,24 +55,16 @@
         android:fillColor="@color/accent"
         android:pathData="M338,114 L342,114 L342,126 L338,126 Z" />
 
-    <!-- The hub's body, hanging outside the glass and clear of the water by its own depth again -->
     <path
         android:fillColor="@color/illustration_hub"
         android:pathData="M24,32 L52,32 A6,6 0 0 1 58,38 L58,74 A6,6 0 0 1 52,80 L24,80
             A6,6 0 0 1 18,74 L18,38 A6,6 0 0 1 24,32 Z" />
 
-    <!--
-      The hook: a bridge over the rim and a flange down the inside of the glass. The gap between
-      it and the body is the channel the tank wall sits in, and is the whole of how the enclosure
-      stays put, so it is drawn at the width it really has rather than as a hairline. The glass
-      showing through that gap is what makes the mounting readable at this size.
-    -->
     <path
         android:fillColor="@color/illustration_hub"
         android:pathData="M58,32 L72,32 A6,6 0 0 1 78,38 L78,74 A5,5 0 0 1 68,74 L68,44
             L58,44 Z" />
 
-    <!-- Slot on the top face. Every lead leaves through it, and the status light shows in it. -->
     <path
         android:fillColor="@color/illustration_hub_slot"
         android:pathData="M29,37 L47,37 A3,3 0 0 1 47,43 L29,43 A3,3 0 0 1 29,37 Z" />
@@ -109,7 +72,6 @@
         android:fillColor="@color/accent"
         android:pathData="M30.8,40 A2.2,2.2 0 1 0 35.2,40 A2.2,2.2 0 1 0 30.8,40 Z" />
 
-    <!-- Three probe leads, up out of the slot, over the hook and down into open water -->
     <path
         android:pathData="M34,37 C34,22 62,18 84,30 C94,38 96,80 106,124"
         android:strokeColor="@color/illustration_cable"
@@ -126,10 +88,6 @@
         android:strokeWidth="3"
         android:strokeLineCap="round" />
 
-    <!--
-      The level sensor's lead, up the outside of the tank and back to the same slot. Kept low over
-      the rim and left to sag: run high and straight, it read as a lid closing the tank.
-    -->
     <path
         android:pathData="M349,108 L349,40 C349,32 344,28 336,28 C260,28 170,38 116,30
             C92,26 66,30 50,38"

@@ -25,20 +25,14 @@ import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.WaterType;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 
-/**
- * Inflates the views that explain an {@link AquariumTemplate}
- */
 public final class AquariumTemplateCardBinder {
 
     private static final DecimalFormat BOUND_FORMAT = new DecimalFormat("0.##");
 
-    // Opacity of the pale background behind the icon tile and the badge, as a fraction of the template's
-    // accent colour.
     private static final int ACCENT_FILL_ALPHA = 30;
 
     private AquariumTemplateCardBinder() {}
 
-    /** Inflates and fills a card. The caller adds it to its own container. */
     public static View createCard(
             LayoutInflater inflater,
             ViewGroup parent,
@@ -60,15 +54,11 @@ public final class AquariumTemplateCardBinder {
         ((TextView) card.findViewById(R.id.tvTemplateDescription))
                 .setText(template.getDescriptionResId());
 
-        // The card includes the details block, so its views are found on the card itself.
         bindDetails(inflater, card, template, accent, accentFill);
 
         return card;
     }
 
-    /**
-     * Fills a template's icon tile.
-     */
     public static void bindIconTile(ImageView tile, AquariumTemplate template) {
         bindIconTile(tile, template.getIconResId(), template.getAccentColorResId());
     }
@@ -84,10 +74,6 @@ public final class AquariumTemplateCardBinder {
                 .setTint(ColorUtils.setAlphaComponent(accent, ACCENT_FILL_ALPHA));
     }
 
-    /**
-     * Inflates and fills the details block on its own, for a screen that already names the template
-     * and only needs the species and threshold bars.
-     */
     public static View createDetails(
             LayoutInflater inflater,
             ViewGroup parent,
@@ -103,9 +89,6 @@ public final class AquariumTemplateCardBinder {
         return details;
     }
 
-    /**
-     * Fills the species chips, band bars and disabled note.
-     */
     private static void bindDetails(
             LayoutInflater inflater,
             View root,
@@ -122,8 +105,6 @@ public final class AquariumTemplateCardBinder {
                 context.getResources().getStringArray(template.getExampleSpeciesResId()),
                 accent, accentFill);
 
-        // Read once for the card rather than per row: all three rows are drawn in the same unit,
-        // and only the temperature one has two to choose between.
         boolean fahrenheit = ReadingFormatter.isFahrenheit(context);
 
         LinearLayout parameters = root.findViewById(R.id.containerParameters);
@@ -134,7 +115,6 @@ public final class AquariumTemplateCardBinder {
         addParameter(inflater, parameters, template, context,
                 DatabaseSchema.DISSOLVED_SOLIDS_KEY, fahrenheit);
 
-        // Only saltwater carries a note for TDS, so the view stays gone for the other three.
         int disabledNoteResId = template.getDisabledNoteResId();
         if (disabledNoteResId != 0) {
             TextView note = root.findViewById(R.id.tvDisabledNote);
@@ -143,9 +123,6 @@ public final class AquariumTemplateCardBinder {
         }
     }
 
-    /**
-     * One chip per example species, wrapping onto as many lines as the card needs.
-     */
     private static void addSpeciesChips(
             LayoutInflater inflater,
             ViewGroup container,
@@ -177,12 +154,6 @@ public final class AquariumTemplateCardBinder {
                 : R.drawable.bg_water_badge_freshwater;
     }
 
-    /**
-     * Appends one sensor's band bar, or nothing when the template has no range for it.
-     *
-     * @param fahrenheit whether the user reads the app in Fahrenheit, which only the temperature
-     *     row acts on.
-     */
     private static void addParameter(
             LayoutInflater inflater,
             LinearLayout parent,
@@ -198,8 +169,6 @@ public final class AquariumTemplateCardBinder {
 
         View row = inflater.inflate(R.layout.item_template_parameter, parent, false);
 
-        // Name and unit both come from ReadingFormatter, so a template's rows are labelled exactly
-        // as the dashboard labels the cards these thresholds go on to colour.
         String unit = context.getString(
                 ReadingFormatter.unitResIdFor(sensorId, fahrenheit)).trim();
         String sensorName = context.getString(ReadingFormatter.nameResIdFor(sensorId));
@@ -208,9 +177,6 @@ public final class AquariumTemplateCardBinder {
                 : context.getString(R.string.template_parameter_with_unit, sensorName, unit);
         ((TextView) row.findViewById(R.id.tvParameterName)).setText(name);
 
-        // Deliberately the stored bounds, not the displayed ones. Fahrenheit scales every band by
-        // the same 9/5, so the proportions the bar is drawn from are identical either way, and
-        // converting first would only invite the offset to creep into a width.
         ThresholdBandBar.apply(row, bands);
 
         ((TextView) row.findViewById(R.id.tvBoundLow)).setText(
@@ -227,11 +193,6 @@ public final class AquariumTemplateCardBinder {
         parent.addView(row);
     }
 
-    /**
-     * Renders one bound in the unit the user reads. Templates declare their temperatures in
-     * Celsius, which is also how telemetry is stored, so the conversion belongs here at the
-     * display edge and nowhere earlier.
-     */
     private static String format(String sensorId, double bound, boolean fahrenheit) {
         double displayValue = DatabaseSchema.TEMPERATURE_KEY.equals(sensorId)
                 ? ReadingFormatter.toDisplayTemperature(bound, fahrenheit)

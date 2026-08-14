@@ -11,11 +11,6 @@ import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
 import ca.team6.aquasense.model.SharedPreferenceHelper;
 
-/**
- * Splash Screen Activity.
- * Transitions from the system splash into the branded activity loading screen.
- * Implements layered timing to prevent white flash gaps during navigation.
- */
 public class SplashActivity extends AppCompatActivity {
 
     private static final long MIN_SPLASH_DURATION_MS = 800L;
@@ -27,9 +22,8 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Transition from system splash to activity immediately.
         SplashScreen.installSplashScreen(this);
-        
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -55,19 +49,15 @@ public class SplashActivity extends AppCompatActivity {
         navigationStarted = true;
 
         AuthRepository authRepository = AuthRepository.getInstance(this);
-        
-        // Start the next activity WITHOUT finishing this one immediately.
-        // This keeps the blue splash background visible behind the next screen while it loads.
+
         if (authRepository.isLoggedIn()) {
             AuthNavigator.continueAfterAuth(this, authRepository, false);
         } else {
             AuthNavigator.goToLogin(this, false);
         }
-        
-        // Ensure the jump is instant (no slide/fade)
+
         AuthNavigator.applyNoAnimation(this);
 
-        // Wait for the next screen to warm up, then close the splash.
         handler.postDelayed(this::finish, NAVIGATION_OVERLAP_MS);
     }
 

@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The groove the period buttons sit in. It is a shade off the page behind it, so the row reads as
-  a recess with one button raised out of it rather than as six buttons in a line.
-
-  The radius is the selected button's 10dp plus the 4dp padding the row carries, which is what
-  keeps the two curves concentric.
--->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/analytics_segment_track" />

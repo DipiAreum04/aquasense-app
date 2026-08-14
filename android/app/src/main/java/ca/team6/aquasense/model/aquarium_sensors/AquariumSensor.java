@@ -14,21 +14,12 @@ import ca.team6.aquasense.model.SensorReading;
 import ca.team6.aquasense.model.ThresholdBand;
 
 public abstract class AquariumSensor {
-    /**
-     * How old a sample may be before it stops counting as the sensor's current reading. Public
-     * because the calibration wizard has to make the same call: an offset worked out against a
-     * frozen reading is an offset against whatever the probe last managed to say.
-     */
     public static final long STALE_THRESHOLD_SECONDS = 30;
 
     private int unitResId;
     private String value;
     protected SensorStatus status;
 
-    /**
-     * The band the current status was graded against, so the info sheet quotes the same numbers
-     * the card was judged by rather than looking the aquarium up again for itself.
-     */
     @Nullable
     protected ThresholdBand thresholdBand;
 
@@ -52,22 +43,13 @@ public abstract class AquariumSensor {
         this.unitResId = unitResId;
     }
 
-    /**
-     * @param spikeDelta how far this reading must have moved from the previous one to count as a
-     *     spike, from {@code SensorThresholds.resolveSpikeDelta}. {@link Double#NaN} for a sensor
-     *     that cannot spike, which disables the check.
-     * @return whether the displayed value or status actually changed, so callers can skip rebinding when it didn't.
-     */
     public boolean applyReading(Context context, @Nullable SensorReading reading, @Nullable ThresholdBand thresholdBand, double spikeDelta, long nowMillis) {
         String previousValue = this.value;
         SensorStatus previousStatus = this.status;
 
-        // Recorded even when the reading is stale: the band is what this aquarium is configured
-        // with, which the info sheet still has something to say about while the sensor is silent.
         this.thresholdBand = thresholdBand;
 
         if (reading == null) {
-            // No sample at all, which is how a switch to another aquarium arrives.
             this.spikeTracker.reset();
         }
 
@@ -77,9 +59,6 @@ public abstract class AquariumSensor {
             this.status = SensorStatus.DISCONNECTED;
             this.spikeTracker.pause();
         } else {
-            // Already carrying its aquarium's calibration correction: TelemetryRepository applies it
-            // as readings arrive, so every screen reading through it agrees without each one having
-            // to remember to correct, and without any risk of a second correction on top.
             double value = reading.getValue();
             this.value = ReadingFormatter.format(context, this.getId(), value);
             boolean spiking = this.spikeTracker.grade(
@@ -90,31 +69,10 @@ public abstract class AquariumSensor {
         return !Objects.equals(previousValue, this.value) || previousStatus != this.status;
     }
 
-    /**
-     * Settles one reading's status between what its band says and whether it jumped to get there.
-     *
-     * <p>A jump only says something the band does not while the reading is otherwise in range: a
-     * spike is the one warning a normal value can earn. Once the reading is out of range the band
-     * is the direct account of it and stands alone, so a jump that lands in warning or critical is
-     * that band and nothing more.
-     *
-     * <p>Nothing here carries over between readings, so the sample after a spike is whatever its
-     * own band says, and a card that spiked while normal drops back to normal on the next reading
-     * that does not jump.
-     */
     static SensorStatus gradedStatus(boolean spiking, SensorStatus banded) {
         return spiking && banded == SensorStatus.NORMAL ? SensorStatus.WARNING : banded;
     }
 
-    /**
-     * Grades a reading. A sensor with no band configured has nothing to be out of range of, so it
-     * reads as normal; a sensor whose reading carries a meaning of its own, regardless of any
-     * band, says so by overriding this.
-     *
-     * <p>Public because it grades a value rather than this sensor's own current one: the analytics
-     * page runs a whole period's buckets through it to say how many of them were in range, and
-     * that has to be the same judgement the dashboard's card is making on the live reading.
-     */
     public SensorStatus statusFor(double value, @Nullable ThresholdBand thresholdBand) {
         return thresholdBand != null ? thresholdBand.statusFor(value) : SensorStatus.NORMAL;
     }
@@ -122,15 +80,15 @@ public abstract class AquariumSensor {
     public SensorStatus getSensorStatus() {
         return this.status;
     }
-    
+
     public int getStatusIconResId() {
         return this.status.iconResourceId;
     }
-    
+
     public int getStatusTextResId() {
         return this.status.textResourceId;
     }
-    
+
     public int getStatusColorResId() {
         return this.status.colorResourceId;
     }
@@ -164,11 +122,6 @@ public abstract class AquariumSensor {
         }
     }
 
-    /**
-     * The line under the sheet's reading, saying where the sensor stands right now. The status pill
-     * above it has already named the status, so this only has to place it against the band, which
-     * every ranged sensor does the same way.
-     */
     @StringRes
     public int getInfoSheetStatusNoteResId() {
         switch (this.status) {
@@ -185,11 +138,6 @@ public abstract class AquariumSensor {
         }
     }
 
-    /**
-     * The three bands this aquarium grades the sensor against, as safe, warning and critical in
-     * that order, for the sheet's range rows. Null when there is no band to quote, which hides the
-     * block rather than spelling the absence out.
-     */
     @Nullable
     public String[] getInfoSheetBandTexts(Context context) {
         ThresholdBand band = this.thresholdBand;
@@ -228,17 +176,14 @@ public abstract class AquariumSensor {
         return context.getString(R.string.sensor_info_band_none);
     }
 
-    /** One section of the sheet, with its heading and bullets already resolved to text. */
     protected InfoSheetSection section(Context context, @StringRes int titleResId, String... bullets) {
         return new InfoSheetSection(context.getString(titleResId), bullets);
     }
 
-    /** Two bounds as one range, carrying the unit once rather than on each end. */
     protected String rangeText(Context context, double low, double high) {
         return this.withUnit(context, this.range(context, low, high));
     }
 
-    // The pair without a unit, so a row that joins two of them still carries only one.
     private String range(Context context, double low, double high) {
         return context.getString(R.string.sensor_info_range,
                 this.number(context, low), this.number(context, high));
@@ -248,8 +193,6 @@ public abstract class AquariumSensor {
         return ReadingFormatter.format(context, this.getId(), value);
     }
 
-    // A dimensionless sensor such as pH declares a blank unit, which would otherwise leave the
-    // number trailing a space.
     private String withUnit(Context context, String text) {
         String unit = context.getString(this.getUnitResId()).trim();
         return unit.isEmpty() ? text : text + " " + unit;

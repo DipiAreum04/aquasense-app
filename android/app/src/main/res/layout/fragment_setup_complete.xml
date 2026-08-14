@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Closing page of the first-installation wizard (SETTINGS-03). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -59,7 +58,6 @@
                 android:textSize="15sp"
                 tools:text="&quot;Reef Tank&quot; is ready to monitor. Head to your dashboard to watch its live readings." />
 
-            <!-- What was just created, so the user can check it before the dashboard opens on it. -->
             <LinearLayout
                 android:id="@+id/completeSummary"
                 android:layout_width="match_parent"
@@ -163,17 +161,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!--
-              The two app-wide display choices, asked here and nowhere else in setup.
-
-              Both are settings rather than properties of the aquarium, so neither belongs on the
-              form that creates one. They are worth asking once, and this is the moment they mean
-              something: the hub is online and the user is about to go and read its numbers.
-
-              Each writes straight through on selection - there is no save, and the button below
-              leaves for the dashboard - so they behave the same as they do in Display & Units,
-              which is where they can be changed afterwards.
-            -->
             <LinearLayout
                 android:id="@+id/completeDisplayPrefs"
                 style="@style/Widget.AquaSense.Card"
@@ -291,6 +278,7 @@
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnGoToDashboard"
             android:layout_width="match_parent"
             android:layout_height="56dp"

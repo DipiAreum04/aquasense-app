@@ -4,19 +4,16 @@ import android.content.Context;
 
 public class SettingsRepository {
 
-    // Keys
     public static final String KEY_TEMP_UNIT              = "tempUnit";
     public static final String KEY_THEME_MODE             = "themeMode";
     public static final String KEY_READING_PRECISION      = "readingPrecision";
     public static final String KEY_SENSOR_ORDER           = "sensorCardOrder";
     public static final String KEY_SENSOR_HIDDEN          = "sensorCardHidden";
 
-    // KEY_THEME_MODE values
     public static final String THEME_SYSTEM = "system";
     public static final String THEME_LIGHT  = "light";
     public static final String THEME_DARK   = "dark";
 
-    // KEY_READING_PRECISION values
     public static final String PRECISION_STANDARD = "standard";
     public static final String PRECISION_PRECISE  = "precise";
 
@@ -30,7 +27,6 @@ public class SettingsRepository {
     public static final String KEY_NOTIFY_SENSOR          = "notifySensorDisconnected";
     public static final String KEY_NOTIFY_HUB_DISCONNECTED = "notifyHubDisconnected";
 
-    // A sensor set to false suppresses every notification type for that sensor except for critical alerts
     public static final String KEY_SENSOR_ALERTS_TEMP     = "sensorAlertsTemperature";
     public static final String KEY_SENSOR_ALERTS_LEVEL    = "sensorAlertsWaterLevel";
     public static final String KEY_SENSOR_ALERTS_TDS      = "sensorAlertsDissolvedSolids";
@@ -39,16 +35,11 @@ public class SettingsRepository {
     public static final String KEY_PROFILE_NAME           = "profileName";
     public static final String KEY_PROFILE_EMAIL          = "profileEmail";
 
-    // True after the SETTINGS-03 pairing wizard has been completed on this device on first install
     public static final String KEY_PAIRING_COMPLETE       = "pairingComplete";
     public static final String KEY_ACTIVE_AQUARIUM        = "activeAquariumId";
 
-    // True after a successful register/login on this device; until then auth starts at register page.
     public static final String KEY_HAS_AUTHENTICATED      = "hasAuthenticated";
 
-    // Device-local prompt state, not a user preference: the system permission sheet is offered
-    // once on launch and never re-launched from there, so declining it does not turn into nagging
-    // on every resume. Settings > Notifications is where it can be asked for again.
     public static final String KEY_NOTIF_PERMISSION_ASKED = "notificationPermissionAsked";
 
     public static final String KEY_CALIB_LIQUID          = "lastCalibratedLiquid";
@@ -67,7 +58,6 @@ public class SettingsRepository {
     }
 
     public void loadSettings(OnSettingsLoaded callback) {
-        // Defaults come from AppSettings' field initializers, never from literals.
         AppSettings d = new AppSettings();
         AppSettings s = new AppSettings();
 

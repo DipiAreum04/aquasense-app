@@ -27,17 +27,9 @@ public enum SensorStatus {
     public final int iconResourceId;
     public final int textResourceId;
     public final int colorResourceId;
-    /** The card's edge, which carries the status around a card that stays white. */
     public final int cardStrokeColorResourceId;
-    /** Fill behind the status pill; the pill's dot and label stay on {@link #colorResourceId}. */
     public final int pillBackgroundColorResourceId;
-    /**
-     * The reading itself, which stays navy whatever the status: the pill beneath it is already
-     * saying that, and a number is easier to read in one colour. Only a sensor that has stopped
-     * reporting greys it, since then there is no reading to show.
-     */
     public final int valueColorResourceId;
-    /** The sensor's own icon, which only leaves navy once the sensor stops reporting. */
     public final int titleIconColorResourceId;
 
     SensorStatus(

@@ -27,8 +27,6 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
         this.sensors = new ArrayList<>(sensors);
     }
 
-    // Replaces the card list after the order / visibility preference changes.
-    // The list is at most four cards, so a full rebind is cheaper than diffing it.
     @SuppressLint("NotifyDataSetChanged")
     public void setSensors(List<AquariumSensor> updated) {
         sensors.clear();
@@ -51,7 +49,6 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
 
         Context context = holder.itemView.getContext();
 
-        // The card stays white; its edge is what carries the status around the whole card.
         holder.sensorCard.setStrokeColor(
                 ContextCompat.getColor(context, sensor.getStatusCardStrokeColorResId()));
 
@@ -79,13 +76,12 @@ public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensor
             sheet.show(fragmentManager, "sensor_info");
         });
     }
-    
+
     @Override
     public int getItemCount() {
         return sensors.size();
     }
 
-    // Rebinds a single sensor card after changes (e.g. after the temperature unit preference changes)
     public void notifySensorChanged(AquariumSensor sensor) {
         int index = sensors.indexOf(sensor);
         if (index != -1) {

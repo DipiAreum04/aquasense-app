@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    "STEP 1 OF 2" strip for the first-installation wizard, driven by WizardProgress.
-
-    Included under the toolbar of every screen the wizard walks through, hidden by default: the
-    same two screens are also reachable from the dashboard, where there is no wizard to report
-    progress for.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/wizardProgress"

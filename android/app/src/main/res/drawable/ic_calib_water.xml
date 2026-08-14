@@ -3,17 +3,14 @@
     android:height="200dp"
     android:viewportWidth="200"
     android:viewportHeight="200">
-    <!-- Glass Background -->
     <path
         android:pathData="M60,40 L140,40 L130,170 L70,170 Z"
         android:fillColor="#1AFFFFFF"
         android:strokeColor="@color/accent"
         android:strokeWidth="4"/>
-    <!-- Water -->
     <path
         android:pathData="M65,100 L135,100 L128,165 L72,165 Z"
         android:fillColor="@color/accent"/>
-    <!-- Bubbles -->
     <path android:fillColor="@color/white" android:pathData="M90,120 A4,4 0 1,1 98,120 A4,4 0 1,1 90,120" />
     <path android:fillColor="@color/white" android:pathData="M110,140 A3,3 0 1,1 116,140 A3,3 0 1,1 110,140" />
 </vector>

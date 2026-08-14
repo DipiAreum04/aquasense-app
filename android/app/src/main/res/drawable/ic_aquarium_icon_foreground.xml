@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Inset icon + subtle drop shadow + soft glass shine. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Subtle shadow under the white mark -->
     <item
         android:left="2dp"
         android:top="3dp"
@@ -16,7 +14,6 @@
             android:insetBottom="22%" />
     </item>
 
-    <!-- Main mark -->
     <item>
         <inset
             android:drawable="@drawable/ic_aquarium_icon_white"
@@ -26,7 +23,6 @@
             android:insetBottom="22%" />
     </item>
 
-    <!-- Soft glass highlight (reduced shine) -->
     <item
         android:gravity="center"
         android:width="36dp"

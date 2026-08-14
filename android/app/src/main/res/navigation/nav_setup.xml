@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    SETTINGS-03 first-installation wizard: welcome, then the three setup steps, then the summary.
-
-    Step 3 is the BLE pairing flow, which lives in its own activity (PairingActivity) because it
-    is also reached from the dashboard. The mount-the-hub screen launches it and navigates on to
-    the completion page once it reports back, so the graph has no destination for it.
-
-    The aquarium's details are collected on step 1 and are not written anywhere until pairing
-    succeeds, so each destination forwards them on as arguments (see SetupArgs).
--->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -26,8 +16,6 @@
             app:destination="@id/addAquariumFragment" />
     </fragment>
 
-    <!-- Step 1. The same screen the dashboard's "Add New Aquarium" opens, in its first-run mode:
-         it carries the Skip action and hands the form straight to pairing. -->
     <fragment
         android:id="@+id/addAquariumFragment"
         android:name="ca.team6.aquasense.dashboard.AddAquariumFragment"
@@ -44,14 +32,12 @@
             app:destination="@id/mountHubFragment" />
     </fragment>
 
-    <!-- Step 2. Instructions only, and the screen that launches pairing (step 3). -->
     <fragment
         android:id="@+id/mountHubFragment"
         android:name="ca.team6.aquasense.setup.MountHubFragment"
         android:label="@string/setup_step_mount_title"
         tools:layout="@layout/fragment_setup_mount_hub">
 
-        <!-- Everything step 1 collected, in the shape the pairing flow writes it. -->
         <argument
             android:name="aquariumConfig"
             android:defaultValue="@null"
@@ -64,8 +50,6 @@
             app:argType="string"
             app:nullable="true" />
 
-        <!-- Setup is over by the time this runs, so the steps behind it are dropped: back from
-             the summary belongs to the dashboard, not to a form that has already been submitted. -->
         <action
             android:id="@+id/action_mountHubFragment_to_setupCompleteFragment"
             app:destination="@id/setupCompleteFragment"
@@ -79,8 +63,6 @@
         android:label="@string/setup_complete_title"
         tools:layout="@layout/fragment_setup_complete">
 
-        <!-- The same bundle step 2 was given, forwarded on: the summary names the aquarium and
-             its water type out of the configuration that has just been written. -->
         <argument
             android:name="aquariumConfig"
             android:defaultValue="@null"

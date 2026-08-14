@@ -3,7 +3,6 @@ package ca.team6.aquasense.model;
 import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
 public class NotificationLogEntry {
-    /** Local history-row ID, or -1 before the entry has been persisted. */
     public final long localId;
     public final String aquariumId;
     public final SensorType sensorType;

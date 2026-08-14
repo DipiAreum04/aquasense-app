@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Sensor info sheet. The header and the dismiss button are pinned; only the body between them
-  scrolls, so the sensor being described and the way out of the sheet are always on screen.
-
-  The root wraps its content, so a short sheet stays short. Once the content outgrows the sheet's
-  maximum height the scroll view is the only child that gives, since it is the only one carrying
-  a weight.
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,7 +45,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
             />
-            <!-- Same pill as the card it was opened from, so the two agree at a glance. -->
             <LinearLayout
                 android:id="@+id/sensorInfoStatusPill"
                 android:layout_width="wrap_content"
@@ -117,18 +108,12 @@
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
         >
-            <!--
-              The sensor's own reading, hidden as a block for a sheet that is not about one - see
-              SensorInfoBottomSheet.explaining, which also drops the heading's top margin when it
-              does, since that margin exists to separate the heading from this.
-            -->
             <LinearLayout
                 android:id="@+id/sensorInfoReadingBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
             >
-                <!-- Reading and unit ride the same baseline, centred as one block, as on the card. -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -191,11 +176,6 @@
                 android:textSize="14sp"
             />
 
-            <!--
-              All three bands, whatever the reading is doing, so the thresholds can be read off
-              rather than inferred from the status. Hidden as a block for a sensor with no band to
-              quote, such as the water level sensor.
-            -->
             <LinearLayout
                 android:id="@+id/sensorInfoRanges"
                 android:layout_width="match_parent"
@@ -241,6 +221,7 @@
     />
 
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.AquaSense.Button.Primary"
         android:id="@+id/sensorInfoDismiss"
         android:layout_width="match_parent"
         android:layout_height="48dp"

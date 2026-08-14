@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Ocean gradient + soft top-left rim light (glass highlight). -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Base: lighter top-left to deeper navy bottom-right -->
     <item>
         <shape android:shape="rectangle">
             <gradient
@@ -13,7 +11,6 @@
         </shape>
     </item>
 
-    <!-- Soft rim light from the top-left (like light on glass) -->
     <item>
         <shape android:shape="rectangle">
             <gradient

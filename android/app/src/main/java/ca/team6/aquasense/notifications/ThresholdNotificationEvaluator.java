@@ -13,13 +13,6 @@ public final class ThresholdNotificationEvaluator {
 
     private ThresholdNotificationEvaluator() {}
 
-    /**
-     * Grades one reading of one sensor.
-     *
-     * @return what this reading is worth alerting on: the band it breached, or the jump it made
-     *     from inside the band, or nothing at all. Never both, since a reading that is out of
-     *     range is not a spike.
-     */
     public static List<ThresholdViolation> evaluateSensor(
             String aquariumId,
             String sensorId,
@@ -34,9 +27,6 @@ public final class ThresholdNotificationEvaluator {
 
         ThresholdViolation breach = evaluateBand(aquariumId, sensorId, band, value);
         if (breach != null) {
-            // A reading out of range is reported as the breach it is. The jump that carried it
-            // there adds nothing the breach does not already say, and alerting on both would
-            // notify one reading twice, so a spike is only ever raised from inside the band.
             return Collections.singletonList(breach);
         }
 
@@ -82,7 +72,6 @@ public final class ThresholdNotificationEvaluator {
         if (previousValue == null || Double.isNaN(spikeDelta)) {
             return null;
         }
-        // Guards against a sentinel that reached the caller's cache before this check existed.
         if (isNotAMeasurement(previousValue)) {
             return null;
         }

@@ -9,14 +9,6 @@ import java.util.Map;
 import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
 import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
 
-/**
- * One entry of /{uid}/aquariums. The database key is carried on the object as {@link #getId()},
- * since every telemetry path needs it.
- *
- * <p>Only name and water type are required by the schema. Thresholds and spike deltas are
- * optional and are frequently absent, so their accessors return {@code null} rather than a
- * default; the caller decides what an unconfigured sensor should fall back to.
- */
 public final class Aquarium {
 
     private final String id;
@@ -52,12 +44,10 @@ public final class Aquarium {
         return waterType;
     }
 
-    //Checks if the sensor is applicable to this aquarium's water type.
     public boolean isSensorApplicable(@NonNull String sensorId) {
         return template().isSensorApplicable(sensorId);
     }
 
-    // Returns the resource ID of the note to display when a sensor is disabled due to water type.
     @StringRes
     public int getSensorDisabledNoteResId() {
         return template().getDisabledNoteResId();
@@ -73,14 +63,6 @@ public final class Aquarium {
         return thresholds.get(sensorId);
     }
 
-    /**
-     * The band this aquarium is actually graded against for a sensor: the one configured for it, or
-     * this water type's default where it has not been overridden.
-     *
-     * <p>Null when the sensor is not one this kind of tank measures. Borrowing a band from a
-     * different water type would be worse than having none - it is the difference between "no
-     * opinion" and a confidently wrong one.
-     */
     @Nullable
     public ThresholdBand effectiveThresholdFor(@NonNull String sensorId) {
         ThresholdBand configured = thresholdFor(sensorId);

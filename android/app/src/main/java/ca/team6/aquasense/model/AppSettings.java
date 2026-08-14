@@ -1,14 +1,11 @@
 package ca.team6.aquasense.model;
 
-// Single source of truth for settings defaults.
 public class AppSettings {
 
-    // Display & Units
-    public String tempUnit = "F";           // "C" or "F"
+    public String tempUnit = "F";
     public String themeMode = SettingsRepository.THEME_SYSTEM;
     public String readingPrecision = SettingsRepository.PRECISION_STANDARD;
 
-    // Notifications
     public boolean pushNotifications = true;
     public boolean criticalAlertsOnly = false;
     public boolean quietHours = false;
@@ -19,17 +16,14 @@ public class AppSettings {
     public boolean notifySensorDisconnected = true;
     public boolean notifyHubDisconnected = true;
 
-    // A sensor set to false suppresses every notification type for that sensor except for critical alerts
     public boolean sensorAlertsTemperature = true;
     public boolean sensorAlertsWaterLevel = true;
     public boolean sensorAlertsDissolvedSolids = true;
     public boolean sensorAlertsPhLevel = true;
 
-    // Accounts
     public String profileName = "";
     public String profileEmail = "";
 
-    // Sensor Calibration: last calibrated timestamps (ms)
     public long lastCalibratedLiquid = 0L;
     public long lastCalibratedTemp = 0L;
     public long lastCalibratedTds = 0L;

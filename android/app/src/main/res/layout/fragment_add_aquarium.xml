@@ -11,10 +11,9 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_add_aquarium"
         style="@style/Widget.AquaSense.Toolbar"
-        android:paddingEnd="20dp" 
+        android:paddingEnd="20dp"
         android:layout_alignParentTop="true" />
 
-    <!-- Shown by WizardProgress only on a first installation, where this screen is step 1 of 2. -->
     <include
         android:id="@+id/wizardProgress"
         layout="@layout/view_wizard_progress"
@@ -118,26 +117,12 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- One row per built-in template, inflated by AddAquariumFragment from
-                 BuiltInTemplates so this list cannot drift from the templates the
-                 dashboard actually enforces. -->
             <LinearLayout
                 android:id="@+id/templateChoiceContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!--
-              Step 3. The thresholds the template above implies, opened up for editing.
-
-              Optional, and collapsed: the values inside are written whether or not it is ever
-              opened, so opening it and changing nothing creates exactly the aquarium that leaving
-              it shut creates. That is what makes it safe to hide.
-
-              There is no separate "custom" template. Every water type is reachable through a named
-              template, so a row offering to define thresholds from scratch would only be a worse
-              route to this panel - one that starts on numbers it cannot explain.
-            -->
             <LinearLayout
                 android:id="@+id/stepAdvancedHeader"
                 android:layout_width="match_parent"
@@ -191,8 +176,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- The whole header is the toggle; the chevron is turned a quarter over while
-                     the panel is open. -->
                 <LinearLayout
                     android:id="@+id/advancedToggle"
                     android:layout_width="match_parent"
@@ -223,8 +206,6 @@
 
                 </LinearLayout>
 
-                <!-- Names the template the fields below were filled in from, so a number that
-                     looks arbitrary can be traced to the choice that produced it. -->
                 <TextView
                     android:id="@+id/tvAdvancedHint"
                     android:layout_width="match_parent"
@@ -248,7 +229,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Action Button -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -258,6 +238,7 @@
         android:padding="16dp">
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.AquaSense.Button.Primary"
             android:id="@+id/btnCreateAquarium"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -270,7 +251,6 @@
             android:textStyle="bold"
             app:backgroundTint="@null" />
 
-        <!-- Only first-installation will show the Skip pairing button -->
         <TextView
             android:id="@+id/btnSkipPairing"
             android:layout_width="match_parent"

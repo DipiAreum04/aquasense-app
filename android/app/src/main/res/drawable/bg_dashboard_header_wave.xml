@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The crest that closes the dashboard header. Same curve as @drawable/bg_auth_wave, with the
-  empty band above the crest cropped out: that drawable's ink starts 28 units down a 72-unit
-  viewport, so drawn at fitXY nearly two fifths of the view was transparent air and the gap
-  above the wave could not be closed from the layout. ConstraintLayout clamps negative margins
-  to zero, so the space had to come out of the drawable. Here the ink starts at y=0 and the
-  layout's top margin is the whole of the gap.
-
-  Only the leading path survives the crop. bg_auth_wave lays a second, softer wave beneath the
-  first, but the controller tints this view with a single colour at SRC_IN, which flattens both
-  to one silhouette, and the softer path runs below the leading one at every x, so it never
-  reached a pixel the leading path had not already covered.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="200dp"
     android:height="44dp"

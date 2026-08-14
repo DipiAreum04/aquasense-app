@@ -12,15 +12,10 @@ import ca.team6.aquasense.model.DatabaseSchema;
 import ca.team6.aquasense.model.ThresholdBand;
 import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
 
-/**
- * Covers the NF-1.1 alert rules. The evaluator takes no Android or Firebase types, so these run on
- * the JVM without a device.
- */
 public class ThresholdNotificationEvaluatorTest {
 
     private static final String AQUARIUM = "tank-1";
 
-    /** Freshwater temperature band: critical below 22 / above 29, safe 24 to 27. */
     private static final ThresholdBand TEMPERATURE_BAND = new ThresholdBand(22, 24, 27, 29);
     private static final ThresholdBand PH_BAND = new ThresholdBand(6.5, 6.8, 7.6, 7.8);
 
@@ -62,7 +57,6 @@ public class ThresholdNotificationEvaluatorTest {
         assertEquals(1, violations.size());
         ThresholdViolation violation = violations.get(0);
         assertEquals(ThresholdViolation.ViolationKind.SPIKE, violation.kind);
-        // A spike inside the safe band is advisory, so quiet hours may still hold it back.
         assertEquals(SensorStatus.WARNING, violation.severity);
     }
 
@@ -71,10 +65,6 @@ public class ThresholdNotificationEvaluatorTest {
         assertTrue(evaluateTemperature(25.0, 24.0).isEmpty());
     }
 
-    /**
-     * A jump only counts as a spike while the reading it lands on is otherwise in range. Once the
-     * reading is out of range the breach is the alert, and the jump is not a second one.
-     */
     @Test
     public void aJumpThatBreachesTheBandIsReportedAsTheBreachAlone() {
         List<ThresholdViolation> violations = evaluateTemperature(31.0, 24.0);
@@ -100,7 +90,6 @@ public class ThresholdNotificationEvaluatorTest {
         assertTrue(evaluateTemperature(24.0, null).isEmpty());
     }
 
-    // --- Offline sentinel: the bug that made a disconnected probe alert three times. ---
 
     @Test
     public void offlineSentinelIsNotTreatedAsAReading() {
@@ -120,8 +109,6 @@ public class ThresholdNotificationEvaluatorTest {
 
     @Test
     public void recoveryFromOfflineDoesNotReadAsASpike() {
-        // The caller keeps the last real value rather than the sentinel, but a sentinel that
-        // reached the cache must not turn into a huge false spike either.
         List<ThresholdViolation> violations =
                 evaluateTemperature(24.0, DatabaseSchema.OFFLINE_SENTINEL);
 
@@ -130,8 +117,6 @@ public class ThresholdNotificationEvaluatorTest {
 
     @Test
     public void anExtremeButRealReadingStillAlerts() {
-        // Only the sentinel means "no reading". A genuine extreme is exactly what the user needs
-        // to hear about, so it must not be filtered out for looking implausible.
         List<ThresholdViolation> violations = ThresholdNotificationEvaluator.evaluateSensor(
                 AQUARIUM, DatabaseSchema.PH_LEVEL_KEY, PH_BAND,
                 SensorThresholds.DEFAULT_PH_SPIKE, 0.5, null);
@@ -140,7 +125,6 @@ public class ThresholdNotificationEvaluatorTest {
         assertTrue(violations.get(0).isCritical());
     }
 
-    // --- Water level is a float switch, not a ranged measurement. ---
 
     @Test
     public void noWaterDetectedIsCritical() {
@@ -161,7 +145,6 @@ public class ThresholdNotificationEvaluatorTest {
         assertTrue(violations.isEmpty());
     }
 
-    // --- Configuration edges. ---
 
     @Test
     public void sensorWithNoBandIsUnmonitoredRatherThanAlwaysSafe() {
@@ -169,7 +152,6 @@ public class ThresholdNotificationEvaluatorTest {
                 AQUARIUM, DatabaseSchema.DISSOLVED_SOLIDS_KEY, null,
                 SensorThresholds.DEFAULT_TDS_SPIKE_PPM, 9999.0, null);
 
-        // Out of any plausible range, but with no band configured there is nothing to breach.
         assertTrue(violations.isEmpty());
     }
 
@@ -197,8 +179,6 @@ public class ThresholdNotificationEvaluatorTest {
 
     @Test
     public void sameOngoingConditionKeepsTheSameDedupeKey() {
-        // Two consecutive out-of-range samples are one alert, which is what stops the monitor
-        // re-notifying on every reading.
         String first = evaluateTemperature(31.0, null).get(0).dedupeKey();
         String second = evaluateTemperature(32.0, null).get(0).dedupeKey();
 

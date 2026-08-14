@@ -20,7 +20,6 @@ import ca.team6.aquasense.auth.SignOutDialog;
 
 public class SettingsHubFragment extends Fragment {
 
-    /** Shown when neither the name nor the email can supply a usable initial. */
     private static final String INITIAL_PLACEHOLDER = "?";
 
     private TextView tvHubProfileInitial;
@@ -44,56 +43,45 @@ public class SettingsHubFragment extends Fragment {
         tvHubProfileName = view.findViewById(R.id.tvHubProfileName);
         tvHubProfileEmail = view.findViewById(R.id.tvHubProfileEmail);
 
-        // Sign out button on the profile card. But the card itself is not clickable.
         view.findViewById(R.id.btnHubSignOut)
                 .setOnClickListener(v -> SignOutDialog.show(requireActivity(), authRepository));
 
-        // Sensor Calibration
         view.findViewById(R.id.rowSensorCalibration)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_sensorCalibration));
 
-        // Display & Units
         view.findViewById(R.id.rowDisplayUnits)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_displayUnits));
 
-        // Notifications
         view.findViewById(R.id.rowNotifications)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_notifications));
 
-        // Accounts & Backup
         view.findViewById(R.id.rowAccountsBackup)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_accounts));
 
-        // Privacy Policy
         view.findViewById(R.id.rowPrivacyPolicy)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_privacyPolicy));
 
-        // Contact & Support
         view.findViewById(R.id.rowContactSupport)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_contactSupport));
 
-        // Troubleshooting Guide
         view.findViewById(R.id.rowTroubleshootingGuide)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_troubleshootingGuide));
 
-        // Aquarium Templates
         view.findViewById(R.id.rowAquariumTemplates)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_aquariumTemplates));
 
-        // My Aquariums: the same aquariumselector as the dashboard header opens
         view.findViewById(R.id.rowTankProfiles)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_aquariumSelector));
 
-        // Water Parameters
         view.findViewById(R.id.rowWaterParameters)
                 .setOnClickListener(v -> Navigation.findNavController(v)
                         .navigate(R.id.action_hub_to_waterParameters));
@@ -123,10 +111,6 @@ public class SettingsHubFragment extends Fragment {
                 : email);
     }
 
-    /**
-     * First character of the display name for the avatar, falling back to the email and then to
-     * {@link #INITIAL_PLACEHOLDER}.
-     */
     private static String initialFor(@Nullable String name, @Nullable String email) {
         String source = !TextUtils.isEmpty(name) ? name : email;
         if (source == null) {

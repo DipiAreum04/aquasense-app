@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
-/** Persists per-aquarium maintenance mode state in device-local storage. */
 public final class MaintenanceModeStore {
 
     public static final long DURATION_15_MIN = 15 * 60 * 1000L;
@@ -78,7 +77,6 @@ public final class MaintenanceModeStore {
         return Math.max(0L, expiresAt - System.currentTimeMillis());
     }
 
-    /** Formats a countdown with minute precision, rounding up so it never reads zero early. */
     @NonNull
     public static String formatRemainingDuration(long remainingMs) {
         long totalMinutes = (remainingMs + 59_999L) / 60_000L;

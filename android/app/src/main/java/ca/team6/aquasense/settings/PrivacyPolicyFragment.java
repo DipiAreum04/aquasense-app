@@ -63,8 +63,6 @@ public class PrivacyPolicyFragment extends Fragment {
                 null);
     }
 
-    // The policy is a local asset, so the WebView cannot navigate anywhere
-    // To allow the user to tap the contact link, redirect the schemes to the browser instead
     private boolean openExternally(@Nullable Uri uri) {
         String scheme = uri == null ? null : uri.getScheme();
         if (scheme == null) {
@@ -97,13 +95,11 @@ public class PrivacyPolicyFragment extends Fragment {
         return true;
     }
 
-    // Reflects whatever AppCompatDelegate resolved, so it follows the in-app theme setting rather than the system setting.
     private boolean isNightMode() {
         int uiMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         return uiMode == Configuration.UI_MODE_NIGHT_YES;
     }
 
-    // The stylesheet keys its dark palette off :root.dark, so flip the class on <html>.
     private static String applyTheme(@NonNull String html, boolean nightMode) {
         if (!nightMode) {
             return html;

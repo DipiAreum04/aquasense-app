@@ -30,7 +30,6 @@ final class ThresholdAlertDedupeStore {
         if (!prefs.contains(key)) {
             return null;
         }
-        // Stored as raw bits so the double round-trips exactly; SharedPreferences has no putDouble.
         return Double.longBitsToDouble(prefs.getLong(key, 0L));
     }
 
@@ -46,21 +45,12 @@ final class ThresholdAlertDedupeStore {
                 .apply();
     }
 
-    /**
-     * True when {@code cooldownKey} has been quiet for at least
-     * {@link SensorThresholds#NOTIFICATION_COOLDOWN_MS}.
-     *
-     * <p>The window is never cleared early. An earlier version reset it as soon as a reading came
-     * back in range, which let a value flapping across a band edge re-alert on the very next
-     * sample.
-     */
     boolean cooldownElapsed(@NonNull String cooldownKey) {
         long lastNotified = prefs.getLong(lastNotifiedKey(cooldownKey), 0L);
         if (lastNotified <= 0L) {
             return true;
         }
         long sinceLast = System.currentTimeMillis() - lastNotified;
-        // A clock moved backwards would otherwise mute this condition until wall time caught up.
         return sinceLast < 0L || sinceLast >= SensorThresholds.NOTIFICATION_COOLDOWN_MS;
     }
 

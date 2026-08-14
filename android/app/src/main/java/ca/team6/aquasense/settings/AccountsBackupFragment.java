@@ -1,5 +1,7 @@
 package ca.team6.aquasense.settings;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -74,13 +76,12 @@ public class AccountsBackupFragment extends Fragment {
     }
 
     private void showDeleteProfileDialog() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_AquaSense_MaterialAlertDialog_Danger)
                 .setTitle(R.string.delete_profile_title)
                 .setMessage(R.string.delete_profile_message)
                 .setNegativeButton(R.string.delete_profile_cancel, null)
                 .setPositiveButton(R.string.delete_profile_confirm, (dialog, which) -> {
-                    // Firebase requires a recent login before delete(), so confirm credentials
-                    // with whichever provider this account actually signed in through.
                     if (authRepository.hasPasswordProvider()) {
                         showConfirmPasswordDialog();
                     } else {
@@ -91,21 +92,20 @@ public class AccountsBackupFragment extends Fragment {
     }
 
     private void showConfirmPasswordDialog() {
-        // The inflated field always starts masked, so reset the tracked state with it.
         passwordVisible = false;
         View content = getLayoutInflater().inflate(R.layout.dialog_confirm_password, null);
         EditText etPassword = content.findViewById(R.id.etConfirmPassword);
         ImageButton btnToggle = content.findViewById(R.id.btnToggleConfirmPassword);
         btnToggle.setOnClickListener(v -> togglePasswordVisibility(etPassword, btnToggle));
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_AquaSense_MaterialAlertDialog_Danger)
                 .setTitle(R.string.delete_profile_confirm_password_title)
                 .setView(content)
                 .setNegativeButton(R.string.delete_profile_cancel, null)
                 .setPositiveButton(R.string.delete_profile_confirm, null)
                 .create();
 
-        // Bound after show() so an empty password does not dismiss the dialog.
         dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(v -> {
                     String password = etPassword.getText().toString();
@@ -138,7 +138,8 @@ public class AccountsBackupFragment extends Fragment {
     }
 
     private void showConfirmGoogleDialog() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext(),
+                R.style.ThemeOverlay_AquaSense_MaterialAlertDialog_Danger)
                 .setTitle(R.string.delete_profile_confirm_google_title)
                 .setMessage(R.string.delete_profile_confirm_google_message)
                 .setNegativeButton(R.string.delete_profile_cancel, null)

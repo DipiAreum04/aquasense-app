@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  The plate behind the dialog's bin icon. It is the same wash the sensor cards fill a critical
-  status pill with, so the one red thing on the page and the one red thing in the dialog are cut
-  from the same colour.
--->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <solid android:color="@color/status_red_soft" />

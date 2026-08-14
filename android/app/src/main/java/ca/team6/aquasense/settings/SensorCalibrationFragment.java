@@ -34,15 +34,6 @@ import ca.team6.aquasense.model.SharedPreferenceHelper;
 import ca.team6.aquasense.model.TelemetryRepository;
 import ca.team6.aquasense.model.ThresholdBand;
 
-/**
- * Settings &rarr; Sensor Calibration: one guide per correctable sensor, each of which has the user
- * name the value they have brought the water to, measures the sensor there, and stores the
- * difference.
- *
- * <p>Each row reports the correction in force as a percentage of the sensor's safe band, which is
- * what makes it comparable between sensors: the same absolute offset is noise on a dissolved-solids
- * band hundreds wide and enormous on a pH one.
- */
 public class SensorCalibrationFragment extends Fragment {
 
     private SettingsRepository repo;
@@ -56,8 +47,6 @@ public class SensorCalibrationFragment extends Fragment {
     @Nullable
     private View root;
 
-    // An offset belongs to one tank's probe, so the page has to know which tank it is looking at -
-    // and the list arrives from Firebase, so it may well not be known yet when the view is created.
     private final AquariumRepository.AquariumsObserver aquariumsObserver = ignored -> {
         activeAquarium = aquariumRepository.getActiveAquarium();
         if (root != null) {
@@ -87,8 +76,6 @@ public class SensorCalibrationFragment extends Fragment {
         repo.loadSettings(s -> currentSettings = s);
         refreshStatus(view);
 
-        // The guide is a page of its own now, so its result comes back through the fragment manager
-        // rather than a listener held across a dialog.
         getParentFragmentManager().setFragmentResultListener(
                 CalibrationGuideFragment.RESULT_KEY, getViewLifecycleOwner(),
                 (requestKey, result) -> {
@@ -100,8 +87,6 @@ public class SensorCalibrationFragment extends Fragment {
                     }
                 });
 
-        // Water level has no row here to wire up: it is a detector rather than a scale, so there
-        // is nothing to compare against a reference and nothing to correct. Its row says so.
         view.findViewById(R.id.rowGuideTemp)
                 .setOnClickListener(v -> startGuide(v, DatabaseSchema.TEMPERATURE_KEY));
         view.findViewById(R.id.rowGuideTds)
@@ -117,11 +102,6 @@ public class SensorCalibrationFragment extends Fragment {
         super.onDestroyView();
     }
 
-    /**
-     * Prepare, place, measure. The first two steps are instructions the user ticks off; the third is
-     * the calibration point, where they name the value they brought the water to and the guide
-     * takes over and reads the sensor itself.
-     */
     private void startGuide(@NonNull View anchor, @NonNull String sensorId) {
         Aquarium aquarium = activeAquarium;
         if (aquarium == null) {
@@ -132,8 +112,6 @@ public class SensorCalibrationFragment extends Fragment {
             toast(R.string.calibration_sensor_unavailable);
             return;
         }
-        // Without a band there is nothing to check the typed operating point against, and no way to
-        // say how big the resulting correction is. That is a range to go and set, not a guess.
         ThresholdBand band = aquarium.effectiveThresholdFor(sensorId);
         if (band == null) {
             toast(R.string.calibration_thresholds_required);
@@ -165,9 +143,6 @@ public class SensorCalibrationFragment extends Fragment {
                 band.getSafeLow(),
                 band.getSafeHigh()));
 
-        // Opening Settings cold leaves nothing subscribed, and the guide reads live samples off
-        // this subscription. The dashboard holds it for the whole session, so arriving from there
-        // costs nothing.
         TelemetryRepository.getInstance().watchAquarium(aquarium.getId());
 
         Navigation.findNavController(anchor).navigate(
@@ -181,9 +156,6 @@ public class SensorCalibrationFragment extends Fragment {
 
     private void onCalibrated(String key, String sensorId, List<StepData> steps) {
         long now = System.currentTimeMillis();
-        // Still recorded: these are the account-wide "last calibrated" fields Settings backs up.
-        // What this screen shows now comes from the per-aquarium store, which is written by
-        // saveOffset below alongside the offset it belongs to.
         prefs.updateField(key, now);
         if (currentSettings != null) {
             if (key.equals(SettingsRepository.KEY_CALIB_TEMP)) currentSettings.lastCalibratedTemp = now;
@@ -197,14 +169,6 @@ public class SensorCalibrationFragment extends Fragment {
         }
     }
 
-    /**
-     * Stores the correction the guide measured: the operating point the user held the probe at,
-     * minus the mean of what the board reported while it was there.
-     *
-     * <p>The typed value is converted out of the display unit; the samples are raw by construction.
-     * A window that caught no samples, or a value that did not survive validation, leaves the stored
-     * offset alone rather than overwriting a good correction with one derived from nothing.
-     */
     private void saveOffset(String sensorId, List<StepData> steps) {
         Aquarium aquarium = activeAquarium;
         if (aquarium == null || !CalibrationOffsetStore.isCalibratable(sensorId)) {
@@ -224,8 +188,6 @@ public class SensorCalibrationFragment extends Fragment {
             offsets.set(aquarium.getId(), sensorId,
                     CalibrationMath.offset(operatingPoint, step.capturedValue));
 
-            // The samples already in hand were published under the old offset, so they are
-            // re-corrected rather than left to be overwritten by whatever the board sends next.
             TelemetryRepository.getInstance().refreshCalibration();
 
             String offset = offsets.describe(aquarium.getId(), sensorId);
@@ -244,15 +206,6 @@ public class SensorCalibrationFragment extends Fragment {
         updateProbeRow(root, R.id.tvPhDays, R.id.tvPhError, DatabaseSchema.PH_LEVEL_KEY);
     }
 
-    /**
-     * When this aquarium's probe was last calibrated, and how large the correction that left on it
-     * is against the sensor's safe band. Both read from the offset store and this aquarium's
-     * thresholds, so the row describes one tank's hardware throughout.
-     *
-     * <p>The subtitle is the timestamp alone. The correction itself is a raw quantity in the
-     * sensor's own unit, which says nothing on its own about whether the probe is in good shape -
-     * the percentage on the right is the reading of it that means the same thing for every sensor.
-     */
     private void updateProbeRow(View root, int lastCalibratedId, int errorId, String sensorId) {
         TextView tvLastCalibrated = root.findViewById(lastCalibratedId);
         TextView tvError = root.findViewById(errorId);
@@ -274,8 +227,6 @@ public class SensorCalibrationFragment extends Fragment {
                 offsets.get(aquarium.getId(), sensorId),
                 band.getSafeLow(), band.getSafeHigh());
         if (Double.isNaN(percent)) {
-            // No band, or one with no width: the sensor has been calibrated, but there is nothing
-            // to measure the correction against, so the column says so rather than guessing.
             tvError.setText(R.string.calib_value_none);
             return;
         }
@@ -283,7 +234,6 @@ public class SensorCalibrationFragment extends Fragment {
                 String.format(Locale.getDefault(), "%.1f", percent)));
     }
 
-    /** The moment a calibration was run, in the phone's own date and time format. */
     private static String formatTimestamp(long epochMillis) {
         return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT,
                 Locale.getDefault()).format(new Date(epochMillis));
@@ -293,7 +243,6 @@ public class SensorCalibrationFragment extends Fragment {
         Toast.makeText(requireContext(), messageResId, Toast.LENGTH_SHORT).show();
     }
 
-    /** Shown while the probe goes in, so the picture matches the thing being handled. */
     @DrawableRes
     private static int placeImageFor(String sensorId) {
         switch (sensorId) {

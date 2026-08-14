@@ -7,9 +7,6 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
-/**
- * This class represents a discovered board shown in the board picker list during the pairing process.
- */
 public final class DiscoveredBoard {
 
     @NonNull
@@ -26,35 +23,25 @@ public final class DiscoveredBoard {
         this.rssi = rssi;
     }
 
-    /** The device to open a GATT link against. */
     @NonNull
     public BluetoothDevice getDevice() {
         return this.device;
     }
 
-    /** MAC address or device address of the board */
     @NonNull
     public String getAddress() {
         return this.address;
     }
 
-    /** Advertised local name of the board */
     @Nullable
     public String getName() {
         return this.name;
     }
 
-    /** Signal strength in dBm. Less negative is closer. */
     public int getRssi() {
         return this.rssi;
     }
 
-    /**
-     * Rough distance banding for the picker, 0 (far) to 3 (very close).
-     *
-     * <p>RSSI is noisy and reflects orientation as much as distance, so this is only ever used to
-     * order and illustrate the list, never to pick a board automatically.
-     */
     public int getSignalBars() {
         if (this.rssi >= -60) {
             return 3;
@@ -68,10 +55,6 @@ public final class DiscoveredBoard {
         return 0;
     }
 
-    /**
-     * Identity is the address alone: a scan reports the same board repeatedly with a different
-     * RSSI each time, and those must collapse to one row instead of stacking up.
-     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
