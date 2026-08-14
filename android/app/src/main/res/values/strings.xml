@@ -161,6 +161,7 @@
     <string name="display_units_desc">Configure display settings &amp; dark mode</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_desc">Push, email, &amp; SMS alert configuration</string>
+    <string name="manage_account">Manage Account</string>
     <string name="account_settings">Account</string>
     <string name="account_settings_desc">Profile &amp; account actions</string>
     <string name="troubleshooting_guide">Troubleshooting Guide</string>
