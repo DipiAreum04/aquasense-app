@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
+import ca.team6.aquasense.aquarium.Aquarium;
 
 public class AquariumDropdown {
 

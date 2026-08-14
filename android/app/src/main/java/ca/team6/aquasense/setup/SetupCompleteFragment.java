@@ -14,12 +14,12 @@ import androidx.fragment.app.Fragment;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthNavigator;
-import ca.team6.aquasense.model.NewAquariumConfig;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
-import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
+import ca.team6.aquasense.aquarium.NewAquariumConfig;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.settings.SharedPreferenceHelper;
+import ca.team6.aquasense.aquarium.WaterType;
+import ca.team6.aquasense.aquarium.templates.AquariumTemplate;
+import ca.team6.aquasense.aquarium.templates.BuiltInTemplates;
 import ca.team6.aquasense.ui.RevealSequence;
 
 public class SetupCompleteFragment extends Fragment {

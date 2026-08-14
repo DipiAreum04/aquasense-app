@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 @SuppressLint("MissingPermission")
 public final class BleProvisioner implements Provisioner {

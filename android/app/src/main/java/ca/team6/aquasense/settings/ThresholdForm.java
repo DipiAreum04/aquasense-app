@@ -9,9 +9,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 public final class ThresholdForm {
 

@@ -23,10 +23,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
-import ca.team6.aquasense.model.InfoSheetSection;
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.aquarium.sensors.AquariumSensor;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
+import ca.team6.aquasense.aquarium.InfoSheetSection;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 public class SensorInfoBottomSheet extends BottomSheetDialogFragment {
     private static final String ICON_KEY = "iconResourceId";

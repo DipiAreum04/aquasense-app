@@ -35,12 +35,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ca.team6.aquasense.PairingActivity;
+import ca.team6.aquasense.pairing.PairingActivity;
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.NewAquariumConfig;
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.aquarium.NewAquariumConfig;
+import ca.team6.aquasense.logging.ScopedLogger;
 import ca.team6.aquasense.ui.BleStatusOrb;
 import ca.team6.aquasense.ui.InputFieldError;
 

@@ -14,12 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import ca.team6.aquasense.PairingActivity;
+import ca.team6.aquasense.pairing.PairingActivity;
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthNavigator;
 import ca.team6.aquasense.auth.AuthRepository;
-import ca.team6.aquasense.model.NewAquariumConfig;
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.aquarium.NewAquariumConfig;
+import ca.team6.aquasense.logging.ScopedLogger;
 import ca.team6.aquasense.pairing.PairingEntryMode;
 import ca.team6.aquasense.ui.FragmentToolbar;
 import ca.team6.aquasense.ui.WizardProgress;

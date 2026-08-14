@@ -37,11 +37,11 @@ import java.util.Locale;
 import java.util.Set;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.FirebaseDatabaseHelper;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.firebase.FirebaseDatabaseHelper;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.settings.SharedPreferenceHelper;
 import ca.team6.aquasense.notifications.BackgroundMonitoringPrompt;
 import ca.team6.aquasense.notifications.MaintenanceModeStore;
 import ca.team6.aquasense.notifications.MonitoringController;

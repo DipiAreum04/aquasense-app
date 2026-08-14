@@ -16,12 +16,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-import ca.team6.aquasense.MainActivity;
+import ca.team6.aquasense.dashboard.MainActivity;
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.NotificationLogMapper;
-import ca.team6.aquasense.model.NotificationLogRepository;
-import ca.team6.aquasense.model.ScopedLogger;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.notifications.NotificationLogMapper;
+import ca.team6.aquasense.notifications.NotificationLogRepository;
+import ca.team6.aquasense.logging.ScopedLogger;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public final class AquasenseNotificationHelper {
 

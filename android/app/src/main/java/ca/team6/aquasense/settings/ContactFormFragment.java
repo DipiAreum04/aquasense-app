@@ -17,8 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.ProfileInputValidator;
-import ca.team6.aquasense.model.SettingsRepository;
+import ca.team6.aquasense.auth.ProfileInputValidator;
+import ca.team6.aquasense.settings.SettingsRepository;
 
 public class ContactFormFragment extends Fragment {
 

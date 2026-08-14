@@ -18,12 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.FirebaseDatabaseHelper;
-import ca.team6.aquasense.model.NewAquariumConfig;
-import ca.team6.aquasense.model.ScopedLogger;
-import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.firebase.FirebaseDatabaseHelper;
+import ca.team6.aquasense.aquarium.NewAquariumConfig;
+import ca.team6.aquasense.logging.ScopedLogger;
+import ca.team6.aquasense.aquarium.SensorReading;
 
 public final class PairingRepository {
 

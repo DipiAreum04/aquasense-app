@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 
-import ca.team6.aquasense.model.DatabaseSchema;
+import ca.team6.aquasense.firebase.DatabaseSchema;
 
 final class SensorTelemetryReading {
 

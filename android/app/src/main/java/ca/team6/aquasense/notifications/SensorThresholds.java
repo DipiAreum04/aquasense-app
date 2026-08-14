@@ -3,8 +3,8 @@ package ca.team6.aquasense.notifications;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.DatabaseSchema;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.firebase.DatabaseSchema;
 
 public final class SensorThresholds {
 

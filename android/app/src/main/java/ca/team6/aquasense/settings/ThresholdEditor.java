@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
-import ca.team6.aquasense.model.aquarium_templates.BuiltInTemplates;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.WaterType;
+import ca.team6.aquasense.aquarium.templates.AquariumTemplate;
+import ca.team6.aquasense.aquarium.templates.BuiltInTemplates;
 import ca.team6.aquasense.notifications.SensorThresholds;
 import ca.team6.aquasense.ui.InputFieldError;
 

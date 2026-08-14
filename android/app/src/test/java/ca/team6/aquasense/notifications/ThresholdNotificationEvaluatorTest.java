@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public class ThresholdNotificationEvaluatorTest {
 

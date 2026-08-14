@@ -14,11 +14,11 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.SensorReading;
-import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.SensorReading;
+import ca.team6.aquasense.aquarium.sensors.AquariumSensor;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public class AnalyticsSummaryController {
 

@@ -6,7 +6,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 public final class ThresholdBandBar {
 

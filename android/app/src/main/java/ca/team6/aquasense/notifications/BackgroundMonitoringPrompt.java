@@ -11,7 +11,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 public final class BackgroundMonitoringPrompt {
 

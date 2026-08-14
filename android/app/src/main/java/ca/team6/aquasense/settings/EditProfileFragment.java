@@ -17,7 +17,7 @@ import androidx.navigation.Navigation;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.auth.AuthRepository;
-import ca.team6.aquasense.model.ProfileInputValidator;
+import ca.team6.aquasense.auth.ProfileInputValidator;
 
 public class EditProfileFragment extends Fragment {
 

@@ -17,9 +17,9 @@ import androidx.fragment.app.Fragment;
 
 import ca.team6.aquasense.R;
 import ca.team6.aquasense.analytics.AquariumDropdown;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.aquarium.WaterType;
 
 public class WaterParametersFragment extends Fragment {
 

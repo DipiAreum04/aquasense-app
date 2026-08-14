@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 public class ThresholdFormTest {
 

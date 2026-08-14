@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.CalibrationMath;
-import ca.team6.aquasense.model.CalibrationOffsetStore;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
-import ca.team6.aquasense.model.TelemetryRepository;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.settings.AppSettings;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.settings.CalibrationMath;
+import ca.team6.aquasense.settings.CalibrationOffsetStore;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.settings.SharedPreferenceHelper;
+import ca.team6.aquasense.aquarium.TelemetryRepository;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 public class SensorCalibrationFragment extends Fragment {
 

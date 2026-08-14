@@ -7,7 +7,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 public final class MonitorBootReceiver extends BroadcastReceiver {
 

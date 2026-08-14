@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ServiceCompat;
 
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 public final class ThresholdMonitorService extends Service {
 

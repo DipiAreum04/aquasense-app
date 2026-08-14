@@ -36,10 +36,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.FirebaseDatabaseHelper;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.settings.AppSettings;
+import ca.team6.aquasense.firebase.FirebaseDatabaseHelper;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.settings.SharedPreferenceHelper;
 import ca.team6.aquasense.notifications.ThresholdMonitorService;
 
 public class AuthRepository {

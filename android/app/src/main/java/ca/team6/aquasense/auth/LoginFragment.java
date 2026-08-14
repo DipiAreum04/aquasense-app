@@ -24,7 +24,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseUser;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.ProfileInputValidator;
+import ca.team6.aquasense.auth.ProfileInputValidator;
 import ca.team6.aquasense.ui.InputFieldError;
 
 public class LoginFragment extends Fragment {

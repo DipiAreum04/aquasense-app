@@ -19,11 +19,11 @@ import androidx.core.widget.ImageViewCompat;
 import java.text.DecimalFormat;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.WaterType;
-import ca.team6.aquasense.model.aquarium_templates.AquariumTemplate;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.WaterType;
+import ca.team6.aquasense.aquarium.templates.AquariumTemplate;
 
 public final class AquariumTemplateCardBinder {
 

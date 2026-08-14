@@ -42,14 +42,14 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.CalibrationMath;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.SensorReading;
-import ca.team6.aquasense.model.TelemetryRepository;
-import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.settings.CalibrationMath;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.SensorReading;
+import ca.team6.aquasense.aquarium.TelemetryRepository;
+import ca.team6.aquasense.aquarium.sensors.AquariumSensor;
 
 public class CalibrationGuideFragment extends Fragment {
 

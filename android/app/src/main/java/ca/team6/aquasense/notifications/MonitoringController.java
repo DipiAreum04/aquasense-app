@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.SharedPreferenceHelper;
+import ca.team6.aquasense.settings.AppSettings;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.settings.SharedPreferenceHelper;
 
 public final class MonitoringController {
 

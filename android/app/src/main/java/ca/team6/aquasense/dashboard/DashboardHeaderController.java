@@ -20,9 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumStatus;
-import ca.team6.aquasense.model.ScopedLogger;
-import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.logging.ScopedLogger;
+import ca.team6.aquasense.aquarium.WaterType;
 
 public class DashboardHeaderController {
     private static final long STATUS_TRANSITION_MS = 450L;

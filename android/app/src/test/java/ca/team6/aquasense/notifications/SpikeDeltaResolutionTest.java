@@ -8,9 +8,9 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Map;
 
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 public class SpikeDeltaResolutionTest {
 

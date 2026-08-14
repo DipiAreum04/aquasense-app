@@ -3,8 +3,8 @@ package ca.team6.aquasense.notifications;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public final class ThresholdViolation {
 

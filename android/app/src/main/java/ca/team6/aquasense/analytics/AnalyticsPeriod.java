@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.SensorReading;
 
 public enum AnalyticsPeriod {
 

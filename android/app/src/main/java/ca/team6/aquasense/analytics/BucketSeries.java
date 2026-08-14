@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.aquarium.SensorReading;
 
 final class BucketSeries {
 

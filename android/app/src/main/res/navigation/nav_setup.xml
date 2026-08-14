@@ -41,7 +41,7 @@
         <argument
             android:name="aquariumConfig"
             android:defaultValue="@null"
-            app:argType="ca.team6.aquasense.model.NewAquariumConfig"
+            app:argType="ca.team6.aquasense.aquarium.NewAquariumConfig"
             app:nullable="true" />
 
         <argument
@@ -66,7 +66,7 @@
         <argument
             android:name="aquariumConfig"
             android:defaultValue="@null"
-            app:argType="ca.team6.aquasense.model.NewAquariumConfig"
+            app:argType="ca.team6.aquasense.aquarium.NewAquariumConfig"
             app:nullable="true" />
 
         <argument

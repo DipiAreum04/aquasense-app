@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.NotificationLogEntry;
-import ca.team6.aquasense.model.NotificationLogRepository;
-import ca.team6.aquasense.model.SensorType;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.notifications.NotificationLogEntry;
+import ca.team6.aquasense.notifications.NotificationLogRepository;
+import ca.team6.aquasense.notifications.SensorType;
 
 public class NotificationHistoryFragment extends Fragment {
 

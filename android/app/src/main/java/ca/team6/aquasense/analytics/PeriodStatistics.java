@@ -5,10 +5,10 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-import ca.team6.aquasense.model.SensorReading;
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.aquarium.SensorReading;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.sensors.AquariumSensor;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public final class PeriodStatistics {
 

@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.NotificationLogEntry;
-import ca.team6.aquasense.model.NotificationTrigger;
-import ca.team6.aquasense.model.SensorType;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.notifications.NotificationLogEntry;
+import ca.team6.aquasense.notifications.NotificationTrigger;
+import ca.team6.aquasense.notifications.SensorType;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 public class NotificationHistoryAdapter extends RecyclerView.Adapter<NotificationHistoryViewHolder> {
     private final List<NotificationLogEntry> entries;

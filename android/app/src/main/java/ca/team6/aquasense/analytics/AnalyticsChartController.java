@@ -23,7 +23,7 @@ import java.util.Locale;
 import androidx.annotation.StringRes;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.SensorReading;
+import ca.team6.aquasense.aquarium.SensorReading;
 
 public class AnalyticsChartController {
 

@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ca.team6.aquasense.model.AppSettings;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.CalibrationOffsetStore;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.FirebaseDatabaseHelper;
-import ca.team6.aquasense.model.ScopedLogger;
-import ca.team6.aquasense.model.SettingsRepository;
-import ca.team6.aquasense.model.ThresholdBand;
+import ca.team6.aquasense.settings.AppSettings;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.settings.CalibrationOffsetStore;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.firebase.FirebaseDatabaseHelper;
+import ca.team6.aquasense.logging.ScopedLogger;
+import ca.team6.aquasense.settings.SettingsRepository;
+import ca.team6.aquasense.aquarium.ThresholdBand;
 
 
 public final class FirebaseThresholdMonitor {

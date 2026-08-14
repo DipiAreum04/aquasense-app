@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import ca.team6.aquasense.model.ScopedLogger;
+import ca.team6.aquasense.logging.ScopedLogger;
 
 public final class DownloadsWriter {
 

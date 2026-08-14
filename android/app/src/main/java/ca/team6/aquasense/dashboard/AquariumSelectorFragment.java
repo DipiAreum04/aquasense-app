@@ -21,9 +21,9 @@ import androidx.navigation.Navigation;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.AquariumRepository;
-import ca.team6.aquasense.model.Aquarium;
-import ca.team6.aquasense.model.WaterType;
+import ca.team6.aquasense.aquarium.AquariumRepository;
+import ca.team6.aquasense.aquarium.Aquarium;
+import ca.team6.aquasense.aquarium.WaterType;
 import ca.team6.aquasense.ui.FragmentToolbar;
 
 public class AquariumSelectorFragment extends Fragment {

@@ -5,10 +5,10 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.DatabaseSchema;
-import ca.team6.aquasense.model.ReadingFormatter;
-import ca.team6.aquasense.model.ThresholdBand;
-import ca.team6.aquasense.model.aquarium_sensors.SensorStatus;
+import ca.team6.aquasense.firebase.DatabaseSchema;
+import ca.team6.aquasense.aquarium.ReadingFormatter;
+import ca.team6.aquasense.aquarium.ThresholdBand;
+import ca.team6.aquasense.aquarium.sensors.SensorStatus;
 
 final class ThresholdAlertFormatter {
 

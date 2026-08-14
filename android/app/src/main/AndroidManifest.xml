@@ -27,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AquaSense">
         <activity
-            android:name=".SplashActivity"
+            android:name=".startup.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AquaSense.Splash">
             <intent-filter>
@@ -37,35 +37,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AuthActivity"
+            android:name=".auth.AuthActivity"
             android:exported="false"
             android:theme="@style/Theme.AquaSense"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".MainActivity"
+            android:name=".dashboard.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.AquaSense" />
         <activity
-            android:name=".SetupWizardActivity"
+            android:name=".setup.SetupWizardActivity"
             android:exported="false"
             android:theme="@style/Theme.AquaSense"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PairingActivity"
+            android:name=".pairing.PairingActivity"
             android:exported="false"
             android:label="@string/pairing_flow_title"
             android:theme="@style/Theme.AquaSense" />
         <activity
-            android:name=".AnalyticsActivity"
+            android:name=".analytics.AnalyticsActivity"
             android:exported="false"
             android:label="@string/analytics"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".dashboard.MainActivity"
             android:theme="@style/Theme.AquaSense" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:exported="false"
             android:label="Settings"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".dashboard.MainActivity"
             android:theme="@style/Theme.AquaSense" />
         <service
             android:name=".notifications.ThresholdMonitorService"

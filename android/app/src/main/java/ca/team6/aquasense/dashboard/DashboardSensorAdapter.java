@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.team6.aquasense.R;
-import ca.team6.aquasense.model.aquarium_sensors.AquariumSensor;
+import ca.team6.aquasense.aquarium.sensors.AquariumSensor;
 
 public class DashboardSensorAdapter extends RecyclerView.Adapter<DashboardSensorViewHolder> {
     private final FragmentManager fragmentManager;

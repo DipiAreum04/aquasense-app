@@ -5,8 +5,8 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
-import ca.team6.aquasense.AuthActivity;
-import ca.team6.aquasense.MainActivity;
+import ca.team6.aquasense.auth.AuthActivity;
+import ca.team6.aquasense.dashboard.MainActivity;
 
 public final class AuthNavigator {
 
