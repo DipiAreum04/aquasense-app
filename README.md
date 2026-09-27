@@ -1,6 +1,6 @@
 # AquaSense
 
-**An end-to-end aquarium monitoring system that connects physical water-quality sensors to an Android app that displays real-time aquarium status, trends, and actionable alerts, built for safer aquatic environments**
+**An end-to-end aquarium monitoring system that connects physical water-quality sensors to an Android app that displays real-time aquarium status, trends, and actionable alerts, built for safer aquatic environments.**
 
 [![Android](https://img.shields.io/badge/Android-14%2B-3DDC84?logo=android&logoColor=white)](android)
 [![Arduino](https://img.shields.io/badge/Arduino-UNO%20R4%20WiFi-00878F?logo=arduino&logoColor=white)](firmware)
