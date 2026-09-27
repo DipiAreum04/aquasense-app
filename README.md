@@ -17,7 +17,7 @@ A user can manage multiple aquariums, each with its own template, thresholds, sp
 
 | Layer | Technologies |
 | --- | --- |
-| Android Application | Java, Kotlin, Android SDK, XML layouts, Material 3, AndroidX Navigation, foreground services |
+| Android Application | Java, Kotlin, Android SDK, XML layouts, Material 3, AndroidX Navigation, foreground services, HTML |
 | Auth and Database | Firebase Authentication, Firebase Realtime Database (NoSQL) |
 | Data Visualization | MPAndroidChart |
 | Firmware | Arduino/C++, WiFiS3, ArduinoBLE, EEPROM, NTP, HTTP, ArduinoJson |
